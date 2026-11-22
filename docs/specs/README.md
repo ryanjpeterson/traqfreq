@@ -1,0 +1,36 @@
+# Specs: phases and sessions
+
+One session = one 5-hour window = one pushed branch. P0–P5 (T1–T28) give a full read-only traqfreq beside jimbo-dj.
+
+| Phase | What | Sessions | Gate |
+|---|---|---|---|
+| P0 | Shell | T1–T4 | Runs on the Mac mini at :4491 |
+| P1 | HISTORY, read-only | T5–T8 | Counts match jimbo-dj |
+| P2 | LIBRARY, read-only | T9–T12 | Counts match jimbo-dj |
+| P3 | SERVERS: track identity, Jellyfin, Navidrome | T13–T19 | One song, three servers |
+| P4 | TAGS, read-only | T20–T23 | Ladder and per-track tags right |
+| P5 | PLAYLISTS: Junction preview | T24–T28 | Same tracks as jimbo-dj |
+| P6 | Cut-overs, one writer at a time | ~15 | Each switched off in jimbo-dj |
+| P7 | DISCOVER, MIXES, FETCH, language loop | ~30 | Per module |
+| P8 | Retire jimbo-dj; other nine directions as skins | ~5 | jimbo-dj off for a week |
+
+## P0 Shell
+- **T1** Repo: FastAPI app, legacy DB read-only, fixture generator, tests, CI, docs. *Done.*
+- **T2** Web shell: Vite + React, Berlin token file → CSS variables, self-hosted Fira Sans, brand fast checks.
+- **T3** The eleven kit components, every state, tests.
+- **T4** Nav (top bar, phone bottom bar), map home, read-only SETUP, container on :4491.
+
+## P1 HISTORY read-only: T5–T8
+## P2 LIBRARY read-only: T9–T12
+## P3 SERVERS
+- T13–T16 track identity · T17 Jellyfin · T18 Navidrome · T19 gate.
+## P4 TAGS read-only: T20–T23
+## P5 PLAYLISTS Junction preview: T24–T28
+## P6 Cut-overs (~15)
+Imports, scans, analyzer, playlists, Fix in Plex, jobs, backups. Each is switched off in jimbo-dj as traqfreq takes the write.
+## P7 New modules
+DISCOVER, MIXES, FETCH, language loop.
+## P8 Retire jimbo-dj
+The other nine design directions ship as skins.
+
+Per-session specs (`tN-<slug>.md`) are added here by the session before.
