@@ -3,7 +3,9 @@
 //   C7  nav/top-bar rules use chrome, chrome-ink or a module colour only
 //   C2  exactly seven module colours, canonical values, never redefined per mode
 //   C4  contrast of every text and mark pair, light and dark
-//   T2 T3 W2  copy lint on web/src/copy/strings.json
+//   T2 T3 W2  copy lint on every web/src/**/*strings.json
+//   K1  pages use only the eleven kit components: kit imports by name, no other UI imports, no raw controls
+//   W1  no copy literals in JSX outside the strings files (text nodes and text attributes)
 // Usage: node scripts/check.mjs [--root <dir>]
 import { readFileSync, readdirSync, statSync, existsSync } from 'node:fs';
 import { dirname, join, relative, resolve } from 'node:path';
@@ -101,7 +103,74 @@ export function lintStyleSource(text, file) {
       }
     }
   });
-  if (isCss) out.push(...lintNavRules(text, file));
+  if (isCss) out.push(...lintNavRules(text, file), ...lintLineVars(text, file));
+  return out;
+}
+
+// --line / --line-ink / --line-outline are the kit's per-module indirection: they may only point at module tokens.
+export function lintLineVars(text, file) {
+  const out = [];
+  for (const m of text.matchAll(/--line(-ink|-outline)?\s*:\s*([^;}]+)/g)) {
+    const want = m[1] === '-outline' ? /^var\(--mark-outline-[a-z]\)$/ : new RegExp(`^var\\(--mod-[a-z]${m[1] ?? ''}\\)$`);
+    if (!want.test(m[2].trim())) out.push(['C7', `${file} --line${m[1] ?? ''} is "${m[2].trim()}"; it must point at a module token`]);
+  }
+  return out;
+}
+
+// ---------- K1 / W1 ----------
+export const KIT = ['LineBullet', 'NavItem', 'Status', 'Band', 'Button', 'ConditionChip', 'LineLever', 'StationRow', 'Text', 'Card', 'ArtTile'];
+const KIT_EXTRAS = ['MODULE_IDS', 'ModuleId', 'type ModuleId'];
+const ALLOWED_PACKAGES = /^(?:react|react\/jsx-runtime|react-dom|react-dom\/client|@fontsource\/[\w./-]+)$/;
+const RAW_CONTROLS = /<(button|input|select|textarea|a|img|svg|canvas)\b/g;
+
+/** K1 for a page or app file (anything under web/src outside components/kit and tests). */
+export function lintPageImports(text, file) {
+  const out = [];
+  for (const m of text.matchAll(/^\s*import\s+(?:type\s+)?(?:([\s\S]*?)\s+from\s+)?['"]([^'"]+)['"]/gm)) {
+    const [, what = '', from] = m;
+    if (from.startsWith('.')) {
+      if (/(?:^|\/)components\//.test(from) && !/components\/kit$/.test(from)) {
+        out.push(['K1', `${file} imports "${from}"; import the kit from components/kit`]);
+      } else if (/components\/kit$/.test(from)) {
+        const names = (what.match(/\{([^}]*)\}/)?.[1] ?? '').split(',').map((n) => n.trim().split(/\s+as\s+/)[0]).filter(Boolean);
+        for (const n of names) if (!KIT.includes(n) && !KIT_EXTRAS.includes(n)) out.push(['K1', `${file} imports "${n}" from the kit; only the eleven components`]);
+      }
+    } else if (!ALLOWED_PACKAGES.test(from) && !from.endsWith('.css')) {
+      out.push(['K1', `${file} imports the package "${from}"; UI comes from the kit only`]);
+    }
+  }
+  if (file.endsWith('.tsx')) {
+    text.split('\n').forEach((line, i) => {
+      for (const m of line.matchAll(RAW_CONTROLS)) out.push(['K1', `${file}:${i + 1} raw <${m[1]}>; use a kit component`]);
+    });
+  }
+  return out;
+}
+
+/** K1 for the kit folder itself: only the eleven components (plus their helpers and tests). */
+export function lintKitFolder(names) {
+  const helpers = new Set(['index.ts', 'modules.ts', 'kit.css']);
+  return names
+    .filter((n) => !helpers.has(n) && !/\.test\.tsx?$/.test(n) && !KIT.includes(n.replace(/\.tsx$/, '')))
+    .map((n) => ['K1', `web/src/components/kit/${n} is not one of the eleven kit components`]);
+}
+
+const TEXT_ATTRS = /\b(aria-label|title|alt|placeholder|label|detail|why|aria-description)=(["'])([^"']*\p{L}[^"']*)\2/gu;
+
+/** W1: copy in JSX comes from strings.json via t(), never a literal. */
+export function lintJsxCopy(text, file) {
+  const out = [];
+  const src = text.replace(/\/\*[\s\S]*?\*\//g, (c) => c.replace(/[^\n]/g, ' '));
+  src.split('\n').forEach((raw, i) => {
+    const line = raw.replace(/^\s*\/\/.*$/, '');
+    const at = `${file}:${i + 1}`;
+    // A text node: after a tag's closing > (not =>) up to the next < or {, holding a letter.
+    for (const m of line.matchAll(/(?<=[\w"'}\/])(?<![=-])>([^<>{}]*\p{L}[^<>{}]*)(?=<|\{|$)/gu)) {
+      const s = m[1].trim();
+      if (s && !/^[)\]};,.:&|?]/.test(s) && !/[;=]\s*$/.test(s) && !/^(?:as|extends|from)\b/.test(s)) out.push(['W1', `${at} copy literal "${s}" in JSX; use t()`]);
+    }
+    for (const m of line.matchAll(TEXT_ATTRS)) out.push(['W1', `${at} ${m[1]}="${m[3]}" is a copy literal; use t()`]);
+  });
   return out;
 }
 
@@ -112,7 +181,7 @@ export function lintNavRules(text, file) {
     if (!/\b(?:nav|topbar|rail|bottombar|strip|dock)\b/i.test(selector.replace(/[.#]/g, ' '))) continue;
     for (const d of m[2].matchAll(/(background(?:-color)?|color)\s*:\s*([^;]+)/gi)) {
       for (const v of d[2].matchAll(/var\(--([\w-]+)\)/g)) {
-        if (!/^(?:chrome|chrome-ink|mod-[a-z](?:-ink)?)$/.test(v[1])) {
+        if (!/^(?:chrome|chrome-ink|mod-[a-z](?:-ink)?|line|line-ink)$/.test(v[1])) {
           out.push(['C7', `${file} "${selector}" uses --${v[1]} for ${d[1]}; nav uses chrome, chrome-ink or a module colour`]);
         }
       }
@@ -172,11 +241,20 @@ export function runAll(root) {
     problems.push(...[...checkModules(tokens), ...checkContrast(tokens)].map(([r, m]) => [r, `${rel}: ${m}`]));
   }
   const generated = (p) => p.endsWith(join('styles', 'tokens.css'));
+  const isTest = (p) => /\.test\.tsx?$/.test(p) || p.includes(`${join('src', 'test')}`);
+  const kitDir = join(root, 'web', 'src', 'components', 'kit');
   for (const f of walk(join(root, 'web', 'src'), ['.css', '.ts', '.tsx'], generated)) {
-    problems.push(...lintStyleSource(readFileSync(f, 'utf8'), relative(root, f)));
+    const text = readFileSync(f, 'utf8');
+    const rel = relative(root, f);
+    problems.push(...lintStyleSource(text, rel));
+    if (isTest(f) || f.endsWith('.css')) continue;
+    if (!f.startsWith(kitDir)) problems.push(...lintPageImports(text, rel));
+    if (f.endsWith('.tsx')) problems.push(...lintJsxCopy(text, rel));
   }
-  const copy = join(root, 'web', 'src', 'copy', 'strings.json');
-  if (existsSync(copy)) problems.push(...lintCopy(JSON.parse(readFileSync(copy, 'utf8')), relative(root, copy)));
+  if (existsSync(kitDir)) problems.push(...lintKitFolder(readdirSync(kitDir)));
+  for (const copy of walk(join(root, 'web', 'src'), ['strings.json'], () => false)) {
+    problems.push(...lintCopy(JSON.parse(readFileSync(copy, 'utf8')), relative(root, copy)));
+  }
   return problems;
 }
 
@@ -185,6 +263,6 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const root = resolve(i > 0 ? process.argv[i + 1] : join(dirname(fileURLToPath(import.meta.url)), '..'));
   const problems = runAll(root);
   for (const [rule, msg] of problems) console.log(`${rule}  ${msg}`);
-  console.log(problems.length ? `\n${problems.length} brand problem(s).` : 'Brand checks: C1 C2 C4 C7 T2 T3 W2 pass.');
+  console.log(problems.length ? `\n${problems.length} brand problem(s).` : 'Brand checks: C1 C2 C4 C7 T2 T3 W1 W2 K1 pass.');
   process.exit(problems.length ? 1 : 0);
 }

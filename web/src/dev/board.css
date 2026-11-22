@@ -1,0 +1,9 @@
+/* Kit board layout only (dev). Tokens only (C1). */
+.board { padding: var(--pad); display: grid; gap: 32px; max-width: 960px; }
+.board-group { display: grid; gap: 12px; }
+.board-row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+.board-stack { display: grid; gap: 4px; }
+.board-chrome { display: flex; flex-wrap: wrap; gap: 4px; padding: 6px; background: var(--chrome); }
+.board-list { margin: 0; padding: 0; }
+.board-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
+.board-art { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }

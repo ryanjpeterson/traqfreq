@@ -24,8 +24,11 @@ jobs:
           cache-dependency-path: web/package-lock.json
       - run: npm ci
         working-directory: web
-      - name: Brand fast checks (C1 C2 C4 C7 T2 T3 W2)
+      - name: Brand fast checks (C1 C2 C4 C7 T2 T3 W1 W2 K1)
         run: node scripts/check.mjs
       - run: node --test scripts/check.test.mjs
+      - name: Kit component tests (Vitest)
+        run: npm test
+        working-directory: web
       - run: npm run build
         working-directory: web

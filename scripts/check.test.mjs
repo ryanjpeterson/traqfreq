@@ -2,7 +2,9 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { checkContrast, checkModules, contrast, lintCopy, lintStyleSource } from './check.mjs';
+import {
+  checkContrast, checkModules, contrast, lintCopy, lintJsxCopy, lintKitFolder, lintLineVars, lintNavRules, lintPageImports, lintStyleSource,
+} from './check.mjs';
 import { buildCss } from './build-tokens.mjs';
 
 const berlin = JSON.parse(readFileSync(new URL('../tokens/berlin.json', import.meta.url)));
@@ -75,4 +77,40 @@ test('token build writes light, dark and outline variables', () => {
   assert.match(css, /prefers-color-scheme: dark[\s\S]*--mark-outline-m: 1px solid #FFFFFF;/);
   assert.match(css, /:root\[data-theme="dark"\][\s\S]*--mark-outline-f: 1px solid #FFFFFF;/);
   assert.match(css, /:root \{[\s\S]*--mark-outline-m: none;/);
+});
+
+test('C7 accepts the kit line indirection only when it points at module tokens', () => {
+  assert.deepEqual(lintNavRules('.kit-nav.is-current { background: var(--line); color: var(--line-ink); }', 'k.css'), []);
+  assert.deepEqual(rules(lintNavRules('.kit-nav { background: var(--card); }', 'k.css')), ['C7']);
+  assert.deepEqual(lintLineVars('.line-m { --line: var(--mod-m); --line-ink: var(--mod-m-ink); --line-outline: var(--mark-outline-m); }', 'k.css'), []);
+  assert.deepEqual(rules(lintLineVars('.line-x { --line: var(--card); --line-ink: var(--ink); --line-outline: 1px solid var(--ink); }', 'k.css')), ['C7', 'C7', 'C7']);
+});
+
+test('K1 catches non-kit imports, unknown kit names, UI packages and raw controls', () => {
+  const ok = `import { useState } from 'react';\nimport { Button, Card, type ModuleId } from './components/kit';\nimport { t } from './copy/t';\nexport const A = () => <main><Button>{t('x')}</Button></main>;`;
+  assert.deepEqual(lintPageImports(ok, 'App.tsx'), []);
+  assert.deepEqual(rules(lintPageImports(`import { Fancy } from './components/fancy/Fancy';`, 'a.tsx')), ['K1']);
+  assert.deepEqual(rules(lintPageImports(`import { Button, Modal } from './components/kit';`, 'a.tsx')), ['K1']);
+  assert.deepEqual(rules(lintPageImports(`import { Dialog } from '@radix-ui/react-dialog';`, 'a.tsx')), ['K1']);
+  assert.deepEqual(rules(lintPageImports(`export const A = () => <div><button>{t('x')}</button><a href="/">{t('y')}</a></div>;`, 'a.tsx')), ['K1', 'K1']);
+});
+
+test('K1 allows only the eleven components in the kit folder', () => {
+  assert.deepEqual(lintKitFolder(['Button.tsx', 'Button.test.tsx', 'index.ts', 'modules.ts', 'kit.css']), []);
+  assert.deepEqual(rules(lintKitFolder(['Button.tsx', 'Modal.tsx'])), ['K1']);
+});
+
+test('W1 catches copy literals in JSX text and text attributes', () => {
+  assert.deepEqual(rules(lintJsxCopy(`const A = () => <p>Save the playlist</p>;`, 'a.tsx')), ['W1']);
+  assert.deepEqual(rules(lintJsxCopy(`const A = () => <Button aria-label="Close">{t('x')}</Button>;`, 'a.tsx')), ['W1']);
+  assert.deepEqual(rules(lintJsxCopy(`const A = () => <Card label="Last scan" />;`, 'a.tsx')), ['W1']);
+  const ok = [
+    `const [s, set] = useState<Summary | null>(null);`,
+    `const A = () => <p>{t('x')}: {n}</p>;`,
+    `const B = (e: Event) => e.preventDefault();`,
+    `const C = () => <span aria-hidden="true">×</span>;`,
+    `const D = () => <Status state="ready" />;`,
+    `if (a > b && c < d) go();`,
+  ].join('\n');
+  assert.deepEqual(lintJsxCopy(ok, 'ok.tsx'), []);
 });

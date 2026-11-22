@@ -1,16 +1,17 @@
 # Handoff
 
-## Where sessions run (from T3 on)
-All code is produced **on the Mac mini**, in a Claude Code session running there and driven from the laptop. Pushes go to GitHub, and to Forgejo too once that remote exists. T1 and T2 ran in a cloud container because the Mac mini didn't offer a traqfreq folder to the session. Before T3, on the Mac mini:
-1. Clone: `git clone https://github.com/ryanjpeterson/traqfreq ~/traqfreq` (not inside a hidden folder under home or in ~/Library), then `git checkout claude/t2-web-shell`.
+## Where sessions run
+T1 and T2 ran in a cloud container. **T3 ran on the laptop, directly in the server checkout over SMB** (`/Volumes/jimbos-sloppydrive/traqfreq`; Ryan's call, use this mount and not `jimbos-sloppydrive-1`). Pushes go to GitHub; Forgejo mirrors it.
+
+Working over SMB, as T3 did:
+- Git and in-place edits work, but SMB now and then refuses a rename: `fatal: unable to write new index file` or `sed: rename(): Resource busy`. Retry once; edit files with in-place writes (Python `r+`, the Edit tool), not `sed -i`.
+- Keep `node_modules` off the drive. T3 ran npm, Vite, Vitest and the build in a scratch copy (`rsync` the repo there without `node_modules`, `npm ci`), then copied sources back with `rsync --inplace`.
+- uv isn't on the laptop; pytest ran in a scratch venv (Python 3.14). CI runs 3.12.
+
+The alternative, still open: a session on the Mac mini itself, in its own clone:
+1. Clone: `git clone https://github.com/ryanjpeterson/traqfreq ~/traqfreq` (not inside a hidden folder under home or in ~/Library), then check out the newest `claude/tN-…` branch.
 2. Start the session there: Claude desktop app → Claude Code with that folder, or `claude remote-control` in `~/traqfreq`. Drive it from the laptop.
-3. Remotes (jimbo-deploy standard; GitHub primary, Forgejo copy):
-   ```
-   git remote set-url --add --push origin https://github.com/ryanjpeterson/traqfreq.git
-   git remote set-url --add --push origin http://macmini:4470/ryanjpeterson/traqfreq.git
-   git remote add forgejo http://macmini:4470/ryanjpeterson/traqfreq.git
-   ```
-   Pushing to Forgejo from the mini needs the Forgejo token in the mini's keychain (`git credential-osxkeychain store`, host `macmini:4470`, user `ryanjpeterson`); see open question 1.
+3. Remotes: `origin` = GitHub only (fetch and push). Forgejo is a **pull mirror** of GitHub (`http://macmini:4470/ryanjpeterson/traqfreq`), so the mini needs no Forgejo credentials. Optional read-only check: `git remote add forgejo http://macmini:4470/ryanjpeterson/traqfreq.git`.
 4. Tools: `uv` (Python 3.12) and Node 22+.
 
 ## Done
@@ -23,13 +24,22 @@ All code is produced **on the Mac mini**, in a Claude Code session running there
   - `scripts/check.mjs`: brand fast checks C1, C2, C4 (every text pair + 3:1 marks, with outline fallback), C7, plus copy lint T2/T3/W2 on `web/src/copy/strings.json`. `scripts/check.test.mjs` proves each check catches violations. Both run in CI (new `web` job, which also builds).
   - Placeholder shell screen (chrome bar + legacy row counts). Replaced by the kit and nav in T3/T4.
 
-- **Deploy setup** (2026-11-22, laptop session, on `claude/t2-web-shell`): jimbo-deploy applied. `deploy.json` (port **4492**, service `web`, compose `docker-compose.yml`, server checkout `/Volumes/jimbos-sloppydrive/traqfreq`, code edited in `~/traqfreq` on the mini). Port moved from 4491 because `jimbodj-text` (jimbo-dj's CLAP analyzer, native on the mini) already listens there and jimbo-dj's compose points at it. GitHub made private. Forgejo repo created (private) with both branches; the server checkout's `origin` pushes to both. README has the `deploy traqfreq` Termius snippet; it works once T4 adds the Dockerfile and `docker-compose.yml`.
+- **Deploy setup** (2026-11-22, laptop session, on `claude/t2-web-shell`): jimbo-deploy applied. `deploy.json` (port **4492**, service `web`, compose `docker-compose.yml`, server checkout `/Volumes/jimbos-sloppydrive/traqfreq`, code edited in `~/traqfreq` on the mini). Port moved from 4491 because `jimbodj-text` (jimbo-dj's CLAP analyzer, native on the mini) already listens there and jimbo-dj's compose points at it. GitHub made private. Forgejo mirrors GitHub (pull mirror, set up by Ryan in the Forgejo UI); `origin` pushes to GitHub only. README has the `deploy traqfreq` Termius snippet; it works once T4 adds the Dockerfile and `docker-compose.yml`.
 
-## Next: T3, the kit
-The eleven components (LineBullet, NavItem, Status, Band, Button, ConditionChip, LineLever, StationRow, Text, Card, ArtTile), every state, tests. Pick a component test runner (Vitest + Testing Library is the obvious fit). Marks use `outline: var(--mark-outline-<x>)`. Extend check.mjs with K1 (pages import only from the kit) and W1 (no string literals in JSX).
+- **T3** (2026-11-22, `claude/t3-kit`, from T2 + deploy setup):
+  - `web/src/components/kit/`: the eleven components, one file each, exported from `index.ts`; styles in `kit.css` (tokens only). Module data in `modules.ts` (badge `L1`…`S0`, name from strings, class `line-<x>`). Each `.line-<x>` class sets `--line`, `--line-ink`, `--line-outline` from the module tokens; components colour themselves through those.
+  - States: LineBullet (7 modules × sizes 22/24/28/36/44, decorative); NavItem (default, current = module fill + `aria-current="page"`, optional `onNavigate`); Status (ready filled, needs outlined, off dashed; own word or default); Band (name, name · screen); Button (primary ink, secondary outline, quiet link; disabled dashed; `href` link; submit); ConditionChip (AND OR NOT true false; removable); LineLever (read-only bar, adjustable range input, off dashed + disabled; clamps 0–100); StationRow (key/BPM optional, why toggle with `aria-expanded`, B3); Text (title h1, heading h2, body, label); Card (label, off dashed); ArtTile (art or "No artwork", code chip key · BPM).
+  - Bullets on their own colour (band, current nav item) invert: white square, module-coloured text, same contrast pair. Only text-free marks (the lever's share bar) use `outline: var(--line-outline)`, per the dark-mode rule.
+  - Kit copy in `strings.json` (`module.*`, `kit.*`). Phone (≤ 480 px): station rows put key and BPM under the artist.
+  - Tests: Vitest 5 + Testing Library + jsdom, `web/src/components/kit/kit.test.tsx`, 51 tests (`cd web && npm test`). In CI.
+  - `check.mjs` adds **K1** (pages import the kit only by its eleven names, no other UI packages, no raw `<button> <a> <input> <select> <textarea> <img> <svg> <canvas>` outside the kit; the kit folder holds only the eleven) and **W1** (no copy literals in JSX text or in `aria-label title alt placeholder label detail why` attributes). C7 accepts `--line`/`--line-ink` and checks every `--line*` points at a module token. Copy lint covers every `*strings.json`. 13 self-tests.
+  - Kit board at `/kit`, **dev only** (`npm run dev`): every component in every state. Its sample copy is in `web/src/dev/board.strings.json`, so none of it reaches `dist` (checked: D1). Looked at in light, dark and 375 px.
+
+## Next: T4, nav, map home, read-only SETUP, container
+Top bar (chrome, NavItems in L1 order: LIBRARY, switched-on modules, SETUP, plus search), phone bottom bar of five (76 px, L3), map home, read-only SETUP (legacy DB summary, last scan, jobs), Dockerfile + `docker-compose.yml` (service `web`, host port 4492, jimbo-dj's data dir mounted `:ro`). Then the README snippet deploys it and the P0 gate can be checked at `http://macmini:4492/`.
 
 ## Open questions
-1. **Forgejo from the mini:** the repo exists at `http://macmini:4470/ryanjpeterson/traqfreq`, and `origin` pushes to GitHub + Forgejo. The mini has no Forgejo credentials yet, so a session in `~/traqfreq` either stores the token there once, or pushes to GitHub only and Forgejo is caught up later.
+1. **Forgejo mirror:** the dual-push repo was deleted 2026-11-22 so Forgejo can re-add traqfreq as a pull mirror of GitHub (+ → New migration → GitHub, token, "This repository will be a mirror"). Check it exists and syncs.
 2. **Fixture schema is provisional** (from T1). jimbo-dj couldn't be attached, so table and column names are guesses. Correct `scripts/make_fixture.py` and `legacy.KEY_TABLES` against jimbo-dj's `src/jimbodj/db.py` before T5. On the Mac mini this is just a read of the local jimbo-dj checkout.
 3. **Reuse plan** (from T1): vendor jimbo-dj's pure functions if the repo is private, use a pinned git dependency if public. Decide in T5.
 4. Copy lint's sentence-case check uses an allowlist of proper nouns and acronyms (`PROPER`, `ACRONYMS` in check.mjs). Add to it when copy needs a new name.

@@ -1,10 +1,20 @@
-import { useEffect, useState } from 'react';
+import { lazy, Suspense, useEffect, useState } from 'react';
 import { t } from './copy/t';
 
 type Summary = { counts: Record<string, number>; missing_tables: string[]; times: Record<string, string> };
 
-/** The shell: chrome bar and the read-only legacy summary. Kit components arrive in T3. */
+// The kit board is dev only: import.meta.env.DEV is false in production, so Vite drops it from the build (D1).
+const KitBoard = import.meta.env.DEV ? lazy(() => import('./dev/KitBoard').then((m) => ({ default: m.KitBoard }))) : null;
+
 export function App() {
+  if (KitBoard && window.location.pathname === '/kit') {
+    return <Suspense><KitBoard /></Suspense>;
+  }
+  return <Shell />;
+}
+
+/** The shell: chrome bar and the read-only legacy summary. Nav and home arrive in T4. */
+function Shell() {
   const [summary, setSummary] = useState<Summary | null>(null);
   const [failed, setFailed] = useState(false);
 

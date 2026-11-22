@@ -4,7 +4,7 @@ The redesign of jimbo-dj, run beside it on the Mac mini (jimbo-dj :4490, traqfre
 
 ## Deploy
 
-Code is pushed to GitHub (primary) and Forgejo (`http://macmini:4470/ryanjpeterson/traqfreq`). The server checkout at `/Volumes/jimbos-sloppydrive/traqfreq` pulls from GitHub and runs compose. `ssh macmini` from the laptop is not set up, so run this as a Termius snippet on the mini, named `deploy traqfreq`:
+Code is pushed to GitHub; Forgejo (`http://macmini:4470/ryanjpeterson/traqfreq`) is a pull mirror of it. The server checkout at `/Volumes/jimbos-sloppydrive/traqfreq` pulls from GitHub and runs compose. `ssh macmini` from the laptop is not set up, so run this as a Termius snippet on the mini, named `deploy traqfreq`:
 
 ```bash
 cd /Volumes/jimbos-sloppydrive/traqfreq && git pull --ff-only && docker compose -f docker-compose.yml up -d --build && docker compose -f docker-compose.yml ps

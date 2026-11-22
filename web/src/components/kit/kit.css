@@ -1,0 +1,178 @@
+/* The kit's styles. Token variables only (C1); one rule set per component. */
+
+/* Module line: each component sets its colour through these three. */
+.line-l { --line: var(--mod-l); --line-ink: var(--mod-l-ink); --line-outline: var(--mark-outline-l); }
+.line-h { --line: var(--mod-h); --line-ink: var(--mod-h-ink); --line-outline: var(--mark-outline-h); }
+.line-t { --line: var(--mod-t); --line-ink: var(--mod-t-ink); --line-outline: var(--mark-outline-t); }
+.line-d { --line: var(--mod-d); --line-ink: var(--mod-d-ink); --line-outline: var(--mark-outline-d); }
+.line-m { --line: var(--mod-m); --line-ink: var(--mod-m-ink); --line-outline: var(--mark-outline-m); }
+.line-f { --line: var(--mod-f); --line-ink: var(--mod-f-ink); --line-outline: var(--mark-outline-f); }
+.line-s { --line: var(--mod-s); --line-ink: var(--mod-s-ink); --line-outline: var(--mark-outline-s); }
+
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; border: 0;
+  overflow: hidden; clip-path: inset(50%); white-space: nowrap;
+}
+
+:where(.kit-nav, .kit-button, .kit-chip-remove, .kit-station-why, .kit-lever-range):focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+/* 1 Line bullet */
+.kit-bullet {
+  display: inline-flex; align-items: center; justify-content: center; flex: none;
+  background: var(--line); color: var(--line-ink);
+  border-radius: var(--radius);
+  font-family: var(--font); font-weight: 700; line-height: 1; letter-spacing: 0;
+}
+.kit-bullet-22 { width: 22px; height: 22px; font-size: 12px; }
+.kit-bullet-24 { width: 24px; height: 24px; font-size: 12px; }
+.kit-bullet-28 { width: 28px; height: 28px; font-size: 13px; }
+.kit-bullet-36 { width: 36px; height: 36px; font-size: 15px; }
+.kit-bullet-44 { width: 44px; height: 44px; font-size: 18px; }
+
+/* 2 Nav item (C7: chrome and chrome-ink; the current item fills with its module colour) */
+.kit-nav {
+  display: inline-flex; align-items: center; gap: 8px;
+  min-height: 44px; min-width: 44px; padding: 0 12px;
+  color: var(--chrome-ink); background: var(--chrome);
+  font-family: var(--font); font-size: 14px; font-weight: 700; text-decoration: none;
+  border-radius: var(--radius);
+}
+.kit-nav:hover { text-decoration: underline; }
+.kit-nav.is-current { background: var(--line); color: var(--line-ink); }
+/* On its own colour the bullet inverts, so the square still shows (same contrast pair). */
+.kit-nav.is-current .kit-bullet, .kit-band .kit-bullet { background: var(--line-ink); color: var(--line); }
+
+/* 3 Status: shape, never colour (C6) */
+.kit-status { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; color: var(--ink); }
+.kit-status-mark { width: 14px; height: 14px; flex: none; border: 2px solid var(--ink); border-radius: var(--radius); }
+.kit-status.is-ready .kit-status-mark { background: var(--ink); }
+.kit-status.is-needs .kit-status-mark { background: var(--paper); }
+.kit-status.is-off .kit-status-mark { background: var(--paper); border-style: dashed; }
+
+/* 4 Band */
+.kit-band {
+  display: flex; align-items: center; gap: 12px;
+  min-height: 56px; padding: 0 var(--pad);
+  background: var(--line); color: var(--line-ink);
+}
+.kit-band-title {
+  margin: 0; font-size: 20px; font-weight: 700; line-height: 1.2;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.kit-band-sub { font-weight: 500; }
+
+/* 5 Button */
+.kit-button {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-height: 44px; min-width: 44px; padding: 0 16px;
+  font-family: var(--font); font-size: 15px; font-weight: 500; text-decoration: none;
+  border: 2px solid var(--ink); border-radius: var(--radius);
+  cursor: pointer;
+}
+.kit-button.is-primary { background: var(--ink); color: var(--paper); }
+.kit-button.is-secondary { background: var(--paper); color: var(--ink); }
+.kit-button.is-quiet { background: var(--paper); color: var(--ink); border-color: var(--paper); text-decoration: underline; padding: 0 8px; }
+.kit-button:disabled { cursor: not-allowed; border-style: dashed; background: var(--paper); color: var(--ink2); border-color: var(--ink2); }
+.kit-button.is-quiet:disabled { border-color: var(--paper); }
+
+/* 6 Condition chip */
+.kit-chip {
+  display: inline-flex; align-items: center; gap: 8px;
+  min-height: 32px; padding: 0 0 0 8px;
+  border: 1px solid var(--rule); border-radius: var(--radius);
+  background: var(--card); color: var(--ink); font-size: 14px;
+}
+.kit-chip:not(:has(.kit-chip-remove)) { padding-right: 8px; }
+.kit-chip-op {
+  font-family: var(--label-font); font-size: 12px; font-weight: 700;
+  letter-spacing: var(--label-tracking); color: var(--ink2);
+}
+.kit-chip-remove {
+  min-width: 44px; min-height: 44px; margin: -6px 0;
+  background: none; border: 0; color: var(--ink); font-size: 18px; cursor: pointer;
+}
+
+/* 7 Line with lever */
+.kit-lever {
+  display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 12px 16px;
+  padding: 12px 0; border-bottom: 1px solid var(--rule); color: var(--ink);
+}
+.kit-lever-body { min-width: 0; }
+.kit-lever-title { margin: 0; font-size: 15px; font-weight: 700; }
+.kit-lever-detail { margin: 2px 0 8px; font-size: 14px; color: var(--ink2); }
+.kit-lever-bar { height: 8px; background: var(--card); border: 1px solid var(--rule); }
+.kit-lever-bar > span { display: block; height: 100%; background: var(--line); outline: var(--line-outline); }
+.kit-lever-range { width: 100%; min-height: 44px; margin: 0; accent-color: var(--line); }
+.kit-lever-nums { margin: 0; text-align: right; display: grid; font-variant-numeric: tabular-nums; }
+.kit-lever-pct { font-size: 20px; font-weight: 700; }
+.kit-lever-count { font-size: 12px; color: var(--ink2); }
+.kit-lever.is-off { border-bottom-style: dashed; }
+.kit-lever.is-off .kit-bullet { background: var(--paper); color: var(--ink2); border: 2px dashed var(--ink2); }
+.kit-lever.is-off .kit-lever-bar { border-style: dashed; }
+.kit-lever.is-off .kit-lever-bar > span { display: none; }
+
+/* 8 Station row */
+.kit-station {
+  display: grid; grid-template-columns: 32px auto 1fr auto auto; align-items: center; gap: 4px 12px;
+  min-height: 56px; padding: 6px 0; border-bottom: 1px solid var(--rule); color: var(--ink);
+  list-style: none;
+}
+.kit-station-pos { font-size: 14px; color: var(--ink2); text-align: right; font-variant-numeric: tabular-nums; }
+.kit-station-main { display: grid; min-width: 0; }
+.kit-station-title { font-size: 15px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.kit-station-artist { font-size: 14px; color: var(--ink2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.kit-station-code { display: flex; gap: 8px; font-family: var(--label-font); font-size: 12px; color: var(--ink2); font-variant-numeric: tabular-nums; }
+.kit-station-why {
+  min-height: 44px; padding: 0 8px; background: none; border: 0;
+  color: var(--ink); font-family: var(--font); font-size: 14px; text-decoration: underline; cursor: pointer;
+}
+.kit-station-reason { grid-column: 3 / -1; margin: 0 0 6px; font-size: 14px; color: var(--ink); }
+/* Phone: key and BPM drop under the artist so the title keeps its room. */
+@media (max-width: 480px) {
+  .kit-station { grid-template-columns: 24px auto 1fr auto; }
+  .kit-station-code { grid-column: 3; grid-row: 2; }
+  .kit-station-why { grid-column: 4; grid-row: 1; }
+  .kit-station-reason { grid-row: 3; }
+}
+
+/* 9 Text */
+.kit-text { margin: 0; color: var(--ink); }
+.kit-text.is-title { font-size: var(--h1); font-weight: var(--h1-weight); letter-spacing: var(--h1-tracking); line-height: 1.1; }
+.kit-text.is-heading { font-size: 20px; font-weight: 700; line-height: 1.25; }
+.kit-text.is-body { font-size: 15px; line-height: 1.45; }
+.kit-text.is-label {
+  font-family: var(--label-font); font-size: 12px; text-transform: var(--label-case);
+  letter-spacing: var(--label-tracking); color: var(--ink2);
+}
+
+/* 10 Card */
+.kit-card {
+  background: var(--card); color: var(--ink);
+  border: 1px solid var(--rule); border-radius: var(--card-radius);
+  padding: 16px;
+}
+.kit-card.is-off { border-style: dashed; background: var(--paper); }
+.kit-card-label {
+  margin: 0 0 8px; font-family: var(--label-font); font-size: 12px;
+  text-transform: var(--label-case); letter-spacing: var(--label-tracking); color: var(--ink2);
+}
+
+/* 11 Artwork tile */
+.kit-art { margin: 0; display: grid; gap: 8px; color: var(--ink); }
+.kit-art-square {
+  position: relative; aspect-ratio: 1; overflow: hidden;
+  background: var(--card); border: 1px solid var(--rule); border-radius: var(--card-radius);
+}
+.kit-art-square img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.kit-art-none { position: absolute; inset: 0; display: grid; place-items: center; font-size: 12px; color: var(--ink2); }
+.kit-art-code {
+  position: absolute; left: 8px; bottom: 8px; padding: 2px 6px;
+  background: var(--ink); color: var(--paper); border-radius: var(--radius);
+  font-family: var(--label-font); font-size: 12px; font-weight: 700; font-variant-numeric: tabular-nums;
+}
+.kit-art figcaption { display: grid; }
+.kit-art-title { font-size: 15px; font-weight: 500; }
+.kit-art-artist { font-size: 14px; color: var(--ink2); }
