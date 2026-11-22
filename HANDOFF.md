@@ -60,10 +60,10 @@ To redeploy: the server checkout is on `main`; get the change onto `main`, then 
 - **Mount note:** during T5 macOS remounted the SMB share as `/Volumes/jimbos-sloppydrive-1` (the plain path vanished; same share, same checkout). T5's later edits went through `-1`. Use whichever path exists; check `mount | grep sloppy`.
 
 ## To check on the Mac mini after deploying T5
-Merge `claude/t5-history` to `main`, run the `deploy traqfreq` snippet, then open `http://macmini:4492/setup`: tracks 52,779, albums 4,306, artists 1,297, each "Same as jimbo-dj's stored count"; plays should equal jimbo-dj's History headline. No "Tables not found". `http://macmini:4492/api/history/overview`: `adds_up: true`, `jimbodj.matches: true` (if false, jimbo-dj's stored overview may be up to an hour old: check again after its next rebuild). Note how long the overview takes on 350,953 listens (T6 caches it if slow).
+Merge `claude/t5-history` to `main`, run the `deploy traqfreq` snippet, then open `http://macmini:4492/setup`: tracks 52,779, albums 4,306, artists 1,297, each "Same as jimbo-dj's stored count"; plays should equal jimbo-dj's History headline. No "Tables not found". `http://macmini:4492/api/history/overview`: `adds_up: true`, `jimbodj.matches: true` (if false, jimbo-dj's stored overview may be up to an hour old: check again after its next rebuild). Note how long the overview takes on 350,953 listens (T6 adds a stats cache).
 
 ## Next: T6
-The HISTORY page (spec: `docs/specs/t5-history.md`, T6). Then T7 top lists and hours, T8 Wrapped and the P1 gate.
+Overview (spec: `docs/specs/t5-history.md`, T6): the HISTORY page with counts, the year heatmap and top artists, and a stats cache in traqfreq's own database. Then T7 counted once (duplicates, held bursts, bot checks, read-only) and T8 years, Wrapped, this day, top and the P1 gate.
 
 ## Open questions
 1. ~~**Forgejo mirror**~~ *Done 2026-11-22:* Forgejo is live as a pull mirror of GitHub (`http://macmini:4470/ryanjpeterson/traqfreq`, syncs every 10 minutes, default branch `main`).

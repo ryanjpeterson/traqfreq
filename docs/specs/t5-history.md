@@ -22,7 +22,7 @@ Source: `src/jimbodj/history.py` (module doc, `dedupe`, `_overview`, `_plays`, `
 - **jimbo-dj's own numbers** are stored as JSON in its `stats` table (`statcache.py`): `history.overview` (params `''`), `history.wrapped` (params `2025`, `2025-06`, `2025-06-14`), `library.stats`. They are rebuilt hourly and after imports, so they can lag the listens by up to an hour. traqfreq reads them as the comparison for the gate (`jimbodj` fields); when they differ, compare after jimbo-dj's next rebuild (`stats.stamp` = meta `history_version` when fresh).
 
 ## Reuse: vendored
-jimbo-dj's repo is private, so a pinned git dependency would need credentials in CI and in the image. The pure functions are copied unchanged into `src/traqfreq/vendor/jimbodj_history.py` (constants, `band_of`, `norm_artist`, `norm_title`, `match_key`), with the commit they came from. `tests/test_vendor.py` checks them against the match keys jimbo-dj stored. Anything else T6–T8 need (`Names`, `_minutes`, period ranges) is vendored the same way, never rewritten.
+jimbo-dj's repo is private, so a pinned git dependency would need credentials in CI and in the image. The pure functions are copied unchanged into `src/traqfreq/vendor/jimbodj_history.py` (constants, `band_of`, `norm_artist`, `norm_title`, `match_key`), with the commit they came from. `tests/test_vendor.py` checks them against the match keys jimbo-dj stored. Anything else T6–T8 need (`Names`, `_minutes`, dedupe windows, period ranges) is vendored the same way, never rewritten.
 
 ## Sessions
 ### T5 (done): schema, counting rules, first read API
@@ -31,21 +31,19 @@ jimbo-dj's repo is private, so a pinned git dependency would need credentials in
 - `GET /api/history/overview`: plays, listens, the three non-play reasons, `adds_up`, matched plays, songs, per source (in PRIORITY order) and per year (in the listening time zone), rules, jimbo-dj's stored plays.
 - `GET /api/history/listens?status=play|too_short|repeat|duplicate&source=&year=&limit=&offset=`: the rows behind each number, newest first, with the rule and its parameters.
 
-### T6: the HISTORY page
-- Module H page (shown when `TRAQFREQ_MODULES` has H): plays headline, sources table (listens, plays, too short, repeats, duplicates of whom), years list with plays per source, matched %, time zone. Every number has a note with its rule and opens its rows (`/api/history/listens`, paged).
-- A "Compared with jimbo-dj" line: same / differs (jimbo-dj's stored value and when it was built).
+### T6: Overview
+- Module H page (shown when `TRAQFREQ_MODULES` has H): plays headline, the year heatmap (a year of days, plays per day in the listening time zone), top artists (vendor `Names`, so one name per artist), sources table (listens, plays, too short, repeats, duplicates of whom), years with plays per source, matched %. Every number has a note with its rule and opens its rows (`/api/history/listens`, paged).
+- A stats cache in traqfreq's own database (`TRAQFREQ_DATA_DIR`, never the legacy DB): built summaries keyed by jimbo-dj's meta `history_version` and the time zone, rebuilt when either changes. The overview loops over every play (350,953 listens live), so pages read the cache.
 - Kit only (K1), copy in `strings.json` (W1); phone and tablet layouts; Vitest.
-- If the overview is slow on 350,953 listens (Python loop over plays for years), cache it in memory keyed by meta `history_version` and the time zone.
 
-### T7: top lists and hours
-- Vendor `Names` and `_minutes`. Hours per year and total, top artists all-time (jimbo-dj: 15), on this day.
-- `GET /api/history/top?kind=artists|songs|albums&period=all|30d|12m|YYYY|YYYY-MM`, matching jimbo-dj's `top_page` for plays (minutes sort after).
-- Compare with `stats.history.overview` (`hours`, `top_artists`, `years[].hours`).
+### T7: Counted once
+- Duplicates and repeats with their reasons: for each listen that isn't a play, the play it duplicates (same `match_key`, the winning source, within jimbo-dj's window: `DEDUPE_SECONDS`, `REPEAT_SECONDS`, `window_sql`; vendored) and how far apart they were.
+- Held bursts and new bot checks, **read-only**: traqfreq flags patterns jimbo-dj doesn't (bursts of plays too close together to have been heard, one song looped, scrobbler-bot shapes), each with its reason and rows. They are reports only: the play count stays jimbo-dj's (`counted = 1`) until HISTORY's cut-over, so the gate still holds. Proposed rules go in this session's spec addition first.
 
-### T8: Wrapped and the gate
-- A year, month or day of listening, matching `stats.history.wrapped` for every stored period.
-- `GET /api/history/compare`: every stored jimbo-dj history number next to traqfreq's, with `matches`. The HISTORY page and SETUP show a one-line gate result.
-- Gate run on the Mac mini (live data): all `matches` true, or each difference explained by a stale stored row. Record it in HANDOFF.
+### T8: Years, Wrapped, This day, Top
+- Vendor `_minutes` and the period ranges. Years (plays and hours), Wrapped for a year, month or day, On this day, Top artists / songs / albums for a period (`all`, `30d`, `12m`, `YYYY`, `YYYY-MM`) by plays or minutes.
+- Gate script (`scripts/p1_gate.py`, read-only): every stored jimbo-dj history number (`stats.history.overview`, every `stats.history.wrapped` row) next to traqfreq's for the same period, with `matches`. Also `GET /api/history/compare` for SETUP and HISTORY.
+- Gate run on the Mac mini (live data): all match, or each difference explained by a stale stored row. Record it in HANDOFF.
 
 ## Not in P1
 Imports, dedupe, rematch, the time zone setting, Last.fm sync: all writes, P6. Library counts (P2) beyond SETUP's four measures.
