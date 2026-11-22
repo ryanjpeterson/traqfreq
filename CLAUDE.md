@@ -11,7 +11,7 @@ The redesign of jimbo-dj (ryanjpeterson/jimbo-dj), a self-hosted music app. traq
 Self-hosted. Transparent (every number can show its rows; every automatic change is logged with reason and undo). No paid APIs. Never change Plex metadata, except genre tags through an explicit, previewed, undoable Fix. Audio files are read-only. Nothing counts twice.
 
 ## Design: Berlin · Gelb
-Yellow chrome `#F0D722` with black text; square module badges **L1 H2 T3 D4 M5 F6 S0**; Fira Sans (self-hosted). Module colours: L `#E60012` · H `#0079C2` · T `#00843A` · D `#7354C2` · M `#B0006E` · F `#6D4C2F` · S ink. Only the eleven kit components (LineBullet, NavItem, Status, Band, Button, ConditionChip, LineLever, StationRow, Text, Card, ArtTile). Brand rules C/T/L/K/W/D/B: `docs/specs/brand.md`.
+Yellow chrome `#F0D722` with black text; square module badges **L1 H2 T3 D4 M5 F6 S0**; Fira Sans (self-hosted). Module colours: L `#E60012` · H `#0079C2` · T `#00843A` · D `#7354C2` · M `#B0006E` · F `#6D4C2F` · S ink. Dark mode: M and F marks on dark grounds get a 1 px paper outline (colours unchanged; white-text fills unaffected). Only the eleven kit components (LineBullet, NavItem, Status, Band, Button, ConditionChip, LineLever, StationRow, Text, Card, ArtTile). Brand rules C/T/L/K/W/D/B: `docs/specs/brand.md`.
 
 ## Session protocol
 - One session = one 5-hour usage window = one pushed branch (`claude/tN-<slug>`). Read only CLAUDE.md, HANDOFF.md and the one spec you need (`docs/specs/README.md` lists them).

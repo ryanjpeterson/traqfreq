@@ -29,6 +29,8 @@ Chrome `#F0D722`, chromeInk black. Square badges. Fira Sans, self-hosted. Nav to
 
 Language loop: grey `#6B6A67` row in SETUP, no nav item.
 
+**Dark mode marks (decided 2026-11-22):** MIXES (`#B0006E`) and FETCH (`#6D4C2F`) marks on dark grounds get a 1 px paper-coloured outline so they pass 3:1. The module colours don't change (C2). Filled bands and bullets with white text are unaffected.
+
 ## Rules (30; script-checked except K2, W3)
 - **C Colour:** C1 only tokens, no literal colours/fonts/radii. C2 exactly seven module colours. C3 line colours mark modules only (never success/error/links). C4 text on a line colour is white, ≥ 4.5:1. C5 errors are ink + shape + sentence + next step (red is LIBRARY). C6 status = the Status component. C7 nav uses chrome/chromeInk; the current item may fill with its module colour.
 - **T Type:** T1 at most two free typefaces. T2 module names one word in CAPITALS. T3 everything else sentence case. T4 labels 12 px, ink2. T5 body 14–15 px, nothing under 12 px.
