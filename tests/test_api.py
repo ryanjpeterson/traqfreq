@@ -15,7 +15,9 @@ def test_health(client):
 def test_summary(client):
     r = client.get("/api/legacy/summary")
     assert r.status_code == 200
-    assert r.json()["counts"]["listens"] == 6
+    body = r.json()
+    assert body["counts"]["listens"] == 9  # raw rows, kept for older clients
+    assert [m["value"] for m in body["measures"]] == [5, 3, 3, 6]
 
 
 def test_summary_unconfigured(tmp_path):

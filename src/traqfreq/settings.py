@@ -36,6 +36,7 @@ class Settings:
     host: str
     web_dir: Path = DEFAULT_WEB_DIR
     modules: frozenset[str] = CORE
+    tz: str | None = None  # TZ: jimbo-dj's listening time zone when its meta history_tz isn't set
 
     @classmethod
     def from_env(cls, env: dict[str, str] | None = None) -> "Settings":
@@ -48,4 +49,5 @@ class Settings:
             host=env.get("TRAQFREQ_HOST", "0.0.0.0"),
             web_dir=Path(env.get("TRAQFREQ_WEB_DIR", str(DEFAULT_WEB_DIR))),
             modules=parse_modules(env.get("TRAQFREQ_MODULES")),
+            tz=env.get("TZ") or None,
         )

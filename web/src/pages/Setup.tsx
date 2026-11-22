@@ -1,6 +1,6 @@
 import { Band, Card, LineBullet, Status, Text, type ModuleId } from '../components/kit';
 import { t, tMaybe, type StringKey } from '../copy/t';
-import { useGet, type Activity, type ModuleSwitch, type Summary } from '../app/api';
+import { useGet, type Activity, type Measure, type ModuleSwitch, type Summary } from '../app/api';
 import { formatUtc } from '../app/time';
 
 /** SETUP, read-only: what traqfreq can read from jimbo-dj's database, and which modules are on. */
@@ -24,6 +24,12 @@ export function Setup({ modules }: { modules: ModuleSwitch[] }) {
             {summary.state === 'ok' && (
               <div className="stack">
                 <Status state="ready" label={t('setup.db.ok')} />
+                {(summary.data.measures ?? []).length > 0 && (
+                  <ul className="rows" aria-label={t('setup.measures')}>
+                    {(summary.data.measures ?? []).map((m) => <MeasureRow key={m.id} m={m} />)}
+                  </ul>
+                )}
+                <Text variant="label">{t('setup.db.raw')}</Text>
                 <ul className="rows" aria-label={t('setup.db')}>
                   {Object.entries(summary.data.counts).map(([table, n]) => (
                     <li key={table}>
@@ -98,5 +104,21 @@ export function Setup({ modules }: { modules: ModuleSwitch[] }) {
         </div>
       </div>
     </>
+  );
+}
+
+/** One of jimbo-dj's numbers with the rule it uses (W3) and how it compares with jimbo-dj's stored copy. */
+function MeasureRow({ m }: { m: Measure }) {
+  const compare = m.jimbodj == null ? t('setup.measure.unstored')
+    : m.matches ? t('setup.measure.same')
+      : `${t('setup.measure.differs')}: ${m.jimbodj.value.toLocaleString('en')}`;
+  return (
+    <li>
+      <span>
+        <strong>{t(`setup.measure.${m.id}` as StringKey)}</strong>
+        <span className="sub">{`${t(`setup.measure.${m.id}.rule` as StringKey)} ${compare}`}</span>
+      </span>
+      <span>{m.value.toLocaleString('en')}</span>
+    </li>
   );
 }

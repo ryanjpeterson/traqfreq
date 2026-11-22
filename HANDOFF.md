@@ -51,13 +51,24 @@ Deployed from `main` (30f380e) with the `deploy traqfreq` snippet; the image bui
 - "Tables not found: track_analysis, track_tags" on real data: the fixture names are wrong (open question 2).
 To redeploy: the server checkout is on `main`; get the change onto `main`, then run the snippet.
 
-## Next: T5
-**T5** (P1 HISTORY read-only, first of T5–T8): first fix open question 2 (fixture schema and `legacy.KEY_TABLES` against jimbo-dj's `src/jimbodj/db.py` and `history.py`; jimbo-dj's checkout is readable at `/Volumes/jimbos-sloppydrive/jimbo-dj`, e.g. `tracks` is keyed by `rating_key`, analysis is `analysis`, not `track_analysis`), then decide open question 3, then write `docs/specs/t5-history.md` and start HISTORY's read API.
+## T5 done (2026-11-22, `claude/t5-history`, from `claude/t4-nav-setup`)
+- **Fixture = jimbo-dj's schema** (read at jimbo-dj 1d8a7cb: `db.py`, `history.py`, `statcache.py`). Invented rows chosen so each rule differs from a raw count: one removed track on its own album and artist; 9 listens, 6 plays (one too short, one Plex duplicate of Last.fm, one Spotify repeat); one unmatched play; one play that is 2025 in America/Denver but 2026 in UTC. jimbo-dj's `stats` rows (`library.stats`, `history.overview`) are in it too.
+- **Counts the way jimbo-dj does:** `legacy.MEASURES` (tracks `removed_at IS NULL`, distinct `album_key` / `artist_key` of those, plays `counted = 1`). `/api/legacy/summary` adds `measures` (value, SQL rule, jimbo-dj's stored value from its `stats` table, `matches`); `counts` stays (raw rows). SETUP shows the four with their rule and "Same as jimbo-dj's stored count", then rows per table.
+- **HISTORY read API** (`src/traqfreq/history.py`): `GET /api/history/overview`, `GET /api/history/listens?status=play|too_short|repeat|duplicate&source=&year=`. traqfreq reads jimbo-dj's `counted`/`dup_of` flags and never recomputes them; `adds_up` checks plays + the three reasons = listens. Years use meta `history_tz`, else `TZ`, else America/Denver (jimbo-dj's order).
+- **Open question 3 decided: vendor.** `gh repo view ryanjpeterson/jimbo-dj`: private. Pure functions copied unchanged into `src/traqfreq/vendor/jimbodj_history.py`; `tests/test_vendor.py` checks them against stored match keys.
+- Tests: pytest 40, Vitest 73, brand checks and 13 self-tests pass. Checked SETUP in the browser against the fixture.
+- **Mount note:** during T5 macOS remounted the SMB share as `/Volumes/jimbos-sloppydrive-1` (the plain path vanished; same share, same checkout). T5's later edits went through `-1`. Use whichever path exists; check `mount | grep sloppy`.
+
+## To check on the Mac mini after deploying T5
+Merge `claude/t5-history` to `main`, run the `deploy traqfreq` snippet, then open `http://macmini:4492/setup`: tracks 52,779, albums 4,306, artists 1,297, each "Same as jimbo-dj's stored count"; plays should equal jimbo-dj's History headline. No "Tables not found". `http://macmini:4492/api/history/overview`: `adds_up: true`, `jimbodj.matches: true` (if false, jimbo-dj's stored overview may be up to an hour old: check again after its next rebuild). Note how long the overview takes on 350,953 listens (T6 caches it if slow).
+
+## Next: T6
+The HISTORY page (spec: `docs/specs/t5-history.md`, T6). Then T7 top lists and hours, T8 Wrapped and the P1 gate.
 
 ## Open questions
 1. ~~**Forgejo mirror**~~ *Done 2026-11-22:* Forgejo is live as a pull mirror of GitHub (`http://macmini:4470/ryanjpeterson/traqfreq`, syncs every 10 minutes, default branch `main`).
-2. **Fixture schema is provisional** (from T1). jimbo-dj couldn't be attached then, so table and column names are guesses (T4 fixed only `meta.last_sync` and `history_imports`). Correct `scripts/make_fixture.py` and `legacy.KEY_TABLES` against jimbo-dj's `src/jimbodj/db.py` before T5. On the Mac mini this is just a read of the local jimbo-dj checkout.
-3. **Reuse plan** (from T1): vendor jimbo-dj's pure functions if the repo is private, use a pinned git dependency if public. Decide in T5. (traqfreq itself is public now; the question is about jimbo-dj's repo.)
+2. ~~**Fixture schema is provisional**~~ *Done in T5:* fixture and `KEY_TABLES` match jimbo-dj 1d8a7cb. When jimbo-dj's schema changes, update `scripts/make_fixture.py` the same way.
+3. ~~**Reuse plan**~~ *Decided in T5: vendor* (jimbo-dj is private). `src/traqfreq/vendor/`, copied unchanged with the commit noted.
 4. Copy lint's sentence-case check uses an allowlist of proper nouns and acronyms (`PROPER`, `ACRONYMS` in check.mjs). Add to it when copy needs a new name.
 
 ## To check on the Mac mini

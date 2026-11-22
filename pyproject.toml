@@ -13,7 +13,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-# `legacy` (jimbo-dj as a pinned git dependency) is deliberately not added yet; see HANDOFF.md.
+# No jimbo-dj dependency: its repo is private, so its pure functions are vendored in src/traqfreq/vendor (T5).
 
 [dependency-groups]
 dev = ["pytest>=8", "httpx>=0.27"]

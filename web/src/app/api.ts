@@ -2,7 +2,15 @@ import { useEffect, useState } from 'react';
 import type { ModuleId } from '../components/kit';
 
 export type ModuleSwitch = { id: ModuleId; on: boolean; core: boolean };
-export type Summary = { counts: Record<string, number>; missing_tables: string[]; times: Record<string, string> };
+export type MeasureId = 'tracks' | 'albums' | 'artists' | 'plays';
+/** A number jimbo-dj shows, counted its way (rule = the SQL), next to the copy jimbo-dj last stored. */
+export type Measure = {
+  id: MeasureId; value: number; rule: string;
+  jimbodj: { value: number; built_at: string | null; source: string } | null; matches: boolean | null;
+};
+export type Summary = {
+  measures?: Measure[]; counts: Record<string, number>; missing_tables: string[]; times: Record<string, string>;
+};
 export type Job = {
   id: number; kind: string; source: string; at: string | null; rows: number | null; added: number | null; note: string | null;
 };

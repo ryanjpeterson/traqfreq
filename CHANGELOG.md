@@ -4,6 +4,14 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 ### Added
+- T5: `GET /api/history/overview` (plays, listens, too short / repeats / duplicates, by source and by year in jimbo-dj's listening time zone, matched plays, songs, jimbo-dj's stored plays) and `GET /api/history/listens` (the rows behind each number). Plays are jimbo-dj's `counted = 1`; every listen is in exactly one bucket, checked on each read (`adds_up`).
+- `/api/legacy/summary` adds `measures`: tracks, albums, artists and plays counted jimbo-dj's way (live tracks, distinct album and artist keys of live tracks, counted listens), each with its SQL rule and jimbo-dj's stored value (`stats` table) to compare. `counts` (raw rows) unchanged.
+- SETUP shows those four numbers with their rules and whether they match jimbo-dj's stored counts (W3), then raw rows per table.
+- `src/traqfreq/vendor/jimbodj_history.py`: jimbo-dj's pure history functions, copied unchanged (jimbo-dj is private, so no git dependency).
+- `TZ` setting (jimbo-dj's listening time zone when its `history_tz` isn't set).
+- `docs/specs/t5-history.md`: plan for T5–T8.
+### Fixed
+- Fixture and `legacy.KEY_TABLES` now match jimbo-dj's real schema (`tracks` by `rating_key` with `removed_at`, `albums`/`artists` by key, `analysis`, `features`, `listens`, `listen_matches`, `history_imports`, `stats`). The guessed `track_analysis` and `track_tags` are gone, so SETUP no longer lists them as not found.
 - P0 gate passed: deployed on the Mac mini at :4492 from `main`, reading jimbo-dj's live database read-only.
 - T4 shell: chrome top bar from `NavItem` (LIBRARY, switched-on modules, SETUP, search; L1/L2), compact top bar on tablets (L4), 76 px phone bottom bar of five (L3), client-side routing.
 - Map home: the modules drawn as lines (off lines dashed), a screen-reader summary and a list view (L6).

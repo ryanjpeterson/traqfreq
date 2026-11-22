@@ -11,7 +11,15 @@ function switches(...on: string[]): ModuleSwitch[] {
   return CORE_ONLY.map((m) => ({ ...m, on: m.core || on.includes(m.id) }));
 }
 
-const SUMMARY = { counts: { tracks: 5, listens: 1234 }, missing_tables: ['track_tags'], times: {} };
+const stored = (value: number) => ({ value, built_at: '2026-11-05T02:01:00Z', source: 'stats.library.stats' });
+const SUMMARY = {
+  measures: [
+    { id: 'tracks', value: 5, rule: 'SELECT COUNT(*) FROM tracks WHERE removed_at IS NULL', jimbodj: stored(5), matches: true },
+    { id: 'albums', value: 3, rule: 'SELECT COUNT(DISTINCT album_key) FROM tracks WHERE removed_at IS NULL', jimbodj: stored(4), matches: false },
+    { id: 'plays', value: 1200, rule: 'SELECT COUNT(*) FROM listens WHERE counted = 1', jimbodj: null, matches: null },
+  ],
+  counts: { tracks: 6, listens: 1234 }, missing_tables: ['features'], times: {},
+};
 const ACTIVITY = {
   last_scan: { at: '2026-11-05T02:00:00Z', source: 'meta.last_sync' },
   jobs: [
@@ -156,7 +164,14 @@ describe('SETUP, read-only', () => {
     expect(await screen.findByText('Readable')).toBeTruthy();
     const db = within(screen.getByRole('list', { name: 'Legacy database' }));
     expect(db.getByText('1,234 rows')).toBeTruthy();
-    expect(screen.getByText('Tables not found: track_tags')).toBeTruthy();
+    expect(screen.getByText('Tables not found: features')).toBeTruthy();
+    const counted = within(screen.getByRole('list', { name: 'Counted the way jimbo-dj counts' }));
+    expect(counted.getAllByRole('listitem').map((r) => r.querySelector('strong')?.textContent)).toEqual(['Tracks', 'Albums', 'Plays']);
+    expect(counted.getByText('Tracks the last Plex sync still saw (removed_at is empty). Same as jimbo-dj\'s stored count.')).toBeTruthy();
+    expect(counted.getByText('Distinct album keys of those tracks. jimbo-dj\'s stored count: 4')).toBeTruthy();
+    expect(counted.getByText('1,200')).toBeTruthy();
+    expect(counted.getByText(/jimbo-dj has no stored count to compare/)).toBeTruthy();
+    expect(screen.getByText('Rows per table')).toBeTruthy();
     expect(await screen.findByText('2026-11-05 02:00 UTC')).toBeTruthy();
     const jobs = within(screen.getByRole('list', { name: 'Jobs' }));
     expect(jobs.getByText('Spotify import')).toBeTruthy();
@@ -174,6 +189,13 @@ describe('SETUP, read-only', () => {
     open('/setup');
     expect(await screen.findByText(/Set TRAQFREQ_LEGACY_DB/)).toBeTruthy();
     expect(screen.getAllByText('Can\'t read').length).toBeGreaterThan(0);
+  });
+  it('an older summary without measures still shows the rows', async () => {
+    api({ '/api/modules': { modules: switches() }, '/api/legacy/summary': { counts: { tracks: 6 }, missing_tables: [], times: {} },
+      '/api/legacy/activity': ACTIVITY });
+    open('/setup');
+    expect(await screen.findByText('6 rows')).toBeTruthy();
+    expect(screen.queryByRole('list', { name: 'Counted the way jimbo-dj counts' })).toBeNull();
   });
   it('empty activity says so', async () => {
     api({ '/api/modules': { modules: switches() }, '/api/legacy/summary': SUMMARY,

@@ -6,7 +6,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.staticfiles import StaticFiles
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
-from . import __version__, legacy
+from . import __version__, history, legacy
 from .settings import CORE, MODULES, Settings
 
 
@@ -45,6 +45,27 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     def legacy_activity() -> dict:
         """Last scan and recent jobs, read from jimbo-dj's DB (read-only)."""
         return read_legacy(legacy.activity)
+
+    def read_history(fn):
+        def run(conn):
+            try:
+                return fn(conn)
+            except history.NoHistory:
+                raise HTTPException(404, "jimbo-dj's database has no listens table")
+            except ValueError as e:
+                raise HTTPException(400, str(e))
+        return read_legacy(run)
+
+    @app.get("/api/history/overview")
+    def history_overview() -> dict:
+        """Plays and the listens that aren't plays, by source and year, counted the way jimbo-dj counts them."""
+        return read_history(lambda c: history.overview(c, settings.tz))
+
+    @app.get("/api/history/listens")
+    def history_listens(status: str = "play", source: str | None = None, year: int | None = None,
+                        limit: int = 50, offset: int = 0) -> dict:
+        """The rows behind each overview number (status play, too_short, repeat or duplicate)."""
+        return read_history(lambda c: history.listens(c, status, source or None, year, limit, offset, settings.tz))
 
     @app.get("/api/modules")
     def modules() -> dict:

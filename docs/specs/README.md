@@ -21,6 +21,11 @@ One session = one 5-hour window = one pushed branch. P0–P5 (T1–T28) give a f
 - **T4** Nav (top bar, phone bottom bar), map home, read-only SETUP, container on :4492. *Done.* **P0 gate passed 2026-11-22** (HANDOFF).
 
 ## P1 HISTORY read-only: T5–T8
+Spec: [t5-history.md](t5-history.md).
+- **T5** Fixture and key tables match jimbo-dj's schema; SETUP counts the way jimbo-dj counts; reuse decided (vendor); HISTORY read API (overview, listens). *Done.*
+- **T6** HISTORY page: plays, sources, years, every number with its rule and rows.
+- **T7** Top lists and hours (vendored `Names`, `_minutes`).
+- **T8** Wrapped, `/api/history/compare`, gate on the Mac mini.
 ## P2 LIBRARY read-only: T9–T12
 ## P3 SERVERS
 - T13–T16 track identity · T17 Jellyfin · T18 Navidrome · T19 gate.
