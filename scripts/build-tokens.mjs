@@ -39,6 +39,15 @@ export function buildCss(tokens) {
     // Text on a line colour: white; on SETUP's ink: paper (C4).
     base.push(`  --mod-${letter.toLowerCase()}-ink: ${mod.color === 'ink' ? 'var(--paper)' : '#FFFFFF'};`);
   }
+  // Heatmap levels (D2: the module's colour): 0 = no plays (an empty mode colour), 1-4 = the module colour
+  // mixed into paper, so each mode gets its own tints from the same token.
+  if (tokens.heat) {
+    const mod = `var(--mod-${tokens.heat.module.toLowerCase()})`;
+    base.push(`  --heat-0: var(--${kebab(tokens.heat.empty)});`);
+    tokens.heat.levels.forEach((pct, i) => {
+      base.push(`  --heat-${i + 1}: ${pct >= 100 ? mod : `color-mix(in srgb, ${mod} ${pct}%, var(--paper))`};`);
+    });
+  }
   return [
     `/* Generated from tokens (${tokens.name} ${tokens.version}) by scripts/build-tokens.mjs. Do not edit. */`,
     `:root {\n${base.join('\n')}\n${modeBlock(tokens, 'light')}\n  color-scheme: light;\n}`,

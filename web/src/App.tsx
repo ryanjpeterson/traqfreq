@@ -3,6 +3,8 @@ import { t, type StringKey } from './copy/t';
 import { useModules } from './app/api';
 import { BottomBar, TopBar } from './app/Nav';
 import { parseRoute, usePath, type Route } from './app/route';
+import { History } from './pages/History';
+import { HistoryRows } from './pages/HistoryRows';
 import { MapHome } from './pages/MapHome';
 import { ModulePage } from './pages/ModulePage';
 import { NotFound } from './pages/NotFound';
@@ -51,7 +53,10 @@ export function Shell() {
         {r.page === 'map' && <MapHome modules={modules} navigate={navigate} />}
         {r.page === 'search' && <Search navigate={navigate} />}
         {r.page === 'module' && r.module === 'S' && <Setup modules={modules} />}
-        {r.page === 'module' && r.module !== 'S' && !waiting && <ModulePage module={r.module} navigate={navigate} />}
+        {r.page === 'module' && r.module === 'H' && !waiting && (r.sub === 'listens'
+          ? <HistoryRows query={path.replace(/^[^?]*/, '')} navigate={navigate} />
+          : <History navigate={navigate} />)}
+        {r.page === 'module' && r.module !== 'S' && r.module !== 'H' && !waiting && <ModulePage module={r.module} navigate={navigate} />}
         {r.page === 'notFound' && <NotFound navigate={navigate} />}
       </main>
       <BottomBar modules={modules} route={r} navigate={navigate} />

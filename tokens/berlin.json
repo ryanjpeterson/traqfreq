@@ -17,6 +17,7 @@
   "density": "dense",
   "padding": "24px",
   "topRule": "none",
+  "heat": { "module": "H", "empty": "card", "levels": [30, 55, 80, 100], "comment": "Heatmap levels 1-4: the module colour mixed into paper at these percentages; level 0 (no plays) is the card colour." },
   "modes": {
     "light": {
       "paper": "#FFFFFF",

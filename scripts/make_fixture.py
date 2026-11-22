@@ -11,7 +11,10 @@ every counting rule has a case that tells it apart from a raw row count:
   duplicate of a Last.fm scrobble (dup_of='lastfm'), one Spotify repeat of itself (dup_of='spotify').
   One play has no library match (listen_matches.rating_key NULL). One play is on 2026-01-01 05:30 UTC,
   which is 2025 in America/Denver (jimbo-dj's default TZ), so years depend on the time zone.
-- stats: jimbo-dj's own stored summaries (library.stats, history.overview), trimmed to the counts.
+- Spotify spells "The Paper Lanterns" as "Paper Lanterns"; jimbo-dj's Names makes them one artist (the
+  library's spelling), so top artists has 4 names, not 5.
+- stats: jimbo-dj's own stored summaries (library.stats, history.overview), trimmed to the counts and the
+  top artists.
 
 Usage: python scripts/make_fixture.py [out_path]   (default tests/fixtures/legacy.sqlite)
 """
@@ -134,6 +137,10 @@ STATS = [
     ("library.stats", {"last_sync": SYNC, "tracks": 5, "albums": 3, "artists": 3}, 1),
     ("history.overview", {"plays": 6, "songs": 6, "songs_matched": 5, "matched_pct": 83.3,
                           "years": [{"year": 2025, "plays": 1}, {"year": 2026, "plays": 5}],
+                          "top_artists": [{"name": "Kollektiv Nord", "plays": 2, "artist_key": 301},
+                                          {"name": "The Paper Lanterns", "plays": 2, "artist_key": 302},
+                                          {"name": "Ada Vey", "plays": 1, "artist_key": 303},
+                                          {"name": "Nobody Known", "plays": 1, "artist_key": None}],
                           "timezone": "America/Denver"}, 2),
 ]
 

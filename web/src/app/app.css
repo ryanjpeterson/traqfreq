@@ -67,6 +67,51 @@ main > .kit-text.is-body { max-width: 64ch; margin-bottom: 24px; }
 .mono { font-family: var(--label-font); font-size: 14px; }
 .module-name { display: inline-flex; align-items: center; gap: 8px; font-weight: 700; font-size: 14px; }
 
+/* ---------- HISTORY ---------- */
+.history { gap: 28px; }
+.history > section { display: grid; gap: 12px; }
+.hist-head { gap: 4px; }
+.hist-big { margin: 0; font-size: var(--h1); font-weight: var(--h1-weight); letter-spacing: var(--h1-tracking); line-height: 1.1; font-variant-numeric: tabular-nums; }
+.hist-grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); align-items: start; }
+.hist-num { padding: 0 8px; font-size: 15px; font-weight: 500; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.hist-actions { display: inline-flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.history section:focus { outline: none; }
+.kit-card .kit-button.is-quiet { background: var(--card); border-color: var(--card); }
+.rows .kit-button.is-quiet { font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+/* top artists: rank, name, a share bar in HISTORY blue (D2); the list is its own list view */
+.hist-top-name { display: flex; align-items: center; gap: 12px; min-width: 0; flex: 1; }
+.hist-rank { width: 2ch; text-align: right; color: var(--ink2); font-size: 14px; font-variant-numeric: tabular-nums; }
+.hist-top-text { display: grid; gap: 4px; min-width: 0; flex: 1; }
+.hist-top-text strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.hist-bar { display: block; height: 6px; max-width: 320px; }
+.hist-bar > span { display: block; height: 100%; background: var(--mod-h); }
+
+.hist-sources { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); align-items: start; }
+
+/* the year heatmap: weeks are columns, Monday on top; five levels of HISTORY blue (tokens --heat-0…4) */
+.hist-heat-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
+.heat-scroll { overflow-x: auto; padding-bottom: 4px; }
+.heat {
+  --cell: 13px;
+  display: grid; gap: 3px;
+  grid-template-columns: repeat(var(--weeks), var(--cell));
+  grid-template-rows: 16px repeat(7, var(--cell));
+  width: max-content;
+}
+.heat-month { grid-row: 1; font-size: 12px; color: var(--ink2); white-space: nowrap; line-height: 16px; }
+.heat-cell { display: inline-block; width: var(--cell, 13px); height: var(--cell, 13px); border-radius: var(--radius); background: var(--heat-0); }
+.heat-cell[data-level="1"] { background: var(--heat-1); }
+.heat-cell[data-level="2"] { background: var(--heat-2); }
+.heat-cell[data-level="3"] { background: var(--heat-3); }
+.heat-cell[data-level="4"] { background: var(--heat-4); }
+.heat-legend { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; }
+.heat-legend ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px 16px; font-size: 14px; }
+.heat-legend li { display: inline-flex; align-items: center; gap: 6px; font-variant-numeric: tabular-nums; }
+@media (min-width: 1000px) { .heat { --cell: 14px; } }
+
+.hist-rows { list-style: none; margin: 0; padding: 0; }
+
 /* ---------- tablet: compact top bar (L4) ---------- */
 @media (max-width: 1023px) {
   .topbar { padding: 6px 12px; }
@@ -95,5 +140,8 @@ main > .kit-text.is-body { max-width: 64ch; margin-bottom: 24px; }
   body { padding-bottom: calc(76px + env(safe-area-inset-bottom)); }
   .map-drawing { padding-left: 12px; gap: 12px; }
   .map-line { margin-left: calc(var(--i) * 8px); grid-template-columns: 36px minmax(40px, 1fr) auto; }
-  .setup-grid, .lines { grid-template-columns: 1fr; }
+  .setup-grid, .lines, .hist-grid, .hist-sources { grid-template-columns: 1fr; }
+  .hist-big { font-size: 28px; }
+  .rows li { flex-wrap: wrap; }
+  .rows li > :last-child:not(:first-child) { margin-left: auto; }
 }

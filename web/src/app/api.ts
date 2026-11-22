@@ -20,7 +20,7 @@ export type Activity = { last_scan: { at: string; source: string } | null; jobs:
 export const CORE_ONLY: ModuleSwitch[] = (['L', 'H', 'T', 'D', 'M', 'F', 'S'] as ModuleId[])
   .map((id) => ({ id, on: id === 'L' || id === 'S', core: id === 'L' || id === 'S' }));
 
-export type Load<T> = { state: 'loading' } | { state: 'ok'; data: T } | { state: 'failed' };
+export type Load<T> = { state: 'loading' } | { state: 'ok'; data: T } | { state: 'failed'; status?: number };
 
 /** GET a JSON endpoint once. */
 export function useGet<T>(url: string): Load<T> {
@@ -30,7 +30,7 @@ export function useGet<T>(url: string): Load<T> {
     fetch(url)
       .then((r) => (r.ok ? r.json() : Promise.reject(r.status)))
       .then((data: T) => live && setLoad({ state: 'ok', data }))
-      .catch(() => live && setLoad({ state: 'failed' }));
+      .catch((e) => live && setLoad({ state: 'failed', status: typeof e === 'number' ? e : undefined }));
     return () => { live = false; };
   }, [url]);
   return load;
