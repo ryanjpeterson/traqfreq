@@ -6,6 +6,9 @@ import os
 from dataclasses import dataclass
 from pathlib import Path
 
+# Repo checkout default: <repo>/web/dist (src layout: src/traqfreq/settings.py -> parents[2]).
+DEFAULT_WEB_DIR = Path(__file__).resolve().parents[2] / "web" / "dist"
+
 
 @dataclass(frozen=True)
 class Settings:
@@ -13,6 +16,7 @@ class Settings:
     legacy_db: Path | None
     port: int
     host: str
+    web_dir: Path = DEFAULT_WEB_DIR
 
     @classmethod
     def from_env(cls, env: dict[str, str] | None = None) -> "Settings":
@@ -23,4 +27,5 @@ class Settings:
             legacy_db=Path(legacy) if legacy else None,
             port=int(env.get("TRAQFREQ_PORT", "4491")),
             host=env.get("TRAQFREQ_HOST", "0.0.0.0"),
+            web_dir=Path(env.get("TRAQFREQ_WEB_DIR", str(DEFAULT_WEB_DIR))),
         )

@@ -1,0 +1,4 @@
+/* Fira Sans, self-hosted: @fontsource ships the woff2 files and Vite bundles them into dist/. No CDN at runtime. */
+@import '@fontsource/fira-sans/latin-400.css';
+@import '@fontsource/fira-sans/latin-500.css';
+@import '@fontsource/fira-sans/latin-700.css';

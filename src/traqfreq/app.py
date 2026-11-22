@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 from fastapi import FastAPI, HTTPException
+from fastapi.staticfiles import StaticFiles
+from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from . import __version__, legacy
 from .settings import Settings
@@ -36,4 +38,19 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         finally:
             conn.close()
 
+    if (settings.web_dir / "index.html").is_file():
+        app.mount("/", SPAStaticFiles(directory=settings.web_dir, html=True), name="web")
+
     return app
+
+
+class SPAStaticFiles(StaticFiles):
+    """Serves the built web app; unknown non-API paths fall back to index.html (client routes)."""
+
+    async def get_response(self, path, scope):
+        try:
+            return await super().get_response(path, scope)
+        except StarletteHTTPException as exc:
+            if exc.status_code != 404 or path.startswith("api/") or path == "api":
+                raise
+            return await super().get_response("index.html", scope)

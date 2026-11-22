@@ -1,0 +1,10 @@
+{
+  "app.name": "traqfreq",
+  "shell.title": "SETUP · Legacy database",
+  "shell.lede": "Read-only view of jimbo-dj's database. traqfreq never writes to it.",
+  "shell.countsLabel": "Rows in jimbo-dj",
+  "shell.loading": "Reading jimbo-dj's database.",
+  "shell.unavailable": "Can't read jimbo-dj's database. Set TRAQFREQ_LEGACY_DB in SETUP and restart.",
+  "shell.missingTables": "Tables not found",
+  "shell.rows": "rows"
+}

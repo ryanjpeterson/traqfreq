@@ -1,0 +1,50 @@
+{
+  "name": "Berlin · Gelb",
+  "city": "Berlin",
+  "version": "2026.11.1",
+  "font": "'Fira Sans', system-ui, sans-serif",
+  "labelFont": "'Fira Sans', system-ui, sans-serif",
+  "badge": "square",
+  "nav": "top",
+  "active": "fill",
+  "radius": "2px",
+  "cardRadius": "0px",
+  "h1": "34px",
+  "h1Weight": 700,
+  "h1Tracking": "-0.01em",
+  "labelCase": "uppercase",
+  "labelTracking": "0.04em",
+  "density": "dense",
+  "padding": "24px",
+  "topRule": "none",
+  "modes": {
+    "light": {
+      "paper": "#FFFFFF",
+      "ink": "#111111",
+      "ink2": "#555555",
+      "rule": "#111111",
+      "card": "#F5F5F3",
+      "chrome": "#F0D722",
+      "chromeInk": "#111111"
+    },
+    "dark": {
+      "paper": "#111111",
+      "ink": "#F2F2F0",
+      "ink2": "#AFAEAA",
+      "rule": "#F2F2F0",
+      "card": "#1B1B1B",
+      "chrome": "#F0D722",
+      "chromeInk": "#111111",
+      "markOutline": { "modules": ["M", "F"], "width": "1px", "color": "#FFFFFF" }
+    }
+  },
+  "modules": {
+    "L": { "name": "LIBRARY", "number": 1, "color": "#E60012" },
+    "H": { "name": "HISTORY", "number": 2, "color": "#0079C2" },
+    "T": { "name": "TAGS", "number": 3, "color": "#00843A" },
+    "D": { "name": "DISCOVER", "number": 4, "color": "#7354C2" },
+    "M": { "name": "MIXES", "number": 5, "color": "#B0006E" },
+    "F": { "name": "FETCH", "number": 6, "color": "#6D4C2F" },
+    "S": { "name": "SETUP", "number": 0, "color": "ink" }
+  }
+}

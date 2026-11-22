@@ -16,7 +16,7 @@ One session = one 5-hour window = one pushed branch. P0–P5 (T1–T28) give a f
 
 ## P0 Shell
 - **T1** Repo: FastAPI app, legacy DB read-only, fixture generator, tests, CI, docs. *Done.*
-- **T2** Web shell: Vite + React, Berlin token file → CSS variables, self-hosted Fira Sans, brand fast checks.
+- **T2** Web shell: Vite + React, Berlin token file → CSS variables, self-hosted Fira Sans, brand fast checks. *Done.*
 - **T3** The eleven kit components, every state, tests.
 - **T4** Nav (top bar, phone bottom bar), map home, read-only SETUP, container on :4491.
 

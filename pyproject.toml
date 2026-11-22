@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "traqfreq"
-version = "2026.11.0"
+version = "2026.11.1"
 description = "Self-hosted music app; successor to jimbo-dj, run side by side."
 requires-python = ">=3.12"
 dependencies = [
