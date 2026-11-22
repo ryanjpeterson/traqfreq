@@ -1,4 +1,4 @@
-/* Base styles: only token variables (C1). */
+/* Base styles: only token variables (C1). The shell and pages are in app/app.css. */
 *, *::before, *::after { box-sizing: border-box; }
 html, body { margin: 0; }
 body {
@@ -8,30 +8,7 @@ body {
   font-size: 15px;
   line-height: 1.45;
 }
-.topbar {
-  background: var(--chrome);
-  color: var(--chrome-ink);
-  border-bottom: var(--top-rule);
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  min-height: 56px;
-  padding: 0 var(--pad);
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; border: 0;
+  overflow: hidden; clip-path: inset(50%); white-space: nowrap;
 }
-.wordmark { font-weight: 700; font-size: 20px; }
-main { padding: var(--pad); }
-h1 {
-  font-size: var(--h1);
-  font-weight: var(--h1-weight);
-  letter-spacing: var(--h1-tracking);
-  margin: 0 0 16px;
-}
-.label {
-  font-family: var(--label-font);
-  font-size: 12px;
-  text-transform: var(--label-case);
-  letter-spacing: var(--label-tracking);
-  color: var(--ink2);
-}
-.counts { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
-.counts li { display: flex; justify-content: space-between; max-width: 360px; border-bottom: 1px solid var(--rule); padding: 8px 0; }

@@ -1,0 +1,14 @@
+.git
+.github
+**/node_modules
+web/dist
+web/src/styles/tokens.css
+**/*.tsbuildinfo
+**/__pycache__
+**/*.egg-info
+.venv
+.pytest_cache
+data
+tests
+docs
+.env

@@ -1,0 +1,19 @@
+name: traqfreq
+
+# Runs beside jimbo-dj (:4490) on the Mac mini. traqfreq only reads jimbo-dj's database: its data folder is
+# mounted read-only. Override paths in .env (JIMBODJ_DATA_DIR, TRAQFREQ_MODULES); see README.
+services:
+  web:
+    build: .
+    restart: unless-stopped
+    environment:
+      TRAQFREQ_LEGACY_DB: /legacy/jimbodj.sqlite
+      # Switched-on modules besides LIBRARY and SETUP, e.g. "H,T". Empty in P0.
+      TRAQFREQ_MODULES: ${TRAQFREQ_MODULES:-}
+      TZ: ${TZ:-America/Denver}
+    ports:
+      - "${TRAQFREQ_PORT:-4492}:4492"
+    volumes:
+      - ${TRAQFREQ_DATA_DIR:-./data}:/data
+      # The whole folder, not just the file: SQLite needs jimbodj.sqlite-wal and -shm next to it.
+      - ${JIMBODJ_DATA_DIR:-../jimbo-dj/data}:/legacy:ro

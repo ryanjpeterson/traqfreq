@@ -42,6 +42,9 @@
 }
 .kit-nav:hover { text-decoration: underline; }
 .kit-nav.is-current { background: var(--line); color: var(--line-ink); }
+.kit-nav.is-plain.is-current { background: var(--chrome-ink); color: var(--chrome); }
+.kit-nav.is-wordmark { font-size: 20px; padding: 0 8px; }
+.kit-nav.is-wordmark.is-current { background: var(--chrome); color: var(--chrome-ink); }
 /* On its own colour the bullet inverts, so the square still shows (same contrast pair). */
 .kit-nav.is-current .kit-bullet, .kit-band .kit-bullet { background: var(--line-ink); color: var(--line); }
 
@@ -147,6 +150,8 @@
   font-family: var(--label-font); font-size: 12px; text-transform: var(--label-case);
   letter-spacing: var(--label-tracking); color: var(--ink2);
 }
+
+.kit-text.is-note { font-size: 13px; line-height: 1.4; color: var(--ink2); }
 
 /* 10 Card */
 .kit-card {

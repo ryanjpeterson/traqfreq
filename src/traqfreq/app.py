@@ -7,7 +7,7 @@ from fastapi.staticfiles import StaticFiles
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from . import __version__, legacy
-from .settings import Settings
+from .settings import CORE, MODULES, Settings
 
 
 def create_app(settings: Settings | None = None) -> FastAPI:
@@ -25,8 +25,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             "legacy_db_present": bool(db and db.is_file()),
         }
 
-    @app.get("/api/legacy/summary")
-    def legacy_summary() -> dict:
+    def read_legacy(fn):
         if settings.legacy_db is None:
             raise HTTPException(503, "TRAQFREQ_LEGACY_DB is not set")
         try:
@@ -34,9 +33,23 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         except legacy.LegacyDBMissing:
             raise HTTPException(503, "legacy DB not found")
         try:
-            return legacy.summary(conn)
+            return fn(conn)
         finally:
             conn.close()
+
+    @app.get("/api/legacy/summary")
+    def legacy_summary() -> dict:
+        return read_legacy(legacy.summary)
+
+    @app.get("/api/legacy/activity")
+    def legacy_activity() -> dict:
+        """Last scan and recent jobs, read from jimbo-dj's DB (read-only)."""
+        return read_legacy(legacy.activity)
+
+    @app.get("/api/modules")
+    def modules() -> dict:
+        """Each module, in nav order, with whether it is switched on (TRAQFREQ_MODULES)."""
+        return {"modules": [{"id": m, "on": m in settings.modules, "core": m in CORE} for m in MODULES]}
 
     if (settings.web_dir / "index.html").is_file():
         app.mount("/", SPAStaticFiles(directory=settings.web_dir, html=True), name="web")

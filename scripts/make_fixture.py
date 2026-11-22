@@ -32,6 +32,9 @@ CREATE TABLE track_analysis (
   track_id INTEGER PRIMARY KEY REFERENCES tracks(id), bpm REAL, musical_key TEXT,
   energy REAL, loudness_db REAL, analyzed_at TEXT
 );
+CREATE TABLE history_imports (
+  id INTEGER PRIMARY KEY, source TEXT NOT NULL, at INTEGER NOT NULL, rows INTEGER, added INTEGER, note TEXT
+);
 CREATE TABLE track_tags (track_id INTEGER REFERENCES tracks(id), tag TEXT NOT NULL, source TEXT,
   PRIMARY KEY (track_id, tag));
 """
@@ -60,6 +63,14 @@ META = [
     ("last_plex_sync", "2026-11-05T03:00:00Z"),
     ("last_lastfm_import", "2026-11-05T03:05:00Z"),
     ("last_library_scan", "2026-11-04T02:00:00Z"),
+    # jimbo-dj's real key (library.py): Unix seconds of the last Plex sync. 1793844000 = 2026-11-05T02:00:00Z.
+    ("last_sync", "1793844000"),
+]
+# Shape of jimbo-dj's history_imports (history.py); times are Unix seconds.
+IMPORTS = [
+    (1, "lastfm", 1793840400, 120, 4, None),
+    (2, "plex", 1793844300, 80, 2, None),
+    (3, "spotify", 1793847900, 0, 0, "file not found"),
 ]
 
 
@@ -81,6 +92,7 @@ def build(out: Path) -> Path:
             "INSERT INTO track_analysis VALUES (?, ?, ?, ?, ?, '2026-11-04T02:30:00Z')", ANALYSIS
         )
         conn.executemany("INSERT INTO track_tags VALUES (?, ?, ?)", TAGS)
+        conn.executemany("INSERT INTO history_imports VALUES (?, ?, ?, ?, ?, ?)", IMPORTS)
     conn.close()
     return out
 

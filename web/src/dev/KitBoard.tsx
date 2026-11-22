@@ -81,6 +81,7 @@ export function KitBoard() {
         <Text variant="heading">{b('board.typeHeading')}</Text>
         <Text>{b('board.typeBody')}</Text>
         <Text variant="label">{b('board.typeLabel')}</Text>
+        <Text variant="note">{b('board.typeNote')}</Text>
       </section>
 
       <section className="board-group">

@@ -7,6 +7,7 @@ SQLite URI ``mode=ro`` and ``PRAGMA query_only`` as a second guard.
 from __future__ import annotations
 
 import sqlite3
+from datetime import datetime, timezone
 from pathlib import Path
 from urllib.parse import quote
 
@@ -53,3 +54,47 @@ def summary(conn: sqlite3.Connection) -> dict:
                 if any(h in r["key"].lower() for h in META_TIME_HINTS):
                     times[r["key"]] = r["value"]
     return {"counts": counts, "missing_tables": [t for t in KEY_TABLES if t not in tables], "times": times}
+
+
+def _iso(epoch: object) -> str | None:
+    """jimbo-dj stores times as Unix seconds (int or float, sometimes as text)."""
+    try:
+        return datetime.fromtimestamp(float(epoch), tz=timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    except (TypeError, ValueError, OverflowError, OSError):
+        return None
+
+
+def last_scan(conn: sqlite3.Connection) -> dict | None:
+    """The last Plex library sync: jimbo-dj's ``meta.last_sync`` (library.py sets it after each sync)."""
+    if "meta" not in table_names(conn):
+        return None
+    row = conn.execute("SELECT value FROM meta WHERE key = 'last_sync'").fetchone()
+    at = _iso(row["value"]) if row else None
+    return {"at": at, "source": "meta.last_sync"} if at else None
+
+
+def recent_jobs(conn: sqlite3.Connection, limit: int = 10) -> list[dict]:
+    """Finished jobs jimbo-dj keeps in its DB: history imports (``history_imports``), newest first.
+
+    jimbo-dj's running jobs (sync, analyzer, pushes) live in its process memory (jobs.py), not in the DB.
+    """
+    if "history_imports" not in table_names(conn):
+        return []
+    rows = conn.execute(
+        "SELECT id, source, at, rows, added, note FROM history_imports ORDER BY at DESC, id DESC LIMIT ?",
+        (limit,),
+    ).fetchall()
+    return [
+        {"id": r["id"], "kind": "history_import", "source": r["source"], "at": _iso(r["at"]),
+         "rows": r["rows"], "added": r["added"], "note": r["note"]}
+        for r in rows
+    ]
+
+
+def activity(conn: sqlite3.Connection, limit: int = 10) -> dict:
+    tables = table_names(conn)
+    return {
+        "last_scan": last_scan(conn),
+        "jobs": recent_jobs(conn, limit),
+        "jobs_source": "history_imports" if "history_imports" in tables else None,
+    }

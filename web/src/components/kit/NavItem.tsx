@@ -2,23 +2,35 @@ import { LineBullet } from './LineBullet';
 import { lineClass, moduleName, type ModuleId } from './modules';
 
 type Props = {
-  module: ModuleId;
+  /** The module this item opens. Leave it out for a plain item (search, the map), which then needs a label. */
+  module?: ModuleId;
+  /** The words for a plain item, or to replace the module name. */
+  label?: string;
   href: string;
   current?: boolean;
+  /** The app's name in the chrome: larger type, no bullet. */
+  wordmark?: boolean;
   onNavigate?: (href: string) => void;
 };
 
-/** 2 · Nav item: bullet + module name. The current item fills with its module colour (C7) and carries aria-current. */
-export function NavItem({ module, href, current = false, onNavigate }: Props) {
+/** 2 · Nav item: bullet + module name. The current item fills with its module colour (C7) and carries aria-current.
+ *  A plain item (no module) has no bullet; when current it fills with chrome-ink. */
+export function NavItem({ module, label, href, current = false, wordmark = false, onNavigate }: Props) {
+  const cls = ['kit-nav', module ? lineClass(module) : 'is-plain', wordmark && 'is-wordmark', current && 'is-current']
+    .filter(Boolean).join(' ');
   return (
     <a
-      className={`kit-nav ${lineClass(module)}${current ? ' is-current' : ''}`}
+      className={cls}
       href={href}
       aria-current={current ? 'page' : undefined}
-      onClick={onNavigate ? (e) => { e.preventDefault(); onNavigate(href); } : undefined}
+      onClick={onNavigate ? (e) => {
+        if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+        e.preventDefault();
+        onNavigate(href);
+      } : undefined}
     >
-      <LineBullet module={module} size={24} decorative />
-      <span>{moduleName(module)}</span>
+      {module && <LineBullet module={module} size={24} decorative />}
+      <span className="kit-nav-name">{label ?? (module ? moduleName(module) : '')}</span>
     </a>
   );
 }

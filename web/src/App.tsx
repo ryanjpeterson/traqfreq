@@ -1,7 +1,14 @@
-import { lazy, Suspense, useEffect, useState } from 'react';
-import { t } from './copy/t';
-
-type Summary = { counts: Record<string, number>; missing_tables: string[]; times: Record<string, string> };
+import { lazy, Suspense, useEffect } from 'react';
+import { t, type StringKey } from './copy/t';
+import { useModules } from './app/api';
+import { BottomBar, TopBar } from './app/Nav';
+import { parseRoute, usePath, type Route } from './app/route';
+import { MapHome } from './pages/MapHome';
+import { ModulePage } from './pages/ModulePage';
+import { NotFound } from './pages/NotFound';
+import { Search } from './pages/Search';
+import { Setup } from './pages/Setup';
+import './app/app.css';
 
 // The kit board is dev only: import.meta.env.DEV is false in production, so Vite drops it from the build (D1).
 const KitBoard = import.meta.env.DEV ? lazy(() => import('./dev/KitBoard').then((m) => ({ default: m.KitBoard }))) : null;
@@ -13,45 +20,41 @@ export function App() {
   return <Shell />;
 }
 
-/** The shell: chrome bar and the read-only legacy summary. Nav and home arrive in T4. */
-function Shell() {
-  const [summary, setSummary] = useState<Summary | null>(null);
-  const [failed, setFailed] = useState(false);
+function pageTitle(route: Route): string {
+  if (route.page === 'map') return t('map.title');
+  if (route.page === 'search') return t('search.title');
+  if (route.page === 'module') return t(`module.${route.module}` as StringKey);
+  return t('notFound.title');
+}
+
+/** The shell: chrome top bar, the page, and the phone bottom bar. */
+export function Shell() {
+  const [path, navigate] = usePath();
+  const [modules, known] = useModules();
+  let route = parseRoute(path);
+  // An off module leaves no trace (L2): its page doesn't exist. Wait for the switches before saying so.
+  const waiting = route.page === 'module' && !known && !['L', 'S'].includes(route.module);
+  if (route.page === 'module') {
+    const id = route.module;
+    if (known && !modules.find((m) => m.id === id)?.on) route = { page: 'notFound' };
+  }
 
   useEffect(() => {
-    fetch('/api/legacy/summary')
-      .then((r) => (r.ok ? r.json() : Promise.reject(r.status)))
-      .then(setSummary)
-      .catch(() => setFailed(true));
-  }, []);
+    document.title = `${pageTitle(route)} · ${t('title.suffix')}`;
+  });
 
+  const r = route;
   return (
     <>
-      <header className="topbar">
-        <span className="wordmark">{t('app.name')}</span>
-      </header>
-      <main>
-        <h1>{t('shell.title')}</h1>
-        <p>{t('shell.lede')}</p>
-        {failed && <p>{t('shell.unavailable')}</p>}
-        {!failed && !summary && <p>{t('shell.loading')}</p>}
-        {summary && (
-          <section aria-labelledby="counts-label">
-            <p id="counts-label" className="label">{t('shell.countsLabel')}</p>
-            <ul className="counts">
-              {Object.entries(summary.counts).map(([table, n]) => (
-                <li key={table}>
-                  <span>{table}</span>
-                  <span>{n.toLocaleString()} {t('shell.rows')}</span>
-                </li>
-              ))}
-            </ul>
-            {summary.missing_tables.length > 0 && (
-              <p className="label">{t('shell.missingTables')}: {summary.missing_tables.join(', ')}</p>
-            )}
-          </section>
-        )}
+      <TopBar modules={modules} route={r} navigate={navigate} />
+      <main className={r.page === 'module' ? 'is-banded' : undefined} aria-busy={waiting || undefined}>
+        {r.page === 'map' && <MapHome modules={modules} navigate={navigate} />}
+        {r.page === 'search' && <Search navigate={navigate} />}
+        {r.page === 'module' && r.module === 'S' && <Setup modules={modules} />}
+        {r.page === 'module' && r.module !== 'S' && !waiting && <ModulePage module={r.module} navigate={navigate} />}
+        {r.page === 'notFound' && <NotFound navigate={navigate} />}
       </main>
+      <BottomBar modules={modules} route={r} navigate={navigate} />
     </>
   );
 }

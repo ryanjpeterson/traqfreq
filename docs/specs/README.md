@@ -18,7 +18,7 @@ One session = one 5-hour window = one pushed branch. P0–P5 (T1–T28) give a f
 - **T1** Repo: FastAPI app, legacy DB read-only, fixture generator, tests, CI, docs. *Done.*
 - **T2** Web shell: Vite + React, Berlin token file → CSS variables, self-hosted Fira Sans, brand fast checks. *Done.*
 - **T3** The eleven kit components, every state, tests. *Done.*
-- **T4** Nav (top bar, phone bottom bar), map home, read-only SETUP, container on :4492.
+- **T4** Nav (top bar, phone bottom bar), map home, read-only SETUP, container on :4492. *Done.* Gate: check on the Mac mini (HANDOFF).
 
 ## P1 HISTORY read-only: T5–T8
 ## P2 LIBRARY read-only: T9–T12

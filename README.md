@@ -10,4 +10,6 @@ Code is pushed to GitHub; Forgejo (`http://macmini:4470/ryanjpeterson/traqfreq`)
 cd /Volumes/jimbos-sloppydrive/traqfreq && git pull --ff-only && docker compose -f docker-compose.yml up -d --build && docker compose -f docker-compose.yml ps
 ```
 
-Then check `http://macmini:4492/api/health`. The Dockerfile and `docker-compose.yml` arrive in T4; until then the snippet has nothing to start.
+Then check `http://macmini:4492/api/health` and open `http://macmini:4492/`.
+
+The compose file mounts jimbo-dj's data folder read-only at `/legacy` (default `../jimbo-dj/data`, next to this checkout). Optional `.env` next to `docker-compose.yml`: `JIMBODJ_DATA_DIR` (if jimbo-dj keeps its data elsewhere), `TRAQFREQ_MODULES` (modules to switch on besides LIBRARY and SETUP, e.g. `H,T`).

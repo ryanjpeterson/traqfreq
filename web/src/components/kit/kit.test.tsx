@@ -191,6 +191,7 @@ describe('Text', () => {
     ['heading', 'H2'],
     ['body', 'P'],
     ['label', 'P'],
+    ['note', 'P'],
   ] as const)('%s renders %s', (variant, tag) => {
     const { container } = render(<Text variant={variant}>Words</Text>);
     expect(container.firstElementChild!.tagName).toBe(tag);
@@ -230,5 +231,42 @@ describe('ArtTile', () => {
   it('BPM only', () => {
     const { container } = render(<ArtTile title="A" artist="B" bpm={98} />);
     expect(container.querySelector('.kit-art-code')!.textContent).toBe('98 BPM');
+  });
+});
+
+describe('NavItem, plain and wordmark (T4)', () => {
+  it('a plain item has no bullet and fills with chrome-ink when current', () => {
+    render(<NavItem label="Search" href="/search" current />);
+    const a = screen.getByRole('link', { name: 'Search' });
+    expect(a.className).toContain('is-plain');
+    expect(a.className).toContain('is-current');
+    expect(a.querySelector('.kit-bullet')).toBeNull();
+  });
+  it('wordmark', () => {
+    render(<NavItem label="traqfreq" href="/" wordmark />);
+    expect(screen.getByRole('link', { name: 'traqfreq' }).className).toContain('is-wordmark');
+  });
+  it('modified clicks follow the link instead of onNavigate', async () => {
+    const nav = vi.fn();
+    render(<NavItem module="T" href="/tags" onNavigate={nav} />);
+    const a = screen.getByRole('link', { name: 'TAGS' });
+    const plain = new MouseEvent('click', { bubbles: true, cancelable: true, button: 0 });
+    a.dispatchEvent(plain);
+    expect(nav).toHaveBeenCalledWith('/tags');
+    expect(plain.defaultPrevented).toBe(true);
+    const meta = new MouseEvent('click', { bubbles: true, cancelable: true, button: 0, metaKey: true });
+    a.dispatchEvent(meta);
+    expect(nav).toHaveBeenCalledTimes(1);
+    expect(meta.defaultPrevented).toBe(false);
+    meta.preventDefault(); // keep jsdom from trying to navigate
+  });
+});
+
+describe('Button link with onClick (T4)', () => {
+  it('routes client-side', async () => {
+    const go = vi.fn();
+    render(<Button href="/setup" onClick={go}>Open</Button>);
+    await userEvent.click(screen.getByRole('link', { name: 'Open' }));
+    expect(go).toHaveBeenCalledTimes(1);
   });
 });

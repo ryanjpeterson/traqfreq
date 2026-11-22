@@ -34,13 +34,27 @@ The alternative, still open: a session on the Mac mini itself, in its own clone:
   - Tests: Vitest 5 + Testing Library + jsdom, `web/src/components/kit/kit.test.tsx`, 51 tests (`cd web && npm test`). In CI.
   - `check.mjs` adds **K1** (pages import the kit only by its eleven names, no other UI packages, no raw `<button> <a> <input> <select> <textarea> <img> <svg> <canvas>` outside the kit; the kit folder holds only the eleven) and **W1** (no copy literals in JSX text or in `aria-label title alt placeholder label detail why` attributes). C7 accepts `--line`/`--line-ink` and checks every `--line*` points at a module token. Copy lint covers every `*strings.json`. 13 self-tests.
   - Kit board at `/kit`, **dev only** (`npm run dev`): every component in every state. Its sample copy is in `web/src/dev/board.strings.json`, so none of it reaches `dist` (checked: D1). Looked at in light, dark and 375 px.
+- **T4** (2026-11-22, `claude/t4-nav-setup`, from T3; laptop over SMB like T3):
+  - Shell (`web/src/App.tsx`, `web/src/app/`): History API router (`route.ts`; `/`, `/library` … `/setup`, `/search`, not found), `useGet`/`useModules` (`api.ts`). Top bar in the chrome built from `NavItem`: wordmark (map home), LIBRARY, switched-on modules, SETUP, then Search (L1). Off modules: no nav item, their path is "No such page" (L2). Tablet (600–1023 px): compact bar, names hidden except the current item (L4). Phone (< 600 px): top bar keeps wordmark + Search; bottom bar 76 px of five at most: LIBRARY, up to two modules, Map, SETUP (L3); the map reaches the rest.
+  - Pages (`web/src/pages/`): map home (lines drawn with CSS from `LineBullet`s, off lines dashed; visually hidden summary; card list with `Status` and Open buttons; L6), SETUP read-only, module empty states and Search pointing to SETUP (D1), not found.
+  - API: `GET /api/modules` (`TRAQFREQ_MODULES`, letters or names, LIBRARY + SETUP always on; default none else), `GET /api/legacy/activity` (last scan, jobs). **Found in jimbo-dj's code:** its jobs live in process memory (`jobs.py`), not in the DB. SETUP shows the DB's record instead: last scan = `meta.last_sync` (Unix seconds, set after each Plex sync, `library.py`) and finished history imports (`history_imports`, `history.py`). The fixture now has both, with the real shapes.
+  - Kit changes (still eleven): `NavItem` takes `label` without `module` (plain item, fills chrome-ink when current) and `wordmark`; `Button` with `href` + `onClick` routes client-side (modified clicks still follow the link); `Text` variant `note` (13 px ink2, for "where this number comes from", W3). On the `/kit` board.
+  - Container: `Dockerfile` (node 22 builds `web/dist`, then uv + Python 3.12, `uv run traqfreq`, healthcheck), `docker-compose.yml` (service `web`, `4492:4492`, `${JIMBODJ_DATA_DIR:-../jimbo-dj/data}:/legacy:ro`, `./data:/data`), `.dockerignore`. Docker wasn't running on the laptop, so **the image has not been built yet**; the first deploy builds it. Checked instead: read-only open of a WAL database in a read-only folder (with `-wal` and `-shm` present) reads rows still in the WAL.
+  - Tests: pytest 23 (7 new in `tests/test_setup.py`), Vitest 72 (`web/src/app/app.test.tsx`: routes, nav order, bottom bar, client navigation, L2, map list + summary, SETUP states). Checked in the browser against the fixture: light, dark, 375 px, tablet.
 
-## Next: T4, nav, map home, read-only SETUP, container
-Top bar (chrome, NavItems in L1 order: LIBRARY, switched-on modules, SETUP, plus search), phone bottom bar of five (76 px, L3), map home, read-only SETUP (legacy DB summary, last scan, jobs), Dockerfile + `docker-compose.yml` (service `web`, host port 4492, jimbo-dj's data dir mounted `:ro`). Then the README snippet deploys it and the P0 gate can be checked at `http://macmini:4492/`.
+## Next: check the P0 gate, then T5
+**P0 gate** ("runs on the Mac mini at :4492"): run the `deploy traqfreq` Termius snippet (README) on the mini, then:
+1. `docker compose -f docker-compose.yml ps` shows `web` up (healthy after a minute); `http://macmini:4492/api/health` has `legacy_db_present: true`.
+2. `http://macmini:4492/`: yellow bar with LIBRARY and SETUP (no other modules in P0), map with five dashed lines.
+3. `http://macmini:4492/setup`: "Readable", row counts, a last scan time and history imports. Compare the scan time with jimbo-dj's Library status and the counts with jimbo-dj. Tables jimbo-dj doesn't have show under "Tables not found" (expected until T5 fixes the fixture schema).
+4. jimbo-dj at :4490 still works and still writes (nothing in traqfreq writes).
+If the build fails, the log is in the snippet's output. If SETUP says "Can't read", check `JIMBODJ_DATA_DIR` in `.env` (jimbo-dj's own `.env` may set its data folder elsewhere).
+
+**T5** (P1 HISTORY read-only, first of T5–T8): first fix open question 2 (fixture schema and `legacy.KEY_TABLES` against jimbo-dj's `src/jimbodj/db.py` and `history.py`; jimbo-dj's checkout is readable at `/Volumes/jimbos-sloppydrive/jimbo-dj`, e.g. `tracks` is keyed by `rating_key`, analysis is `analysis`, not `track_analysis`), then decide open question 3, then write `docs/specs/t5-history.md` and start HISTORY's read API.
 
 ## Open questions
 1. **Forgejo mirror:** the dual-push repo was deleted 2026-11-22 so Forgejo can re-add traqfreq as a pull mirror of GitHub (+ → New migration → GitHub, token, "This repository will be a mirror"). Check it exists and syncs.
-2. **Fixture schema is provisional** (from T1). jimbo-dj couldn't be attached, so table and column names are guesses. Correct `scripts/make_fixture.py` and `legacy.KEY_TABLES` against jimbo-dj's `src/jimbodj/db.py` before T5. On the Mac mini this is just a read of the local jimbo-dj checkout.
+2. **Fixture schema is provisional** (from T1). jimbo-dj couldn't be attached then, so table and column names are guesses (T4 fixed only `meta.last_sync` and `history_imports`). Correct `scripts/make_fixture.py` and `legacy.KEY_TABLES` against jimbo-dj's `src/jimbodj/db.py` before T5. On the Mac mini this is just a read of the local jimbo-dj checkout.
 3. **Reuse plan** (from T1): vendor jimbo-dj's pure functions if the repo is private, use a pinned git dependency if public. Decide in T5.
 4. Copy lint's sentence-case check uses an allowlist of proper nouns and acronyms (`PROPER`, `ACRONYMS` in check.mjs). Add to it when copy needs a new name.
 
@@ -48,4 +62,4 @@ Top bar (chrome, NavItems in L1 order: LIBRARY, switched-on modules, SETUP, plus
 - `cd web && npm ci && npm run build`, then `uv run traqfreq` with `TRAQFREQ_LEGACY_DB` pointing at jimbo-dj's `data/jimbodj.sqlite`. Open `http://macmini:4492/`: the yellow bar and row counts from jimbo-dj. Compare the counts with jimbo-dj.
 - In any container, mount jimbo-dj's data directory read-only (`:ro`). If jimbo-dj uses WAL, `mode=ro` still needs the `-wal`/`-shm` files readable.
 - Port 4492 is free (checked from the laptop 2026-11-22: no answer on 4492–4494, not in any compose file) and reachable over Tailscale.
-- T4's container: compose service `web`, host port `4492`, jimbo-dj's data dir mounted `:ro`. Then the README snippet deploys it.
+- T4's container: compose service `web`, host port `4492`, jimbo-dj's data dir mounted `:ro`. The README snippet deploys it; first build not yet run (see the P0 gate above).

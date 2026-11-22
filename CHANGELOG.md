@@ -4,6 +4,13 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 ### Added
+- T4 shell: chrome top bar from `NavItem` (LIBRARY, switched-on modules, SETUP, search; L1/L2), compact top bar on tablets (L4), 76 px phone bottom bar of five (L3), client-side routing.
+- Map home: the modules drawn as lines (off lines dashed), a screen-reader summary and a list view (L6).
+- Read-only SETUP: legacy DB row counts, last scan (`meta.last_sync`), recent jobs (`history_imports`), each module's on/off `Status`. Empty module pages and search point to SETUP (D1).
+- `GET /api/legacy/activity` and `GET /api/modules`; `TRAQFREQ_MODULES` switches modules on (LIBRARY and SETUP always on).
+- `Dockerfile`, `docker-compose.yml` (service `web`, port 4492, jimbo-dj's data folder mounted `:ro`), `.dockerignore`.
+- Kit: `NavItem` plain items (no module) and wordmark; `Button` links route client-side with `onClick`; `Text` variant `note`.
+- Fixture: jimbo-dj's real `meta.last_sync` key and `history_imports` table.
 - T3 kit: the eleven components in `web/src/components/kit` (LineBullet, NavItem, Status, Band, Button, ConditionChip, LineLever, StationRow, Text, Card, ArtTile), every state, styled from tokens only.
 - Vitest + Testing Library component tests (51), in CI.
 - Brand checks K1 (kit-only UI) and W1 (no copy literals in JSX); C7 covers the kit's `--line` indirection; copy lint covers every `*strings.json`.

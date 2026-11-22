@@ -24,6 +24,7 @@
   "board.typeHeading": "Section heading",
   "board.typeBody": "Body text is 15 px and wraps at the column.",
   "board.typeLabel": "Label",
+  "board.typeNote": "Note: where a number comes from, 13 px in ink2.",
   "board.chipGenre": "genre is house",
   "board.chipBpm": "BPM between 120 and 126",
   "board.chipPlayed": "played in the last 30 days",
