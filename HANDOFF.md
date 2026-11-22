@@ -1,7 +1,7 @@
 # Handoff
 
 ## Where sessions run
-T1 and T2 ran in a cloud container. **T3 ran on the laptop, directly in the server checkout over SMB** (`/Volumes/jimbos-sloppydrive/traqfreq`; Ryan's call, use this mount and not `jimbos-sloppydrive-1`). Pushes go to GitHub; Forgejo mirrors it.
+T1 and T2 ran in a cloud container. **T3 ran on the laptop, directly in the server checkout over SMB** (`/Volumes/jimbos-sloppydrive/traqfreq`; Ryan's call, use this mount and not `jimbos-sloppydrive-1`). Pushes go to GitHub; Forgejo mirrors it. The GitHub repo is **public** and its default branch is **`main`** (2026-11-22, at f06a60f = `claude/t3-kit`); session branches are pushed beside it, and only Ryan moves `main`.
 
 Working over SMB, as T3 did:
 - Git and in-place edits work, but SMB now and then refuses a rename: `fatal: unable to write new index file` or `sed: rename(): Resource busy`. Retry once; edit files with in-place writes (Python `r+`, the Edit tool), not `sed -i`.
@@ -24,7 +24,7 @@ The alternative, still open: a session on the Mac mini itself, in its own clone:
   - `scripts/check.mjs`: brand fast checks C1, C2, C4 (every text pair + 3:1 marks, with outline fallback), C7, plus copy lint T2/T3/W2 on `web/src/copy/strings.json`. `scripts/check.test.mjs` proves each check catches violations. Both run in CI (new `web` job, which also builds).
   - Placeholder shell screen (chrome bar + legacy row counts). Replaced by the kit and nav in T3/T4.
 
-- **Deploy setup** (2026-11-22, laptop session, on `claude/t2-web-shell`): jimbo-deploy applied. `deploy.json` (port **4492**, service `web`, compose `docker-compose.yml`, server checkout `/Volumes/jimbos-sloppydrive/traqfreq`, code edited in `~/traqfreq` on the mini). Port moved from 4491 because `jimbodj-text` (jimbo-dj's CLAP analyzer, native on the mini) already listens there and jimbo-dj's compose points at it. GitHub made private. Forgejo mirrors GitHub (pull mirror, set up by Ryan in the Forgejo UI); `origin` pushes to GitHub only. README has the `deploy traqfreq` Termius snippet; it works once T4 adds the Dockerfile and `docker-compose.yml`.
+- **Deploy setup** (2026-11-22, laptop session, on `claude/t2-web-shell`): jimbo-deploy applied. `deploy.json` (port **4492**, service `web`, compose `docker-compose.yml`, server checkout `/Volumes/jimbos-sloppydrive/traqfreq`, code edited in `~/traqfreq` on the mini). Port moved from 4491 because `jimbodj-text` (jimbo-dj's CLAP analyzer, native on the mini) already listens there and jimbo-dj's compose points at it. GitHub made private (made public again 2026-11-22, see below). Forgejo mirrors GitHub (pull mirror, set up by Ryan in the Forgejo UI); `origin` pushes to GitHub only. README has the `deploy traqfreq` Termius snippet; it works once T4 adds the Dockerfile and `docker-compose.yml`.
 
 - **T3** (2026-11-22, `claude/t3-kit`, from T2 + deploy setup):
   - `web/src/components/kit/`: the eleven components, one file each, exported from `index.ts`; styles in `kit.css` (tokens only). Module data in `modules.ts` (badge `L1`…`S0`, name from strings, class `line-<x>`). Each `.line-<x>` class sets `--line`, `--line-ink`, `--line-outline` from the module tokens; components colour themselves through those.
@@ -43,7 +43,7 @@ The alternative, still open: a session on the Mac mini itself, in its own clone:
   - Tests: pytest 23 (7 new in `tests/test_setup.py`), Vitest 72 (`web/src/app/app.test.tsx`: routes, nav order, bottom bar, client navigation, L2, map list + summary, SETUP states). Checked in the browser against the fixture: light, dark, 375 px, tablet.
 
 ## Next: check the P0 gate, then T5
-**P0 gate** ("runs on the Mac mini at :4492"): run the `deploy traqfreq` Termius snippet (README) on the mini, then:
+**P0 gate** ("runs on the Mac mini at :4492"): the server checkout is on `main`, so T4 must be on `main` first (merge `claude/t4-nav-setup`; Ryan moves `main`). Then run the `deploy traqfreq` Termius snippet (README) on the mini, then:
 1. `docker compose -f docker-compose.yml ps` shows `web` up (healthy after a minute); `http://macmini:4492/api/health` has `legacy_db_present: true`.
 2. `http://macmini:4492/`: yellow bar with LIBRARY and SETUP (no other modules in P0), map with five dashed lines.
 3. `http://macmini:4492/setup`: "Readable", row counts, a last scan time and history imports. Compare the scan time with jimbo-dj's Library status and the counts with jimbo-dj. Tables jimbo-dj doesn't have show under "Tables not found" (expected until T5 fixes the fixture schema).
@@ -53,9 +53,9 @@ If the build fails, the log is in the snippet's output. If SETUP says "Can't rea
 **T5** (P1 HISTORY read-only, first of T5–T8): first fix open question 2 (fixture schema and `legacy.KEY_TABLES` against jimbo-dj's `src/jimbodj/db.py` and `history.py`; jimbo-dj's checkout is readable at `/Volumes/jimbos-sloppydrive/jimbo-dj`, e.g. `tracks` is keyed by `rating_key`, analysis is `analysis`, not `track_analysis`), then decide open question 3, then write `docs/specs/t5-history.md` and start HISTORY's read API.
 
 ## Open questions
-1. **Forgejo mirror:** the dual-push repo was deleted 2026-11-22 so Forgejo can re-add traqfreq as a pull mirror of GitHub (+ → New migration → GitHub, token, "This repository will be a mirror"). Check it exists and syncs.
+1. ~~**Forgejo mirror**~~ *Done 2026-11-22:* Forgejo is live as a pull mirror of GitHub (`http://macmini:4470/ryanjpeterson/traqfreq`, syncs every 10 minutes, default branch `main`).
 2. **Fixture schema is provisional** (from T1). jimbo-dj couldn't be attached then, so table and column names are guesses (T4 fixed only `meta.last_sync` and `history_imports`). Correct `scripts/make_fixture.py` and `legacy.KEY_TABLES` against jimbo-dj's `src/jimbodj/db.py` before T5. On the Mac mini this is just a read of the local jimbo-dj checkout.
-3. **Reuse plan** (from T1): vendor jimbo-dj's pure functions if the repo is private, use a pinned git dependency if public. Decide in T5.
+3. **Reuse plan** (from T1): vendor jimbo-dj's pure functions if the repo is private, use a pinned git dependency if public. Decide in T5. (traqfreq itself is public now; the question is about jimbo-dj's repo.)
 4. Copy lint's sentence-case check uses an allowlist of proper nouns and acronyms (`PROPER`, `ACRONYMS` in check.mjs). Add to it when copy needs a new name.
 
 ## To check on the Mac mini

@@ -17,7 +17,7 @@ All notable changes to this project are documented here. The format follows [Kee
 - Dev-only kit board at `/kit`; its sample copy never ships.
 ### Changed
 - Port 4491 → **4492** (4491 is jimbo-dj's `jimbodj-text` analyzer on the Mac mini): settings default, Vite proxy, docs, tests.
-- GitHub repo is private.
+- GitHub repo was made private, then public again; default branch is `main` (at the T3 commit). Forgejo is live as a pull mirror of GitHub (10-minute sync).
 ### Added
 - jimbo-deploy: `deploy.json`, README deploy snippet, Forgejo mirrors GitHub (pull mirror); `origin` pushes to GitHub only.
 
