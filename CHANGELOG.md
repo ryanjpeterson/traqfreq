@@ -4,6 +4,7 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 ### Added
+- T5 deployed: on live data SETUP's four counts and the history overview (every year, every source) equal jimbo-dj's.
 - T5: `GET /api/history/overview` (plays, listens, too short / repeats / duplicates, by source and by year in jimbo-dj's listening time zone, matched plays, songs, jimbo-dj's stored plays) and `GET /api/history/listens` (the rows behind each number). Plays are jimbo-dj's `counted = 1`; every listen is in exactly one bucket, checked on each read (`adds_up`).
 - `/api/legacy/summary` adds `measures`: tracks, albums, artists and plays counted jimbo-dj's way (live tracks, distinct album and artist keys of live tracks, counted listens), each with its SQL rule and jimbo-dj's stored value (`stats` table) to compare. `counts` (raw rows) unchanged.
 - SETUP shows those four numbers with their rules and whether they match jimbo-dj's stored counts (W3), then raw rows per table.

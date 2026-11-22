@@ -59,8 +59,11 @@ To redeploy: the server checkout is on `main`; get the change onto `main`, then 
 - Tests: pytest 40, Vitest 73, brand checks and 13 self-tests pass. Checked SETUP in the browser against the fixture.
 - **Mount note:** during T5 macOS remounted the SMB share as `/Volumes/jimbos-sloppydrive-1` (the plain path vanished; same share, same checkout). T5's later edits went through `-1`. Use whichever path exists; check `mount | grep sloppy`.
 
-## To check on the Mac mini after deploying T5
-Merge `claude/t5-history` to `main`, run the `deploy traqfreq` snippet, then open `http://macmini:4492/setup`: tracks 52,779, albums 4,306, artists 1,297, each "Same as jimbo-dj's stored count"; plays should equal jimbo-dj's History headline. No "Tables not found". `http://macmini:4492/api/history/overview`: `adds_up: true`, `jimbodj.matches: true` (if false, jimbo-dj's stored overview may be up to an hour old: check again after its next rebuild). Note how long the overview takes on 350,953 listens (T6 adds a stats cache).
+## T5 deployed and checked: 2026-11-22
+Deployed from `main` with the snippet. Checked from the laptop over Tailscale against jimbo-dj at :4490:
+- SETUP measures, all `matches: true`: tracks 52,779, albums 4,306, artists 1,297 (jimbo-dj `/api/stats` the same), plays 167,180. No tables missing.
+- `/api/history/overview`: 350,953 listens = 167,180 plays + 140,580 too short + 18,169 repeats + 25,024 duplicates (`adds_up: true`). Matched 67.4 %, songs 81,923 heard / 22,568 matched, time zone America/New_York (jimbo-dj's `history_tz`). **Every year 2011–2026 and every source's listens, plays, repeats and duplicates equal jimbo-dj's `/api/history`.**
+- The overview answers in about 0.6 s on live data. T6's stats cache is still worth it for the heatmap and top artists.
 
 ## Next: T6
 Overview (spec: `docs/specs/t5-history.md`, T6): the HISTORY page with counts, the year heatmap and top artists, and a stats cache in traqfreq's own database. Then T7 counted once (duplicates, held bursts, bot checks, read-only) and T8 years, Wrapped, this day, top and the P1 gate.
