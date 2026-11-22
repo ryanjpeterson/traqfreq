@@ -75,6 +75,13 @@ Deployed from `main` with the snippet. Checked from the laptop over Tailscale ag
 - Tests: pytest 59 (`tests/test_overview.py`: names, days in the zone, heatmap windows and levels, periods, cache key, cache builds once and rebuilds, legacy DB untouched), Vitest 86 (`web/src/pages/history.test.tsx`), brand checks and 13 self-tests pass. Checked in the browser on an invented dense copy of the fixture (3,000 made-up plays, scratchpad only): dark and light desktop, light 375 px (no page side-scroll), rows page, why toggle, year stepping.
 - **To see it on the mini:** HISTORY is off until `.env` next to `docker-compose.yml` has `TRAQFREQ_MODULES=H`. First page load after a deploy builds the cache (≈ the T5 overview's 0.6 s plus Names); later loads read it.
 
+## T6 deployed and checked: 2026-11-22
+Deployed from the server checkout on `claude/t6-history-overview` (65942b2; `main` still at a64c2c6). Checked over Tailscale against jimbo-dj at :4490:
+- Overview: 167,180 plays, `adds_up` true, matched 67.4 %; `jimbodj.matches`, `matched_pct_matches` and `top_artists_match` all true (Wavves 2,304 … The Smashing Pumpkins 1,053); 10,359 artists heard, the same as jimbo-dj.
+- Heatmap (last 53 weeks, 2025-11-17 to 2026-11-22): every one of the 371 days equals jimbo-dj Home's `last_year` (7,411 plays, 0 differences).
+- Cache: first build 1.35 s on live data, then a hit in 0.05 s.
+- HISTORY is still off on the mini (`/api/modules`: L, S): add `TRAQFREQ_MODULES=H` to `.env` and redeploy to show the page.
+
 ## Next: T7
 Counted once (spec: `docs/specs/t5-history.md`, T7): duplicates and repeats with their reasons (the play each duplicates, the window, how far apart), then held bursts and new bot checks, read-only reports. Then T8 years, Wrapped, this day, top and the P1 gate.
 - Deploy check for T6 on live data: overview `jimbodj.top_artists_match` and `matched_pct_matches` true (or explained by a stale stored row), heatmap's last 53 weeks against jimbo-dj Home's heatmap.
