@@ -4,6 +4,7 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 ### Added
+- P0 gate passed: deployed on the Mac mini at :4492 from `main`, reading jimbo-dj's live database read-only.
 - T4 shell: chrome top bar from `NavItem` (LIBRARY, switched-on modules, SETUP, search; L1/L2), compact top bar on tablets (L4), 76 px phone bottom bar of five (L3), client-side routing.
 - Map home: the modules drawn as lines (off lines dashed), a screen-reader summary and a list view (L6).
 - Read-only SETUP: legacy DB row counts, last scan (`meta.last_sync`), recent jobs (`history_imports`), each module's on/off `Status`. Empty module pages and search point to SETUP (D1).

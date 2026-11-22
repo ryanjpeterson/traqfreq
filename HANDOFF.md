@@ -42,14 +42,16 @@ The alternative, still open: a session on the Mac mini itself, in its own clone:
   - Container: `Dockerfile` (node 22 builds `web/dist`, then uv + Python 3.12, `uv run traqfreq`, healthcheck), `docker-compose.yml` (service `web`, `4492:4492`, `${JIMBODJ_DATA_DIR:-../jimbo-dj/data}:/legacy:ro`, `./data:/data`), `.dockerignore`. Docker wasn't running on the laptop, so **the image has not been built yet**; the first deploy builds it. Checked instead: read-only open of a WAL database in a read-only folder (with `-wal` and `-shm` present) reads rows still in the WAL.
   - Tests: pytest 23 (7 new in `tests/test_setup.py`), Vitest 72 (`web/src/app/app.test.tsx`: routes, nav order, bottom bar, client navigation, L2, map list + summary, SETUP states). Checked in the browser against the fixture: light, dark, 375 px, tablet.
 
-## Next: check the P0 gate, then T5
-**P0 gate** ("runs on the Mac mini at :4492"): the server checkout is on `main`, so T4 must be on `main` first (merge `claude/t4-nav-setup`; Ryan moves `main`). Then run the `deploy traqfreq` Termius snippet (README) on the mini, then:
-1. `docker compose -f docker-compose.yml ps` shows `web` up (healthy after a minute); `http://macmini:4492/api/health` has `legacy_db_present: true`.
-2. `http://macmini:4492/`: yellow bar with LIBRARY and SETUP (no other modules in P0), map with five dashed lines.
-3. `http://macmini:4492/setup`: "Readable", row counts, a last scan time and history imports. Compare the scan time with jimbo-dj's Library status and the counts with jimbo-dj. Tables jimbo-dj doesn't have show under "Tables not found" (expected until T5 fixes the fixture schema).
-4. jimbo-dj at :4490 still works and still writes (nothing in traqfreq writes).
-If the build fails, the log is in the snippet's output. If SETUP says "Can't read", check `JIMBODJ_DATA_DIR` in `.env` (jimbo-dj's own `.env` may set its data folder elsewhere).
+## P0 gate: passed 2026-11-22
+Deployed from `main` (30f380e) with the `deploy traqfreq` snippet; the image built on the mini. Checked from the laptop over Tailscale:
+- `http://macmini:4492/api/health`: ok, `legacy_db_present: true`. jimbo-dj at :4490 still answers.
+- `/`: yellow bar with LIBRARY and SETUP only; map with five dashed lines. `/setup`: "Readable", row counts, last scan, history imports (276 so far), modules.
+- **Last scan matches jimbo-dj exactly** (`meta.last_sync` 1795381464 = 2026-11-22 21:04 UTC, same as jimbo-dj's `/api/stats`). The read-only `:ro` mount of the WAL database works.
+- **Counts are raw row counts, not jimbo-dj's numbers:** tracks 54,355 rows vs jimbo-dj's 52,779 (it counts `removed_at IS NULL`), albums 4,443 vs 4,306 and artists 1,311 vs 1,297 (it counts distinct `album_key` / `artist_key` among live tracks); listens 350,953. P1 and P2 must use jimbo-dj's definitions (`library.py` stats) for "counts match".
+- "Tables not found: track_analysis, track_tags" on real data: the fixture names are wrong (open question 2).
+To redeploy: the server checkout is on `main`; get the change onto `main`, then run the snippet.
 
+## Next: T5
 **T5** (P1 HISTORY read-only, first of T5–T8): first fix open question 2 (fixture schema and `legacy.KEY_TABLES` against jimbo-dj's `src/jimbodj/db.py` and `history.py`; jimbo-dj's checkout is readable at `/Volumes/jimbos-sloppydrive/jimbo-dj`, e.g. `tracks` is keyed by `rating_key`, analysis is `analysis`, not `track_analysis`), then decide open question 3, then write `docs/specs/t5-history.md` and start HISTORY's read API.
 
 ## Open questions
