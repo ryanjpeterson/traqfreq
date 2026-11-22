@@ -19,13 +19,13 @@ def test_summary(client):
 
 
 def test_summary_unconfigured(tmp_path):
-    c = TestClient(create_app(Settings(data_dir=tmp_path, legacy_db=None, port=4491, host="127.0.0.1")))
+    c = TestClient(create_app(Settings(data_dir=tmp_path, legacy_db=None, port=4492, host="127.0.0.1")))
     assert c.get("/api/health").json()["legacy_db_configured"] is False
     assert c.get("/api/legacy/summary").status_code == 503
 
 
 def test_settings_defaults():
     s = Settings.from_env({})
-    assert s.port == 4491 and str(s.data_dir) == "data" and s.legacy_db is None
+    assert s.port == 4492 and str(s.data_dir) == "data" and s.legacy_db is None
     s = Settings.from_env({"TRAQFREQ_PORT": "5000", "TRAQFREQ_LEGACY_DB": "/x/jimbodj.sqlite"})
     assert s.port == 5000 and str(s.legacy_db) == "/x/jimbodj.sqlite"

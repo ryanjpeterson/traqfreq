@@ -3,6 +3,11 @@
 All notable changes to this project are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions are CalVer (`YYYY.MM.N`).
 
 ## [Unreleased]
+### Changed
+- Port 4491 → **4492** (4491 is jimbo-dj's `jimbodj-text` analyzer on the Mac mini): settings default, Vite proxy, docs, tests.
+- GitHub repo is private.
+### Added
+- jimbo-deploy: `deploy.json`, README deploy snippet, Forgejo repo `ryanjpeterson/traqfreq`; `origin` pushes to GitHub and Forgejo.
 
 ## [2026.11.1] - 2026-11-22
 ### Added

@@ -9,3 +9,4 @@ node_modules/
 web/dist/
 web/src/styles/tokens.css
 *.tsbuildinfo
+.env

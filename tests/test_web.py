@@ -10,7 +10,7 @@ def _client(tmp_path, with_build=True):
         (web / "assets").mkdir(parents=True)
         (web / "index.html").write_text("<!doctype html><title>traqfreq</title>")
         (web / "assets" / "app.js").write_text("console.log(1)")
-    s = Settings(data_dir=tmp_path / "data", legacy_db=None, port=4491, host="127.0.0.1", web_dir=web)
+    s = Settings(data_dir=tmp_path / "data", legacy_db=None, port=4492, host="127.0.0.1", web_dir=web)
     return TestClient(create_app(s))
 
 

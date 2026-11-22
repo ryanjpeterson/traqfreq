@@ -25,7 +25,7 @@ class Settings:
         return cls(
             data_dir=Path(env.get("TRAQFREQ_DATA_DIR", "./data")),
             legacy_db=Path(legacy) if legacy else None,
-            port=int(env.get("TRAQFREQ_PORT", "4491")),
+            port=int(env.get("TRAQFREQ_PORT", "4492")),
             host=env.get("TRAQFREQ_HOST", "0.0.0.0"),
             web_dir=Path(env.get("TRAQFREQ_WEB_DIR", str(DEFAULT_WEB_DIR))),
         )

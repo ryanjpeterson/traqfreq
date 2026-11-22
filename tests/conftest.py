@@ -25,5 +25,5 @@ def legacy_db(tmp_path) -> Path:
 
 @pytest.fixture
 def client(legacy_db, tmp_path) -> TestClient:
-    s = Settings(data_dir=tmp_path / "data", legacy_db=legacy_db, port=4491, host="127.0.0.1")
+    s = Settings(data_dir=tmp_path / "data", legacy_db=legacy_db, port=4492, host="127.0.0.1")
     return TestClient(create_app(s))
