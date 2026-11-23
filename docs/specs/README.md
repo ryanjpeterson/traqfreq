@@ -30,7 +30,7 @@ Spec: [t5-history.md](t5-history.md).
 Spec: [t9-library.md](t9-library.md).
 - **T9** Library numbers (jimbo-dj's `library.stats`) and the rows behind them. *Done* (API only; the page is T10).
 - **T10** LIBRARY page. *Done.*
-- **T11** Albums, artists, a track.
+- **T11** Albums, artists, a track. *Done.*
 - **T12** Gate script and `GET /api/library/compare`; gate on the Mac mini.
 ## P3 SERVERS
 - T13–T16 track identity · T17 Jellyfin · T18 Navidrome · T19 gate.

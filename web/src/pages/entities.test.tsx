@@ -123,6 +123,7 @@ describe('album page', () => {
     expect(sources.querySelectorAll('.lib-bar[aria-hidden="true"]')).toHaveLength(2);
     expect(within(sources).getAllByRole('link')[1].getAttribute('href')).toBe('/library/plays?album=202&source=spotify');
     expect(within(card).getByText('1 year; most in 2026, 2 plays.')).toBeTruthy();
+    expect(within(card).getByText('first 1 Nov 2026, last 2 Nov 2026')).toBeTruthy();  // in America/Denver
   });
   it('says when there is no such album', async () => {
     api({ '/api/modules': MODULES, '/api/library/album/204': 404 });

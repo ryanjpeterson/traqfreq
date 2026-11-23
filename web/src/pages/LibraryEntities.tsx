@@ -14,6 +14,8 @@ import { TracksLink } from './Library';
 type Nav = { navigate: (href: string) => void };
 
 const day = (iso: string | null | undefined) => (iso ? dayLabel(iso.slice(0, 10)) : '');
+/** A UTC instant's day in the listening time zone (a listen at 05:30 UTC on 1 Jan is 31 Dec in Denver). */
+const dayIn = (iso: string, tz?: string) => dayLabel((tz ? localTime(iso, tz) : iso).slice(0, 10));
 const rule = (text: string | undefined) => `${t('library.rule')}: ${text ?? ''}`;
 const len = (ms: number | null | undefined) => (ms != null ? duration(Math.round(ms / 1000)) : t('entity.none'));
 
@@ -108,7 +110,7 @@ function Listens({ h, query, label, rules, navigate }: { h: Summary; query: stri
     <Card label={label}>
       <div className="stack">
         <ul className="rows" aria-label={label}>
-          <Fact label={t('entity.hist.plays')} sub={h.first && h.last ? tf('entity.hist.span', { first: day(h.first), last: day(h.last) }) : undefined}>
+          <Fact label={t('entity.hist.plays')} sub={h.first && h.last ? tf('entity.hist.span', { first: dayIn(h.first, h.timezone), last: dayIn(h.last, h.timezone) }) : undefined}>
             <PlaysLink n={h.plays} query={query} navigate={navigate} />
           </Fact>
         </ul>

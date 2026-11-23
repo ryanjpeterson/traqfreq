@@ -155,7 +155,7 @@ main > .kit-text.is-body { max-width: 64ch; margin-bottom: 24px; }
 
 /* T11: albums, artists, a track */
 .lib-name { display: grid; justify-items: start; min-width: 0; }
-.lib-name > .kit-button { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: block; }
+.lib-name > .kit-button { padding-left: 0; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: block; }
 .lib-nums { display: inline-flex; flex-wrap: wrap; justify-content: flex-end; gap: 0 4px; }
 .lib-fact { text-align: right; padding: 0 8px; }
 .hist-top-text strong > .kit-button { padding: 0; }
