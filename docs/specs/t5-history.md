@@ -31,7 +31,8 @@ jimbo-dj's repo is private, so a pinned git dependency would need credentials in
 - `GET /api/history/overview`: plays, listens, the three non-play reasons, `adds_up`, matched plays, songs, per source (in PRIORITY order) and per year (in the listening time zone), rules, jimbo-dj's stored plays.
 - `GET /api/history/listens?status=play|too_short|repeat|duplicate&source=&year=&limit=&offset=`: the rows behind each number, newest first, with the rule and its parameters.
 
-### T6: Overview
+### T6 (done): Overview
+Built as below; details in HANDOFF (T6 done). Heatmap levels: 0 = no plays, 1–4 = quarters of the shown days with plays. Rows page: `/history/listens` with the API's filters.
 - Module H page (shown when `TRAQFREQ_MODULES` has H): plays headline, the year heatmap (a year of days, plays per day in the listening time zone), top artists (vendor `Names`, so one name per artist), sources table (listens, plays, too short, repeats, duplicates of whom), years with plays per source, matched %. Every number has a note with its rule and opens its rows (`/api/history/listens`, paged).
 - A stats cache in traqfreq's own database (`TRAQFREQ_DATA_DIR`, never the legacy DB): built summaries keyed by jimbo-dj's meta `history_version` and the time zone, rebuilt when either changes. The overview loops over every play (350,953 listens live), so pages read the cache.
 - Kit only (K1), copy in `strings.json` (W1); phone and tablet layouts; Vitest.

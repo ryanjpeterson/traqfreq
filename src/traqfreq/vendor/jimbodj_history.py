@@ -1,6 +1,6 @@
 """Pure functions vendored from jimbo-dj (ryanjpeterson/jimbo-dj, private), src/jimbodj/history.py at 1d8a7cb.
 
-Copied as is, never edited here: traqfreq must count and match listens exactly the way jimbo-dj does
+Copied as is (constants, band_of, norm_artist, norm_title, match_key, Names), never edited here: traqfreq must count and match listens exactly the way jimbo-dj does
 until HISTORY's cut-over (P6). To update: copy the same names again from jimbo-dj, bump VENDORED_FROM,
 and run tests/test_vendor.py (it checks these against the match keys jimbo-dj stored in the fixture).
 Why vendored, not a git dependency: jimbo-dj's repo is private (HANDOFF, open question 3).
@@ -9,7 +9,9 @@ from __future__ import annotations
 
 import functools
 import re
+import sqlite3
 import unicodedata
+from collections import Counter, defaultdict
 
 VENDORED_FROM = "jimbo-dj 1d8a7cb src/jimbodj/history.py"
 
@@ -70,3 +72,52 @@ def norm_title(s: str | None) -> str:
 
 def match_key(artist: str | None, title: str | None) -> str:
     return f"{norm_artist(artist)}|{norm_title(title)}"
+
+
+class Names:
+    """One name for everything heard under one normalised key, whichever source spelled it how: an artist
+    (norm_artist) is the library's spelling when it's in Plex, otherwise the most played one; a song
+    (match_key) is the library title of its default copy, otherwise the most played; an album (norm artist
+    + norm title) the library's, otherwise the most played. So "Death from Above 1979" (Apple Music, Last.fm)
+    and "Death From Above 1979" (Spotify) are one artist everywhere history is counted."""
+
+    def __init__(self, con: sqlite3.Connection):
+        lib: dict[str, Counter] = defaultdict(Counter)
+        lib_albums: dict[tuple, str] = {}
+        for a, al, n in con.execute("SELECT artist, album, COUNT(*) FROM tracks WHERE removed_at IS NULL GROUP BY artist, album"):
+            if a:
+                lib[norm_artist(a)][a] += n
+                if al:
+                    lib_albums.setdefault((norm_artist(a), norm_title(al)), al)
+        for ta, n in con.execute("SELECT track_artist, COUNT(*) FROM tracks WHERE removed_at IS NULL AND track_artist IS NOT NULL "
+                                 "AND track_artist != artist GROUP BY track_artist"):
+            k = norm_artist(ta)
+            if k not in lib and not re.search(r"(?i)\s(feat\.?|ft\.?|featuring)\s", ta):
+                lib[k][ta] += n
+        heard: dict[str, Counter] = defaultdict(Counter)
+        albums: dict[tuple, Counter] = defaultdict(Counter)
+        for a, al, n in con.execute("SELECT artist, album, COUNT(*) FROM listens WHERE counted=1 GROUP BY artist, album"):
+            k = norm_artist(a)
+            heard[k][a] += n
+            if al:
+                albums[(k, norm_title(al))][al] += n
+        self.artists = {k: lib[k].most_common(1)[0][0] if k in lib else c.most_common(1)[0][0] for k, c in heard.items()}
+        self.albums = {k: lib_albums.get(k) or c.most_common(1)[0][0] for k, c in albums.items()}
+        titles: dict[str, Counter] = defaultdict(Counter)
+        lib_titles: dict[str, str] = {}
+        for mk, t, n, lt in con.execute(
+                "SELECT l.match_key, l.title, COUNT(*), t.title FROM listens l LEFT JOIN listen_matches m ON m.match_key = l.match_key "
+                "LEFT JOIN tracks t ON t.rating_key = m.rating_key WHERE l.counted=1 GROUP BY l.match_key, l.title"):
+            titles[mk][t] += n
+            if lt:
+                lib_titles[mk] = lt
+        self.titles = {k: lib_titles.get(k) or c.most_common(1)[0][0] for k, c in titles.items()}
+
+    def artist(self, raw: str | None) -> str | None:
+        return self.artists.get(norm_artist(raw), raw)
+
+    def title(self, mk: str, raw: str | None) -> str | None:
+        return self.titles.get(mk, raw)
+
+    def album(self, artist: str | None, raw: str | None) -> str | None:
+        return self.albums.get((norm_artist(artist), norm_title(raw)), raw) if raw else raw

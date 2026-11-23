@@ -32,6 +32,7 @@ const ACTIVITY = {
 /** Stub fetch with fixed answers per URL (invented rows; never real data). */
 function api(answers: Record<string, unknown>) {
   vi.stubGlobal('fetch', vi.fn(async (url: string) => {
+    if (answers[url] === 404) return { ok: false, status: 404, json: async () => ({}) };
     if (!(url in answers) || answers[url] === 503) return { ok: false, status: 503, json: async () => ({}) };
     return { ok: true, status: 200, json: async () => answers[url] };
   }));
@@ -96,16 +97,17 @@ describe('nav order (L1, L2, L3)', () => {
 
 describe('navigation', () => {
   it('nav items route client-side and set aria-current', async () => {
-    api({ '/api/modules': { modules: switches('H') }, '/api/legacy/summary': SUMMARY, '/api/legacy/activity': ACTIVITY });
+    api({ '/api/modules': { modules: switches('H') }, '/api/legacy/summary': SUMMARY, '/api/legacy/activity': ACTIVITY,
+      '/api/history/overview': 404 });
     open('/');
     const user = userEvent.setup();
     await user.click(await within(topNav()).findByRole('link', { name: 'HISTORY' }));
     expect(window.location.pathname).toBe('/history');
     expect(within(topNav()).getByRole('link', { name: 'HISTORY' }).getAttribute('aria-current')).toBe('page');
-    expect(screen.getByRole('heading', { level: 2, name: 'HISTORY' })).toBeTruthy();
+    expect(await screen.findByRole('heading', { level: 2, name: /^HISTORY/ })).toBeTruthy();
     expect(document.title).toBe('HISTORY · traqfreq');
-    // Empty state points to SETUP (D1).
-    await user.click(screen.getByRole('link', { name: 'Open SETUP' }));
+    // No listens table: the empty state points to SETUP (D1).
+    await user.click(await screen.findByRole('link', { name: 'Open SETUP' }));
     expect(window.location.pathname).toBe('/setup');
     expect(await screen.findByText('Readable')).toBeTruthy();
   });

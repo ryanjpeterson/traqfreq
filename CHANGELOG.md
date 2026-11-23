@@ -4,6 +4,10 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 ### Added
+- T6: HISTORY page (when `TRAQFREQ_MODULES` has H): plays, every listen counted once, matched %, the year heatmap (HISTORY blue at five levels, with a summary, legend and list by month), top artists (one name per artist, jimbo-dj's `Names`), sources and years. Every number links to its rows at `/history/listens` (paged, with the rule and why each listen is there).
+- T6: stats cache in traqfreq's own database (`TRAQFREQ_DATA_DIR/traqfreq.sqlite`), keyed by jimbo-dj's history, match and library versions and the time zone.
+- T6: `GET /api/history/heatmap?year=`; `/api/history/overview` adds top artists and reads the cache; `/api/history/listens` adds `period`, `artist`, `matched`.
+- T6: heat tokens (`heat` in `berlin.json` → `--heat-0…4`).
 - T5 deployed: on live data SETUP's four counts and the history overview (every year, every source) equal jimbo-dj's.
 - T5: `GET /api/history/overview` (plays, listens, too short / repeats / duplicates, by source and by year in jimbo-dj's listening time zone, matched plays, songs, jimbo-dj's stored plays) and `GET /api/history/listens` (the rows behind each number). Plays are jimbo-dj's `counted = 1`; every listen is in exactly one bucket, checked on each read (`adds_up`).
 - `/api/legacy/summary` adds `measures`: tracks, albums, artists and plays counted jimbo-dj's way (live tracks, distinct album and artist keys of live tracks, counted listens), each with its SQL rule and jimbo-dj's stored value (`stats` table) to compare. `counts` (raw rows) unchanged.

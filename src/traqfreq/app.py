@@ -6,7 +6,9 @@ from fastapi import FastAPI, HTTPException
 from fastapi.staticfiles import StaticFiles
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
-from . import __version__, history, legacy
+from datetime import datetime
+
+from . import __version__, history, legacy, store
 from .settings import CORE, MODULES, Settings
 
 
@@ -56,16 +58,38 @@ def create_app(settings: Settings | None = None) -> FastAPI:
                 raise HTTPException(400, str(e))
         return read_legacy(run)
 
+    def history_summary(conn) -> tuple[dict, dict]:
+        """The built summary, from traqfreq's stats cache (its own database), rebuilt when jimbo-dj's data or
+        the time zone changes."""
+        return store.cached(settings.data_dir, "history.summary", history.cache_key(conn, settings.tz),
+                            lambda: history.summary(conn, settings.tz))
+
     @app.get("/api/history/overview")
     def history_overview() -> dict:
-        """Plays and the listens that aren't plays, by source and year, counted the way jimbo-dj counts them."""
-        return read_history(lambda c: history.overview(c, settings.tz))
+        """Plays and the listens that aren't plays, by source and year, top artists, counted the way jimbo-dj
+        counts them. Read from the stats cache."""
+        def run(conn):
+            value, info = history_summary(conn)
+            return {**value["overview"], "cache": info}
+        return read_history(run)
+
+    @app.get("/api/history/heatmap")
+    def history_heatmap(year: int | None = None) -> dict:
+        """Plays per day for a year of days (the last 53 weeks, or one calendar year), with five levels."""
+        def run(conn):
+            value, info = history_summary(conn)
+            tz = history.listen_tz(conn, settings.tz)
+            return {**history.heatmap(value["days"], tz, year, datetime.now(tz).date()), "cache": info}
+        return read_history(run)
 
     @app.get("/api/history/listens")
     def history_listens(status: str = "play", source: str | None = None, year: int | None = None,
+                        period: str | None = None, artist: str | None = None, matched: bool | None = None,
                         limit: int = 50, offset: int = 0) -> dict:
-        """The rows behind each overview number (status play, too_short, repeat or duplicate)."""
-        return read_history(lambda c: history.listens(c, status, source or None, year, limit, offset, settings.tz))
+        """The rows behind each HISTORY number (status play, too_short, repeat or duplicate; optional source,
+        year, period YYYY / YYYY-MM / YYYY-MM-DD, artist key, matched)."""
+        return read_history(lambda c: history.listens(c, status, source or None, year, limit, offset, settings.tz,
+                                                      period or None, artist or None, matched))
 
     @app.get("/api/modules")
     def modules() -> dict:
