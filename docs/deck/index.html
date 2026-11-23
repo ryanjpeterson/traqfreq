@@ -116,14 +116,14 @@ addEventListener('resize', fit); fit();
 <div class="frame"><section id="status">
 <div class="bar"></div>
 <p class="barlabel">Status</p>
-<div class="barcode"><p>16 / 28</p></div>
+<div class="barcode"><p>17 / 28</p></div>
 <h2 class="head">Where the build stands</h2>
 <table class="tbl">
 <tr class="hd"><th style="width:8%">Phase</th><th style="width:30%">What</th><th style="width:12%">Sessions</th><th style="width:10%">Done</th><th style="width:14%">Status</th><th style="width:26%">Gate</th></tr>
 <tr><td>P0</td><td>Shell: repo, tokens, kit, nav, SETUP</td><td>4</td><td>4</td><td>Done</td><td>Runs on the Mac mini at :4492</td></tr>
 <tr><td>P1</td><td>HISTORY, read-only</td><td>4</td><td>4</td><td>Done</td><td>Counts match jimbo-dj</td></tr>
 <tr><td>P2</td><td>LIBRARY, read-only</td><td>4</td><td>4</td><td>Done</td><td>Counts match jimbo-dj</td></tr>
-<tr class="now"><td>P3</td><td>SERVERS: identity, Jellyfin, Navidrome</td><td>7</td><td>4</td><td>In progress</td><td>One song, three servers</td></tr>
+<tr class="now"><td>P3</td><td>SERVERS: identity, Jellyfin, Navidrome</td><td>7</td><td>5</td><td>In progress</td><td>One song, three servers</td></tr>
 <tr><td>P4</td><td>TAGS, read-only</td><td>4</td><td>0</td><td>Not started</td><td>Ladder and per-track tags right</td></tr>
 <tr><td>P5</td><td>PLAYLISTS: Junction preview</td><td>5</td><td>0</td><td>Not started</td><td>Same tracks as jimbo-dj</td></tr>
 <tr><td>P6</td><td>Cut-overs, one writer at a time</td><td>~15</td><td>0</td><td>Not started</td><td>Each switched off in jimbo-dj</td></tr>
@@ -229,7 +229,7 @@ addEventListener('resize', fit); fit();
 <div class="frame"><section id="p3">
 <div class="bar"></div>
 <p class="barlabel">Phase P3 · SERVERS</p>
-<div class="barcode"><p>4 / 7</p></div>
+<div class="barcode"><p>5 / 7</p></div>
 <div class="row"><div class="badge L"><p>P3</p></div><h2 class="head">One song, any server</h2></div>
 <div class="cols2">
 <table class="tbl">
@@ -238,7 +238,7 @@ addEventListener('resize', fit); fit();
 <tr><td>T14</td><td>Matching on snapshots: file, MusicBrainz ID, tags; one to one; a reason for every miss</td><td>Done</td></tr>
 <tr><td>T15</td><td>SERVERS page on SETUP; “On servers” on the track page</td><td>Done</td></tr>
 <tr><td>T16</td><td>Reading servers: GET-only client, snapshot refresh, their plays shown beside</td><td>Done</td></tr>
-<tr><td>T17</td><td>Jellyfin, read-only</td><td>To do</td></tr>
+<tr><td>T17</td><td>Jellyfin, read-only: server name and version, music folders, every audio item, one user’s play counts</td><td>Done</td></tr>
 <tr><td>T18</td><td>Navidrome, read-only, over OpenSubsonic</td><td>To do</td></tr>
 <tr><td>T19</td><td>Gate: one song across Plex, Jellyfin and Navidrome</td><td>To do</td></tr>
 </table>
@@ -356,7 +356,8 @@ addEventListener('resize', fit); fit();
 <h2 class="head">What happened, newest first</h2>
 <table class="tbl">
 <tr class="hd"><th style="width:16%">Date</th><th style="width:16%">Session</th><th style="width:68%">What</th></tr>
-<tr class="now"><td>Next</td><td>Next: T17</td><td>Jellyfin: fill its reader (System/Info, VirtualFolders, paged /Items, the user’s play counts), refresh on live data and check the matches; needs Jellyfin’s URL and API key in the deploy’s .env</td></tr>
+<tr class="now"><td>Next</td><td>Next: T18</td><td>Navidrome: fill its reader over Subsonic (ping, music folders, every song through search3, OpenSubsonic fields), refresh on live data and check the matches; needs its URL, a user and Report Real Path. Jellyfin’s live check waits for its URL and key in the deploy’s .env</td></tr>
+<tr><td>2026-11-23</td><td>T17</td><td>PR #16 on branch claude/t17-jellyfin: Jellyfin’s reader, GET only (System/Info, music folders, every audio item page by page, one named user’s play counts); server name, version and user on SERVERS; tested on invented answers, not yet on live data (no URL or key in .env); 159 API and 155 web tests</td></tr>
 <tr><td>2026-11-23</td><td>T16</td><td>PR #14 merged (bf15089), docs synced in PR #15: the read-only client (GET only, timeouts, paging, no retries, the server’s own errors, secrets never shown); snapshot refresh writing only traqfreq’s database, one at a time, each logged with its counts; a refresh button per server on SERVERS; reader hooks for T17 and T18; 152 API and 154 web tests</td></tr>
 <tr><td>2026-11-23</td><td>T15</td><td>PR #13 on branch claude/t15-servers-page: SERVERS page on SETUP (three servers with snapshot age, identity counts, matches by tier and reason, each opening its rows; a song’s three IDs); “On servers” on the track page, each server’s plays beside, never added; rating_key filter; 138 API and 152 web tests</td></tr>
 <tr><td>2026-11-23</td><td>T14</td><td>PR #12 on branch claude/t14-snapshot-matching: snapshots table and one item shape for Jellyfin and Navidrome; matching by file, MusicBrainz ID, tags, one to one, one reason for every miss; /api/servers/matches on invented snapshots; 136 API and 139 web tests</td></tr>
@@ -365,8 +366,7 @@ addEventListener('resize', fit); fit();
 <tr><td>2026-11-23</td><td>T12</td><td>PR #9 on branch claude/t12-library-gate: P2 gate script, /api/library/compare and the compare page; jimbo-dj’s library.stats and charts (files, time, place, keys, sound) vendored; gate card on LIBRARY and SETUP; fixture passes with one explained difference; 114 API and 137 web tests</td></tr>
 <tr><td>2026-11-22</td><td>T11</td><td>PR #7 on branch claude/t11-entities: album and artist lists, album, artist and track pages and their listens, counted with jimbo-dj’s own page code (vendored); no album art (it comes from Plex); merged. PR #8: LIBRARY play history from every source (Plex, Last.fm, Spotify, Apple Music) beside jimbo-dj’s Plex-only numbers</td></tr>
 <tr><td>2026-11-22</td><td>T9, T10</td><td>Library stats and tracks API counted with jimbo-dj’s own library.stats (vendored), plays as the larger of Plex and history; LIBRARY page (counts, files, Plex plays, both analyses, paths) with every number opening its rows; T9 live: 48 of 48 fields equal jimbo-dj’s</td></tr>
-<tr><td>2026-11-22</td><td>P1 gate</td><td>Passed: T8 merged and deployed; all 41 stored HISTORY rows (overview, every Wrapped), 862 of 862 numbers, equal jimbo-dj’s, all fresh</td></tr>
-<tr><td>2026-11-22</td><td>T8</td><td>Pushed on branch claude/t8-years-gate: Years, Wrapped (year, month, day), On this day, Top by plays or minutes, all as jimbo-dj counts them; P1 gate script and compare page; 81 API and 97 web tests</td></tr>
+<tr><td>2026-11-22</td><td>T8, P1 gate</td><td>Years, Wrapped (year, month, day), On this day, Top by plays or minutes, as jimbo-dj counts them; P1 gate script and compare page. Gate passed: all 41 stored HISTORY rows, 862 of 862 numbers, equal jimbo-dj’s</td></tr>
 <tr><td>2026-11-22</td><td>T5–T7</td><td>Deployed from main: SETUP and the history API count as jimbo-dj does (52,779 tracks, 167,180 plays, each play once), jimbo-dj’s functions vendored; HISTORY page with a stats cache, equal to jimbo-dj’s; Counted once page and read-only checks</td></tr>
 <tr><td>2026-11-15–22</td><td>Planning, T1–T4, P0 gate</td><td>Pitch deck, ten directions, Berlin · Gelb beside jimbo-dj; repo scaffold and web shell; the eleven kit components; nav, map home, read-only SETUP and compose on :4492; GitHub public with a Forgejo pull mirror; P0 gate passed: runs on the Mac mini from main, reads jimbo-dj read-only</td></tr>
 </table>
