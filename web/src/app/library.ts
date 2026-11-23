@@ -101,7 +101,7 @@ export function tracksHref(query: string, extra?: Record<string, string>): strin
 export const fmt1 = (n: number) => n.toLocaleString('en', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
 export const pct = (n: number) => tf('unit.pct', { n: fmt1(n) });
 
-type Unit = 'track' | 'play' | 'album' | 'artist' | 'folder';
+type Unit = 'track' | 'play' | 'album' | 'artist' | 'folder' | 'year' | 'source';
 export function count(n: number, unit: Unit): string {
   return `${fmt(n)} ${t(`unit.${unit}.${n === 1 ? 'one' : 'other'}` as StringKey)}`;
 }

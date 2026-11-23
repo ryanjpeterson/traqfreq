@@ -72,6 +72,7 @@ export function KitBoard() {
           <StationRow position={1} module="H" title={b('board.sampleTitle')} artist={b('board.sampleArtist')} musicalKey={b('board.sampleKey')} bpm={124} why={b('board.sampleWhy')} />
           <StationRow position={2} module="T" title={b('board.sampleTitle')} artist={b('board.sampleArtist')} bpm={122} why={b('board.leverTagsDetail')} defaultOpen />
           <StationRow position={3} module="F" title={b('board.sampleTitle')} artist={b('board.sampleArtist')} why={b('board.leverDiscoverDetail')} />
+          <StationRow position={4} module="L" title={b('board.sampleTitle')} artist={b('board.sampleArtist')} musicalKey={b('board.sampleKey')} bpm={128} why={b('board.sampleWhy')} href="#track" onNavigate={() => undefined} />
         </ol>
       </section>
 

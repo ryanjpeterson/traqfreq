@@ -9,7 +9,7 @@ export const MODULE_PATH: Record<ModuleId, string> = {
 export type Route =
   | { page: 'map' }
   | { page: 'search' }
-  | { page: 'module'; module: ModuleId; sub?: HistorySub | LibrarySub }
+  | { page: 'module'; module: ModuleId; sub?: HistorySub | LibrarySub; key?: number }
   | { page: 'notFound' };
 
 /** HISTORY's rows page: the listens behind a number (query string = the filters). */
@@ -31,13 +31,22 @@ const HISTORY_SUBS: Record<string, HistorySub> = {
 
 /** LIBRARY's rows page (T10): the tracks behind a number (query string = the filters of /api/library/tracks). */
 export const LIBRARY_TRACKS = '/library/tracks';
-export type LibrarySub = 'tracks';
+/** T11: the album and artist lists, the listens behind a page's history numbers, and /library/album|artist|track/<key>. */
+export const LIBRARY_ALBUMS = '/library/albums';
+export const LIBRARY_ARTISTS = '/library/artists';
+export const LIBRARY_PLAYS = '/library/plays';
+export type LibrarySub = 'tracks' | 'albums' | 'artists' | 'plays' | 'album' | 'artist' | 'track';
+const LIBRARY_SUBS: Record<string, LibrarySub> = {
+  [LIBRARY_TRACKS]: 'tracks', [LIBRARY_ALBUMS]: 'albums', [LIBRARY_ARTISTS]: 'artists', [LIBRARY_PLAYS]: 'plays',
+};
 
 export function parseRoute(pathname: string): Route {
   const path = pathname.replace(/[?#].*$/, '').replace(/\/+$/, '') || '/';
   if (path === '/') return { page: 'map' };
   if (path === '/search') return { page: 'search' };
-  if (path === LIBRARY_TRACKS) return { page: 'module', module: 'L', sub: 'tracks' };
+  if (LIBRARY_SUBS[path]) return { page: 'module', module: 'L', sub: LIBRARY_SUBS[path] };
+  const entity = /^\/library\/(album|artist|track)\/(\d+)$/.exec(path);
+  if (entity) return { page: 'module', module: 'L', sub: entity[1] as LibrarySub, key: Number(entity[2]) };
   if (HISTORY_SUBS[path]) return { page: 'module', module: 'H', sub: HISTORY_SUBS[path] };
   const module = MODULE_IDS.find((m) => MODULE_PATH[m] === path);
   return module ? { page: 'module', module } : { page: 'notFound' };

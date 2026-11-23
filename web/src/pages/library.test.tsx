@@ -102,9 +102,10 @@ describe('LIBRARY page', () => {
     const head = screen.getByRole('list', { name: 'The library in numbers' });
     expect(within(head).getByText(/COUNT\(DISTINCT album_key\)/)).toBeTruthy();
     const links = within(head).getAllByRole('link');
-    expect(links.map((a) => a.textContent)).toEqual(['3 albums, show the tracks', '3 artists, show the tracks',
+    // T11: albums and artists open their lists; hours and size open the tracks.
+    expect(links.map((a) => a.textContent)).toEqual(['3 albums, all albums', '3 artists, all artists',
       '0.4 h, show the tracks', '0.1 GB, show the tracks']);
-    expect(links.every((a) => a.getAttribute('href') === '/library/tracks')).toBe(true);
+    expect(links.map((a) => a.getAttribute('href'))).toEqual(['/library/albums', '/library/artists', '/library/tracks', '/library/tracks']);
   });
 
   it('draws codecs, containers and bitrate as lists with share bars and a summary (L6)', async () => {

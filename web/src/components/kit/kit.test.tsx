@@ -183,6 +183,14 @@ describe('StationRow', () => {
     expect(screen.getByText('Tagged.').hidden).toBe(false);
     expect(screen.getByRole('listitem').textContent).not.toContain('BPM');
   });
+  it('the title can be a link that navigates in the app (T11)', async () => {
+    const go = vi.fn();
+    render(<ol><StationRow {...row} href="/library/track/101" onNavigate={go} /></ol>);
+    const a = screen.getByRole('link', { name: 'A title' });
+    expect(a.getAttribute('href')).toBe('/library/track/101');
+    await userEvent.click(a);
+    expect(go).toHaveBeenCalledWith('/library/track/101');
+  });
 });
 
 describe('Text', () => {

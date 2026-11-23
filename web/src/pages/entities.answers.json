@@ -1,0 +1,542 @@
+{
+ "_note": "GET answers from traqfreq on scripts/make_fixture.py (invented rows, never real data), for entities.test.tsx.",
+ "/api/library/albums?sort=plays": {
+  "kind": "albums",
+  "sort": "plays",
+  "total": 3,
+  "limit": 50,
+  "offset": 0,
+  "items": [
+   {
+    "key": 201,
+    "name": "Ringbahn",
+    "artist": "Kollektiv Nord",
+    "artist_key": 301,
+    "tracks": 2,
+    "plays": 4,
+    "added": "2025-03-01T10:00:00Z",
+    "year": 2019,
+    "rows": "album_key=201"
+   },
+   {
+    "key": 202,
+    "name": "Low Tide Radio",
+    "artist": "The Paper Lanterns",
+    "artist_key": 302,
+    "tracks": 2,
+    "plays": 3,
+    "added": "2026-06-12T09:00:00Z",
+    "year": 2021,
+    "rows": "album_key=202"
+   },
+   {
+    "key": 203,
+    "name": "Quiet Engines",
+    "artist": "Ada Vey",
+    "artist_key": 303,
+    "tracks": 1,
+    "plays": 1,
+    "added": "2026-09-20T15:30:00Z",
+    "year": 2023,
+    "rows": "album_key=203"
+   }
+  ],
+  "rules": {
+   "albums": "COUNT(DISTINCT album_key) WHERE removed_at IS NULL (jimbo-dj's Library → Albums, browse._grouped)",
+   "artists": "COUNT(DISTINCT artist_key) WHERE removed_at IS NULL (jimbo-dj's Library → Artists, browse._grouped)",
+   "tracks": "COUNT(*) of its tracks WHERE removed_at IS NULL",
+   "plays": "SUM(plays_of) over its live tracks; plays_of = max(Plex view_count, history plays), never the sum (jimbo-dj's plays_of)",
+   "added": "MAX(added_at) of its live tracks (Plex)",
+   "year": "MAX(year) of its live tracks (Plex's year, as jimbo-dj's list shows it)",
+   "sort.plays": "plays, most first; ties: more tracks first (jimbo-dj's order)",
+   "sort.added": "newest added first (jimbo-dj's order)",
+   "sort.name": "name A to Z, ignoring case (traqfreq's order)",
+   "sort.year": "newest year first, no year last (traqfreq's order)",
+   "total": "COUNT(DISTINCT album_key) WHERE removed_at IS NULL (jimbo-dj's Library → Albums, browse._grouped)"
+  }
+ },
+ "/api/library/artists?sort=name": {
+  "kind": "artists",
+  "sort": "name",
+  "total": 3,
+  "limit": 50,
+  "offset": 0,
+  "items": [
+   {
+    "key": 303,
+    "name": "Ada Vey",
+    "artist": "Ada Vey",
+    "artist_key": 303,
+    "tracks": 1,
+    "plays": 1,
+    "added": "2026-09-20T15:30:00Z",
+    "year": 2023,
+    "rows": "artist_key=303&name=Ada+Vey"
+   },
+   {
+    "key": 301,
+    "name": "Kollektiv Nord",
+    "artist": "Kollektiv Nord",
+    "artist_key": 301,
+    "tracks": 2,
+    "plays": 4,
+    "added": "2025-03-01T10:00:00Z",
+    "year": 2019,
+    "rows": "artist_key=301&name=Kollektiv+Nord"
+   },
+   {
+    "key": 302,
+    "name": "The Paper Lanterns",
+    "artist": "The Paper Lanterns",
+    "artist_key": 302,
+    "tracks": 2,
+    "plays": 3,
+    "added": "2026-06-12T09:00:00Z",
+    "year": 2021,
+    "rows": "artist_key=302&name=The+Paper+Lanterns"
+   }
+  ],
+  "rules": {
+   "albums": "COUNT(DISTINCT album_key) WHERE removed_at IS NULL (jimbo-dj's Library → Albums, browse._grouped)",
+   "artists": "COUNT(DISTINCT artist_key) WHERE removed_at IS NULL (jimbo-dj's Library → Artists, browse._grouped)",
+   "tracks": "COUNT(*) of its tracks WHERE removed_at IS NULL",
+   "plays": "SUM(plays_of) over its live tracks; plays_of = max(Plex view_count, history plays), never the sum (jimbo-dj's plays_of)",
+   "added": "MAX(added_at) of its live tracks (Plex)",
+   "year": "MAX(year) of its live tracks (Plex's year, as jimbo-dj's list shows it)",
+   "sort.plays": "plays, most first; ties: more tracks first (jimbo-dj's order)",
+   "sort.added": "newest added first (jimbo-dj's order)",
+   "sort.name": "name A to Z, ignoring case (traqfreq's order)",
+   "sort.year": "newest year first, no year last (traqfreq's order)",
+   "total": "COUNT(DISTINCT artist_key) WHERE removed_at IS NULL (jimbo-dj's Library → Artists, browse._grouped)"
+  }
+ },
+ "/api/library/album/202": {
+  "album": {
+   "album_key": 202,
+   "slug": "the-paper-lanterns-low-tide-radio",
+   "title": "Low Tide Radio",
+   "artist": "The Paper Lanterns",
+   "artist_key": 302,
+   "year": 2020,
+   "released": "2021-02-05",
+   "label": "Harbour House",
+   "mbid": "00000000-0000-4000-8000-000000000202",
+   "plex_year": 2021,
+   "musicbrainz": {
+    "first_release": "2020-10-01",
+    "date": "2021-02-05",
+    "country": "GB",
+    "labels": [
+     "Harbour House"
+    ],
+    "type": "Album",
+    "secondary": []
+   }
+  },
+  "tracks": [
+   {
+    "rating_key": 104,
+    "title": "Static Gulls",
+    "artist": "The Paper Lanterns",
+    "artist_key": 302,
+    "album": "Low Tide Radio",
+    "album_key": 202,
+    "year": 2021,
+    "duration_ms": 245000,
+    "disc": 1,
+    "track_no": 2,
+    "view_count": 2,
+    "track_artist": null,
+    "bpm": null,
+    "camelot": null,
+    "key": null,
+    "scale": null,
+    "moods": [],
+    "plays": 2,
+    "versions": 1
+   },
+   {
+    "rating_key": 103,
+    "title": "Harbour Lights",
+    "artist": "The Paper Lanterns",
+    "artist_key": 302,
+    "album": "Low Tide Radio",
+    "album_key": 202,
+    "year": 2021,
+    "duration_ms": 221000,
+    "disc": 2,
+    "track_no": 1,
+    "view_count": 0,
+    "track_artist": null,
+    "bpm": 104.0,
+    "camelot": "5B",
+    "key": "G",
+    "scale": "major",
+    "moods": [
+     "relaxed",
+     "happy"
+    ],
+    "plays": 1,
+    "versions": 1
+   }
+  ],
+  "plays": 3,
+  "minutes": 8,
+  "history": {
+   "plays": 2,
+   "first": "2026-11-01T20:21:00Z",
+   "last": "2026-11-02T08:10:00Z",
+   "sources": [
+    {
+     "source": "plex",
+     "name": "Plex",
+     "plays": 1
+    },
+    {
+     "source": "spotify",
+     "name": "Spotify",
+     "plays": 1
+    }
+   ],
+   "years": [
+    {
+     "year": 2026,
+     "plays": 2,
+     "by_source": {
+      "plex": 1,
+      "spotify": 1
+     }
+    }
+   ],
+   "recent": [
+    {
+     "at": "2026-11-02T08:10:00Z",
+     "source": "spotify",
+     "name": "Spotify",
+     "rating_key": 104,
+     "local": "2026-11-02 01:10"
+    },
+    {
+     "at": "2026-11-01T20:21:00Z",
+     "source": "plex",
+     "name": "Plex",
+     "rating_key": 103,
+     "local": "2026-11-01 13:21"
+    }
+   ],
+   "timezone": "America/Denver"
+  },
+  "rows": {
+   "tracks": "album_key=202",
+   "plays": "album=202"
+  },
+  "rules": {
+   "tracks": "tracks WHERE album_key = ? AND removed_at IS NULL ORDER BY disc, track_no, title",
+   "year": "MusicBrainz's first release year, else Plex's release date, else Plex's year (insights._release_years)",
+   "minutes": "SUM(duration_ms) / 60 000, rounded",
+   "plays": "SUM(plays_of) over its tracks; plays_of = max(Plex view_count, history plays), never the sum (jimbo-dj's plays_of)",
+   "history": "counted listens of these exact copies: those that say they were this copy (listens.rating_key), and the rest by the song's default copy (listen_matches); pages._keys_where",
+   "sources": "counted listens per source, in jimbo-dj's source order",
+   "years": "counted listens per year, in the listening time zone",
+   "versions": "other live copies of the same song: the same artist (track artist first) and title without its version, like (Live) or - Remastered (songs.Index)"
+  }
+ },
+ "/api/library/artist/302": {
+  "artist": {
+   "artist_key": 302,
+   "name": "The Paper Lanterns",
+   "slug": "the-paper-lanterns",
+   "mbid": null
+  },
+  "tracks": 2,
+  "albums": [
+   {
+    "album_key": 202,
+    "title": "Low Tide Radio",
+    "artist": "The Paper Lanterns",
+    "year": 2020,
+    "tracks": 2,
+    "plays": 3,
+    "appears_on": false,
+    "rows": "album_key=202"
+   }
+  ],
+  "top_tracks": [
+   {
+    "rating_key": 104,
+    "title": "Static Gulls",
+    "artist": "The Paper Lanterns",
+    "artist_key": 302,
+    "album": "Low Tide Radio",
+    "album_key": 202,
+    "year": 2021,
+    "duration_ms": 245000,
+    "disc": 1,
+    "track_no": 2,
+    "view_count": 2,
+    "track_artist": null,
+    "bpm": null,
+    "camelot": null,
+    "key": null,
+    "scale": null,
+    "moods": [],
+    "plays": 2,
+    "versions": 1,
+    "albums": 1
+   },
+   {
+    "rating_key": 103,
+    "title": "Harbour Lights",
+    "artist": "The Paper Lanterns",
+    "artist_key": 302,
+    "album": "Low Tide Radio",
+    "album_key": 202,
+    "year": 2021,
+    "duration_ms": 221000,
+    "disc": 2,
+    "track_no": 1,
+    "view_count": 0,
+    "track_artist": null,
+    "bpm": 104.0,
+    "camelot": "5B",
+    "key": "G",
+    "scale": "major",
+    "moods": [
+     "relaxed",
+     "happy"
+    ],
+    "plays": 1,
+    "versions": 1,
+    "albums": 1
+   }
+  ],
+  "plays": 3,
+  "history": {
+   "plays": 2,
+   "first": "2026-11-01T20:21:00Z",
+   "last": "2026-11-02T08:10:00Z",
+   "sources": [
+    {
+     "source": "plex",
+     "name": "Plex",
+     "plays": 1
+    },
+    {
+     "source": "spotify",
+     "name": "Spotify",
+     "plays": 1
+    }
+   ],
+   "years": [
+    {
+     "year": 2026,
+     "plays": 2,
+     "by_source": {
+      "plex": 1,
+      "spotify": 1
+     }
+    }
+   ],
+   "songs": 2,
+   "top_songs": [
+    {
+     "title": "Harbour Lights",
+     "artist": "The Paper Lanterns",
+     "rating_key": 103,
+     "album_key": 202,
+     "plays": 1
+    },
+    {
+     "title": "Static Gulls",
+     "artist": "Paper Lanterns",
+     "rating_key": 104,
+     "album_key": 202,
+     "plays": 1
+    }
+   ],
+   "recent": [
+    {
+     "at": "2026-11-02T08:10:00Z",
+     "source": "spotify",
+     "name": "Spotify",
+     "rating_key": 104,
+     "local": "2026-11-02 01:10"
+    },
+    {
+     "at": "2026-11-01T20:21:00Z",
+     "source": "plex",
+     "name": "Plex",
+     "rating_key": 103,
+     "local": "2026-11-01 13:21"
+    }
+   ],
+   "timezone": "America/Denver"
+  },
+  "rows": {
+   "tracks": "artist_key=302&name=The+Paper+Lanterns",
+   "plays": "artist=302"
+  },
+  "rules": {
+   "tracks": "tracks WHERE (artist_key = ? OR track_artist = its name, ignoring case) AND removed_at IS NULL (pages._library_of: its albums, and its songs on other people's)",
+   "albums": "the albums of those tracks, oldest first (year as album.year); appears on = someone else's album",
+   "plays": "SUM(plays_of) over those tracks; plays_of = max(Plex view_count, history plays), never the sum (jimbo-dj's plays_of)",
+   "top": "its 10 most played songs, each once: every copy's plays_of added up, shown as the original copy (pages._top_songs)",
+   "history": "counted listens whose match key starts with its normalised name, plus those matched to its tracks (pages._artist_where)",
+   "sources": "counted listens per source, in jimbo-dj's source order",
+   "years": "counted listens per year, in the listening time zone"
+  }
+ },
+ "/api/library/track/101": {
+  "track": {
+   "rating_key": 101,
+   "title": "Westkreuz",
+   "artist": "Kollektiv Nord",
+   "track_artist": null,
+   "album": "Ringbahn",
+   "album_key": 201,
+   "artist_key": 301,
+   "disc": 1,
+   "track_no": 1,
+   "year": 2019,
+   "duration_ms": 312000,
+   "plex_path": "/music/Kollektiv Nord/Ringbahn/01 Westkreuz.flac",
+   "local_path": "/srv/music/Kollektiv Nord/Ringbahn/01 Westkreuz.flac",
+   "parts": 1,
+   "file_size": 39400000,
+   "container": "flac",
+   "codec": "flac",
+   "bitrate": 1011,
+   "bit_depth": null,
+   "sample_rate": null,
+   "channels": null,
+   "view_count": 3,
+   "skip_count": 0,
+   "last_viewed_at": "2026-10-30T18:00:00Z",
+   "user_rating": null,
+   "sonic_version": 1,
+   "added_at": "2025-03-01T10:00:00Z",
+   "updated_at": null,
+   "removed_at": null
+  },
+  "kind": null,
+  "live": true,
+  "plays": {
+   "plays": 3,
+   "plex": 3,
+   "history": 1,
+   "last_played": "2026-11-01T20:15:00Z"
+  },
+  "analysis": {
+   "status": "ok",
+   "version": 2,
+   "error": null,
+   "analyzed_at": "2026-11-05T02:00:00Z",
+   "seconds": null,
+   "current": true
+  },
+  "features": {
+   "bpm": 128.0,
+   "bpm_confidence": null,
+   "key": "A",
+   "scale": "minor",
+   "key_strength": null,
+   "camelot": "8A",
+   "loudness_lufs": -7.1,
+   "loudness_range": null,
+   "danceability": null,
+   "moods": [
+    "party",
+    "aggressive",
+    "happy"
+   ]
+  },
+  "analyzer_version": 2,
+  "history": {
+   "plays": 1,
+   "first": "2026-11-01T20:15:00Z",
+   "last": "2026-11-01T20:15:00Z",
+   "sources": [
+    {
+     "source": "lastfm",
+     "name": "Last.fm",
+     "plays": 1
+    }
+   ],
+   "years": [
+    {
+     "year": 2026,
+     "plays": 1,
+     "by_source": {
+      "lastfm": 1
+     }
+    }
+   ],
+   "recent": [
+    {
+     "at": "2026-11-01T20:15:00Z",
+     "source": "lastfm",
+     "name": "Last.fm",
+     "rating_key": 101,
+     "local": "2026-11-01 13:15"
+    }
+   ],
+   "timezone": "America/Denver"
+  },
+  "song": {
+   "title": "Westkreuz",
+   "artist": "Kollektiv Nord",
+   "copies": 1,
+   "versions": [],
+   "history": null
+  },
+  "rows": {
+   "plays": "track=101",
+   "song": null
+  },
+  "rules": {
+   "plays": "max(Plex view_count, history plays), never the sum (jimbo-dj's plays_of)",
+   "history": "counted listens of this copy: COALESCE(listens.rating_key, listen_matches.rating_key) = it (jimbo-dj's _track_stats; on a song with more copies, pages.song's version history)",
+   "song_history": "counted listens of every copy of the song (pages._keys_where over its versions)",
+   "versions": "other live copies of the same song: the same artist (track artist first) and title without its version, like (Live) or - Remastered (songs.Index)",
+   "analysis": "jimbo-dj's analyzer: analysis.status and version (current = ok at version 2); key, BPM and moods from its features row",
+   "sources": "counted listens per source, in jimbo-dj's source order",
+   "years": "counted listens per year, in the listening time zone"
+  }
+ },
+ "/api/library/plays?artist=302": {
+  "artist": 302,
+  "name": "The Paper Lanterns",
+  "source": null,
+  "sources": [
+   "plex",
+   "spotify"
+  ],
+  "total": 2,
+  "limit": 50,
+  "offset": 0,
+  "rule": "counted listens whose match key starts with its normalised name, plus those matched to its tracks (pages._artist_where)",
+  "timezone": "America/Denver",
+  "rows": [
+   {
+    "started_at": "2026-11-02T08:10:00Z",
+    "source": "spotify",
+    "name": "Spotify",
+    "artist": "Paper Lanterns",
+    "title": "Static Gulls (Remastered 2024)",
+    "album": null,
+    "rating_key": 104,
+    "album_key": 202
+   },
+   {
+    "started_at": "2026-11-01T20:21:00Z",
+    "source": "plex",
+    "name": "Plex",
+    "artist": "The Paper Lanterns",
+    "title": "Harbour Lights",
+    "album": "Low Tide Radio",
+    "rating_key": 103,
+    "album_key": 202
+   }
+  ]
+ }
+}
