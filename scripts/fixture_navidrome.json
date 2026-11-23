@@ -1,5 +1,31 @@
 {
- "_comment": "Invented Navidrome (Subsonic/OpenSubsonic) answers (T14): getScanStatus, getAlbumList2 (type=alphabeticalByName) and two pages of search3 (query \"\", songCount=5, songOffset). Report Real Path is on for some songs and off for others, which a real server never mixes; here it shows both cases. Not real data.",
+ "_comment": "Invented Navidrome (Subsonic/OpenSubsonic) answers (T14; ping and getMusicFolders added in T18): ping, getMusicFolders, getScanStatus, getAlbumList2 (type=alphabeticalByName) and two pages of search3 (query \"\", songCount=5, songOffset). Report Real Path is on for some songs and off for others, which a real server never mixes; here it shows both cases. Not real data.",
+ "ping": {
+  "subsonic-response": {
+   "status": "ok",
+   "version": "1.16.1",
+   "type": "navidrome",
+   "serverVersion": "0.53.3 (invented)",
+   "openSubsonic": true
+  }
+ },
+ "music_folders": {
+  "subsonic-response": {
+   "status": "ok",
+   "version": "1.16.1",
+   "type": "navidrome",
+   "serverVersion": "0.53.3 (invented)",
+   "openSubsonic": true,
+   "musicFolders": {
+    "musicFolder": [
+     {
+      "id": 1,
+      "name": "Invented Music"
+     }
+    ]
+   }
+  }
+ },
  "scan_status": {
   "subsonic-response": {
    "status": "ok",

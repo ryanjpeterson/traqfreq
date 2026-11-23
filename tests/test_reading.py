@@ -1,9 +1,9 @@
-"""T16/T17: reading servers (docs/specs/t13-servers.md): the read-only client, paging, errors, refresh and its log,
-and Jellyfin's reader (T17).
+"""T16–T18: reading servers (docs/specs/t13-servers.md): the read-only client, paging, errors, refresh and its log,
+Jellyfin's reader (T17) and Navidrome's (T18).
 
 No network: every answer comes from ``httpx.MockTransport`` serving the invented answers in
-``scripts/fixture_jellyfin.json`` and ``fixture_navidrome.json``. Jellyfin is read by the real reader
-(``reading.read_jellyfin``); the Navidrome reader here stands in for T18's.
+``scripts/fixture_jellyfin.json`` and ``fixture_navidrome.json``, read by the real readers
+(``reading.read_jellyfin``, ``reading.read_navidrome``).
 """
 
 import hashlib
@@ -40,6 +40,13 @@ JF_PAGE = len(JF["items_pages"][0]["Items"])  # 10
 JF_ITEMS = [it for p in JF["items_pages"] for it in p["Items"]]
 JF_PLAYED = {it["Id"]: it["UserData"]["PlayCount"] for it in JF["user_played"]["Items"]}
 ND_PAGE = len(ND["song_pages"][0]["subsonic-response"]["searchResult3"]["song"])  # 5
+ND_SONGS = [s for p in ND["song_pages"] for s in p["subsonic-response"]["searchResult3"]["song"]]
+ND_ALBUMS = [a for p in ND["album_pages"] for a in p["subsonic-response"]["albumList2"]["album"]]
+
+
+def _nd(key: str, **body) -> dict:
+    """A Subsonic answer in the fixture's envelope."""
+    return {"subsonic-response": {**{k: v for k, v in ND["ping"]["subsonic-response"].items()}, **({key: body} if key else {})}}
 
 
 class Servers:
@@ -80,35 +87,36 @@ class Servers:
             if q.get("t") != hashlib.md5((PASSWORD + q.get("s", "")).encode()).hexdigest():
                 return httpx.Response(200, json={"subsonic-response": {
                     "status": "failed", "error": {"code": 40, "message": "Wrong username or password"}}})
+            if path == "/rest/ping":
+                return httpx.Response(200, json=ND["ping"])
+            if path == "/rest/getMusicFolders":
+                return httpx.Response(200, json=ND["music_folders"])
             if path == "/rest/getScanStatus":
-                return httpx.Response(200, json=ND["scan_status"])
+                return httpx.Response(200, json=self.scan_status())
             if path == "/rest/getAlbumList2":
-                return httpx.Response(200, json=ND["album_pages"][0])
-            if path == "/rest/search3":
-                i = int(q.get("songOffset", 0)) // ND_PAGE
-                pages = ND["song_pages"]
-                return httpx.Response(200, json=pages[i] if i < len(pages) else {
-                    "subsonic-response": {"status": "ok", "searchResult3": {}}})
+                o, n = int(q.get("offset", 0)), int(q.get("size", 10))
+                return httpx.Response(200, json=_nd("albumList2", album=ND_ALBUMS[o:o + n]))
+            if path == "/rest/search3":  # as Navidrome: an empty query lists every song, sliced by offset
+                o, n = int(q.get("songOffset", 0)), int(q.get("songCount", 20))
+                return httpx.Response(200, json=_nd("searchResult3", song=self.songs()[o:o + n]))
         return httpx.Response(404, json={"message": f"No route {path}"})
 
+    def scan_status(self) -> dict:
+        return ND["scan_status"]
 
-def read_navidrome(client, settings):
-    """Stands in for T18's reader: scan status, albums, then every song through search3."""
-    scan = client.get("/rest/getScanStatus")
-    albums = [client.get("/rest/getAlbumList2", {"type": "alphabeticalByName", "size": 500, "offset": 0})]
-    songs = list(reading.pages(
-        lambda o: client.get("/rest/search3", {"query": "", "songCount": ND_PAGE, "songOffset": o, "albumCount": 0, "artistCount": 0}),
-        count=lambda p: len(((p.get("subsonic-response") or {}).get("searchResult3") or {}).get("song") or []), size=ND_PAGE))
-    return snapshots.from_navidrome(scan, albums, songs), {"pages": len(albums) + len(songs)}
+    def songs(self) -> list[dict]:
+        return ND_SONGS
 
 
-READERS = {"jellyfin": reading.read_jellyfin, "navidrome": read_navidrome}
+READERS = {"jellyfin": reading.read_jellyfin, "navidrome": reading.read_navidrome}
 
 
 @pytest.fixture(autouse=True)
 def small_pages(monkeypatch):
-    """The fixture's 14 items in pages of 10, so paging shows (Jellyfin's default page is 500)."""
+    """The fixture's 14 Jellyfin items in pages of 10 and 9 Navidrome songs (7 albums) in pages of 5, so paging
+    shows (the default page is 500)."""
     monkeypatch.setattr(reading, "JELLYFIN_PAGE", JF_PAGE)
+    monkeypatch.setattr(reading, "NAVIDROME_PAGE", ND_PAGE)
 
 
 def _settings(tmp_path, legacy_db=None, **over):
@@ -171,7 +179,7 @@ def test_navidrome_token_auth_never_sends_the_password(app_client, srv):
     r = app_client.post("/api/servers/navidrome/refresh")
     assert r.status_code == 200, r.text
     c = r.json()["refresh"]["counts"]
-    assert (c["items"], c["pages"], c["hidden_paths"]) == (9, 3, 4)
+    assert (c["items"], c["pages"], c["requests"], c["hidden_paths"]) == (9, 4, 8, 4)
     salts = [q.url.params["s"] for q in srv.requests]
     assert len(set(salts)) == len(salts)  # a new salt per request
     assert all(PASSWORD not in str(q.url) and q.method == "GET" for q in srv.requests)
@@ -266,15 +274,14 @@ def test_two_refreshes_at_once(legacy_db, tmp_path):
     assert out["a"]["ok"] and len(store.refreshes(s.data_dir, "jellyfin")) == 1
 
 
-def test_navidrome_reader_waits_for_t18(legacy_db, tmp_path, srv):
+def test_shipped_readers_are_the_real_ones(legacy_db, tmp_path, srv):
     app = create_app(_settings(tmp_path, legacy_db), server_transport=httpx.MockTransport(srv))
     c = TestClient(app)  # the shipped readers
-    assert reading.READERS["jellyfin"] is reading.read_jellyfin
-    r = c.post("/api/servers/navidrome/refresh")
-    assert r.status_code == 501 and "reader comes in T18" in r.json()["detail"]["message"]
-    assert srv.requests == []
-    assert c.get("/api/servers/navidrome/refreshes").json()["last"]["ok"] is False
-    assert c.post("/api/servers/jellyfin/refresh").status_code == 200  # Jellyfin's is T17's, shipped
+    assert reading.READERS == {"jellyfin": reading.read_jellyfin, "navidrome": reading.read_navidrome}
+    assert c.post("/api/servers/navidrome/refresh").status_code == 200
+    assert c.post("/api/servers/jellyfin/refresh").status_code == 200
+    assert {s["server"]: s.get("note") for s in c.get("/api/servers").json()["servers"]}["navidrome"].startswith(
+        "Set up; traqfreq reads it when you refresh it")
 
 
 def test_plex_and_unknown_servers(app_client):
@@ -293,6 +300,8 @@ def test_secrets_never_logged_or_returned(app_client, srv, tmp_path, caplog):
              (tmp_path / "data" / "traqfreq.sqlite").read_bytes().decode("latin-1")]
     for t in texts:
         assert KEY not in t and PASSWORD not in t
+    tokens = [q.url.params["t"] for q in srv.requests if q.url.host == "navidrome.test"]
+    assert tokens and not any(tok in caplog.text for tok in tokens)  # nor Navidrome's token (httpx's own log)
     assert "refresh jellyfin: 14 items" in caplog.text
 
 
@@ -457,3 +466,135 @@ def test_jellyfin_reads_oldest_first_so_a_scan_adds_at_the_end(legacy_db, tmp_pa
     assert entry["ok"] and entry["counts"]["items"] == 15
     q = [r.url.params for r in srv.requests if r.url.path == "/Items"][0]
     assert (q["SortBy"], q["SortOrder"]) == ("DateCreated,SortName", "Ascending")
+
+
+# --- Navidrome's reader (T18) ------------------------------------------------------------------------------
+
+def _read_nd(srv, tmp_path, **over):
+    s = _settings(tmp_path, **over)
+    with reading.client_for("navidrome", s, httpx.MockTransport(srv)) as client:
+        return reading.read_navidrome(client, s)
+
+
+def test_navidrome_reads_ping_folders_scan_albums_and_songs(srv, tmp_path):
+    snap, counts = _read_nd(srv, tmp_path)
+    assert [q.url.path for q in srv.requests] == [
+        "/rest/ping", "/rest/getMusicFolders", "/rest/getScanStatus", "/rest/getAlbumList2", "/rest/getAlbumList2",
+        "/rest/search3", "/rest/search3", "/rest/getScanStatus"]
+    assert {q.method for q in srv.requests} == {"GET"}
+    albums_q = [q.url.params for q in srv.requests if q.url.path == "/rest/getAlbumList2"]
+    assert [(p["type"], p["size"], p["offset"]) for p in albums_q] == [("alphabeticalByName", "5", "0"),
+                                                                       ("alphabeticalByName", "5", "5")]
+    songs_q = [q.url.params for q in srv.requests if q.url.path == "/rest/search3"]
+    assert [(p["query"], p["songCount"], p["songOffset"], p["albumCount"], p["artistCount"]) for p in songs_q] == [
+        ("", "5", "0", "0", "0"), ("", "5", "5", "0", "0")]
+    assert counts == {"pages": 4, "album_pages": 2, "song_pages": 2, "albums": 7, "server_name": "navidrome",
+                      "version": "0.53.3 (invented)", "user": "reader", "music_folders": 1, "played": 4}
+    st = snap["stamp"]
+    assert (st["server_name"], st["version"], st["user"], st["open_subsonic"]) == ("navidrome", "0.53.3 (invented)", "reader", True)
+    assert (st["items"], st["scan_count"], st["last_scan"], st["hidden_paths"]) == (9, 9, "2026-11-23T03:00:00Z", 4)
+    assert st["music_folders"] == ["Invented Music"]
+
+
+def test_navidrome_items_are_t14s(srv, tmp_path):
+    snap, _ = _read_nd(srv, tmp_path)
+    t14 = snapshots.from_navidrome(ND["scan_status"], ND["album_pages"], ND["song_pages"])
+    assert snap["items"] == t14["items"] and (snap["folders"], snap["folder_source"]) == (["/music"], "common")
+    assert sum(1 for i in snap["items"] if i["mb_release"]) == sum(1 for i in t14["items"] if i["mb_release"]) > 0
+
+
+class NoPlayCount(Servers):
+    """As OpenSubsonic: a song never played has no playCount at all."""
+
+    def songs(self):
+        return [{k: v for k, v in s.items() if not (k == "playCount" and not v)} for s in ND_SONGS]
+
+
+def test_navidrome_unplayed_songs_count_zero(tmp_path):
+    snap, counts = _read_nd(NoPlayCount(), tmp_path)
+    assert sorted(i["play_count"] for i in snap["items"]) == [0, 0, 0, 0, 0, 1, 2, 3, 5] and counts["played"] == 4
+
+
+def test_navidrome_roots_setting(srv, tmp_path, legacy_db):
+    snap, _ = _read_nd(srv, tmp_path, navidrome_roots=("/music/Kollektiv Nord/",))
+    assert (snap["folders"], snap["folder_source"]) == (["/music/Kollektiv Nord"], "server")
+    assert [i["file"] for i in snap["items"] if i["path"] == "/music/Kollektiv Nord/Ringbahn/01 Westkreuz.flac"] == [
+        "Ringbahn/01 Westkreuz.flac"]
+    s = Settings.from_env({"TRAQFREQ_NAVIDROME_ROOTS": " /music , /other/ "})
+    assert s.navidrome_roots == ("/music", "/other/")
+    c = TestClient(create_app(_settings(tmp_path, legacy_db, navidrome_roots=("/music",))))
+    nd = {x["server"]: x for x in c.get("/api/servers").json()["servers"]}["navidrome"]
+    assert {r["env"]: r["value"] for r in nd["settings"]}["TRAQFREQ_NAVIDROME_ROOTS"] == "/music"
+
+
+class NavidromeScanning(Servers):
+    """Navidrome while its library changes: ``mode`` says how."""
+
+    def __init__(self, mode: str):
+        super().__init__()
+        self.mode, self.scans, self.search = mode, 0, 0
+
+    def scan_status(self):
+        self.scans += 1
+        st = dict(ND["scan_status"]["subsonic-response"]["scanStatus"])
+        if self.mode == "running":
+            st["scanning"] = True
+        if self.mode == "finished" and self.scans == 2:
+            st["lastScan"] = "2026-11-23T04:00:00Z"
+        if self.mode == "count":
+            st["count"] = 10
+        return _nd("scanStatus", **st)
+
+    def songs(self):
+        if self.mode == "shift" and self.search >= 1:  # a new song lands at the front after the first page
+            return [dict(ND_SONGS[0], id="b00000000000000000000000000new01")] + ND_SONGS
+        return ND_SONGS
+
+    def __call__(self, req):
+        out = super().__call__(req)
+        if req.url.path == "/rest/search3":
+            self.search += 1
+        return out
+
+
+@pytest.mark.parametrize("mode,why", [
+    ("running", "9 distinct songs of 9; a library scan was running"),
+    ("finished", "9 distinct songs of 9; a library scan finished during the read"),
+    ("count", "9 distinct songs of 10; the song list moved under the pages"),
+    ("shift", "9 distinct songs of 9, 1 read twice; the song list moved under the pages"),
+])
+def test_navidrome_torn_read_is_not_stored(legacy_db, tmp_path, mode, why):
+    s = _settings(tmp_path, legacy_db)
+    reading.refresh("navidrome", s, httpx.MockTransport(Servers()))
+    with pytest.raises(reading.ServerError) as e:
+        reading.refresh("navidrome", s, httpx.MockTransport(NavidromeScanning(mode)))
+    assert f"Navidrome's song list changed while traqfreq read it ({why}). Nothing was stored" in e.value.message
+    assert len(store.snapshots(s.data_dir)["navidrome"]["items"]) == 9
+    assert [r["ok"] for r in store.refreshes(s.data_dir, "navidrome")] == [False, True]
+
+
+def test_navidrome_failed_answer_is_its_own_message(srv, tmp_path):
+    srv.fail["/rest/getMusicFolders"] = httpx.Response(200, json={"subsonic-response": {
+        "status": "failed", "error": {"code": 50, "message": "User not authorized"}}})
+    with pytest.raises(reading.ServerError) as e:
+        _read_nd(srv, tmp_path)
+    assert e.value.message == "Navidrome said 'User not authorized' (Subsonic error 50)."
+    assert [q.url.path for q in srv.requests] == ["/rest/ping", "/rest/getMusicFolders"]
+
+
+def test_navidrome_default_page_is_one_request_each_for_the_fixture(srv, tmp_path, monkeypatch):
+    monkeypatch.setattr(reading, "NAVIDROME_PAGE", reading.PAGE_SIZE)
+    snap, counts = _read_nd(srv, tmp_path)
+    assert [q.url.params["songCount"] for q in srv.requests if q.url.path == "/rest/search3"] == ["500"]
+    assert counts["pages"] == 2 and len(snap["items"]) == 9
+
+
+def test_navidrome_name_and_version_on_servers(app_client):
+    assert app_client.post("/api/servers/navidrome/refresh").status_code == 200
+    m = app_client.get("/api/servers/matches").json()
+    nd = next(x for x in m["snapshots"] if x["server"] == "navidrome")
+    assert (nd["stamp"]["server_name"], nd["stamp"]["version"], nd["stamp"]["user"]) == ("navidrome", "0.53.3 (invented)", "reader")
+    log = app_client.get("/api/servers/navidrome/refreshes").json()["last"]["counts"]
+    assert (log["items"], log["albums"], log["play_counts"], log["hidden_paths"]) == (9, 7, 4, 4)
+    pair = next(p for p in m["pairs"] if p["pair"] == "navidrome")
+    assert pair["unmatched_left"].get("hidden_path", 0) >= 1 and sum(pair["tiers"].values()) >= 1

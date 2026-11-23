@@ -109,12 +109,16 @@ def _subsonic(answer: dict, key: str) -> dict:
 
 
 def from_navidrome(scan_status: dict, album_pages: list[dict], song_pages: list[dict],
-                   folders: list[str] = (), read_at: float | None = None) -> dict:
+                   folders: list[str] = (), read_at: float | None = None, info: dict | None = None,
+                   user: str | None = None, music_folders: dict | None = None) -> dict:
     """A Navidrome snapshot from Subsonic ``getScanStatus`` (``lastScan``), the pages of ``getAlbumList2``
     (each album's ``musicBrainzId`` is the release; Subsonic songs carry only the recording) and the pages of
     ``search3`` with an empty query (``songCount``/``songOffset``). With "Report Real Path" off a song's
     ``path`` is made up and relative: such a song is ``hidden`` and has no file key. Subsonic names no folder
-    paths, so the music folder is ``folders`` if given, else the folder every real path shares."""
+    paths, so the music folder is ``folders`` if given (``TRAQFREQ_NAVIDROME_ROOTS``), else the folder every real
+    path shares. ``info`` is ``ping`` (its ``type`` and ``serverVersion`` go in the stamp as ``server_name`` and
+    ``version``, with ``user``, whose play counts these are); ``music_folders`` is ``getMusicFolders`` (their
+    names go in the stamp: Subsonic gives no paths)."""
     albums = {a.get("id"): a for page in album_pages for a in _subsonic(page, "albumList2").get("album") or []}
     raw = [s for page in song_pages for s in _subsonic(page, "searchResult3").get("song") or []]
     roots, source = _roots(list(folders), [s.get("path") for s in raw if s.get("path")])
@@ -130,9 +134,14 @@ def from_navidrome(scan_status: dict, album_pages: list[dict], song_pages: list[
             mb_release=album.get("musicBrainzId") or None, size=_int(s.get("size")),
             play_count=_int(s.get("playCount"))))
     scan = _subsonic(scan_status, "scanStatus")
-    return snapshot("navidrome", items, roots, source,
-                    {"items": len(items), "last_scan": scan.get("lastScan"), "hidden_paths": sum(i["hidden"] for i in items)},
-                    read_at)
+    stamp = {"items": len(items), "last_scan": scan.get("lastScan"), "hidden_paths": sum(i["hidden"] for i in items)}
+    if info is not None:
+        ping = (info or {}).get("subsonic-response") or {}
+        stamp.update(server_name=ping.get("type") or None, version=ping.get("serverVersion") or None, user=user,
+                     open_subsonic=bool(ping.get("openSubsonic")), scan_count=_int(scan.get("count")))
+    if music_folders is not None:
+        stamp["music_folders"] = [f.get("name") for f in _subsonic(music_folders, "musicFolders").get("musicFolder") or []]
+    return snapshot("navidrome", items, roots, source, stamp, read_at)
 
 
 def folder_of(file: str | None) -> str | None:

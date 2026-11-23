@@ -319,7 +319,7 @@ def matches(conn, data_dir, env_roots: tuple[str, ...] = ()) -> Matches:
 def _snapshot_info(s: str, snap: dict | None, now: float) -> dict:
     if snap is None:
         return {"server": s, "snapshot": False,
-                "note": "No snapshot yet: T16 refreshes snapshots, T17 and T18 read the servers."}
+                "note": "No snapshot yet: press Refresh on the server's column to read it (GET requests only)."}
     return {"server": s, "snapshot": True, "read_at": snap["read_at"], "age_s": round(now - snap["read_at"]),
             "stamp": snap["stamp"], "folders": snap["folders"], "folder_source": snap["folder_source"],
             "folder_rule": FOLDER_SOURCES[snap["folder_source"]], "items": len(snap["items"]),

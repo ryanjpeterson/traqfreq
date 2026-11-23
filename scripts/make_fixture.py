@@ -376,7 +376,8 @@ def load_snapshots(data_dir: Path) -> list[str]:
     jf, nd = snapshot_answers()
     snaps = [snapshots.from_jellyfin(jf["virtual_folders"], jf["items_pages"], read_at=SNAPSHOT_READ_AT,
                                      info=jf["system_info"], user="listener"),
-             snapshots.from_navidrome(nd["scan_status"], nd["album_pages"], nd["song_pages"], read_at=SNAPSHOT_READ_AT)]
+             snapshots.from_navidrome(nd["scan_status"], nd["album_pages"], nd["song_pages"], read_at=SNAPSHOT_READ_AT,
+                                      info=nd["ping"], user="listener", music_folders=nd["music_folders"])]
     for snap in snaps:
         store.save_snapshot(Path(data_dir), snap)
     return [s["server"] for s in snaps]

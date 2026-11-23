@@ -1,7 +1,7 @@
 """The three media servers traqfreq maps one song across (T13, spec docs/specs/t13-servers.md).
 
 Plex is read through jimbo-dj's database (its last sync), never directly. Jellyfin and Navidrome are read by
-traqfreq itself from T17 and T18, GET only; here they are "set up" or "not set up" from the environment.
+traqfreq itself (T17, T18), GET only; here they are "set up" or "not set up" from the environment.
 Secrets (Jellyfin's API key, Navidrome's password) are never returned: the answer says only whether each
 setting is there.
 """
@@ -23,11 +23,12 @@ SETTINGS = {
     "jellyfin": (("TRAQFREQ_JELLYFIN_URL", "jellyfin_url", False), ("TRAQFREQ_JELLYFIN_KEY", "jellyfin_key", True),
                  ("TRAQFREQ_JELLYFIN_USER", "jellyfin_user", False)),
     "navidrome": (("TRAQFREQ_NAVIDROME_URL", "navidrome_url", False), ("TRAQFREQ_NAVIDROME_USER", "navidrome_user", False),
-                  ("TRAQFREQ_NAVIDROME_PASSWORD", "navidrome_password", True)),
+                  ("TRAQFREQ_NAVIDROME_PASSWORD", "navidrome_password", True),
+                  ("TRAQFREQ_NAVIDROME_ROOTS", "navidrome_roots", False)),
 }
 REQUIRED = {"jellyfin": ("jellyfin_url", "jellyfin_key"), "navidrome": ("navidrome_url", "navidrome_user", "navidrome_password")}
 READER = {"jellyfin": "T17", "navidrome": "T18"}
-READ_NOW = ("jellyfin",)  # servers whose reader has landed (T17); Navidrome's is T18
+READ_NOW = ("jellyfin", "navidrome")  # servers whose reader has landed (T17, T18)
 
 
 def _safe_url(url: str | None) -> str | None:
@@ -75,6 +76,8 @@ def _other(server: str, settings: Settings) -> dict:
     rows = []
     for env, field, secret in SETTINGS[server]:
         v = getattr(settings, field)
+        if isinstance(v, tuple):
+            v = ",".join(v)
         rows.append({"env": env, "set": bool(v), "secret": secret,
                      "value": None if secret or not v else (_safe_url(v) if field.endswith("_url") else v)})
     set_up = all(getattr(settings, f) for f in REQUIRED[server])
