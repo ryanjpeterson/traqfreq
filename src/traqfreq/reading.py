@@ -171,7 +171,9 @@ def client_for(server: str, settings: Settings, transport: httpx.BaseTransport |
     """The read-only client for a set-up server, with its key or token added to each request."""
     if server == "jellyfin":
         key = settings.jellyfin_key or ""
-        return Client("jellyfin", settings.jellyfin_url or "", headers={"X-Emby-Token": key}, secrets=(key,),
+        # Jellyfin's own auth header; 12.x refuses the old X-Emby-Token (401), 10.x takes this too.
+        return Client("jellyfin", settings.jellyfin_url or "", headers={"Authorization": f'MediaBrowser Token="{key}"'},
+                      secrets=(key,),
                       transport=transport)
     if server == "navidrome":
         pw = settings.navidrome_password or ""
@@ -192,7 +194,7 @@ def _missing(server: str) -> Reader:
 # --- Jellyfin (T17) ------------------------------------------------------------------------------------------
 
 JELLYFIN_PAGE = PAGE_SIZE  # items per /Items page (tests make it smaller)
-JELLYFIN_FIELDS = "Path,ProviderIds,MediaSources,ParentId"
+JELLYFIN_FIELDS = "Path,ProviderIds,MediaSources,ParentId,DateCreated"  # DateCreated: the stamp's newest item
 
 
 def _jellyfin_pages(client: Client, path: str, params: dict) -> list[dict]:
@@ -222,17 +224,36 @@ def jellyfin_user(client: Client, wanted: str) -> dict:
                                   f"Its users: {', '.join(sorted(str(u.get('Name')) for u in users)) or 'none'}.")
 
 
+def _whole(items: list[dict]) -> None:
+    """ServerError when the pages don't add up to one whole list: an item came twice, or the distinct items
+    aren't Jellyfin's own final ``TotalRecordCount`` (the library changed while it was read)."""
+    ids = [it.get("Id") for p in items for it in p.get("Items") or []]
+    total = items[-1].get("TotalRecordCount") if items else 0
+    twice = len(ids) - len(set(ids))
+    if twice or (total is not None and len(set(ids)) != total):
+        raise ServerError("jellyfin", (
+            f"Jellyfin's item list changed while traqfreq read it ({len(set(ids))} distinct items of {total}"
+            f"{f', {twice} read twice' if twice else ''}); a library scan may be running. Nothing was stored: "
+            f"refresh again when the scan is done."))
+
+
 def read_jellyfin(client: Client, settings: Settings) -> tuple[dict, dict]:
     """Jellyfin, GET only: ``/System/Info/Public`` (name, version), ``/Library/VirtualFolders`` (music folders),
     every audio item through ``/Items`` page by page, and, when ``TRAQFREQ_JELLYFIN_USER`` is set, that user's
     play counts through ``/Users/{id}/Items`` (played items only). The item list doesn't depend on the user: a
     user who can't see a library takes no items away. Without a user there are no play counts (an API key
-    belongs to no user)."""
+    belongs to no user).
+
+    The pages are sorted oldest first (``DateCreated``, then ``SortName``), so items a running scan adds land at
+    the end instead of shifting the pages still to come. A read that still came out torn (an item twice, or not
+    as many items as Jellyfin's own final total) is not stored: the refresh fails and says so (``_whole``)."""
     info = client.get("/System/Info/Public")
     info = info if isinstance(info, dict) else {}
     folders = client.get("/Library/VirtualFolders")
     items = _jellyfin_pages(client, "/Items", {"IncludeItemTypes": "Audio", "Recursive": "true",
-                                               "Fields": JELLYFIN_FIELDS, "EnableUserData": "false"})
+                                               "Fields": JELLYFIN_FIELDS, "EnableUserData": "false",
+                                               "SortBy": "DateCreated,SortName", "SortOrder": "Ascending"})
+    _whole(items)
     for page in items:  # play counts come only from the named user, below
         for it in page.get("Items") or []:
             it.pop("UserData", None)

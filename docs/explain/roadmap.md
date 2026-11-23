@@ -5,7 +5,7 @@ The phases and sessions are planned in [docs/specs/README.md](../specs/README.md
 ## Now
 
 - **P3 SERVERS, T18: Navidrome.** Fill `reading.READERS["navidrome"]` (Subsonic `ping`, `getMusicFolders`, every song through `search3`, OpenSubsonic fields), refresh on live data and check the matches. Needs Navidrome's URL, a user and Report Real Path in the deploy's `.env`. Spec: `docs/specs/t13-servers.md`.
-- **Jellyfin on live data** (T17 left it): once its URL and API key are in the deploy's `.env`, refresh it on SERVERS and record the match counts.
+- **Jellyfin from the container**: T17 read it live from the laptop (53,133 of 53,133 Plex copies matched by file); after the deploy, press Refresh Jellyfin on SERVERS to check `host.docker.internal` from inside the container.
 
 ## Next
 

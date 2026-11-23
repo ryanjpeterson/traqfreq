@@ -60,7 +60,7 @@ class Servers:
         if req.url.host == "jellyfin.test":
             if path == "/System/Info/Public":  # public: no key needed, as on Jellyfin
                 return httpx.Response(200, json=JF["system_info"])
-            if req.headers.get("X-Emby-Token") != KEY:
+            if req.headers.get("Authorization") != f'MediaBrowser Token="{KEY}"':  # as Jellyfin 12: no X-Emby-Token
                 return httpx.Response(401, text="Access token is invalid or expired.")
             start, limit = int(q.get("StartIndex", 0)), int(q.get("Limit", 100))
             if path == "/Library/VirtualFolders":
@@ -347,7 +347,7 @@ def test_jellyfin_reads_info_folders_items_and_one_users_plays(srv, tmp_path):
     items_q = [q.url.params for q in srv.requests if q.url.path == "/Items"]
     assert [(p["StartIndex"], p["Limit"]) for p in items_q] == [("0", "10"), ("10", "10")]
     assert all(p["IncludeItemTypes"] == "Audio" and p["Recursive"] == "true"
-               and p["Fields"] == "Path,ProviderIds,MediaSources,ParentId" for p in items_q)
+               and p["Fields"] == "Path,ProviderIds,MediaSources,ParentId,DateCreated" for p in items_q)
     user_q = srv.requests[-1].url.params
     assert user_q["Filters"] == "IsPlayed" and user_q["IncludeItemTypes"] == "Audio"
     assert counts == {"pages": 3, "server_name": "Invented Jellyfin", "version": "10.10.3", "user": "listener", "played": 4}
@@ -419,3 +419,41 @@ def test_jellyfin_name_and_version_on_servers(app_client):
     assert (log["server_name"], log["version"], log["user"], log["play_counts"]) == ("Invented Jellyfin", "10.10.3", "listener", 4)
     pair = next(p for p in m["pairs"] if p["pair"] == "jellyfin")
     assert pair["tiers"].get("file", 0) >= 4
+
+
+class Scanning(Servers):
+    """Jellyfin with a scan running: after the first /Items page, a new item appears at the front of the list."""
+
+    def __init__(self, sort_ok: bool):
+        super().__init__()
+        self.sort_ok, self.calls = sort_ok, 0
+
+    def __call__(self, req):
+        global JF_ITEMS
+        if req.url.path == "/Items":
+            self.calls += 1
+            if self.calls == 2:
+                new = dict(JF_ITEMS[0], Id="a00000000000000000000000000new01", Path="/data/music/New/Song.flac")
+                # sorted oldest first, the new item goes last; unsorted (as before T17's fix) it goes first
+                JF_ITEMS = JF_ITEMS + [new] if self.sort_ok else [new] + JF_ITEMS
+        return super().__call__(req)
+
+
+def test_jellyfin_torn_read_is_not_stored(legacy_db, tmp_path, monkeypatch):
+    s = _settings(tmp_path, legacy_db)
+    reading.refresh("jellyfin", s, httpx.MockTransport(Servers()))
+    monkeypatch.setattr(__import__(__name__), "JF_ITEMS", list(JF_ITEMS))
+    with pytest.raises(reading.ServerError) as e:  # an item read twice: the list moved under the pages
+        reading.refresh("jellyfin", s, httpx.MockTransport(Scanning(sort_ok=False)))
+    assert "changed while traqfreq read it (14 distinct items of 15, 1 read twice)" in e.value.message
+    assert len(store.snapshots(s.data_dir)["jellyfin"]["items"]) == 14 and not store.refreshes(s.data_dir, "jellyfin")[0]["ok"]
+
+
+def test_jellyfin_reads_oldest_first_so_a_scan_adds_at_the_end(legacy_db, tmp_path, monkeypatch):
+    s = _settings(tmp_path, legacy_db)
+    monkeypatch.setattr(__import__(__name__), "JF_ITEMS", list(JF_ITEMS))
+    srv = Scanning(sort_ok=True)
+    entry = reading.refresh("jellyfin", s, httpx.MockTransport(srv))
+    assert entry["ok"] and entry["counts"]["items"] == 15
+    q = [r.url.params for r in srv.requests if r.url.path == "/Items"][0]
+    assert (q["SortBy"], q["SortOrder"]) == ("DateCreated,SortName", "Ascending")

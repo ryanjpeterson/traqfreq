@@ -94,7 +94,7 @@ def from_jellyfin(virtual_folders: list[dict], pages: list[dict], read_at: float
             mb_release=ids.get("MusicBrainzAlbum") or None, size=_int(ms.get("Size")),
             play_count=_int((it.get("UserData") or {}).get("PlayCount"))))
     created = [it.get("DateCreated") for it in raw if it.get("DateCreated")]
-    total = pages[0].get("TotalRecordCount") if pages else 0
+    total = pages[-1].get("TotalRecordCount") if pages else 0  # the newest total: it can move while pages are read
     stamp = {"items": total, "newest_created": max(created) if created else None}
     if info is not None:
         stamp.update(server_name=info.get("ServerName") or None, version=info.get("Version") or None, user=user)
