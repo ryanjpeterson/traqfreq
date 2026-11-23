@@ -108,15 +108,16 @@ Deployed from `main` (ea02d96) with `TRAQFREQ_MODULES=H` in `.env`. Checked from
 - Fixture: invented stored `history.wrapped` rows (2025, 2026, 2026-11-01 fresh; 2026-10 stale with a wrong play count, so the gate shows an explained difference). T5–T7 counts unchanged. Found on the way: 1 Nov 2026 is a 25-hour day in Denver (clocks go back); the tests say so.
 - Tests: pytest 81 (`tests/test_periods.py`), Vitest 97 (`web/src/pages/periods.test.tsx`), brand checks and 13 self-tests pass. Checked in the browser on the `--checks` fixture: dark desktop (Wrapped, Top, Compare, overview), light 375 px (Years, Top, Compare, a day's Wrapped: no page side-scroll). Not timed on a dense copy; first live build of `/api/history/compare` builds every stored Wrapped period (about 40) once.
 
-## P1 gate: not run yet
-Needs T8 deployed. Then, from the laptop:
-```
-python3 scripts/p1_gate.py --url http://macmini:4492
-```
-(or open `http://macmini:4492/history/compare`). Record the result here: all rows match, or each differing row stale (rerun after jimbo-dj's next hourly rebuild). P1 is done when it passes.
+## P1 gate: passed 2026-11-22
+T8 merged to `main` (e9166ee, PR #2) and deployed on the Mac mini. From the laptop: `python3 scripts/p1_gate.py --url http://macmini:4492` → **PASSED**, exit 0.
+- **41 stored rows, all 41 match, 862 of 862 fields**: jimbo-dj's `history.overview` (22 fields: plays, hours, matched %, songs, years with hours, top artists, sources, imports, on this day and every highlight) and 40 `history.wrapped` rows (every year 2011–2026, every month of 2025 and 2026 up to November, and the day 2022-03-01; 21 fields each).
+- Every stored row is fresh (its stamp is jimbo-dj's current one), so none needed explaining. Time zone America/New_York.
+- Not compared in P1, as planned: Wrapped's styles (TAGS, P4), decades and sound (LIBRARY, P2).
+- First build of the comparison on live data 2.6 s, then read from the cache; `/api/history/years` 0.03 s, all-time Top songs 1.7 s on first build.
+**P1 is done.**
 
 ## Next: T9
-LIBRARY read-only, first session: library numbers and their rows (spec: `docs/specs/t9-library.md`). First run the P1 gate above if it hasn't been run.
+LIBRARY read-only, first session: library numbers and their rows (spec: `docs/specs/t9-library.md`).
 
 ## Open questions
 1. ~~**Forgejo mirror**~~ *Done 2026-11-22:* Forgejo is live as a pull mirror of GitHub (`http://macmini:4470/ryanjpeterson/traqfreq`, syncs every 10 minutes, default branch `main`).

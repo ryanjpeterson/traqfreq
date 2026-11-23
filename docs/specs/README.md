@@ -25,7 +25,7 @@ Spec: [t5-history.md](t5-history.md).
 - **T5** Fixture and key tables match jimbo-dj's schema; SETUP counts the way jimbo-dj counts; reuse decided (vendor); HISTORY read API (overview, listens). *Done.*
 - **T6** Overview: counts, the year heatmap, top artists; a stats cache in traqfreq's database. *Done.*
 - **T7** Counted once: duplicates and held bursts with their reasons; new bot checks, read-only. *Done.*
-- **T8** Years, Wrapped, This day, Top; gate script, gate on the Mac mini. *Done* (gate run after deploy: HANDOFF).
+- **T8** Years, Wrapped, This day, Top; gate script, gate on the Mac mini. *Done.* **P1 gate passed 2026-11-22** (HANDOFF).
 ## P2 LIBRARY read-only: T9–T12
 Spec: [t9-library.md](t9-library.md).
 - **T9** Library numbers (jimbo-dj's `library.stats`) and the rows behind them.

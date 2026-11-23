@@ -4,6 +4,7 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 ### Added
+- P1 gate passed on live data: all 41 stored HISTORY rows (overview and every Wrapped), 862 of 862 fields, equal jimbo-dj's.
 - T8: Years (`/history/years`: every year's plays and hours, on this day in earlier years, jimbo-dj's highlights), Wrapped for a year, month or day (`/history/wrapped?period=`), Top artists, songs and albums for all time, 30 days, 12 months, a year or a month by plays or minutes (`/history/top`). The same numbers as jimbo-dj's (its `_overview`, `_wrapped`, `_top`), each opening its rows.
 - T8: P1 gate: `scripts/p1_gate.py` (read-only, `--url` or `--db`) and `GET /api/history/compare` put every number jimbo-dj stored for HISTORY next to traqfreq's, with matches and whether the stored row is stale; shown at `/history/compare`, on the overview and on SETUP.
 - T8: `GET /api/history/years`, `/on-this-day`, `/wrapped`, `/top`, `/compare`; `/api/history/listens` adds `song`, `album`, `hour`, `weekday`.
