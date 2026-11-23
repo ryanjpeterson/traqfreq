@@ -2,7 +2,7 @@
 
 ## Summary
 
-One required: jimbo-dj's database, read-only. Jellyfin and Navidrome are optional (P3, read-only, not read yet). Nothing leaves the tailnet.
+One required: jimbo-dj's database, read-only. Jellyfin and Navidrome are optional (P3, read-only: GET requests only, on a refresh from SETUP; the client is in place, the readers come in T17 and T18). Nothing leaves the tailnet.
 
 ## Services
 

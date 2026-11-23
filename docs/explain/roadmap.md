@@ -4,11 +4,11 @@ The phases and sessions are planned in [docs/specs/README.md](../specs/README.md
 
 ## Now
 
-- **P3 SERVERS, T16: reading servers.** The GET-only client base (timeouts, paging, no retries, the server's own error shown) and snapshot refresh (`POST /api/servers/{server}/refresh`, writing only traqfreq's database, one at a time, logged with its counts); plays on other servers shown beside, never added. Spec: `docs/specs/t13-servers.md`.
+- **P3 SERVERS, T17: Jellyfin.** Fill `reading.READERS["jellyfin"]` (System/Info, VirtualFolders, paged `/Items`, the user's play counts), refresh on live data and check the matches. Needs Jellyfin's URL and API key in the deploy's `.env`. Spec: `docs/specs/t13-servers.md`.
 
 ## Next
 
-1. **T17 Jellyfin, T18 Navidrome**: read their libraries (medium each; need their URLs and keys).
+1. **T18 Navidrome**: read its library over Subsonic (medium; needs its URL, a user and Report Real Path).
 2. **T19** gate "One song, three servers" on live data (small).
 3. **P4 TAGS** read-only (4 sessions), **P5 PLAYLISTS** Junction preview (5 sessions). After P5, traqfreq shows everything jimbo-dj shows, read-only.
 

@@ -4,6 +4,11 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 ### Added
+- T16: reading servers (`src/traqfreq/reading.py`): a read-only `httpx` client whose only verb is GET (a timeout, no retries, no redirects; errors show the server's own message; Jellyfin's key and Navidrome's password and token never logged, returned or put in a message), paging, and reader hooks that T17 (Jellyfin) and T18 (Navidrome) fill in; until then a refresh says the reader is missing.
+- T16: `POST /api/servers/{server}/refresh` reads a set-up server whole and stores its snapshot in traqfreq's own database only; one refresh at a time per server (409 while one runs); "not set up" answers 409 with the missing settings; each refresh, done or failed, is logged with its counts (items, pages, requests, added, removed, hidden paths, seconds) or the server's message (`refreshes` table, `GET /api/servers/{server}/refreshes`); a failed refresh keeps the snapshot before it. `/api/servers` gives each server's refresh state.
+- T16: SETUP → SERVERS: a refresh button per Jellyfin and Navidrome (disabled when not set up; it only reads, B2), the result, the last refresh and the log. Plays on other servers stay beside traqfreq's, never added.
+### Changed
+- T16: `httpx` is a runtime dependency (was dev only).
 - T15: SETUP → SERVERS (`/setup/servers`; not a module of its own): the three servers with status and snapshot age (each server's column says when it has no snapshot), Plex's identity counts and issues, each pair's matches by tier and by reason (lists with SETUP-ink bars and a one-line summary, L6), and a song's three IDs (pick a copy: its Plex rating key, Jellyfin item and Navidrome song, with the tier or the reason). Every count opens its rows: `/setup/servers/copies` and `/setup/servers/matches`, each row saying why. SETUP gets a servers card.
 - T15: LIBRARY's track page gains "On servers": the copy's item on each server, its tier, and each server's own play count, labelled; shown beside, never added to traqfreq's plays.
 - T15: `GET /api/servers/matches?rating_key=`: one Plex copy's rows (its match or reason on each pair, and Jellyfin ↔ Navidrome matched through it), with `copy.live`.
