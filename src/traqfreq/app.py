@@ -8,7 +8,7 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from datetime import datetime
 
-from . import __version__, history, legacy, store
+from . import __version__, counted, history, legacy, store
 from .settings import CORE, MODULES, Settings
 
 
@@ -82,14 +82,28 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             return {**history.heatmap(value["days"], tz, year, datetime.now(tz).date()), "cache": info}
         return read_history(run)
 
+    @app.get("/api/history/counted")
+    def history_counted() -> dict:
+        """Counted once: how far each repeat and duplicate was from the listen it repeats or duplicates, and the
+        read-only checks (bursts, loops, steady rhythms). Read from the stats cache, same key as the summary."""
+        def run(conn):
+            tz = history.listen_tz(conn, settings.tz)
+            value, info = store.cached(settings.data_dir, "history.counted", history.cache_key(conn, settings.tz),
+                                       lambda: counted.counted(conn, tz))
+            return {**value, "cache": info}
+        return read_history(run)
+
     @app.get("/api/history/listens")
     def history_listens(status: str = "play", source: str | None = None, year: int | None = None,
                         period: str | None = None, artist: str | None = None, matched: bool | None = None,
-                        limit: int = 50, offset: int = 0) -> dict:
+                        of: str | None = None, gap: str | None = None, start: int | None = None,
+                        end: int | None = None, limit: int = 50, offset: int = 0) -> dict:
         """The rows behind each HISTORY number (status play, too_short, repeat or duplicate; optional source,
-        year, period YYYY / YYYY-MM / YYYY-MM-DD, artist key, matched)."""
+        year, period YYYY / YYYY-MM / YYYY-MM-DD, artist key, matched, of = dup_of, gap a-b / none, start and
+        end in UTC epoch seconds)."""
         return read_history(lambda c: history.listens(c, status, source or None, year, limit, offset, settings.tz,
-                                                      period or None, artist or None, matched))
+                                                      period or None, artist or None, matched, of or None,
+                                                      gap or None, start, end))
 
     @app.get("/api/modules")
     def modules() -> dict:

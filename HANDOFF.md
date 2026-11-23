@@ -82,9 +82,19 @@ Deployed from the server checkout on `claude/t6-history-overview` (65942b2; `mai
 - Cache: first build 1.35 s on live data, then a hit in 0.05 s.
 - HISTORY is still off on the mini (`/api/modules`: L, S): add `TRAQFREQ_MODULES=H` to `.env` and redeploy to show the page.
 
-## Next: T7
-Counted once (spec: `docs/specs/t5-history.md`, T7): duplicates and repeats with their reasons (the play each duplicates, the window, how far apart), then held bursts and new bot checks, read-only reports. Then T8 years, Wrapped, this day, top and the P1 gate.
-- Deploy check for T6 on live data: overview `jimbodj.top_artists_match` and `matched_pct_matches` true (or explained by a stale stored row), heatmap's last 53 weeks against jimbo-dj Home's heatmap.
+## T7 done (2026-11-22, `claude/t7-counted-once`, from `main` 7ccdff0; laptop over SMB like T3–T6)
+- **HISTORY switch:** `.env` (git-ignored) in the server checkout now has one line, `TRAQFREQ_MODULES=H`; nothing else from jimbo-dj. Needs a redeploy to show.
+- Rules written into the spec first (`docs/specs/t5-history.md`, "T7 rules").
+- `src/traqfreq/counted.py`: the listen each repeat or duplicate is of, found with jimbo-dj's own conditions (vendored `window_sql`, now in `vendor/jimbodj_history.py`, unchanged; `REPEAT_SECONDS`), the gap in buckets (0–10 s … 15 min–1 h) per (source, dup_of), "not found" kept visible. Checks over the plays, report only: burst (≥ 3 plays each < 30 s after the last; all but the first held), loop (one song ≥ 10 in a row, each within an hour), steady rhythm (≥ 10 plays of ≥ 3 songs, gaps 30 s–10 min within 2 s of the first). Newest 25 findings per check.
+- API: `GET /api/history/counted` (cache name `history.counted`, same key as the summary); `/api/history/listens` adds `of`, `gap=a-b|none`, `start`/`end` (UTC epoch s, inclusive), and repeat/duplicate rows carry `of` {id, source, started_at, play, gap_s, window_s} or null.
+- Page `/history/counted` (`HistoryCounted.tsx`), linked from the overview card "Every listen, counted once": one card per source pair (buckets inside its window, share bars aria-hidden, each count opens its rows), then one card per check with `Status` off "Report only", findings and their rows. Rows page: titles for of/gap/span; the "why" line names the play and the gap.
+- Fixture: `make_fixture.py --checks` (`build(..., checks=True)`) adds invented check rows; the plain fixture is unchanged, so T5/T6 counts stay.
+- Fixed: `test_api_tz_from_env` wrote its cache into `./data` (the deployed app's data folder in the server checkout). Now a temp folder.
+- Tests: pytest 69 (`tests/test_counted.py`), Vitest 90, brand checks and 13 self-tests pass. Checked in the browser on the `--checks` fixture: dark desktop, light 375 px (no page side-scroll), rows of a gap and of a burst, why line. Timed on an invented dense copy (370k listens, scratchpad only): gaps 0.2 s, checks 0.5 s.
+
+## Next: T8
+Years, Wrapped, This day, Top; vendor `_minutes` and period ranges; gate script `scripts/p1_gate.py` and `GET /api/history/compare`; gate run on the Mac mini (spec: `docs/specs/t5-history.md`, T8).
+- Deploy check for T7 on live data: `/history` opens (needs the `.env` redeploy), `/api/history/counted` `not_found` is 0 or each one explained, gap buckets add up to the overview's repeats and duplicates, and look at what the checks find before T8.
 
 ## Open questions
 1. ~~**Forgejo mirror**~~ *Done 2026-11-22:* Forgejo is live as a pull mirror of GitHub (`http://macmini:4470/ryanjpeterson/traqfreq`, syncs every 10 minutes, default branch `main`).

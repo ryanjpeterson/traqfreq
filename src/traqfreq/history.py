@@ -22,7 +22,7 @@ from collections import Counter, defaultdict
 from datetime import date, datetime, timedelta, timezone
 from zoneinfo import ZoneInfo
 
-from . import legacy
+from . import counted, legacy
 from .vendor.jimbodj_history import PRIORITY, SOURCES, Names, norm_artist
 
 # Bump when the shape of what ``summary`` builds changes, so cached summaries are rebuilt (store.py).
@@ -262,10 +262,13 @@ def period_range(period: str, tz) -> tuple[int, int]:
 
 def listens(conn: sqlite3.Connection, status: str = "play", source: str | None = None, year: int | None = None,
             limit: int = 50, offset: int = 0, default_tz: str | None = None, period: str | None = None,
-            artist: str | None = None, matched: bool | None = None) -> dict:
+            artist: str | None = None, matched: bool | None = None, of: str | None = None, gap: str | None = None,
+            start: int | None = None, end: int | None = None) -> dict:
     """The rows behind a number: listens with one status, optionally one source, one year or period (YYYY,
-    YYYY-MM, YYYY-MM-DD), one artist (its normalised key, as in ``top_artists``) and matched or not, newest
-    first."""
+    YYYY-MM, YYYY-MM-DD), one artist (its normalised key, as in ``top_artists``), matched or not, the source a
+    repeat or duplicate is of (``of``), its gap to that listen (``gap`` "a-b" seconds or "none", counted.py) and
+    a span of UTC epoch seconds (``start``/``end``, inclusive), newest first. Repeats and duplicates carry
+    ``of``: the listen they repeat or duplicate, the gap and the window (or None when none is in it)."""
     if status not in STATUS:
         raise ValueError(f"status is one of {', '.join(STATUS)}")
     tables = _require(conn)
@@ -290,6 +293,19 @@ def listens(conn: sqlite3.Connection, status: str = "play", source: str | None =
         args.append(artist)
     if matched is not None:
         where.append(f"{track} IS {'NOT ' if matched else ''}NULL")
+    if of:
+        where.append("l.dup_of = ?")
+        args.append(of)
+    if gap:
+        if status not in ("repeat", "duplicate"):
+            raise ValueError("gap needs status repeat or duplicate")
+        where.append(counted.gap_where(gap))
+    if start is not None:
+        where.append("l.started_at >= ?")
+        args.append(start)
+    if end is not None:
+        where.append("l.started_at <= ?")
+        args.append(end)
     w = " AND ".join(where)
     total = conn.execute(f"SELECT COUNT(*) {frm} WHERE {w}", args).fetchone()[0]
     limit = max(1, min(limit, 500))
@@ -297,9 +313,13 @@ def listens(conn: sqlite3.Connection, status: str = "play", source: str | None =
         f"SELECT l.id, l.source, l.started_at, l.ms_played, l.artist, l.title, l.album, l.dup_of, {track} rating_key "
         f"{frm} WHERE {w} ORDER BY l.started_at DESC, l.id DESC LIMIT ? OFFSET ?", [*args, limit, max(0, offset)]
     ).fetchall()
+    ofs = counted.of_rows(conn, [r["id"] for r in rows]) if status in ("repeat", "duplicate") else {}
+    rule = w if not gap else w.replace(counted.GAP, "gap")  # the gap's subquery is in rules.gap
     return {
         "status": status, "source": source, "year": year, "period": period, "artist": artist, "matched": matched,
+        "of": of, "gap": gap, "start": start, "end": end,
         "timezone": str(tz), "total": total,
-        "limit": limit, "offset": max(0, offset), "rule": f"listens WHERE {w.replace('l.', '')}", "params": args,
-        "rows": [{**dict(r), "started_at": legacy._iso(r["started_at"])} for r in rows],
+        "limit": limit, "offset": max(0, offset), "rule": f"listens WHERE {rule.replace('l.', '')}", "params": args,
+        "rows": [{**dict(r), "started_at": legacy._iso(r["started_at"]),
+                  **({"of": ofs.get(r["id"])} if status in ("repeat", "duplicate") else {})} for r in rows],
     }

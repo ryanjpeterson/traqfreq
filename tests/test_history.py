@@ -85,7 +85,7 @@ def test_api(client):
 
 
 def test_api_tz_from_env(legacy_db, tmp_path):
-    s = Settings.from_env({"TRAQFREQ_LEGACY_DB": str(legacy_db), "TZ": "UTC"})
+    s = Settings.from_env({"TRAQFREQ_LEGACY_DB": str(legacy_db), "TZ": "UTC", "TRAQFREQ_DATA_DIR": str(tmp_path / "data")})
     assert TestClient(create_app(s)).get("/api/history/overview").json()["timezone"] == "UTC"
 
 

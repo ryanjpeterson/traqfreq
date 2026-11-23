@@ -1,6 +1,6 @@
 """Pure functions vendored from jimbo-dj (ryanjpeterson/jimbo-dj, private), src/jimbodj/history.py at 1d8a7cb.
 
-Copied as is (constants, band_of, norm_artist, norm_title, match_key, Names), never edited here: traqfreq must count and match listens exactly the way jimbo-dj does
+Copied as is (constants, band_of, norm_artist, norm_title, match_key, Names, window_sql), never edited here: traqfreq must count and match listens exactly the way jimbo-dj does
 until HISTORY's cut-over (P6). To update: copy the same names again from jimbo-dj, bump VENDORED_FROM,
 and run tests/test_vendor.py (it checks these against the match keys jimbo-dj stored in the fixture).
 Why vendored, not a git dependency: jimbo-dj's repo is private (HANDOFF, open question 3).
@@ -72,6 +72,14 @@ def norm_title(s: str | None) -> str:
 
 def match_key(artist: str | None, title: str | None) -> str:
     return f"{norm_artist(artist)}|{norm_title(title)}"
+
+
+def window_sql(source: str) -> str:
+    """How far apart (s) a listen from `source` and the same play from another source can be. Apple Music's
+    day-by-hour summary (uri daily:…) only knows the hour."""
+    if source == "applemusic":
+        return f"(CASE WHEN listens.uri LIKE 'daily:%' THEN 3600 ELSE {DEDUPE_SECONDS['applemusic']} END)"
+    return str(DEDUPE_SECONDS.get(source, 300))
 
 
 class Names:

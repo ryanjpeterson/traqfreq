@@ -41,6 +41,20 @@ Built as below; details in HANDOFF (T6 done). Heatmap levels: 0 = no plays, 1–
 - Duplicates and repeats with their reasons: for each listen that isn't a play, the play it duplicates (same `match_key`, the winning source, within jimbo-dj's window: `DEDUPE_SECONDS`, `REPEAT_SECONDS`, `window_sql`; vendored) and how far apart they were.
 - Held bursts and new bot checks, **read-only**: traqfreq flags patterns jimbo-dj doesn't (bursts of plays too close together to have been heard, one song looped, scrobbler-bot shapes), each with its reason and rows. They are reports only: the play count stays jimbo-dj's (`counted = 1`) until HISTORY's cut-over, so the gate still holds. Proposed rules go in this session's spec addition first.
 
+#### T7 rules (written before the code)
+**Which play a listen repeats or duplicates.** jimbo-dj's `dedupe` (vendored: `window_sql`, `DEDUPE_SECONDS`, `REPEAT_SECONDS`, `PRIORITY`) keeps only the flag, not the play. traqfreq finds it again with jimbo-dj's own conditions:
+- repeat (`dup_of = source`): the listen x of the same source and `match_key`, with `x.id < id` and `|x.started_at - started_at| <= REPEAT_SECONDS`; the nearest one (lowest id on a tie), and whether it is a play.
+- duplicate (`dup_of = winner`): the play w (`counted = 1`) of source `dup_of` with the same `match_key` and `|w.started_at - started_at| <= MAX(window_sql(loser), window_sql(winner))` (5 min; 15 min with Plex; an hour for Apple Music's daily summary); the nearest one (lowest id on a tie).
+- Gap = `|Δ started_at|` in seconds. Not found (a flag with no play in its window, e.g. mid-import) is its own bucket, shown, never hidden.
+- Gap buckets (whole seconds, inclusive): 0–10, 11–30, 31–60, 61–120, 121–300, 301–900, 901–3600. Each bucket opens its rows (`/api/history/listens?gap=a-b`, `gap=none`).
+
+**Held bursts and new checks, read-only.** Over plays only (`counted = 1`, every source, by `started_at`, then `id`). They change no count: a play in a finding is still a play until HISTORY's cut-over (P6). A play can be in more than one check; each check counts its own.
+- **Burst:** 3 or more plays in a row, each starting under 30 s (`MIN_PLAY_MS`) after the one before. Every play in it but the first is *held*: it started before 30 s of the one before could have played, so both can't have been heard.
+- **Loop:** the same song (`match_key`) 10 or more plays in a row, no other play between, each within an hour of the one before.
+- **Steady rhythm** (scrobbler-bot shape): 10 or more plays in a row of at least 3 songs, every gap between starts from 30 s to 10 min and within 2 s of the run's first gap. Albums vary in track length; a bot replaying a list on a timer doesn't.
+- Each finding: first and last play (UTC and the listening zone), plays, songs, and its rows (`/api/history/listens?status=play&start=&end=`, UTC epoch seconds, inclusive). The report lists the newest 25 findings of each check and the totals.
+- Built in the same stats cache (name `history.counted`, same key as the summary).
+
 ### T8: Years, Wrapped, This day, Top
 - Vendor `_minutes` and the period ranges. Years (plays and hours), Wrapped for a year, month or day, On this day, Top artists / songs / albums for a period (`all`, `30d`, `12m`, `YYYY`, `YYYY-MM`) by plays or minutes.
 - Gate script (`scripts/p1_gate.py`, read-only): every stored jimbo-dj history number (`stats.history.overview`, every `stats.history.wrapped` row) next to traqfreq's for the same period, with `matches`. Also `GET /api/history/compare` for SETUP and HISTORY.

@@ -3,6 +3,7 @@ import { Band, Button, Card, Status, Text } from '../components/kit';
 import { t, tf, type StringKey } from '../copy/t';
 import { useGet } from '../app/api';
 import { formatUtc } from '../app/time';
+import { HISTORY_COUNTED } from '../app/route';
 import {
   NOT_PLAYS, count, dayLabel, fmt, monthLabel, rowsHref, sourceName,
   type Heatmap, type Overview, type RowsFilter, type SourceRow,
@@ -13,7 +14,7 @@ type Nav = { navigate: (href: string) => void };
 type Unit = Parameters<typeof count>[1];
 
 /** A number that opens its rows (W3): "1,234 plays", a link to /history/listens with its filters. */
-function RowsLink({ n, unit, filter, navigate }: { n: number; unit: Unit; filter: RowsFilter } & Nav) {
+export function RowsLink({ n, unit, filter, navigate }: { n: number; unit: Unit; filter: RowsFilter } & Nav) {
   const href = rowsHref(filter);
   if (n === 0) return <span className="hist-num">{count(n, unit)}</span>;  // no rows to show
   return (
@@ -88,6 +89,9 @@ function OverviewBody({ o, navigate }: { o: Overview } & Nav) {
                 </li>
               ))}
             </ul>
+            <div>
+              <Button variant="quiet" href={HISTORY_COUNTED} onClick={() => navigate(HISTORY_COUNTED)}>{t('history.once.why')}</Button>
+            </div>
             {o.adds_up ? <Text variant="note">{t('history.addsUp')}</Text> : (
               <div className="stack">
                 <Status state="needs" label={t('history.addsUpNot')} />

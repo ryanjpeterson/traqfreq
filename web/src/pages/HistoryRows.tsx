@@ -3,7 +3,7 @@ import { t, tf, type StringKey } from '../copy/t';
 import { useGet } from '../app/api';
 import { MODULE_PATH } from '../app/route';
 import {
-  count, dayLabel, fmt, localTime, monthLabel, rowsHref, sourceName,
+  count, dayLabel, duration, fmt, localTime, monthLabel, rowsHref, sourceName,
   type ListenRow, type ListenStatus, type Listens, type RowsFilter,
 } from '../app/history';
 
@@ -25,9 +25,22 @@ export function parseFilter(query: string): RowsFilter {
     artist: q.get('artist') || undefined,
     matched: m === 'true' ? true : m === 'false' ? false : undefined,
     offset: num('offset'),
+    of: q.get('of') || undefined,
+    gap: (q.get('gap') && /^(\d+-\d+|none)$/.test(q.get('gap')!) ? q.get('gap')! : undefined),
+    start: num('start'),
+    end: num('end'),
     name: (q.get('artist') && q.get('name')) || undefined,
   };
 }
+
+/** "61-120" → "1 min 1 s to 2 min". */
+function gapLabel(gap: string): string {
+  const [a, b] = gap.split('-').map(Number);
+  return tf('rows.title.span', { a: duration(a), b: duration(b) });
+}
+
+/** A span's ends (UTC epoch seconds) as UTC times; the rows show local times. */
+const spanTime = (sec: number) => `${new Date(sec * 1000).toISOString().slice(0, 19).replace('T', ' ')} UTC`;
 
 function periodLabel(p: string): string {
   return p.length === 10 ? dayLabel(p) : p.length === 7 ? monthLabel(p) : p;
@@ -46,6 +59,15 @@ function why(r: ListenRow, tz: string): string {
   parts.push(r.rating_key != null ? tf('rows.why.track', { rk: r.rating_key }) : t('rows.why.noTrack'));
   if (r.dup_of && r.dup_of === r.source) parts.push(t('rows.why.repeat'));
   else if (r.dup_of) parts.push(tf('rows.why.dupOf', { source: sourceName(r.dup_of) }));
+  if (r.of === null) parts.push(t('rows.why.ofNone'));
+  else if (r.of) {
+    const vars = {
+      source: sourceName(r.of.source), at: r.of.started_at ? `${localTime(r.of.started_at, tz)} ${tz}` : '',
+      gap: duration(r.of.gap_s), w: duration(r.of.window_s),
+    };
+    parts.push(tf(r.dup_of === r.source ? 'rows.why.ofRepeat' : 'rows.why.ofDuplicate', vars));
+    if (!r.of.play) parts.push(t('rows.why.ofNotPlay'));
+  }
   return parts.join(' · ');
 }
 
@@ -63,6 +85,9 @@ export function HistoryRows({ query, navigate }: Props) {
     f.name,
     f.matched === true && t('rows.matchedYes'),
     f.matched === false && t('rows.matchedNo'),
+    f.of && f.of !== f.source && tf('history.sources.dupOf', { source: sourceName(f.of) }),
+    f.gap && (f.gap === 'none' ? t('rows.title.noGap') : tf('rows.title.gap', { gap: gapLabel(f.gap) })),
+    f.start != null && f.end != null && tf('rows.title.span', { a: spanTime(f.start), b: spanTime(f.end) }),
   ].filter(Boolean).join(' · ');
   return (
     <>

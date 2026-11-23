@@ -4,6 +4,7 @@ import { useModules } from './app/api';
 import { BottomBar, TopBar } from './app/Nav';
 import { parseRoute, usePath, type Route } from './app/route';
 import { History } from './pages/History';
+import { HistoryCounted } from './pages/HistoryCounted';
 import { HistoryRows } from './pages/HistoryRows';
 import { MapHome } from './pages/MapHome';
 import { ModulePage } from './pages/ModulePage';
@@ -55,7 +56,8 @@ export function Shell() {
         {r.page === 'module' && r.module === 'S' && <Setup modules={modules} />}
         {r.page === 'module' && r.module === 'H' && !waiting && (r.sub === 'listens'
           ? <HistoryRows query={path.replace(/^[^?]*/, '')} navigate={navigate} />
-          : <History navigate={navigate} />)}
+          : r.sub === 'counted' ? <HistoryCounted navigate={navigate} />
+            : <History navigate={navigate} />)}
         {r.page === 'module' && r.module !== 'S' && r.module !== 'H' && !waiting && <ModulePage module={r.module} navigate={navigate} />}
         {r.page === 'notFound' && <NotFound navigate={navigate} />}
       </main>

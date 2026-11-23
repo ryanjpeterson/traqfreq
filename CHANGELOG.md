@@ -4,6 +4,10 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 ### Added
+- T7: Counted once page (`/history/counted`, linked from the overview's "Every listen, counted once"): for each repeat and duplicate, the listen it repeats or duplicates, found again with jimbo-dj's own conditions (`window_sql` vendored unchanged), and how far apart, in gap buckets per source pair; "no listen in the window" is shown, not hidden.
+- T7: read-only checks over the plays: bursts (plays starting under 30 s apart, all but the first held), one song looped, steady rhythm (scrobbler-bot shape). Report only; plays stay jimbo-dj's `counted = 1`.
+- T7: `GET /api/history/counted` (stats cache `history.counted`); `/api/history/listens` adds `of`, `gap` (`a-b` seconds or `none`), `start`/`end` (UTC epoch seconds), and each repeat or duplicate row carries `of` (its listen, gap, window). The rows' "why" line says which play and how far apart.
+- T7: `scripts/make_fixture.py --checks` adds invented bursts, a loop, a steady rhythm, an Apple Music daily-summary duplicate and a flag with no play in its window.
 - T6: HISTORY page (when `TRAQFREQ_MODULES` has H): plays, every listen counted once, matched %, the year heatmap (HISTORY blue at five levels, with a summary, legend and list by month), top artists (one name per artist, jimbo-dj's `Names`), sources and years. Every number links to its rows at `/history/listens` (paged, with the rule and why each listen is there).
 - T6: stats cache in traqfreq's own database (`TRAQFREQ_DATA_DIR/traqfreq.sqlite`), keyed by jimbo-dj's history, match and library versions and the time zone.
 - T6: `GET /api/history/heatmap?year=`; `/api/history/overview` adds top artists and reads the cache; `/api/history/listens` adds `period`, `artist`, `matched`.
@@ -16,6 +20,7 @@ All notable changes to this project are documented here. The format follows [Kee
 - `TZ` setting (jimbo-dj's listening time zone when its `history_tz` isn't set).
 - `docs/specs/t5-history.md`: plan for T5–T8.
 ### Fixed
+- T7: `test_api_tz_from_env` wrote its cache into `./data` (in the server checkout, the deployed app's data folder); it now uses a temp folder.
 - Fixture and `legacy.KEY_TABLES` now match jimbo-dj's real schema (`tracks` by `rating_key` with `removed_at`, `albums`/`artists` by key, `analysis`, `features`, `listens`, `listen_matches`, `history_imports`, `stats`). The guessed `track_analysis` and `track_tags` are gone, so SETUP no longer lists them as not found.
 - P0 gate passed: deployed on the Mac mini at :4492 from `main`, reading jimbo-dj's live database read-only.
 - T4 shell: chrome top bar from `NavItem` (LIBRARY, switched-on modules, SETUP, search; L1/L2), compact top bar on tablets (L4), 76 px phone bottom bar of five (L3), client-side routing.

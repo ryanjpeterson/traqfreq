@@ -214,3 +214,90 @@ describe('HISTORY rows', () => {
     expect(await screen.findByRole('heading', { name: 'No such page' })).toBeTruthy();
   });
 });
+
+// T7, invented rows shaped like the --checks fixture's answers.
+const COUNTED = {
+  gaps: {
+    repeats: 1, duplicates: 3, not_found: 1, rules: {},
+    pairs: [
+      { source: 'spotify', of: 'spotify', kind: 'repeat', listens: 1, windows: [30], not_found: 0, beyond: 0,
+        buckets: [{ min: 0, max: 10, listens: 0 }, { min: 11, max: 30, listens: 1 }, { min: 31, max: 60, listens: 0 },
+          { min: 61, max: 120, listens: 0 }, { min: 121, max: 300, listens: 0 }, { min: 301, max: 900, listens: 0 },
+          { min: 901, max: 3600, listens: 0 }] },
+      { source: 'plex', of: 'lastfm', kind: 'duplicate', listens: 2, windows: [900], not_found: 1, beyond: 0,
+        buckets: [{ min: 0, max: 10, listens: 0 }, { min: 11, max: 30, listens: 0 }, { min: 31, max: 60, listens: 1 },
+          { min: 61, max: 120, listens: 0 }, { min: 121, max: 300, listens: 0 }, { min: 301, max: 900, listens: 0 },
+          { min: 901, max: 3600, listens: 0 }] },
+      { source: 'applemusic', of: 'lastfm', kind: 'duplicate', listens: 1, windows: [300, 3600], not_found: 0, beyond: 0,
+        buckets: [{ min: 0, max: 10, listens: 0 }, { min: 11, max: 30, listens: 0 }, { min: 31, max: 60, listens: 0 },
+          { min: 61, max: 120, listens: 0 }, { min: 121, max: 300, listens: 0 }, { min: 301, max: 900, listens: 0 },
+          { min: 901, max: 3600, listens: 1 }] },
+    ],
+  },
+  checks: {
+    plays_checked: 33,
+    burst: { findings: 1, plays: 3, in_bursts: 4, rule: '3 or more plays in a row', newest: [
+      { start: 1791633600, end: 1791633640, first: '2026-10-10T12:00:00Z', last: '2026-10-10T12:00:40Z', plays: 4, songs: 4,
+        sources: { lastfm: 4 }, artist: 'Static Choir', title: 'Signal 1', held: 3 }] },
+    loop: { findings: 0, plays: 0, newest: [], rule: 'the same song 10 or more plays in a row' },
+    rhythm: { findings: 1, plays: 12, rule: '10 or more plays in a row', newest: [
+      { start: 1791774000, end: 1791775985, first: '2026-10-12T03:00:00Z', last: '2026-10-12T03:33:05Z', plays: 12, songs: 4,
+        sources: { plex: 12 }, artist: 'Metronome Club', title: 'Tick 1', gap_s: 180 }] },
+  },
+  timezone: 'America/Denver',
+  cache: { built_at: 1793847960, seconds: 0.01, hit: true, key: 'v1' },
+};
+
+describe('HISTORY counted once (T7)', () => {
+  it('routes /history/counted and links it from the overview', async () => {
+    expect(parseRoute('/history/counted')).toEqual({ page: 'module', module: 'H', sub: 'counted' });
+    api({ '/api/modules': MODULES, '/api/history/overview': OVERVIEW, '/api/history/heatmap': heatmap(null),
+      '/api/history/counted': COUNTED });
+    open('/history');
+    const user = userEvent.setup();
+    await user.click(await screen.findByRole('link', { name: "Why each one isn't a play" }));
+    expect(window.location.pathname).toBe('/history/counted');
+    expect(await screen.findByText('Repeats: 1 listen. Duplicates: 3 listens. No listen in the window: 1 listen.')).toBeTruthy();
+  });
+
+  it('lists each gap bucket with its rows, inside the window only', async () => {
+    api({ '/api/modules': MODULES, '/api/history/counted': COUNTED });
+    open('/history/counted');
+    const plex = await screen.findByRole('list', { name: 'Plex, duplicates of Last.fm' });
+    // 15 min window: buckets up to 15 min, then "no listen in the window".
+    expect(within(plex).getAllByRole('listitem')).toHaveLength(7);
+    expect(within(plex).getByText('Over 30 s, up to 1 min')).toBeTruthy();
+    const hrefs = within(plex).getAllByRole('link').map((a) => a.getAttribute('href'));
+    expect(hrefs).toEqual(['/history/listens?status=duplicate&source=plex&of=lastfm&gap=31-60',
+      '/history/listens?status=duplicate&source=plex&of=lastfm&gap=none']);
+    const rep = screen.getByRole('list', { name: 'Spotify, repeats of itself' });
+    expect(within(rep).getAllByRole('listitem')).toHaveLength(3);  // up to 10 s, up to 30 s, none
+    expect(screen.getByText("1 listen. Window 5 min, or 1 h for Apple Music's daily summary.")).toBeTruthy();
+  });
+
+  it('reports the checks without changing a count', async () => {
+    api({ '/api/modules': MODULES, '/api/history/counted': COUNTED });
+    open('/history/counted');
+    expect(await screen.findByText('1 finding, 3 plays held')).toBeTruthy();
+    expect(screen.getAllByText('Report only')).toHaveLength(3);
+    expect(screen.getByText('None found.')).toBeTruthy();
+    const burst = screen.getByRole('list', { name: 'Bursts' });
+    expect(within(burst).getByText('2026-10-10 06:00 America/Denver, 4 plays, 4 songs')).toBeTruthy();
+    expect(within(burst).getByRole('link').getAttribute('href'))
+      .toBe('/history/listens?status=play&start=1791633600&end=1791633640');
+    expect(screen.getByText(/every 3 min · Plex 12/)).toBeTruthy();
+  });
+
+  it('rows of a gap say which play each duplicates and how far apart', async () => {
+    const url = '/api/history/listens?status=duplicate&source=plex&of=lastfm&gap=31-60';
+    api({ '/api/modules': MODULES, [url]: { ...LISTENS, of: 'lastfm', gap: '31-60', rows: [{ ...LISTENS.rows[0],
+      of: { id: 1, source: 'lastfm', started_at: '2026-11-01T20:15:00Z', play: true, gap_s: 60, window_s: 900 } }] } });
+    open('/history/listens?status=duplicate&source=plex&of=lastfm&gap=31-60');
+    expect(await screen.findByRole('heading', { name: 'Duplicates · Plex · of Last.fm · 31 s to 1 min apart' })).toBeTruthy();
+    const user = userEvent.setup();
+    await user.click(await screen.findByRole('button', { name: "Why it's here" }));
+    expect(screen.getByText(/duplicates the Last\.fm play at 2026-11-01 13:15 America\/Denver, 1 min apart \(window 15 min\)$/))
+      .toBeTruthy();
+    expect(parseFilter('?status=repeat&gap=bad&start=1&end=2')).toMatchObject({ status: 'repeat', gap: undefined, start: 1, end: 2 });
+  });
+});

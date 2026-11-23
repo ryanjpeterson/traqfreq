@@ -16,7 +16,9 @@ every counting rule has a case that tells it apart from a raw row count:
 - stats: jimbo-dj's own stored summaries (library.stats, history.overview), trimmed to the counts and the
   top artists.
 
-Usage: python scripts/make_fixture.py [out_path]   (default tests/fixtures/legacy.sqlite)
+- With --checks: T7's invented bursts, loop, steady rhythm and windows (CHECK_LISTENS), on top of the above.
+
+Usage: python scripts/make_fixture.py [--checks] [out_path]   (default tests/fixtures/legacy.sqlite)
 """
 
 from __future__ import annotations
@@ -122,6 +124,38 @@ LISTENS = [
     ("lastfm", "2026-11-04T19:05:00Z", None, "Nobody Known", "Ghost Song (Live)", None, None, 1,
      "nobodyknown|ghostsong", None, None),  # not in the library
 ]
+# T7's checks, only with --checks (build(..., checks=True)), so T5/T6's counts above stay as they are. All
+# invented, flagged the way jimbo-dj's dedupe would flag them:
+# - a burst: 4 plays of 4 songs 10, 10 and 20 s apart (3 held);
+# - a loop: one song 10 times, 200 s apart (one song, so not a steady rhythm);
+# - a steady rhythm: 12 plays of 4 songs, 180-181 s apart;
+# - an Apple Music daily-summary listen 40 min from the Last.fm play it duplicates (an hour's window);
+# - a Plex listen flagged as a Last.fm duplicate with no Last.fm play in its window ("not found").
+def _check_listens() -> list[tuple]:
+    rows = []
+    burst = [("Static Choir", f"Signal {i}", f"staticchoir|signal{i}") for i in range(1, 5)]
+    for (a, t, mk), at in zip(burst, ("12:00:00", "12:00:10", "12:00:20", "12:00:40")):
+        rows.append(("lastfm", f"2026-10-10T{at}Z", None, a, t, None, None, 1, mk, None, None))
+    for i in range(10):
+        m, sec = divmod(i * 200, 60)
+        rows.append(("spotify", f"2026-10-11T10:{m:02d}:{sec:02d}Z", 190000, "Loop Garden", "Again", None,
+                     "spotify:track:l1", 1, "loopgarden|again", None, None))
+    gaps = [0, 180, 361, 541, 722, 902, 1083, 1263, 1444, 1624, 1805, 1985]
+    for i, g in enumerate(gaps):
+        m, sec = divmod(g, 60)
+        n = i % 4 + 1
+        rows.append(("plex", f"2026-10-12T03:{m:02d}:{sec:02d}Z", 180000, "Metronome Club", f"Tick {n}", None,
+                     f"plex:9{n}", 1, f"metronomeclub|tick{n}", None, None))
+    rows.append(("lastfm", "2026-10-14T18:00:00Z", None, "Ada Vey", "Coil", "Quiet Engines", None, 1, "adavey|coil", None, None))
+    rows.append(("applemusic", "2026-10-14T18:40:00Z", 402000, "Ada Vey", "Coil", "Quiet Engines", "daily:2026-10-14:18", 0,
+                 "adavey|coil", None, "lastfm"))
+    rows.append(("plex", "2026-10-13T09:00:00Z", 200000, "Ghost Line", "Orphan", None, "plex:99", 0,
+                 "ghostline|orphan", None, "lastfm"))
+    return rows
+
+
+CHECK_LISTENS = _check_listens()
+
 MATCHES = [("kollektivnord|westkreuz", 101), ("kollektivnord|ostkreuz", 102), ("paperlanterns|harbourlights", 103),
            ("paperlanterns|staticgulls", 104), ("adavey|coil", 105), ("nobodyknown|ghostsong", None)]
 
@@ -145,7 +179,7 @@ STATS = [
 ]
 
 
-def build(out: Path) -> Path:
+def build(out: Path, checks: bool = False) -> Path:
     out.parent.mkdir(parents=True, exist_ok=True)
     out.unlink(missing_ok=True)
     conn = sqlite3.connect(out)
@@ -170,7 +204,7 @@ def build(out: Path) -> Path:
         conn.executemany(
             "INSERT INTO listens (id, source, started_at, ms_played, artist, title, album, uri, counted, match_key,"
             " rating_key, dup_of) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-            [(i, src, _t(at), *rest) for i, (src, at, *rest) in enumerate(LISTENS, 1)],
+            [(i, src, _t(at), *rest) for i, (src, at, *rest) in enumerate(LISTENS + (CHECK_LISTENS if checks else []), 1)],
         )
         conn.executemany("INSERT INTO listen_matches VALUES (?, ?)", MATCHES)
         conn.executemany("INSERT INTO history_imports VALUES (?, ?, ?, ?, ?, ?)", IMPORTS)
@@ -183,5 +217,6 @@ def build(out: Path) -> Path:
 
 
 if __name__ == "__main__":
-    target = Path(sys.argv[1]) if len(sys.argv) > 1 else Path(__file__).resolve().parents[1] / "tests/fixtures/legacy.sqlite"
-    print(build(target))
+    args = [a for a in sys.argv[1:] if a != "--checks"]
+    target = Path(args[0]) if args else Path(__file__).resolve().parents[1] / "tests/fixtures/legacy.sqlite"
+    print(build(target, checks="--checks" in sys.argv))

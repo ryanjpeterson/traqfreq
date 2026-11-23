@@ -9,17 +9,20 @@ export const MODULE_PATH: Record<ModuleId, string> = {
 export type Route =
   | { page: 'map' }
   | { page: 'search' }
-  | { page: 'module'; module: ModuleId; sub?: 'listens' }
+  | { page: 'module'; module: ModuleId; sub?: 'listens' | 'counted' }
   | { page: 'notFound' };
 
 /** HISTORY's rows page: the listens behind a number (query string = the filters). */
 export const HISTORY_LISTENS = '/history/listens';
+/** HISTORY's Counted once page (T7): why each listen that isn't a play isn't one, and the read-only checks. */
+export const HISTORY_COUNTED = '/history/counted';
 
 export function parseRoute(pathname: string): Route {
   const path = pathname.replace(/[?#].*$/, '').replace(/\/+$/, '') || '/';
   if (path === '/') return { page: 'map' };
   if (path === '/search') return { page: 'search' };
   if (path === HISTORY_LISTENS) return { page: 'module', module: 'H', sub: 'listens' };
+  if (path === HISTORY_COUNTED) return { page: 'module', module: 'H', sub: 'counted' };
   const module = MODULE_IDS.find((m) => MODULE_PATH[m] === path);
   return module ? { page: 'module', module } : { page: 'notFound' };
 }
