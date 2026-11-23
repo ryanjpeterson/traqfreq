@@ -2,9 +2,10 @@ import { Band, Button, Card, Status, Text } from '../components/kit';
 import { t, tf } from '../copy/t';
 import { useGet } from '../app/api';
 import { formatUtc } from '../app/time';
-import { count, fmt1, pct, tracksHref, valueLabel, type LibraryStats } from '../app/library';
+import { count, fmt1, pct, tracksHref, valueLabel, type LibraryGate, type LibraryStats } from '../app/library';
 import { artistHref, listHref } from '../app/entities';
 import { EmptyState } from './ModulePage';
+import { LibraryCompareCard } from './LibraryCompare';
 
 type Nav = { navigate: (href: string) => void };
 
@@ -50,6 +51,7 @@ const qOf = (s: LibraryStats, k: string, v: string) => (s.rows[k] as Record<stri
 const rule = (s: LibraryStats, k: string) => `${t('library.rule')}: ${s.rules[k] ?? ''}`;
 
 function LibraryBody({ s, navigate }: { s: LibraryStats } & Nav) {
+  const gate = useGet<LibraryGate>('/api/library/compare');
   const jd = s.jimbodj;
   const stored = jd == null ? t('library.unstored') : jd.fresh ? t('library.storedFresh') : t('library.storedStale');
   const ph = s.play_history;
@@ -86,6 +88,10 @@ function LibraryBody({ s, navigate }: { s: LibraryStats } & Nav) {
           ))}
         </ul>
       </section>
+
+      <div className="hist-grid">
+        <LibraryCompareCard load={gate} navigate={navigate} />
+      </div>
 
       <section aria-labelledby="l-files">
         <Text variant="label" id="l-files">{t('library.files')}</Text>

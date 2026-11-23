@@ -28,6 +28,7 @@ export function filterTitle(f: TrackFilter): string {
     yesNo(f.multi_part, 'library.rows.multiPart', 'library.rows.onePart'),
     f.artist_key != null && (f.name ?? tf('library.rows.artistKey', { k: f.artist_key })),
     f.album_key != null && tf('library.rows.albumKey', { k: f.album_key }),
+    f.facet && f.value != null && tf('library.rows.facet', { facet: t(`library.facet.${f.facet}` as StringKey), v: valueLabel(f.value) }),
   ].filter(Boolean).join(' · ');
 }
 

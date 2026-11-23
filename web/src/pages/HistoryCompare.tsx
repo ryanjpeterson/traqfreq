@@ -13,10 +13,15 @@ const short = (v: unknown) => {
   return s && s.length > 120 ? `${s.slice(0, 117)}...` : String(s);
 };
 
-/** The P1 gate in one card, for SETUP and the HISTORY overview: how many stored numbers match jimbo-dj's. */
-export function CompareCard({ load, navigate }: { load: Load<Compare> } & Nav) {
+/** What a gate card needs: the P1 gate (HISTORY) and the P2 gate (LIBRARY, T12) answer alike. */
+export type GateSummary = Pick<Compare, 'stored' | 'matching' | 'fields' | 'matching_fields' | 'differ' | 'explained' | 'passed'>;
+
+/** A gate in one card, for SETUP and its module's page: how many stored numbers match jimbo-dj's. HISTORY's by
+ *  default; LIBRARY's passes its own label and compare page. */
+export function CompareCard({ load, navigate, label = t('compare.card'), href = HISTORY_COMPARE }:
+  { load: Load<GateSummary>; label?: string; href?: string } & Nav) {
   return (
-    <Card label={t('compare.card')}>
+    <Card label={label}>
       {load.state === 'loading' && <Text>{t('compare.loading')}</Text>}
       {load.state === 'failed' && <Status state="needs" label={t('history.failed')} />}
       {load.state === 'ok' && (
@@ -24,7 +29,7 @@ export function CompareCard({ load, navigate }: { load: Load<Compare> } & Nav) {
           <Status state={load.data.passed ? 'ready' : 'needs'} label={t(load.data.passed ? 'compare.passed' : 'compare.notPassed')} />
           <Text>{summary(load.data)}</Text>
           <div>
-            <Button variant="quiet" href={HISTORY_COMPARE} onClick={() => navigate(HISTORY_COMPARE)}>{t('compare.open')}</Button>
+            <Button variant="quiet" href={href} onClick={() => navigate(href)}>{t('compare.open')}</Button>
           </div>
         </div>
       )}
@@ -32,7 +37,7 @@ export function CompareCard({ load, navigate }: { load: Load<Compare> } & Nav) {
   );
 }
 
-function summary(c: Compare): string {
+export function summary(c: GateSummary): string {
   return tf('compare.summary', {
     rows: count(c.stored, 'row'), matching: fmt(c.matching), fields: count(c.fields, 'field'), mf: fmt(c.matching_fields),
     stale: c.differ ? tf('compare.staleNote', { differ: fmt(c.differ), explained: fmt(c.explained) }) : '',

@@ -172,10 +172,17 @@ def _fields(theirs: dict, ours: dict, name: str, stats_rows: dict) -> list[dict]
                 if f in NOT_IN_P2:
                     out.append({"field": f, "matches": None, "skipped": NOT_IN_P2[f], "jimbodj": v2})
                     continue
-                out.append({**_field(f, v2, mine.get(k2)), **_rows(f, k2, v2, stats_rows)})
+                out.append(_both(_field(f, v2, mine.get(k2)), v2, mine.get(k2), _rows(f, k2, v2, stats_rows)))
             continue
-        out.append({**_field(k, v, ours.get(k)), **_rows(k, k, v, stats_rows)})
+        out.append(_both(_field(k, v, ours.get(k)), v, ours.get(k), _rows(k, k, v, stats_rows)))
     return out
+
+
+def _both(f: dict, theirs, ours, rows: dict) -> dict:
+    """A field with both values, lists and dicts too (the compare page shows every bar next to jimbo-dj's)."""
+    if "jimbodj" not in f:
+        f["jimbodj"], f["traqfreq"] = _norm(theirs), _norm(ours)
+    return {**f, **rows}
 
 
 def _rows(field: str, key: str, value, stats_rows: dict) -> dict:
