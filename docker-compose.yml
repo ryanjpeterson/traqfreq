@@ -11,6 +11,14 @@ services:
       # Switched-on modules besides LIBRARY and SETUP, e.g. "H,T". Empty in P0.
       TRAQFREQ_MODULES: ${TRAQFREQ_MODULES:-}
       TZ: ${TZ:-America/Denver}
+      # P3 SERVERS (docs/specs/t13-servers.md): empty = not set up. Put the values in .env, never in the repo.
+      TRAQFREQ_PLEX_ROOTS: ${TRAQFREQ_PLEX_ROOTS:-}
+      TRAQFREQ_JELLYFIN_URL: ${TRAQFREQ_JELLYFIN_URL:-}
+      TRAQFREQ_JELLYFIN_KEY: ${TRAQFREQ_JELLYFIN_KEY:-}
+      TRAQFREQ_JELLYFIN_USER: ${TRAQFREQ_JELLYFIN_USER:-}
+      TRAQFREQ_NAVIDROME_URL: ${TRAQFREQ_NAVIDROME_URL:-}
+      TRAQFREQ_NAVIDROME_USER: ${TRAQFREQ_NAVIDROME_USER:-}
+      TRAQFREQ_NAVIDROME_PASSWORD: ${TRAQFREQ_NAVIDROME_PASSWORD:-}
     ports:
       - "${TRAQFREQ_PORT:-4492}:4492"
     volumes:

@@ -31,9 +31,15 @@ Spec: [t9-library.md](t9-library.md).
 - **T9** Library numbers (jimbo-dj's `library.stats`) and the rows behind them. *Done* (API only; the page is T10).
 - **T10** LIBRARY page. *Done.*
 - **T11** Albums, artists, a track. *Done.*
-- **T12** Gate script and `GET /api/library/compare`, the compare page, the gate card on SETUP and LIBRARY. *Done;* the gate run on live data follows the deploy (HANDOFF).
-## P3 SERVERS
-- T13–T16 track identity · T17 Jellyfin · T18 Navidrome · T19 gate.
+- **T12** Gate script and `GET /api/library/compare`, the compare page, the gate card on SETUP and LIBRARY. *Done.* **P2 gate passed 2026-11-23** (HANDOFF).
+## P3 SERVERS: T13–T19
+Spec: [t13-servers.md](t13-servers.md).
+- **T13** Track identity, the Plex side: file key, song and match key of every copy, its problems; the three servers' settings and status. *Done* (API only; the page is T15).
+- **T14** Matching on snapshots: file, MusicBrainz ID, tags; one to one; every unmatched copy and item with its reason.
+- **T15** SERVERS page on SETUP; "On servers" on LIBRARY's track page.
+- **T16** Reading servers: the GET-only client, snapshot refresh, plays on other servers shown beside, never added.
+- **T17** Jellyfin. **T18** Navidrome (both need their URL and keys: HANDOFF).
+- **T19** Gate "One song, three servers": `scripts/p3_gate.py`, `GET /api/servers/compare`, run on live data.
 ## P4 TAGS read-only: T20–T23
 ## P5 PLAYLISTS Junction preview: T24–T28
 ## P6 Cut-overs (~15)
