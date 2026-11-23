@@ -2,6 +2,13 @@
 
 ## Log
 
+### 2026-11-23 — A Navidrome read counts only when no scan ran during it
+
+- **Decision:** read every song through `search3` page by page, with `getScanStatus` before and after; store the read only when no scan ran (not scanning, the same `lastScan` and `count`), no song came twice and the distinct songs are the scan's own `count`. Otherwise the refresh fails, says why, and keeps the snapshot before.
+- **Why:** Subsonic's `search3` has no sort order to ask for, so a scan can shift the pages under the read (T17 found a torn read live on Jellyfin); a snapshot with songs twice or missing would match wrongly.
+- **Alternatives:** one `getAlbum` per album (thousands of requests); store the torn read with a warning.
+- **Consequences:** a refresh during a scan has to be pressed again; live, the scan's count equals the songs listed (52,985).
+
 ### 2026-11-23 — Jellyfin's items don't depend on a user; play counts come from one named user
 
 - **Decision:** the reader lists every audio item through `/Items` with the API key, and reads play counts separately from one user (`TRAQFREQ_JELLYFIN_USER`, by name or ID) through `/Users/{id}/Items?Filters=IsPlayed`; without a user there are no play counts.
@@ -21,7 +28,7 @@
 - **Decision:** a tier that finds two candidates, or one candidate two copies want, stops with `ambiguous`; every unmatched copy and item gets exactly one reason. Plex copies have no track MusicBrainz ID, so for the `mbid` tier a copy uses the IDs of the item its file matched on the other server. Navidrome's music folder is the folder its real paths share (Subsonic names none).
 - **Why:** a wrong match is worse than a missing one (transparent, W3), and the reasons must add up to the unmatched count.
 - **Alternatives:** best-of-several by score; asking MusicBrainz (no lookups in P3).
-- **Consequences:** some songs stay unmatched until their tags are fixed; a Navidrome library in one artist folder would need a folder setting (T18).
+- **Consequences:** some songs stay unmatched until their tags are fixed; a Navidrome library in one artist folder needs its folder set (`TRAQFREQ_NAVIDROME_ROOTS`, T18).
 
 ### 2026-11-23 — The file is the anchor for one song across servers
 
