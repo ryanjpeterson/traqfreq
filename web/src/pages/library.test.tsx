@@ -26,6 +26,12 @@ const STATS = {
   },
   analyzer: { version: 2, tracks: 2, pct: 40.0, errors: 1 },
   top_artist_keys: [{ artist: 'Kollektiv Nord', artist_key: 301, plays: 3 }, { artist: 'The Paper Lanterns', artist_key: 302, plays: 2 }],
+  plays_all: {
+    played_tracks: 5, played_pct: 100.0, plays: 8, history_plays: 5,
+    by_source: { lastfm: 2, plex: 1, spotify: 1, applemusic: 1 }, tracks_by_source: { lastfm: 2, plex: 1, spotify: 1, applemusic: 1 },
+    top_artists: [{ artist: 'Kollektiv Nord', artist_key: 301, plays: 4 }, { artist: 'The Paper Lanterns', artist_key: 302, plays: 3 },
+      { artist: 'Ada Vey', artist_key: 303, plays: 1 }],
+  },
   rules: {
     tracks: 'COUNT(*) WHERE removed_at IS NULL', albums: 'COUNT(DISTINCT album_key) WHERE removed_at IS NULL',
     codecs: "the 10 most common COALESCE(codec, '?') WHERE removed_at IS NULL",
@@ -43,6 +49,9 @@ const STATS = {
     top_artists: { 301: 'artist_key=301&played=true&sort=plex_plays', 302: 'artist_key=302&played=true&sort=plex_plays' },
     sonic_analysis: 'sonic=true', analyzer: 'analysis=ok', analyzer_errors: 'analysis=error',
     mapped: 'mapped=true', unmapped: 'mapped=false', multi_part_tracks: 'multi_part=true', removed_since_first_sync: 'removed=true',
+    'all.played_tracks': 'heard=true&sort=plays', 'all.plays': 'heard=true&sort=plays',
+    'all.by_source': { lastfm: 'source=lastfm&sort=plays', plex: 'source=plex&sort=plays', spotify: 'source=spotify&sort=plays', applemusic: 'source=applemusic&sort=plays' },
+    'all.top_artists': { 301: 'artist_key=301&heard=true&sort=plays', 302: 'artist_key=302&heard=true&sort=plays', 303: 'artist_key=303&heard=true&sort=plays' },
   },
   jimbodj: { source: 'stats.library.stats', built_at: '2026-11-05T02:01:00Z', stamp: '[]', fresh: true },
   cache: { name: 'library.stats', key: 'v1', built_at: 1793847960, seconds: 0.01, hit: true },
@@ -130,13 +139,38 @@ describe('LIBRARY page', () => {
   it('shows Plex play history and Plex top artists by key', async () => {
     api(answers);
     open('/library');
-    const plex = await screen.findByRole('list', { name: 'Plays in Plex' });
+    const plex = await screen.findByRole('list', { name: "Plex only (jimbo-dj's numbers)" });
     expect(within(plex).getAllByText(/^40\.0 % · Rule/, { selector: '.sub' })).toHaveLength(2);  // played and rated
     expect(within(plex).getByRole('link', { name: '5 plays, show the tracks' }).getAttribute('href'))
       .toBe('/library/tracks?played=true&sort=plex_plays');
     const top = screen.getByRole('list', { name: 'Plex top artists' });
     expect(within(top).getByRole('link', { name: '3 plays, show the tracks' }).getAttribute('href'))
       .toBe('/library/tracks?artist_key=301&played=true&sort=plex_plays&name=Kollektiv+Nord');
+  });
+
+  it('shows play history from every source beside Plex, each number opening its tracks', async () => {
+    api(answers);
+    open('/library');
+    const all = await screen.findByRole('list', { name: 'Every source' });
+    expect(within(all).getByRole('link', { name: '5 tracks, show the tracks' }).getAttribute('href')).toBe('/library/tracks?heard=true&sort=plays');
+    expect(within(all).getByRole('link', { name: '8 plays, show the tracks' })).toBeTruthy();
+    const src = screen.getByRole('list', { name: 'Plays by source' });
+    expect(within(src).getAllByRole('listitem').map((li) => li.querySelector('strong')!.textContent))
+      .toEqual(['Last.fm', 'Plex', 'Spotify', 'Apple Music']);
+    expect(within(src).getAllByRole('link', { name: 'on 1 track, show the tracks' })).toHaveLength(3);
+    expect(within(src).getAllByRole('link')[2].getAttribute('href')).toBe('/library/tracks?source=spotify&sort=plays');
+    expect(src.querySelectorAll('.lib-bar[aria-hidden="true"]')).toHaveLength(4);
+    expect(screen.getByText('Most from Last.fm: 2 plays on 2 tracks.')).toBeTruthy();
+    const top = screen.getByRole('list', { name: 'Top artists, every source' });
+    expect(within(top).getByRole('link', { name: '4 plays, show the tracks' }).getAttribute('href'))
+      .toBe('/library/tracks?artist_key=301&heard=true&sort=plays&name=Kollektiv+Nord');
+    expect(within(top).getByRole('link', { name: 'Ada Vey' }).getAttribute('href')).toBe('/library/artist/303');
+  });
+
+  it('titles rows played anywhere or on one source', () => {
+    expect(filterTitle(parseTrackFilter('heard=true&sort=plays'))).toBe('Tracks · played anywhere');
+    expect(filterTitle(parseTrackFilter('source=applemusic'))).toBe('Tracks · played on Apple Music');
+    expect(trackQuery(parseTrackFilter('sort=plays&source=spotify&heard=true'))).toBe('heard=true&source=spotify&sort=plays');
   });
 
   it("says which analysis is Plex's and which is jimbo-dj's", async () => {
