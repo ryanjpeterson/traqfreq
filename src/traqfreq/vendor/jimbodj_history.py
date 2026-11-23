@@ -1,12 +1,16 @@
 """Pure functions vendored from jimbo-dj (ryanjpeterson/jimbo-dj, private), src/jimbodj/history.py at 1d8a7cb.
 
-Copied as is (constants, band_of, norm_artist, norm_title, match_key, Names, window_sql), never edited here: traqfreq must count and match listens exactly the way jimbo-dj does
+Copied as is (constants, band_of, norm_artist, norm_title, match_key, Names, window_sql; T8: DAY, _range,
+_minutes, TOP_PERIODS, top_range), never edited here: traqfreq must count and match listens exactly the way jimbo-dj does
 until HISTORY's cut-over (P6). To update: copy the same names again from jimbo-dj, bump VENDORED_FROM,
 and run tests/test_vendor.py (it checks these against the match keys jimbo-dj stored in the fixture).
 Why vendored, not a git dependency: jimbo-dj's repo is private (HANDOFF, open question 3).
 """
 from __future__ import annotations
 
+import contextlib
+import contextvars
+import datetime as dt
 import functools
 import re
 import sqlite3
@@ -129,3 +133,70 @@ class Names:
 
     def album(self, artist: str | None, raw: str | None) -> str | None:
         return self.albums.get((norm_artist(artist), norm_title(raw)), raw) if raw else raw
+
+
+# --- T8: periods and minutes (copied unchanged) ----------------------------------------------------------
+
+DAY = 86400
+
+
+def _range(con: sqlite3.Connection, year: int, month: int | None, day: int | None = None) -> tuple[float, float]:
+    tz = listen_tz(con)
+    if month and day:
+        a = dt.datetime(year, month, day, tzinfo=tz)
+        b = dt.datetime.combine(a.date() + dt.timedelta(days=1), dt.time(), tzinfo=tz)
+        return a.timestamp(), b.timestamp()
+    a = dt.datetime(year, month or 1, 1, tzinfo=tz)
+    b = dt.datetime(year + (month or 12) // 12, (month or 12) % 12 + 1, 1, tzinfo=tz)
+    return a.timestamp(), b.timestamp()
+
+
+def _minutes(r) -> float:
+    """How long a play lasted. Last.fm doesn't say (the track's length is used); Apple Music's daily summary
+    gives a day's total over its plays, which can run past the track, so it's capped at the track's length."""
+    ms = r["ms_played"] if r["source"] != "lastfm" else None
+    if ms and r["duration_ms"] and r["source"] == "applemusic" and (r.get("uri") or "").startswith("daily:"):
+        ms = min(ms, r["duration_ms"])
+    return (ms or r["duration_ms"] or 225_000) / 60000
+
+
+TOP_PERIODS = {"all": "All time", "30d": "Last 30 days", "12m": "Last 12 months"}
+
+
+def top_range(con: sqlite3.Connection, period: str) -> tuple[float | None, float | None]:
+    """A Top period: "all", "30d", "12m" (both ending today), a year ("2025") or a month ("2025-06")."""
+    tz = listen_tz(con)
+    if period in ("all", ""):
+        return None, None
+    if period in ("30d", "12m"):
+        today = dt.datetime.now(tz).date()
+        start = today - dt.timedelta(days=29 if period == "30d" else 364)
+        a = dt.datetime.combine(start, dt.time(), tzinfo=tz)
+        b = dt.datetime.combine(today + dt.timedelta(days=1), dt.time(), tzinfo=tz)
+        return a.timestamp(), b.timestamp()
+    m = re.fullmatch(r"(\d{4})(?:-(\d{1,2}))?", period)
+    if not m or (m[2] and not 1 <= int(m[2]) <= 12):
+        raise ValueError("period is all, 30d, 12m, a year (2025) or a month (2025-06)")
+    return _range(con, int(m[1]), int(m[2]) if m[2] else None)
+
+
+# --- traqfreq's stand-in, not vendored --------------------------------------------------------------------
+# jimbo-dj's _range and top_range call its listen_tz(con) (meta history_tz, else TZ). traqfreq works the zone
+# out the same way (history.listen_tz, with Settings.tz for TZ) and hands it in here, so the copies above stay
+# unchanged.
+_TZ: contextvars.ContextVar = contextvars.ContextVar("listen_tz")
+
+
+def listen_tz(con: sqlite3.Connection):
+    """The zone set by ``in_zone``: the vendored functions above read it through this name."""
+    return _TZ.get()
+
+
+@contextlib.contextmanager
+def in_zone(tz):
+    """Run vendored period code in ``tz`` (traqfreq's history.listen_tz for the connection)."""
+    token = _TZ.set(tz)
+    try:
+        yield
+    finally:
+        _TZ.reset(token)

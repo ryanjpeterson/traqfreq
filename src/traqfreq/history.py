@@ -23,7 +23,7 @@ from datetime import date, datetime, timedelta, timezone
 from zoneinfo import ZoneInfo
 
 from . import counted, legacy
-from .vendor.jimbodj_history import PRIORITY, SOURCES, Names, norm_artist
+from .vendor.jimbodj_history import PRIORITY, SOURCES, Names, norm_artist, norm_title
 
 # Bump when the shape of what ``summary`` builds changes, so cached summaries are rebuilt (store.py).
 SUMMARY_VERSION = 1
@@ -263,11 +263,14 @@ def period_range(period: str, tz) -> tuple[int, int]:
 def listens(conn: sqlite3.Connection, status: str = "play", source: str | None = None, year: int | None = None,
             limit: int = 50, offset: int = 0, default_tz: str | None = None, period: str | None = None,
             artist: str | None = None, matched: bool | None = None, of: str | None = None, gap: str | None = None,
-            start: int | None = None, end: int | None = None) -> dict:
+            start: int | None = None, end: int | None = None, song: str | None = None, album: str | None = None,
+            hour: int | None = None, weekday: int | None = None) -> dict:
     """The rows behind a number: listens with one status, optionally one source, one year or period (YYYY,
     YYYY-MM, YYYY-MM-DD), one artist (its normalised key, as in ``top_artists``), matched or not, the source a
     repeat or duplicate is of (``of``), its gap to that listen (``gap`` "a-b" seconds or "none", counted.py) and
-    a span of UTC epoch seconds (``start``/``end``, inclusive), newest first. Repeats and duplicates carry
+    a span of UTC epoch seconds (``start``/``end``, inclusive), one song (its match_key), one album (T8: the key
+    Top and Wrapped use, norm_artist|norm_title of the album, or of its library track's album when the listen
+    names none), an hour of the day (0-23) or a weekday (0 = Monday) in the listening zone, newest first. Repeats and duplicates carry
     ``of``: the listen they repeat or duplicate, the gap and the window (or None when none is in it)."""
     if status not in STATUS:
         raise ValueError(f"status is one of {', '.join(STATUS)}")
@@ -293,6 +296,30 @@ def listens(conn: sqlite3.Connection, status: str = "play", source: str | None =
         args.append(artist)
     if matched is not None:
         where.append(f"{track} IS {'NOT ' if matched else ''}NULL")
+    if song:
+        where.append("l.match_key = ?")
+        args.append(song)
+    if album:
+        if not has_matches or "tracks" not in tables:
+            raise ValueError("album needs jimbo-dj's listen_matches and tracks")
+        conn.create_function("norm_artist", 1, norm_artist, deterministic=True)
+        conn.create_function("norm_title", 1, norm_title, deterministic=True)
+        frm = f"{frm} LEFT JOIN tracks t ON t.rating_key = {track}"
+        where.append("(norm_artist(l.artist) || '|' || norm_title(COALESCE(NULLIF(l.album, ''), t.album))) = ?")
+        args.append(album)
+    if hour is not None or weekday is not None:
+        if hour is not None and not 0 <= hour <= 23:
+            raise ValueError("hour is 0 to 23")
+        if weekday is not None and not 0 <= weekday <= 6:
+            raise ValueError("weekday is 0 (Monday) to 6 (Sunday)")
+        conn.create_function("local_hour", 1, lambda s: datetime.fromtimestamp(s, tz).hour, deterministic=True)
+        conn.create_function("local_weekday", 1, lambda s: datetime.fromtimestamp(s, tz).weekday(), deterministic=True)
+        if hour is not None:
+            where.append("local_hour(l.started_at) = ?")
+            args.append(hour)
+        if weekday is not None:
+            where.append("local_weekday(l.started_at) = ?")
+            args.append(weekday)
     if of:
         where.append("l.dup_of = ?")
         args.append(of)
@@ -317,7 +344,7 @@ def listens(conn: sqlite3.Connection, status: str = "play", source: str | None =
     rule = w if not gap else w.replace(counted.GAP, "gap")  # the gap's subquery is in rules.gap
     return {
         "status": status, "source": source, "year": year, "period": period, "artist": artist, "matched": matched,
-        "of": of, "gap": gap, "start": start, "end": end,
+        "of": of, "gap": gap, "start": start, "end": end, "song": song, "album": album, "hour": hour, "weekday": weekday,
         "timezone": str(tz), "total": total,
         "limit": limit, "offset": max(0, offset), "rule": f"listens WHERE {rule.replace('l.', '')}", "params": args,
         "rows": [{**dict(r), "started_at": legacy._iso(r["started_at"]),

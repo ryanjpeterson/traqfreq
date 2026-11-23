@@ -13,7 +13,7 @@ every counting rule has a case that tells it apart from a raw row count:
   which is 2025 in America/Denver (jimbo-dj's default TZ), so years depend on the time zone.
 - Spotify spells "The Paper Lanterns" as "Paper Lanterns"; jimbo-dj's Names makes them one artist (the
   library's spelling), so top artists has 4 names, not 5.
-- stats: jimbo-dj's own stored summaries (library.stats, history.overview), trimmed to the counts and the
+- stats: jimbo-dj's own stored summaries (library.stats, history.overview, T8: history.wrapped), trimmed to the counts and the
   top artists.
 
 - With --checks: T7's invented bursts, loop, steady rhythm and windows (CHECK_LISTENS), on top of the above.
@@ -178,6 +178,36 @@ STATS = [
                           "timezone": "America/Denver"}, 2),
 ]
 
+# T8: jimbo-dj's stored Wrapped rows (history.wrapped, params = the period), cut down to numbers worked out
+# by hand from LISTENS above (America/Denver). Stamp = statcache._history_stamp for META (fresh), except
+# 2026-10: built before the last import (an older stamp) with a play count that is no longer right, as a
+# stale row is. families/decades are TAGS/LIBRARY numbers that P1 doesn't compare.
+STAMP = json.dumps(["1793847900.5", str(SYNC), None])
+OLD_STAMP = json.dumps(["1793240000.0", str(OLD_SYNC), None])
+WRAPPED_STATS = [
+    ("2025", {"year": 2025, "month": None, "day": None, "plays": 1, "hours": 0.1, "artists": 1, "songs": 1,
+              "new_artists": 1, "in_library_pct": 100.0,
+              "top_artists": [{"name": "Kollektiv Nord", "plays": 1, "artist_key": 301}],
+              "decades": [{"label": "2010s", "value": 1}]}, STAMP),
+    ("2026", {"year": 2026, "month": None, "day": None, "plays": 5, "hours": 0.4, "artists": 4, "songs": 5,
+              "new_artists": 3, "in_library_pct": 80.0, "busiest_day": {"date": "2026-11-01", "plays": 2},
+              "top_artists": [{"name": "The Paper Lanterns", "plays": 2, "artist_key": 302},
+                              {"name": "Kollektiv Nord", "plays": 1, "artist_key": 301},
+                              {"name": "Ada Vey", "plays": 1, "artist_key": 303},
+                              {"name": "Nobody Known", "plays": 1, "artist_key": None}],
+              "top_albums": [{"artist": "The Paper Lanterns", "album": "Low Tide Radio", "plays": 2, "album_key": 202},
+                             {"artist": "Kollektiv Nord", "album": "Ringbahn", "plays": 1, "album_key": 201},
+                             {"artist": "Ada Vey", "album": "Quiet Engines", "plays": 1, "album_key": 203}],
+              "families": []}, STAMP),
+    ("2026-10", {"year": 2026, "month": 10, "day": None, "plays": 3}, OLD_STAMP),
+    ("2026-11-01", {"year": 2026, "month": 11, "day": 1, "plays": 2, "hours": 0.1, "artists": 2, "songs": 2,
+                    "new_artists": 1, "every_play": [
+                        {"time": "13:15", "artist": "Kollektiv Nord", "title": "Westkreuz", "album": "Ringbahn",
+                         "source": "Last.fm", "rating_key": 101, "album_key": 201, "minutes": 5.2},
+                        {"time": "13:21", "artist": "The Paper Lanterns", "title": "Harbour Lights", "album": "Low Tide Radio",
+                         "source": "Plex", "rating_key": 103, "album_key": 202, "minutes": 3.7}]}, STAMP),
+]
+
 
 def build(out: Path, checks: bool = False) -> Path:
     out.parent.mkdir(parents=True, exist_ok=True)
@@ -211,6 +241,10 @@ def build(out: Path, checks: bool = False) -> Path:
         conn.executemany(
             "INSERT INTO stats VALUES (?, '', ?, ?, NULL, ?, 0.1)",
             [(name, json.dumps(value), version, SYNC + 60) for name, value, version in STATS],
+        )
+        conn.executemany(
+            "INSERT INTO stats VALUES ('history.wrapped', ?, ?, 2, ?, ?, 0.1)",
+            [(params, json.dumps(value), stamp, SYNC + 120) for params, value, stamp in WRAPPED_STATS],
         )
     conn.close()
     return out
