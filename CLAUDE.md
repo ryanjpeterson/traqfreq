@@ -17,7 +17,7 @@ Yellow chrome `#F0D722` with black text; square module badges **L1 H2 T3 D4 M5 F
 - **Where:** on the laptop in the server checkout `/Volumes/jimbos-sloppydrive/traqfreq` (SMB; see HANDOFF for its quirks), or in a session on the Mac mini. Not in a cloud container. Push every branch to GitHub (`origin`); Forgejo mirrors GitHub.
 - One session = one 5-hour usage window = one pushed branch (`claude/tN-<slug>`). Read only CLAUDE.md, HANDOFF.md and the one spec you need (`docs/specs/README.md` lists them).
 - Stop at the last green commit if the window runs low.
-- At the end: tests green, push, update HANDOFF.md and CHANGELOG.md, then update the progress deck (Slides artifact "traqfreq: build phases": `status`, the phase slide, `log`).
+- At the end: tests green, push, update HANDOFF.md and CHANGELOG.md, then update the progress deck (Slides artifact "traqfreq: build phases", https://claude.ai/artifact/4xm8KY4kxsi36oa9gEToMe: `status`, the phase slide, `log`). Then copy the deck into the repo: read its `project/deck.json`, `project/deck.css` and `project/slides/*.html` into `docs/deck/` (same names, without `project/`), run `node scripts/build-deck.mjs`, and commit them with the session's docs. At the end of each phase, check that `docs/deck` matches the artifact.
 
 ## Docs (jimbo-explain)
 This repo's docs follow jimbo-explain (`docs/explain/`, `jimbo-explain.json`). When a change adds, removes or changes a feature, dependency, integration, roadmap item or key decision, update the matching doc and facts in the same change, and move `synced` to HEAD. Check with the jimbo-explain skill's `scripts/check.mjs`.

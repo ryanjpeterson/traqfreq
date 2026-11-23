@@ -1,0 +1,13 @@
+<section id="sidebyside">
+<div class="bar"></div>
+<p class="barlabel">How it runs</p>
+<h2 class="head">Side by side on the Mac mini</h2>
+<div style="display:flex;gap:40px;align-items:stretch">
+<div class="card" style="flex:1"><p class="k">JIMBO-DJ · PORT 4490 · UNCHANGED</p><h3 class="sub">Keeps every write until it hands one over</h3><ul class="items"><li>Plex playlists and Fix in Plex</li><li>History imports and Plex scans</li><li>The analyzer posts its results here</li><li>Writes data/jimbodj.sqlite</li></ul></div>
+<div style="display:flex;flex-direction:column;justify-content:center;align-items:center;gap:12px;width:220px;flex:none"><x-shape kind="arrow-right" style="width:160px;height:64px;background:#111111"></x-shape><p class="mono" style="text-align:center">read-only<br>mode=ro</p></div>
+<div class="card Y" style="flex:1"><p class="k">TRAQFREQ · PORT 4491 · NEW REPO</p><h3 class="sub">Reads jimbo-dj, writes only its own</h3><ul class="items"><li>Opens jimbodj.sqlite as legacy, read-only</li><li>Its own database per module</li><li>Reuses jimbo-dj’s functions, pinned to a release</li><li>Same Tailscale, same Plex</li></ul></div>
+</div>
+<div class="row" style="border-top:2px solid #111111;padding-top:20px"><div class="badge sm"><p>1</p></div><p class="txt"><b>One writer at a time.</b> When a module cuts over (P6), traqfreq takes that write and jimbo-dj’s switch for it goes off in the same release.</p></div>
+<div class="foot"><p class="label">traqfreq · build phases</p><p class="pg"></p></div>
+<aside>Nothing in jimbo-dj changes for this build until a cut-over. traqfreq opens jimbo-dj’s database read-only through a read-only mount, so it can’t corrupt it, and it reuses jimbo-dj’s Python by depending on a tagged release instead of copying code early.</aside>
+</section>

@@ -25,7 +25,7 @@ Healthy and moving fast: P0–P2 done and gated on live data in two days, P3 und
 
 - After each merge: run the `deploy traqfreq` snippet on the Mac mini.
 - After each phase: run its gate script against the live app and record it in HANDOFF.
-- After each session: update HANDOFF, CHANGELOG and the progress deck "traqfreq: build phases".
+- After each session: update HANDOFF, CHANGELOG and the progress deck "traqfreq: build phases", then copy the deck into `docs/deck` and rebuild its page (`node scripts/build-deck.mjs`).
 
 ## Open questions
 

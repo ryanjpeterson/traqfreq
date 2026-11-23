@@ -1,0 +1,16 @@
+<section id="sessions">
+<div class="bar"></div>
+<p class="barlabel">How sessions work</p>
+<h2 class="head">One session, one window, one pull request</h2>
+<div class="cols3">
+<div class="card"><p class="k">START · SMALL</p><h3 class="sub">Read only what the session needs</h3><p class="txt">CLAUDE.md (one page), HANDOFF.md, and the one spec in docs/specs. No reading jimbo-dj beyond the functions it reuses.</p></div>
+<div class="card Y"><p class="k">BUILD · TESTED</p><h3 class="sub">Fixture database, not the real one</h3><p class="txt">Tests run on a small generated copy of jimbo-dj’s schema, so cloud sessions never need your library.</p></div>
+<div class="card"><p class="k">END · HANDED OFF</p><h3 class="sub">Push, note, deck</h3><p class="txt">Tests green, pull request open, HANDOFF.md says done and next, and this deck’s status and log are updated.</p></div>
+</div>
+<div class="stack" style="gap:10px;border-top:2px solid #111111;padding-top:20px">
+<p class="txt"><b>New chat</b> at the start of each phase, or sooner when a chat grows long. The handoff note and this deck carry everything across.</p>
+<p class="txt"><b>On the Mac mini:</b> from T2, sessions run in jimbos-sloppydrive/traqfreq on the Mac mini, driven from the laptop by Remote Control, so gates run in the same session.</p>
+</div>
+<div class="foot"><p class="label">traqfreq · build phases</p><p class="pg"></p></div>
+<aside>Token-efficient by design: each session starts from a one-page CLAUDE.md, the handoff note and one spec, never from this long planning conversation. If a usage window runs low, the session stops at the last green commit and writes the handoff.</aside>
+</section>

@@ -1,0 +1,25 @@
+<section id="p3">
+<div class="bar"></div>
+<p class="barlabel">Phase P3 · SERVERS</p>
+<div class="barcode"><p>4 / 7</p></div>
+<div class="row"><div class="badge L"><p>P3</p></div><h2 class="head">One song, any server</h2></div>
+<div class="cols2">
+<table class="tbl">
+<tr class="hd"><th style="width:14%">Session</th><th style="width:70%">Work</th><th style="width:16%">Status</th></tr>
+<tr><td>T13</td><td>Spec; track identity, the Plex side: file key, song, match key and issues of every copy; servers’ settings</td><td>Done</td></tr>
+<tr><td>T14</td><td>Matching on snapshots: file, MusicBrainz ID, tags; one to one; a reason for every miss</td><td>Done</td></tr>
+<tr><td>T15</td><td>SERVERS page on SETUP; “On servers” on the track page</td><td>Done</td></tr>
+<tr><td>T16</td><td>Reading servers: GET-only client, snapshot refresh, their plays shown beside</td><td>Done</td></tr>
+<tr><td>T17</td><td>Jellyfin, read-only</td><td>To do</td></tr>
+<tr><td>T18</td><td>Navidrome, read-only, over OpenSubsonic</td><td>To do</td></tr>
+<tr><td>T19</td><td>Gate: one song across Plex, Jellyfin and Navidrome</td><td>To do</td></tr>
+</table>
+<div class="stack" style="gap:28px">
+<div class="card L"><p class="k">GATE</p><p class="txt">Every library track names its item on each server, or why not; nothing matched twice; a spot check agrees on file and length.</p></div>
+<div class="card"><p class="k">STAYS IN JIMBO-DJ</p><p class="txt">Plex remains its only server.</p></div>
+<div class="card"><p class="k">NEW CODE</p><p class="txt">jimbo-dj knows only Plex, so this is traqfreq’s own.</p></div>
+</div>
+</div>
+<div class="foot"><p class="label">traqfreq · build phases</p><p class="pg"></p></div>
+<aside>The file is the anchor: all three servers read the same music folder, so a track’s path below that folder names it everywhere. MusicBrainz IDs and tags stand in only where a server hides paths. No fingerprints: traqfreq never opens the audio. Jellyfin and Navidrome need their URLs and keys before T17 and T18. Writing playlists to them comes later, in the cut-overs.</aside>
+</section>
