@@ -250,6 +250,38 @@ def test_api(legacy_db, tmp_path):
     assert (p["counts"]["items"], p["counts"]["matched"]) == (1, 1)
 
 
+def test_api_rating_key(legacy_db, data_dir):
+    """T15: one Plex copy's rows, for the track page's "On servers": its match or reason on each pair."""
+    s = Settings(data_dir=data_dir, legacy_db=legacy_db, port=4492, host="127.0.0.1")
+    client = TestClient(create_app(s))
+    body = client.get("/api/servers/matches?rating_key=101").json()
+    assert body["copy"] == {"rating_key": 101, "live": True}
+    rows = body["rows"]["rows"]
+    by = {r["pair"]: r for r in rows}
+    assert set(by) == {"jellyfin", "navidrome", "jellyfin-navidrome"} and body["rows"]["total"] == 3
+    assert (by["jellyfin"]["tier"], by["jellyfin"]["left"]["rating_key"], by["jellyfin"]["right"]["id"]) == (
+        "file", 101, _id(101, "a"))
+    assert by["jellyfin"]["right"]["play_count"] == 4  # Jellyfin's own count, shown beside, never added
+    assert by["navidrome"]["tier"] == "file"
+    assert (by["jellyfin-navidrome"]["tier"], by["jellyfin-navidrome"]["via"]) == ("plex", 101)
+    assert "Plex copy 101" in body["rows"]["rule"]
+    # a copy Navidrome hides: its miss and its reason
+    miss = client.get("/api/servers/matches?server=navidrome&rating_key=105").json()["rows"]["rows"]
+    assert [(r["side"], r["reason"], r["left"]["rating_key"]) for r in miss] == [("left", "hidden_path", 105)]
+    # with a tier or a reason too, both apply
+    assert client.get("/api/servers/matches?server=jellyfin&tier=mbid&rating_key=101").json()["rows"]["total"] == 0
+    # not a live copy: no rows, and it says so
+    gone = client.get("/api/servers/matches?rating_key=999").json()
+    assert gone["copy"] == {"rating_key": 999, "live": False} and gone["rows"]["total"] == 0
+    assert client.get("/api/servers/matches?rating_key=x").status_code == 422
+
+
+def test_api_rating_key_without_snapshots(client):
+    body = client.get("/api/servers/matches?rating_key=101").json()
+    assert body["rows"]["total"] == 0 and body["copy"]["live"] is True
+    assert [s["snapshot"] for s in body["snapshots"]] == [False, False]
+
+
 def test_reads_only():
     for mod in ("matching", "snapshots"):
         src = (ROOT / f"src/traqfreq/{mod}.py").read_text(encoding="utf-8")

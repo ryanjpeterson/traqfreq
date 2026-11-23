@@ -326,10 +326,18 @@ def _snapshot_info(s: str, snap: dict | None, now: float) -> dict:
             "hidden_paths": sum(1 for i in snap["items"] if i["hidden"])}
 
 
+def _of_copy(row: dict, rating_key: int) -> bool:
+    """A row about this Plex copy: its match or miss on a Plex pair, or a Jellyfin ↔ Navidrome match made
+    through it (tier ``plex``)."""
+    left = row["left"] or {}
+    return left.get("rating_key") == rating_key or row.get("via") == rating_key
+
+
 def report(conn, data_dir, env_roots: tuple[str, ...] = (), server: str | None = None, tier: str | None = None,
-           reason: str | None = None, limit: int = 50, offset: int = 0) -> dict:
+           reason: str | None = None, limit: int = 50, offset: int = 0, rating_key: int | None = None) -> dict:
     """``GET /api/servers/matches``: the snapshots, each pair's counts with their rules and rows queries, and
-    the rows asked for (``server`` = jellyfin, navidrome or jellyfin-navidrome; ``tier``; ``reason``)."""
+    the rows asked for (``server`` = jellyfin, navidrome or jellyfin-navidrome; ``tier``; ``reason``;
+    ``rating_key``: one Plex copy's rows, for the track page's "On servers")."""
     if server is not None and server not in PAIRS:
         raise ValueError(f"server must be one of {', '.join(PAIRS)}")
     if tier is not None and tier not in (*TIERS, "plex"):
@@ -353,7 +361,7 @@ def report(conn, data_dir, env_roots: tuple[str, ...] = (), server: str | None =
         "read_only": "Matched from stored snapshots; nothing is sent to any server.",
         "version": MATCH_VERSION,
     }
-    if server or tier or reason:
+    if server or tier or reason or rating_key is not None:
         sel = [server] if server else pairs
         if server and server not in m.result:
             sel = []
@@ -363,6 +371,10 @@ def report(conn, data_dir, env_roots: tuple[str, ...] = (), server: str | None =
             rule.append(f"matched at tier {tier}")
         if reason:
             rule.append(f"unmatched because {reason}")
+        if rating_key is not None:
+            rows = [r for r in rows if _of_copy(r, rating_key)]
+            rule.append(f"Plex copy {rating_key} (its match or reason; Jellyfin ↔ Navidrome matched through it)")
+            out["copy"] = {"rating_key": rating_key, "live": rating_key in m.idn.by_key}
         out["rows"] = {"total": len(rows), "offset": offset, "limit": limit, "rule": ", ".join(rule),
                        "rows": rows[offset:offset + limit]}
     return out
