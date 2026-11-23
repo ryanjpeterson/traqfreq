@@ -7,7 +7,7 @@
                                                               └→ traqfreq.sqlite (caches, /data)
 
 - `src/traqfreq/app.py`: the FastAPI app and every route; serves `web/dist`.
-- `legacy.py` (the read-only connection), `history.py`, `counted.py`, `periods.py` (HISTORY), `library.py`, `entities.py`, `library_gate.py` (LIBRARY), `identity.py`, `servers.py` (SERVERS), `store.py` (cache), `vendor/` (jimbo-dj's code).
+- `legacy.py` (the read-only connection), `history.py`, `counted.py`, `periods.py` (HISTORY), `library.py`, `entities.py`, `library_gate.py` (LIBRARY), `identity.py`, `servers.py`, `snapshots.py`, `matching.py` (SERVERS), `store.py` (cache and server snapshots), `vendor/` (jimbo-dj's code).
 - `web/src/pages` (pages, importing only from `web/src/components/kit`), `web/src/app` (nav, routes, API calls), `web/src/copy/strings.json` (all copy).
 
 ## Data flow
@@ -20,7 +20,7 @@
 ## Where data lives
 
 - jimbo-dj's `data/jimbodj.sqlite` (with `-wal`, `-shm`): precious, owned and backed up by jimbo-dj; traqfreq never writes it.
-- `data/traqfreq.sqlite` in the server checkout: caches only, rebuildable; nothing precious yet.
+- `data/traqfreq.sqlite` in the server checkout: caches and server snapshots (`snapshots`, one row per server), all rebuildable by reading again; nothing precious yet.
 
 ## Jobs and schedules
 
