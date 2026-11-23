@@ -9,7 +9,7 @@ export const MODULE_PATH: Record<ModuleId, string> = {
 export type Route =
   | { page: 'map' }
   | { page: 'search' }
-  | { page: 'module'; module: ModuleId; sub?: HistorySub | LibrarySub; key?: number }
+  | { page: 'module'; module: ModuleId; sub?: HistorySub | LibrarySub | SetupSub; key?: number }
   | { page: 'notFound' };
 
 /** HISTORY's rows page: the listens behind a number (query string = the filters). */
@@ -43,6 +43,12 @@ const LIBRARY_SUBS: Record<string, LibrarySub> = {
   [LIBRARY_COMPARE]: 'compare',
 };
 
+/** T15: SETUP → SERVERS and the rows behind its counts (identity copies; match rows). SERVERS is not a module. */
+export type SetupSub = 'servers' | 'serverCopies' | 'serverMatches';
+const SETUP_SUBS: Record<string, SetupSub> = {
+  '/setup/servers': 'servers', '/setup/servers/copies': 'serverCopies', '/setup/servers/matches': 'serverMatches',
+};
+
 export function parseRoute(pathname: string): Route {
   const path = pathname.replace(/[?#].*$/, '').replace(/\/+$/, '') || '/';
   if (path === '/') return { page: 'map' };
@@ -51,6 +57,7 @@ export function parseRoute(pathname: string): Route {
   const entity = /^\/library\/(album|artist|track)\/(\d+)$/.exec(path);
   if (entity) return { page: 'module', module: 'L', sub: entity[1] as LibrarySub, key: Number(entity[2]) };
   if (HISTORY_SUBS[path]) return { page: 'module', module: 'H', sub: HISTORY_SUBS[path] };
+  if (SETUP_SUBS[path]) return { page: 'module', module: 'S', sub: SETUP_SUBS[path] };
   const module = MODULE_IDS.find((m) => MODULE_PATH[m] === path);
   return module ? { page: 'module', module } : { page: 'notFound' };
 }

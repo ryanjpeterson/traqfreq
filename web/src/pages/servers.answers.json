@@ -1,0 +1,2266 @@
+{
+ "/api/servers": {
+  "servers": [
+   {
+    "server": "plex",
+    "name": "Plex",
+    "set_up": true,
+    "read": true,
+    "source": "jimbo-dj's database, read-only (its last Plex sync)",
+    "settings": [
+     {
+      "env": "TRAQFREQ_PLEX_ROOTS",
+      "set": false,
+      "secret": false,
+      "value": null
+     }
+    ],
+    "server_name": "Fixture Plex",
+    "version": "1.41.0",
+    "section": "Music",
+    "last_sync": 1793844000,
+    "tracks": 5
+   },
+   {
+    "server": "jellyfin",
+    "name": "Jellyfin",
+    "set_up": false,
+    "read": false,
+    "url": null,
+    "settings": [
+     {
+      "env": "TRAQFREQ_JELLYFIN_URL",
+      "set": false,
+      "secret": false,
+      "value": null
+     },
+     {
+      "env": "TRAQFREQ_JELLYFIN_KEY",
+      "set": false,
+      "secret": true,
+      "value": null
+     },
+     {
+      "env": "TRAQFREQ_JELLYFIN_USER",
+      "set": false,
+      "secret": false,
+      "value": null
+     }
+    ],
+    "missing": [
+     "TRAQFREQ_JELLYFIN_URL",
+     "TRAQFREQ_JELLYFIN_KEY"
+    ],
+    "note": "Not set up: TRAQFREQ_JELLYFIN_URL, TRAQFREQ_JELLYFIN_KEY missing. Every page works without it."
+   },
+   {
+    "server": "navidrome",
+    "name": "Navidrome",
+    "set_up": false,
+    "read": false,
+    "url": null,
+    "settings": [
+     {
+      "env": "TRAQFREQ_NAVIDROME_URL",
+      "set": false,
+      "secret": false,
+      "value": null
+     },
+     {
+      "env": "TRAQFREQ_NAVIDROME_USER",
+      "set": false,
+      "secret": false,
+      "value": null
+     },
+     {
+      "env": "TRAQFREQ_NAVIDROME_PASSWORD",
+      "set": false,
+      "secret": true,
+      "value": null
+     }
+    ],
+    "missing": [
+     "TRAQFREQ_NAVIDROME_URL",
+     "TRAQFREQ_NAVIDROME_USER",
+     "TRAQFREQ_NAVIDROME_PASSWORD"
+    ],
+    "note": "Not set up: TRAQFREQ_NAVIDROME_URL, TRAQFREQ_NAVIDROME_USER, TRAQFREQ_NAVIDROME_PASSWORD missing. Every page works without it."
+   }
+  ],
+  "read_only": "traqfreq never writes to any server: GET requests only, no playlists, plays or tags."
+ },
+ "/api/servers/identity": {
+  "counts": {
+   "copies": 5,
+   "with_file": 5,
+   "files": 5,
+   "songs": 5,
+   "songs_with_versions": 0,
+   "match_keys": 5
+  },
+  "issues": {
+   "no_path": 0,
+   "outside_roots": 0,
+   "shared_file": 0,
+   "loose_clash": 0,
+   "multi_part": 1,
+   "no_duration": 0
+  },
+  "clean": 4,
+  "roots": [
+   {
+    "folder": "/music",
+    "tracks": 5
+   }
+  ],
+  "root_source": "jimbodj",
+  "root_rule": "jimbo-dj's music folders (its PATH_MAP, as stored in library.stats paths.folders)",
+  "rules": {
+   "copies": "Live tracks in jimbo-dj's database (removed_at IS NULL): one Plex copy each, keyed by rating_key.",
+   "with_file": "Copies with a file key: Plex gives a path and it is inside one of Plex's music folders. The file key is the path below that folder (Unicode NFC, / separators, case kept).",
+   "files": "Distinct file keys among the copies.",
+   "songs": "Songs as jimbo-dj counts them (songs.py): track artist (else album artist) and title without the version, so a live take and the album track are one song.",
+   "songs_with_versions": "Songs with more than one copy in the library.",
+   "match_keys": "Distinct listen match keys (history.py: normalised artist|title) among the copies.",
+   "no_path": "Plex gives no file for the copy (plex_path is empty). No other server can be matched by file.",
+   "outside_roots": "The file is outside every Plex music folder, so it has no file key.",
+   "shared_file": "Two or more live copies point at one file. They will match the same item on another server.",
+   "loose_clash": "Two different file keys that are equal once case-folded: on a case-insensitive disk they would be one file, so the loose key can't decide between them.",
+   "multi_part": "Plex joins two or more files into this copy and jimbo-dj keeps only the first part's path. The other parts may be items of their own on Jellyfin and Navidrome.",
+   "no_duration": "Plex gives no duration, so the tag tier (durations within 2 s) can't use the copy."
+  },
+  "rows": {
+   "copies": "",
+   "with_file": "has_file=true",
+   "files": "has_file=true",
+   "songs": "",
+   "songs_with_versions": "versions=true",
+   "match_keys": "",
+   "no_path": "issue=no_path",
+   "outside_roots": "issue=outside_roots",
+   "shared_file": "issue=shared_file",
+   "loose_clash": "issue=loose_clash",
+   "multi_part": "issue=multi_part",
+   "no_duration": "issue=no_duration"
+  },
+  "tiers": [
+   {
+    "tier": "file",
+    "rule": "The same file key; then the same loose key when only one item has it."
+   },
+   {
+    "tier": "mbid",
+    "rule": "The same MusicBrainz recording and release, from the server's tags."
+   },
+   {
+    "tier": "tags",
+    "rule": "The same match key, album, disc and track number, durations within 2 s; only when exactly one candidate is left."
+   }
+  ],
+  "version": 1
+ },
+ "/api/servers/matches": {
+  "snapshots": [
+   {
+    "server": "jellyfin",
+    "snapshot": true,
+    "read_at": 1793847600.0,
+    "age_s": 7200,
+    "stamp": {
+     "items": 14,
+     "newest_created": "2026-11-20T21:00:00.0000000Z"
+    },
+    "folders": [
+     "/data/music"
+    ],
+    "folder_source": "server",
+    "folder_rule": "the server's own music folders",
+    "items": 14,
+    "hidden_paths": 0
+   },
+   {
+    "server": "navidrome",
+    "snapshot": true,
+    "read_at": 1793847600.0,
+    "age_s": 7200,
+    "stamp": {
+     "items": 9,
+     "last_scan": "2026-11-23T03:00:00Z",
+     "hidden_paths": 4
+    },
+    "folders": [
+     "/music"
+    ],
+    "folder_source": "common",
+    "folder_rule": "the folder every real path shares (the server names no folder paths)",
+    "items": 9,
+    "hidden_paths": 4
+   }
+  ],
+  "pairs": [
+   {
+    "pair": "jellyfin",
+    "left": "plex",
+    "right": "jellyfin",
+    "counts": {
+     "copies": 5,
+     "items": 14,
+     "matched": 5,
+     "items_matched": 5,
+     "copies_unmatched": 0,
+     "items_unmatched": 9
+    },
+    "tiers": {
+     "file": 5,
+     "mbid": 0,
+     "tags": 0
+    },
+    "notes": {
+     "loose": 1,
+     "shared_file": 0,
+     "multi_part": 1
+    },
+    "unmatched_left": {},
+    "unmatched_items": {
+     "no_path": 1,
+     "outside_roots": 1,
+     "not_in_plex": 6,
+     "multi_part": 1
+    },
+    "rules": {
+     "copies": "Live Plex copies (identity).",
+     "items": "Items in the jellyfin snapshot.",
+     "matched": "Copies matched to one jellyfin item, at the tier said.",
+     "items_matched": "Distinct jellyfin items matched (a shared file counts once).",
+     "copies_unmatched": "Not matched; each with one reason, so the reasons add up to this.",
+     "items_unmatched": "jellyfin items nothing matched; each with one reason.",
+     "file": "The same file key (the path below each server's music folder); then the same loose key (case-folded), only when exactly one item has it.",
+     "mbid": "The same MusicBrainz recording and release, from the server's tags. A Plex copy has none of its own: it uses the IDs of the item its file matched on the other server.",
+     "tags": "The same match key (artist|title, normalised as listens are), album, disc and track number, and durations within 2 s; only when exactly one candidate is left.",
+     "loose": "Matched by the loose key: the file key with other capitals.",
+     "shared_file": "Two or more Plex copies point at one file; they all match its one item.",
+     "multi_part": "A multi-part Plex copy, matched by its first part's file."
+    },
+    "rows": {
+     "all": "server=jellyfin",
+     "file": "server=jellyfin&tier=file",
+     "mbid": "server=jellyfin&tier=mbid",
+     "tags": "server=jellyfin&tier=tags",
+     "multi_part": "server=jellyfin&reason=multi_part",
+     "outside_roots": "server=jellyfin&reason=outside_roots",
+     "no_path": "server=jellyfin&reason=no_path",
+     "not_in_plex": "server=jellyfin&reason=not_in_plex"
+    }
+   },
+   {
+    "pair": "navidrome",
+    "left": "plex",
+    "right": "navidrome",
+    "counts": {
+     "copies": 5,
+     "items": 9,
+     "matched": 4,
+     "items_matched": 4,
+     "copies_unmatched": 1,
+     "items_unmatched": 5
+    },
+    "tiers": {
+     "file": 2,
+     "mbid": 1,
+     "tags": 1
+    },
+    "notes": {
+     "loose": 0,
+     "shared_file": 0,
+     "multi_part": 1
+    },
+    "unmatched_left": {
+     "hidden_path": 1
+    },
+    "unmatched_items": {
+     "hidden_path": 2,
+     "not_in_plex": 3
+    },
+    "rules": {
+     "copies": "Live Plex copies (identity).",
+     "items": "Items in the navidrome snapshot.",
+     "matched": "Copies matched to one navidrome item, at the tier said.",
+     "items_matched": "Distinct navidrome items matched (a shared file counts once).",
+     "copies_unmatched": "Not matched; each with one reason, so the reasons add up to this.",
+     "items_unmatched": "navidrome items nothing matched; each with one reason.",
+     "file": "The same file key (the path below each server's music folder); then the same loose key (case-folded), only when exactly one item has it.",
+     "mbid": "The same MusicBrainz recording and release, from the server's tags. A Plex copy has none of its own: it uses the IDs of the item its file matched on the other server.",
+     "tags": "The same match key (artist|title, normalised as listens are), album, disc and track number, and durations within 2 s; only when exactly one candidate is left.",
+     "loose": "Matched by the loose key: the file key with other capitals.",
+     "shared_file": "Two or more Plex copies point at one file; they all match its one item.",
+     "multi_part": "A multi-part Plex copy, matched by its first part's file."
+    },
+    "rows": {
+     "all": "server=navidrome",
+     "file": "server=navidrome&tier=file",
+     "mbid": "server=navidrome&tier=mbid",
+     "tags": "server=navidrome&tier=tags",
+     "hidden_path": "server=navidrome&reason=hidden_path",
+     "not_in_plex": "server=navidrome&reason=not_in_plex"
+    }
+   },
+   {
+    "pair": "jellyfin-navidrome",
+    "left": "jellyfin",
+    "right": "navidrome",
+    "counts": {
+     "left": 14,
+     "items": 9,
+     "matched": 7,
+     "items_matched": 7,
+     "left_unmatched": 7,
+     "items_unmatched": 2
+    },
+    "tiers": {
+     "plex": 4,
+     "file": 1,
+     "mbid": 1,
+     "tags": 1
+    },
+    "notes": {
+     "loose": 0,
+     "shared_file": 0
+    },
+    "unmatched_left": {
+     "no_path": 1,
+     "outside_roots": 1,
+     "ambiguous": 2,
+     "hidden_path": 3
+    },
+    "unmatched_items": {
+     "ambiguous": 1,
+     "hidden_path": 1
+    },
+    "rules": {
+     "left": "Items in the jellyfin snapshot.",
+     "items": "Items in the navidrome snapshot.",
+     "matched": "Items matched to one navidrome item, at the tier said.",
+     "items_matched": "Distinct navidrome items matched (a shared file counts once).",
+     "left_unmatched": "Not matched; each with one reason, so the reasons add up to this.",
+     "items_unmatched": "navidrome items nothing matched; each with one reason.",
+     "plex": "Jellyfin ↔ Navidrome: both items are matched to the same Plex copy.",
+     "file": "The same file key (the path below each server's music folder); then the same loose key (case-folded), only when exactly one item has it.",
+     "mbid": "The same MusicBrainz recording and release, from the server's tags. A Plex copy has none of its own: it uses the IDs of the item its file matched on the other server.",
+     "tags": "The same match key (artist|title, normalised as listens are), album, disc and track number, and durations within 2 s; only when exactly one candidate is left.",
+     "loose": "Matched by the loose key: the file key with other capitals.",
+     "shared_file": "Two or more Plex copies point at one file; they all match its one item."
+    },
+    "rows": {
+     "all": "server=jellyfin-navidrome",
+     "plex": "server=jellyfin-navidrome&tier=plex",
+     "file": "server=jellyfin-navidrome&tier=file",
+     "mbid": "server=jellyfin-navidrome&tier=mbid",
+     "tags": "server=jellyfin-navidrome&tier=tags",
+     "ambiguous": "server=jellyfin-navidrome&reason=ambiguous",
+     "hidden_path": "server=jellyfin-navidrome&reason=hidden_path",
+     "no_path": "server=jellyfin-navidrome&reason=no_path",
+     "outside_roots": "server=jellyfin-navidrome&reason=outside_roots"
+    }
+   }
+  ],
+  "missing": [],
+  "tiers": [
+   {
+    "tier": "file",
+    "rule": "The same file key (the path below each server's music folder); then the same loose key (case-folded), only when exactly one item has it."
+   },
+   {
+    "tier": "mbid",
+    "rule": "The same MusicBrainz recording and release, from the server's tags. A Plex copy has none of its own: it uses the IDs of the item its file matched on the other server."
+   },
+   {
+    "tier": "tags",
+    "rule": "The same match key (artist|title, normalised as listens are), album, disc and track number, and durations within 2 s; only when exactly one candidate is left."
+   },
+   {
+    "tier": "plex",
+    "rule": "Jellyfin ↔ Navidrome: both items are matched to the same Plex copy."
+   }
+  ],
+  "reasons": {
+   "no_path": "No file to match by: Plex gives no path for the copy, or the server none for the item; the MusicBrainz and tag tiers found nothing either.",
+   "outside_roots": "The file is outside the known music folders, so it has no file key; the MusicBrainz and tag tiers found nothing either.",
+   "not_on_server": "No item on the other server has this file, MusicBrainz IDs or tags.",
+   "ambiguous": "More than one candidate at the first tier that had any (or one candidate two copies want): traqfreq doesn't guess.",
+   "hidden_path": "The server gives no real path (Navidrome without Report Real Path), so the file tier can't be used, and the MusicBrainz and tag tiers found nothing.",
+   "not_in_plex": "An item no Plex copy matched: a file Plex doesn't list.",
+   "multi_part": "Another part of a multi-part Plex copy (same folder, disc and track): Plex keeps only the first part's file, which is matched; this part is not."
+  },
+  "tolerance_ms": 2000,
+  "read_only": "Matched from stored snapshots; nothing is sent to any server.",
+  "version": 1
+ },
+ "/api/servers/copies?sort=artist&limit=5&offset=0": {
+  "total": 5,
+  "offset": 0,
+  "limit": 5,
+  "sort": "artist",
+  "rule": "live copies",
+  "copies": [
+   {
+    "rating_key": 105,
+    "guid": null,
+    "title": "Coil",
+    "artist": "Ada Vey",
+    "track_artist": null,
+    "album": "Quiet Engines",
+    "album_key": 203,
+    "artist_key": 303,
+    "disc": 1,
+    "track_no": 1,
+    "duration_ms": 402000,
+    "plex_path": "/music/Ada Vey/Quiet Engines/01 Coil.flac",
+    "parts": 1,
+    "file_size": 41000000,
+    "root": "/music",
+    "file": "Ada Vey/Quiet Engines/01 Coil.flac",
+    "loose": "ada vey/quiet engines/01 coil.flac",
+    "song": "adaveycoil",
+    "match_key": "adavey|coil",
+    "issues": [],
+    "song_copies": 1
+   },
+   {
+    "rating_key": 101,
+    "guid": null,
+    "title": "Westkreuz",
+    "artist": "Kollektiv Nord",
+    "track_artist": null,
+    "album": "Ringbahn",
+    "album_key": 201,
+    "artist_key": 301,
+    "disc": 1,
+    "track_no": 1,
+    "duration_ms": 312000,
+    "plex_path": "/music/Kollektiv Nord/Ringbahn/01 Westkreuz.flac",
+    "parts": 1,
+    "file_size": 39400000,
+    "root": "/music",
+    "file": "Kollektiv Nord/Ringbahn/01 Westkreuz.flac",
+    "loose": "kollektiv nord/ringbahn/01 westkreuz.flac",
+    "song": "kollektivnordwestkreuz",
+    "match_key": "kollektivnord|westkreuz",
+    "issues": [],
+    "song_copies": 1
+   },
+   {
+    "rating_key": 102,
+    "guid": null,
+    "title": "Ostkreuz",
+    "artist": "Kollektiv Nord",
+    "track_artist": null,
+    "album": "Ringbahn",
+    "album_key": 201,
+    "artist_key": 301,
+    "disc": 1,
+    "track_no": 2,
+    "duration_ms": 298000,
+    "plex_path": "/music/Kollektiv Nord/Ringbahn/02 Ostkreuz.flac",
+    "parts": 1,
+    "file_size": 4800000,
+    "root": "/music",
+    "file": "Kollektiv Nord/Ringbahn/02 Ostkreuz.flac",
+    "loose": "kollektiv nord/ringbahn/02 ostkreuz.flac",
+    "song": "kollektivnordostkreuz",
+    "match_key": "kollektivnord|ostkreuz",
+    "issues": [],
+    "song_copies": 1
+   },
+   {
+    "rating_key": 104,
+    "guid": null,
+    "title": "Static Gulls",
+    "artist": "The Paper Lanterns",
+    "track_artist": null,
+    "album": "Low Tide Radio",
+    "album_key": 202,
+    "artist_key": 302,
+    "disc": 1,
+    "track_no": 2,
+    "duration_ms": 245000,
+    "plex_path": "/music/The Paper Lanterns/Low Tide Radio/02 Static Gulls.flac",
+    "parts": 2,
+    "file_size": 9800000,
+    "root": "/music",
+    "file": "The Paper Lanterns/Low Tide Radio/02 Static Gulls.flac",
+    "loose": "the paper lanterns/low tide radio/02 static gulls.flac",
+    "song": "paperlanternsstaticgulls",
+    "match_key": "paperlanterns|staticgulls",
+    "issues": [
+     "multi_part"
+    ],
+    "song_copies": 1
+   },
+   {
+    "rating_key": 103,
+    "guid": null,
+    "title": "Harbour Lights",
+    "artist": "The Paper Lanterns",
+    "track_artist": null,
+    "album": "Low Tide Radio",
+    "album_key": 202,
+    "artist_key": 302,
+    "disc": 2,
+    "track_no": 1,
+    "duration_ms": 221000,
+    "plex_path": "/music/The Paper Lanterns/Low Tide Radio/01 Harbour Lights.flac",
+    "parts": 1,
+    "file_size": 7100000,
+    "root": "/music",
+    "file": "The Paper Lanterns/Low Tide Radio/01 Harbour Lights.flac",
+    "loose": "the paper lanterns/low tide radio/01 harbour lights.flac",
+    "song": "paperlanternsharbourlights",
+    "match_key": "paperlanterns|harbourlights",
+    "issues": [],
+    "song_copies": 1
+   }
+  ]
+ },
+ "/api/servers/matches?rating_key=101": {
+  "snapshots": [
+   {
+    "server": "jellyfin",
+    "snapshot": true,
+    "read_at": 1793847600.0,
+    "age_s": 7200,
+    "stamp": {
+     "items": 14,
+     "newest_created": "2026-11-20T21:00:00.0000000Z"
+    },
+    "folders": [
+     "/data/music"
+    ],
+    "folder_source": "server",
+    "folder_rule": "the server's own music folders",
+    "items": 14,
+    "hidden_paths": 0
+   },
+   {
+    "server": "navidrome",
+    "snapshot": true,
+    "read_at": 1793847600.0,
+    "age_s": 7200,
+    "stamp": {
+     "items": 9,
+     "last_scan": "2026-11-23T03:00:00Z",
+     "hidden_paths": 4
+    },
+    "folders": [
+     "/music"
+    ],
+    "folder_source": "common",
+    "folder_rule": "the folder every real path shares (the server names no folder paths)",
+    "items": 9,
+    "hidden_paths": 4
+   }
+  ],
+  "pairs": [
+   {
+    "pair": "jellyfin",
+    "left": "plex",
+    "right": "jellyfin",
+    "counts": {
+     "copies": 5,
+     "items": 14,
+     "matched": 5,
+     "items_matched": 5,
+     "copies_unmatched": 0,
+     "items_unmatched": 9
+    },
+    "tiers": {
+     "file": 5,
+     "mbid": 0,
+     "tags": 0
+    },
+    "notes": {
+     "loose": 1,
+     "shared_file": 0,
+     "multi_part": 1
+    },
+    "unmatched_left": {},
+    "unmatched_items": {
+     "no_path": 1,
+     "outside_roots": 1,
+     "not_in_plex": 6,
+     "multi_part": 1
+    },
+    "rules": {
+     "copies": "Live Plex copies (identity).",
+     "items": "Items in the jellyfin snapshot.",
+     "matched": "Copies matched to one jellyfin item, at the tier said.",
+     "items_matched": "Distinct jellyfin items matched (a shared file counts once).",
+     "copies_unmatched": "Not matched; each with one reason, so the reasons add up to this.",
+     "items_unmatched": "jellyfin items nothing matched; each with one reason.",
+     "file": "The same file key (the path below each server's music folder); then the same loose key (case-folded), only when exactly one item has it.",
+     "mbid": "The same MusicBrainz recording and release, from the server's tags. A Plex copy has none of its own: it uses the IDs of the item its file matched on the other server.",
+     "tags": "The same match key (artist|title, normalised as listens are), album, disc and track number, and durations within 2 s; only when exactly one candidate is left.",
+     "loose": "Matched by the loose key: the file key with other capitals.",
+     "shared_file": "Two or more Plex copies point at one file; they all match its one item.",
+     "multi_part": "A multi-part Plex copy, matched by its first part's file."
+    },
+    "rows": {
+     "all": "server=jellyfin",
+     "file": "server=jellyfin&tier=file",
+     "mbid": "server=jellyfin&tier=mbid",
+     "tags": "server=jellyfin&tier=tags",
+     "multi_part": "server=jellyfin&reason=multi_part",
+     "outside_roots": "server=jellyfin&reason=outside_roots",
+     "no_path": "server=jellyfin&reason=no_path",
+     "not_in_plex": "server=jellyfin&reason=not_in_plex"
+    }
+   },
+   {
+    "pair": "navidrome",
+    "left": "plex",
+    "right": "navidrome",
+    "counts": {
+     "copies": 5,
+     "items": 9,
+     "matched": 4,
+     "items_matched": 4,
+     "copies_unmatched": 1,
+     "items_unmatched": 5
+    },
+    "tiers": {
+     "file": 2,
+     "mbid": 1,
+     "tags": 1
+    },
+    "notes": {
+     "loose": 0,
+     "shared_file": 0,
+     "multi_part": 1
+    },
+    "unmatched_left": {
+     "hidden_path": 1
+    },
+    "unmatched_items": {
+     "hidden_path": 2,
+     "not_in_plex": 3
+    },
+    "rules": {
+     "copies": "Live Plex copies (identity).",
+     "items": "Items in the navidrome snapshot.",
+     "matched": "Copies matched to one navidrome item, at the tier said.",
+     "items_matched": "Distinct navidrome items matched (a shared file counts once).",
+     "copies_unmatched": "Not matched; each with one reason, so the reasons add up to this.",
+     "items_unmatched": "navidrome items nothing matched; each with one reason.",
+     "file": "The same file key (the path below each server's music folder); then the same loose key (case-folded), only when exactly one item has it.",
+     "mbid": "The same MusicBrainz recording and release, from the server's tags. A Plex copy has none of its own: it uses the IDs of the item its file matched on the other server.",
+     "tags": "The same match key (artist|title, normalised as listens are), album, disc and track number, and durations within 2 s; only when exactly one candidate is left.",
+     "loose": "Matched by the loose key: the file key with other capitals.",
+     "shared_file": "Two or more Plex copies point at one file; they all match its one item.",
+     "multi_part": "A multi-part Plex copy, matched by its first part's file."
+    },
+    "rows": {
+     "all": "server=navidrome",
+     "file": "server=navidrome&tier=file",
+     "mbid": "server=navidrome&tier=mbid",
+     "tags": "server=navidrome&tier=tags",
+     "hidden_path": "server=navidrome&reason=hidden_path",
+     "not_in_plex": "server=navidrome&reason=not_in_plex"
+    }
+   },
+   {
+    "pair": "jellyfin-navidrome",
+    "left": "jellyfin",
+    "right": "navidrome",
+    "counts": {
+     "left": 14,
+     "items": 9,
+     "matched": 7,
+     "items_matched": 7,
+     "left_unmatched": 7,
+     "items_unmatched": 2
+    },
+    "tiers": {
+     "plex": 4,
+     "file": 1,
+     "mbid": 1,
+     "tags": 1
+    },
+    "notes": {
+     "loose": 0,
+     "shared_file": 0
+    },
+    "unmatched_left": {
+     "no_path": 1,
+     "outside_roots": 1,
+     "ambiguous": 2,
+     "hidden_path": 3
+    },
+    "unmatched_items": {
+     "ambiguous": 1,
+     "hidden_path": 1
+    },
+    "rules": {
+     "left": "Items in the jellyfin snapshot.",
+     "items": "Items in the navidrome snapshot.",
+     "matched": "Items matched to one navidrome item, at the tier said.",
+     "items_matched": "Distinct navidrome items matched (a shared file counts once).",
+     "left_unmatched": "Not matched; each with one reason, so the reasons add up to this.",
+     "items_unmatched": "navidrome items nothing matched; each with one reason.",
+     "plex": "Jellyfin ↔ Navidrome: both items are matched to the same Plex copy.",
+     "file": "The same file key (the path below each server's music folder); then the same loose key (case-folded), only when exactly one item has it.",
+     "mbid": "The same MusicBrainz recording and release, from the server's tags. A Plex copy has none of its own: it uses the IDs of the item its file matched on the other server.",
+     "tags": "The same match key (artist|title, normalised as listens are), album, disc and track number, and durations within 2 s; only when exactly one candidate is left.",
+     "loose": "Matched by the loose key: the file key with other capitals.",
+     "shared_file": "Two or more Plex copies point at one file; they all match its one item."
+    },
+    "rows": {
+     "all": "server=jellyfin-navidrome",
+     "plex": "server=jellyfin-navidrome&tier=plex",
+     "file": "server=jellyfin-navidrome&tier=file",
+     "mbid": "server=jellyfin-navidrome&tier=mbid",
+     "tags": "server=jellyfin-navidrome&tier=tags",
+     "ambiguous": "server=jellyfin-navidrome&reason=ambiguous",
+     "hidden_path": "server=jellyfin-navidrome&reason=hidden_path",
+     "no_path": "server=jellyfin-navidrome&reason=no_path",
+     "outside_roots": "server=jellyfin-navidrome&reason=outside_roots"
+    }
+   }
+  ],
+  "missing": [],
+  "tiers": [
+   {
+    "tier": "file",
+    "rule": "The same file key (the path below each server's music folder); then the same loose key (case-folded), only when exactly one item has it."
+   },
+   {
+    "tier": "mbid",
+    "rule": "The same MusicBrainz recording and release, from the server's tags. A Plex copy has none of its own: it uses the IDs of the item its file matched on the other server."
+   },
+   {
+    "tier": "tags",
+    "rule": "The same match key (artist|title, normalised as listens are), album, disc and track number, and durations within 2 s; only when exactly one candidate is left."
+   },
+   {
+    "tier": "plex",
+    "rule": "Jellyfin ↔ Navidrome: both items are matched to the same Plex copy."
+   }
+  ],
+  "reasons": {
+   "no_path": "No file to match by: Plex gives no path for the copy, or the server none for the item; the MusicBrainz and tag tiers found nothing either.",
+   "outside_roots": "The file is outside the known music folders, so it has no file key; the MusicBrainz and tag tiers found nothing either.",
+   "not_on_server": "No item on the other server has this file, MusicBrainz IDs or tags.",
+   "ambiguous": "More than one candidate at the first tier that had any (or one candidate two copies want): traqfreq doesn't guess.",
+   "hidden_path": "The server gives no real path (Navidrome without Report Real Path), so the file tier can't be used, and the MusicBrainz and tag tiers found nothing.",
+   "not_in_plex": "An item no Plex copy matched: a file Plex doesn't list.",
+   "multi_part": "Another part of a multi-part Plex copy (same folder, disc and track): Plex keeps only the first part's file, which is matched; this part is not."
+  },
+  "tolerance_ms": 2000,
+  "read_only": "Matched from stored snapshots; nothing is sent to any server.",
+  "version": 1,
+  "copy": {
+   "rating_key": 101,
+   "live": true
+  },
+  "rows": {
+   "total": 3,
+   "offset": 0,
+   "limit": 50,
+   "rule": "every pair, Plex copy 101 (its match or reason; Jellyfin ↔ Navidrome matched through it)",
+   "rows": [
+    {
+     "pair": "jellyfin",
+     "side": "both",
+     "tier": "file",
+     "how": "exact",
+     "shared": false,
+     "multi_part": false,
+     "mbid_from": null,
+     "via": null,
+     "reason": null,
+     "left": {
+      "rating_key": 101,
+      "title": "Westkreuz",
+      "artist": "Kollektiv Nord",
+      "track_artist": null,
+      "album": "Ringbahn",
+      "disc": 1,
+      "track_no": 1,
+      "duration_ms": 312000,
+      "plex_path": "/music/Kollektiv Nord/Ringbahn/01 Westkreuz.flac",
+      "parts": 1,
+      "file": "Kollektiv Nord/Ringbahn/01 Westkreuz.flac",
+      "issues": []
+     },
+     "right": {
+      "id": "a0000000000000000000000000000065",
+      "path": "/data/music/Kollektiv Nord/Ringbahn/01 Westkreuz.flac",
+      "hidden": false,
+      "file": "Kollektiv Nord/Ringbahn/01 Westkreuz.flac",
+      "title": "Westkreuz",
+      "artist": "Kollektiv Nord",
+      "album_artist": "Kollektiv Nord",
+      "album": "Ringbahn",
+      "disc": 1,
+      "track": 1,
+      "duration_ms": 312000,
+      "mb_recording": "7a3e5d10-0000-4000-8000-000000000101",
+      "mb_release": "4f1c9a2e-0000-4000-8000-00000000b201",
+      "size": 39400000,
+      "play_count": 4
+     }
+    },
+    {
+     "pair": "navidrome",
+     "side": "both",
+     "tier": "file",
+     "how": "exact",
+     "shared": false,
+     "multi_part": false,
+     "mbid_from": null,
+     "via": null,
+     "reason": null,
+     "left": {
+      "rating_key": 101,
+      "title": "Westkreuz",
+      "artist": "Kollektiv Nord",
+      "track_artist": null,
+      "album": "Ringbahn",
+      "disc": 1,
+      "track_no": 1,
+      "duration_ms": 312000,
+      "plex_path": "/music/Kollektiv Nord/Ringbahn/01 Westkreuz.flac",
+      "parts": 1,
+      "file": "Kollektiv Nord/Ringbahn/01 Westkreuz.flac",
+      "issues": []
+     },
+     "right": {
+      "id": "b0000000000000000000000000000065",
+      "path": "/music/Kollektiv Nord/Ringbahn/01 Westkreuz.flac",
+      "hidden": false,
+      "file": "Kollektiv Nord/Ringbahn/01 Westkreuz.flac",
+      "title": "Westkreuz",
+      "artist": "Kollektiv Nord",
+      "album_artist": "Kollektiv Nord",
+      "album": "Ringbahn",
+      "disc": 1,
+      "track": 1,
+      "duration_ms": 312000,
+      "mb_recording": "7a3e5d10-0000-4000-8000-000000000101",
+      "mb_release": "4f1c9a2e-0000-4000-8000-00000000b201",
+      "size": 39400000,
+      "play_count": 2
+     }
+    },
+    {
+     "pair": "jellyfin-navidrome",
+     "side": "both",
+     "tier": "plex",
+     "how": null,
+     "shared": false,
+     "multi_part": false,
+     "mbid_from": null,
+     "via": 101,
+     "reason": null,
+     "left": {
+      "id": "a0000000000000000000000000000065",
+      "path": "/data/music/Kollektiv Nord/Ringbahn/01 Westkreuz.flac",
+      "hidden": false,
+      "file": "Kollektiv Nord/Ringbahn/01 Westkreuz.flac",
+      "title": "Westkreuz",
+      "artist": "Kollektiv Nord",
+      "album_artist": "Kollektiv Nord",
+      "album": "Ringbahn",
+      "disc": 1,
+      "track": 1,
+      "duration_ms": 312000,
+      "mb_recording": "7a3e5d10-0000-4000-8000-000000000101",
+      "mb_release": "4f1c9a2e-0000-4000-8000-00000000b201",
+      "size": 39400000,
+      "play_count": 4
+     },
+     "right": {
+      "id": "b0000000000000000000000000000065",
+      "path": "/music/Kollektiv Nord/Ringbahn/01 Westkreuz.flac",
+      "hidden": false,
+      "file": "Kollektiv Nord/Ringbahn/01 Westkreuz.flac",
+      "title": "Westkreuz",
+      "artist": "Kollektiv Nord",
+      "album_artist": "Kollektiv Nord",
+      "album": "Ringbahn",
+      "disc": 1,
+      "track": 1,
+      "duration_ms": 312000,
+      "mb_recording": "7a3e5d10-0000-4000-8000-000000000101",
+      "mb_release": "4f1c9a2e-0000-4000-8000-00000000b201",
+      "size": 39400000,
+      "play_count": 2
+     }
+    }
+   ]
+  }
+ },
+ "/api/servers/matches?rating_key=104": {
+  "snapshots": [
+   {
+    "server": "jellyfin",
+    "snapshot": true,
+    "read_at": 1793847600.0,
+    "age_s": 7200,
+    "stamp": {
+     "items": 14,
+     "newest_created": "2026-11-20T21:00:00.0000000Z"
+    },
+    "folders": [
+     "/data/music"
+    ],
+    "folder_source": "server",
+    "folder_rule": "the server's own music folders",
+    "items": 14,
+    "hidden_paths": 0
+   },
+   {
+    "server": "navidrome",
+    "snapshot": true,
+    "read_at": 1793847600.0,
+    "age_s": 7200,
+    "stamp": {
+     "items": 9,
+     "last_scan": "2026-11-23T03:00:00Z",
+     "hidden_paths": 4
+    },
+    "folders": [
+     "/music"
+    ],
+    "folder_source": "common",
+    "folder_rule": "the folder every real path shares (the server names no folder paths)",
+    "items": 9,
+    "hidden_paths": 4
+   }
+  ],
+  "pairs": [
+   {
+    "pair": "jellyfin",
+    "left": "plex",
+    "right": "jellyfin",
+    "counts": {
+     "copies": 5,
+     "items": 14,
+     "matched": 5,
+     "items_matched": 5,
+     "copies_unmatched": 0,
+     "items_unmatched": 9
+    },
+    "tiers": {
+     "file": 5,
+     "mbid": 0,
+     "tags": 0
+    },
+    "notes": {
+     "loose": 1,
+     "shared_file": 0,
+     "multi_part": 1
+    },
+    "unmatched_left": {},
+    "unmatched_items": {
+     "no_path": 1,
+     "outside_roots": 1,
+     "not_in_plex": 6,
+     "multi_part": 1
+    },
+    "rules": {
+     "copies": "Live Plex copies (identity).",
+     "items": "Items in the jellyfin snapshot.",
+     "matched": "Copies matched to one jellyfin item, at the tier said.",
+     "items_matched": "Distinct jellyfin items matched (a shared file counts once).",
+     "copies_unmatched": "Not matched; each with one reason, so the reasons add up to this.",
+     "items_unmatched": "jellyfin items nothing matched; each with one reason.",
+     "file": "The same file key (the path below each server's music folder); then the same loose key (case-folded), only when exactly one item has it.",
+     "mbid": "The same MusicBrainz recording and release, from the server's tags. A Plex copy has none of its own: it uses the IDs of the item its file matched on the other server.",
+     "tags": "The same match key (artist|title, normalised as listens are), album, disc and track number, and durations within 2 s; only when exactly one candidate is left.",
+     "loose": "Matched by the loose key: the file key with other capitals.",
+     "shared_file": "Two or more Plex copies point at one file; they all match its one item.",
+     "multi_part": "A multi-part Plex copy, matched by its first part's file."
+    },
+    "rows": {
+     "all": "server=jellyfin",
+     "file": "server=jellyfin&tier=file",
+     "mbid": "server=jellyfin&tier=mbid",
+     "tags": "server=jellyfin&tier=tags",
+     "multi_part": "server=jellyfin&reason=multi_part",
+     "outside_roots": "server=jellyfin&reason=outside_roots",
+     "no_path": "server=jellyfin&reason=no_path",
+     "not_in_plex": "server=jellyfin&reason=not_in_plex"
+    }
+   },
+   {
+    "pair": "navidrome",
+    "left": "plex",
+    "right": "navidrome",
+    "counts": {
+     "copies": 5,
+     "items": 9,
+     "matched": 4,
+     "items_matched": 4,
+     "copies_unmatched": 1,
+     "items_unmatched": 5
+    },
+    "tiers": {
+     "file": 2,
+     "mbid": 1,
+     "tags": 1
+    },
+    "notes": {
+     "loose": 0,
+     "shared_file": 0,
+     "multi_part": 1
+    },
+    "unmatched_left": {
+     "hidden_path": 1
+    },
+    "unmatched_items": {
+     "hidden_path": 2,
+     "not_in_plex": 3
+    },
+    "rules": {
+     "copies": "Live Plex copies (identity).",
+     "items": "Items in the navidrome snapshot.",
+     "matched": "Copies matched to one navidrome item, at the tier said.",
+     "items_matched": "Distinct navidrome items matched (a shared file counts once).",
+     "copies_unmatched": "Not matched; each with one reason, so the reasons add up to this.",
+     "items_unmatched": "navidrome items nothing matched; each with one reason.",
+     "file": "The same file key (the path below each server's music folder); then the same loose key (case-folded), only when exactly one item has it.",
+     "mbid": "The same MusicBrainz recording and release, from the server's tags. A Plex copy has none of its own: it uses the IDs of the item its file matched on the other server.",
+     "tags": "The same match key (artist|title, normalised as listens are), album, disc and track number, and durations within 2 s; only when exactly one candidate is left.",
+     "loose": "Matched by the loose key: the file key with other capitals.",
+     "shared_file": "Two or more Plex copies point at one file; they all match its one item.",
+     "multi_part": "A multi-part Plex copy, matched by its first part's file."
+    },
+    "rows": {
+     "all": "server=navidrome",
+     "file": "server=navidrome&tier=file",
+     "mbid": "server=navidrome&tier=mbid",
+     "tags": "server=navidrome&tier=tags",
+     "hidden_path": "server=navidrome&reason=hidden_path",
+     "not_in_plex": "server=navidrome&reason=not_in_plex"
+    }
+   },
+   {
+    "pair": "jellyfin-navidrome",
+    "left": "jellyfin",
+    "right": "navidrome",
+    "counts": {
+     "left": 14,
+     "items": 9,
+     "matched": 7,
+     "items_matched": 7,
+     "left_unmatched": 7,
+     "items_unmatched": 2
+    },
+    "tiers": {
+     "plex": 4,
+     "file": 1,
+     "mbid": 1,
+     "tags": 1
+    },
+    "notes": {
+     "loose": 0,
+     "shared_file": 0
+    },
+    "unmatched_left": {
+     "no_path": 1,
+     "outside_roots": 1,
+     "ambiguous": 2,
+     "hidden_path": 3
+    },
+    "unmatched_items": {
+     "ambiguous": 1,
+     "hidden_path": 1
+    },
+    "rules": {
+     "left": "Items in the jellyfin snapshot.",
+     "items": "Items in the navidrome snapshot.",
+     "matched": "Items matched to one navidrome item, at the tier said.",
+     "items_matched": "Distinct navidrome items matched (a shared file counts once).",
+     "left_unmatched": "Not matched; each with one reason, so the reasons add up to this.",
+     "items_unmatched": "navidrome items nothing matched; each with one reason.",
+     "plex": "Jellyfin ↔ Navidrome: both items are matched to the same Plex copy.",
+     "file": "The same file key (the path below each server's music folder); then the same loose key (case-folded), only when exactly one item has it.",
+     "mbid": "The same MusicBrainz recording and release, from the server's tags. A Plex copy has none of its own: it uses the IDs of the item its file matched on the other server.",
+     "tags": "The same match key (artist|title, normalised as listens are), album, disc and track number, and durations within 2 s; only when exactly one candidate is left.",
+     "loose": "Matched by the loose key: the file key with other capitals.",
+     "shared_file": "Two or more Plex copies point at one file; they all match its one item."
+    },
+    "rows": {
+     "all": "server=jellyfin-navidrome",
+     "plex": "server=jellyfin-navidrome&tier=plex",
+     "file": "server=jellyfin-navidrome&tier=file",
+     "mbid": "server=jellyfin-navidrome&tier=mbid",
+     "tags": "server=jellyfin-navidrome&tier=tags",
+     "ambiguous": "server=jellyfin-navidrome&reason=ambiguous",
+     "hidden_path": "server=jellyfin-navidrome&reason=hidden_path",
+     "no_path": "server=jellyfin-navidrome&reason=no_path",
+     "outside_roots": "server=jellyfin-navidrome&reason=outside_roots"
+    }
+   }
+  ],
+  "missing": [],
+  "tiers": [
+   {
+    "tier": "file",
+    "rule": "The same file key (the path below each server's music folder); then the same loose key (case-folded), only when exactly one item has it."
+   },
+   {
+    "tier": "mbid",
+    "rule": "The same MusicBrainz recording and release, from the server's tags. A Plex copy has none of its own: it uses the IDs of the item its file matched on the other server."
+   },
+   {
+    "tier": "tags",
+    "rule": "The same match key (artist|title, normalised as listens are), album, disc and track number, and durations within 2 s; only when exactly one candidate is left."
+   },
+   {
+    "tier": "plex",
+    "rule": "Jellyfin ↔ Navidrome: both items are matched to the same Plex copy."
+   }
+  ],
+  "reasons": {
+   "no_path": "No file to match by: Plex gives no path for the copy, or the server none for the item; the MusicBrainz and tag tiers found nothing either.",
+   "outside_roots": "The file is outside the known music folders, so it has no file key; the MusicBrainz and tag tiers found nothing either.",
+   "not_on_server": "No item on the other server has this file, MusicBrainz IDs or tags.",
+   "ambiguous": "More than one candidate at the first tier that had any (or one candidate two copies want): traqfreq doesn't guess.",
+   "hidden_path": "The server gives no real path (Navidrome without Report Real Path), so the file tier can't be used, and the MusicBrainz and tag tiers found nothing.",
+   "not_in_plex": "An item no Plex copy matched: a file Plex doesn't list.",
+   "multi_part": "Another part of a multi-part Plex copy (same folder, disc and track): Plex keeps only the first part's file, which is matched; this part is not."
+  },
+  "tolerance_ms": 2000,
+  "read_only": "Matched from stored snapshots; nothing is sent to any server.",
+  "version": 1,
+  "copy": {
+   "rating_key": 104,
+   "live": true
+  },
+  "rows": {
+   "total": 3,
+   "offset": 0,
+   "limit": 50,
+   "rule": "every pair, Plex copy 104 (its match or reason; Jellyfin ↔ Navidrome matched through it)",
+   "rows": [
+    {
+     "pair": "jellyfin",
+     "side": "both",
+     "tier": "file",
+     "how": "exact",
+     "shared": false,
+     "multi_part": true,
+     "mbid_from": null,
+     "via": null,
+     "reason": null,
+     "left": {
+      "rating_key": 104,
+      "title": "Static Gulls",
+      "artist": "The Paper Lanterns",
+      "track_artist": null,
+      "album": "Low Tide Radio",
+      "disc": 1,
+      "track_no": 2,
+      "duration_ms": 245000,
+      "plex_path": "/music/The Paper Lanterns/Low Tide Radio/02 Static Gulls.flac",
+      "parts": 2,
+      "file": "The Paper Lanterns/Low Tide Radio/02 Static Gulls.flac",
+      "issues": [
+       "multi_part"
+      ]
+     },
+     "right": {
+      "id": "a0000000000000000000000000000068",
+      "path": "/data/music/The Paper Lanterns/Low Tide Radio/02 Static Gulls.flac",
+      "hidden": false,
+      "file": "The Paper Lanterns/Low Tide Radio/02 Static Gulls.flac",
+      "title": "Static Gulls",
+      "artist": "The Paper Lanterns",
+      "album_artist": "The Paper Lanterns",
+      "album": "Low Tide Radio",
+      "disc": 1,
+      "track": 2,
+      "duration_ms": 245000,
+      "mb_recording": null,
+      "mb_release": null,
+      "size": 5100000,
+      "play_count": 2
+     }
+    },
+    {
+     "pair": "navidrome",
+     "side": "both",
+     "tier": "tags",
+     "how": null,
+     "shared": false,
+     "multi_part": true,
+     "mbid_from": null,
+     "via": null,
+     "reason": null,
+     "left": {
+      "rating_key": 104,
+      "title": "Static Gulls",
+      "artist": "The Paper Lanterns",
+      "track_artist": null,
+      "album": "Low Tide Radio",
+      "disc": 1,
+      "track_no": 2,
+      "duration_ms": 245000,
+      "plex_path": "/music/The Paper Lanterns/Low Tide Radio/02 Static Gulls.flac",
+      "parts": 2,
+      "file": "The Paper Lanterns/Low Tide Radio/02 Static Gulls.flac",
+      "issues": [
+       "multi_part"
+      ]
+     },
+     "right": {
+      "id": "b0000000000000000000000000000068",
+      "path": "The Paper Lanterns/Low Tide Radio/1-02 - Static Gulls.flac",
+      "hidden": true,
+      "file": null,
+      "title": "Static Gulls",
+      "artist": "The Paper Lanterns",
+      "album_artist": "The Paper Lanterns",
+      "album": "Low Tide Radio",
+      "disc": 1,
+      "track": 2,
+      "duration_ms": 246000,
+      "mb_recording": null,
+      "mb_release": "4f1c9a2e-0000-4000-8000-00000000b202",
+      "size": 5100000,
+      "play_count": 0
+     }
+    },
+    {
+     "pair": "jellyfin-navidrome",
+     "side": "both",
+     "tier": "plex",
+     "how": null,
+     "shared": false,
+     "multi_part": false,
+     "mbid_from": null,
+     "via": 104,
+     "reason": null,
+     "left": {
+      "id": "a0000000000000000000000000000068",
+      "path": "/data/music/The Paper Lanterns/Low Tide Radio/02 Static Gulls.flac",
+      "hidden": false,
+      "file": "The Paper Lanterns/Low Tide Radio/02 Static Gulls.flac",
+      "title": "Static Gulls",
+      "artist": "The Paper Lanterns",
+      "album_artist": "The Paper Lanterns",
+      "album": "Low Tide Radio",
+      "disc": 1,
+      "track": 2,
+      "duration_ms": 245000,
+      "mb_recording": null,
+      "mb_release": null,
+      "size": 5100000,
+      "play_count": 2
+     },
+     "right": {
+      "id": "b0000000000000000000000000000068",
+      "path": "The Paper Lanterns/Low Tide Radio/1-02 - Static Gulls.flac",
+      "hidden": true,
+      "file": null,
+      "title": "Static Gulls",
+      "artist": "The Paper Lanterns",
+      "album_artist": "The Paper Lanterns",
+      "album": "Low Tide Radio",
+      "disc": 1,
+      "track": 2,
+      "duration_ms": 246000,
+      "mb_recording": null,
+      "mb_release": "4f1c9a2e-0000-4000-8000-00000000b202",
+      "size": 5100000,
+      "play_count": 0
+     }
+    }
+   ]
+  }
+ },
+ "/api/servers/matches?rating_key=105": {
+  "snapshots": [
+   {
+    "server": "jellyfin",
+    "snapshot": true,
+    "read_at": 1793847600.0,
+    "age_s": 7200,
+    "stamp": {
+     "items": 14,
+     "newest_created": "2026-11-20T21:00:00.0000000Z"
+    },
+    "folders": [
+     "/data/music"
+    ],
+    "folder_source": "server",
+    "folder_rule": "the server's own music folders",
+    "items": 14,
+    "hidden_paths": 0
+   },
+   {
+    "server": "navidrome",
+    "snapshot": true,
+    "read_at": 1793847600.0,
+    "age_s": 7200,
+    "stamp": {
+     "items": 9,
+     "last_scan": "2026-11-23T03:00:00Z",
+     "hidden_paths": 4
+    },
+    "folders": [
+     "/music"
+    ],
+    "folder_source": "common",
+    "folder_rule": "the folder every real path shares (the server names no folder paths)",
+    "items": 9,
+    "hidden_paths": 4
+   }
+  ],
+  "pairs": [
+   {
+    "pair": "jellyfin",
+    "left": "plex",
+    "right": "jellyfin",
+    "counts": {
+     "copies": 5,
+     "items": 14,
+     "matched": 5,
+     "items_matched": 5,
+     "copies_unmatched": 0,
+     "items_unmatched": 9
+    },
+    "tiers": {
+     "file": 5,
+     "mbid": 0,
+     "tags": 0
+    },
+    "notes": {
+     "loose": 1,
+     "shared_file": 0,
+     "multi_part": 1
+    },
+    "unmatched_left": {},
+    "unmatched_items": {
+     "no_path": 1,
+     "outside_roots": 1,
+     "not_in_plex": 6,
+     "multi_part": 1
+    },
+    "rules": {
+     "copies": "Live Plex copies (identity).",
+     "items": "Items in the jellyfin snapshot.",
+     "matched": "Copies matched to one jellyfin item, at the tier said.",
+     "items_matched": "Distinct jellyfin items matched (a shared file counts once).",
+     "copies_unmatched": "Not matched; each with one reason, so the reasons add up to this.",
+     "items_unmatched": "jellyfin items nothing matched; each with one reason.",
+     "file": "The same file key (the path below each server's music folder); then the same loose key (case-folded), only when exactly one item has it.",
+     "mbid": "The same MusicBrainz recording and release, from the server's tags. A Plex copy has none of its own: it uses the IDs of the item its file matched on the other server.",
+     "tags": "The same match key (artist|title, normalised as listens are), album, disc and track number, and durations within 2 s; only when exactly one candidate is left.",
+     "loose": "Matched by the loose key: the file key with other capitals.",
+     "shared_file": "Two or more Plex copies point at one file; they all match its one item.",
+     "multi_part": "A multi-part Plex copy, matched by its first part's file."
+    },
+    "rows": {
+     "all": "server=jellyfin",
+     "file": "server=jellyfin&tier=file",
+     "mbid": "server=jellyfin&tier=mbid",
+     "tags": "server=jellyfin&tier=tags",
+     "multi_part": "server=jellyfin&reason=multi_part",
+     "outside_roots": "server=jellyfin&reason=outside_roots",
+     "no_path": "server=jellyfin&reason=no_path",
+     "not_in_plex": "server=jellyfin&reason=not_in_plex"
+    }
+   },
+   {
+    "pair": "navidrome",
+    "left": "plex",
+    "right": "navidrome",
+    "counts": {
+     "copies": 5,
+     "items": 9,
+     "matched": 4,
+     "items_matched": 4,
+     "copies_unmatched": 1,
+     "items_unmatched": 5
+    },
+    "tiers": {
+     "file": 2,
+     "mbid": 1,
+     "tags": 1
+    },
+    "notes": {
+     "loose": 0,
+     "shared_file": 0,
+     "multi_part": 1
+    },
+    "unmatched_left": {
+     "hidden_path": 1
+    },
+    "unmatched_items": {
+     "hidden_path": 2,
+     "not_in_plex": 3
+    },
+    "rules": {
+     "copies": "Live Plex copies (identity).",
+     "items": "Items in the navidrome snapshot.",
+     "matched": "Copies matched to one navidrome item, at the tier said.",
+     "items_matched": "Distinct navidrome items matched (a shared file counts once).",
+     "copies_unmatched": "Not matched; each with one reason, so the reasons add up to this.",
+     "items_unmatched": "navidrome items nothing matched; each with one reason.",
+     "file": "The same file key (the path below each server's music folder); then the same loose key (case-folded), only when exactly one item has it.",
+     "mbid": "The same MusicBrainz recording and release, from the server's tags. A Plex copy has none of its own: it uses the IDs of the item its file matched on the other server.",
+     "tags": "The same match key (artist|title, normalised as listens are), album, disc and track number, and durations within 2 s; only when exactly one candidate is left.",
+     "loose": "Matched by the loose key: the file key with other capitals.",
+     "shared_file": "Two or more Plex copies point at one file; they all match its one item.",
+     "multi_part": "A multi-part Plex copy, matched by its first part's file."
+    },
+    "rows": {
+     "all": "server=navidrome",
+     "file": "server=navidrome&tier=file",
+     "mbid": "server=navidrome&tier=mbid",
+     "tags": "server=navidrome&tier=tags",
+     "hidden_path": "server=navidrome&reason=hidden_path",
+     "not_in_plex": "server=navidrome&reason=not_in_plex"
+    }
+   },
+   {
+    "pair": "jellyfin-navidrome",
+    "left": "jellyfin",
+    "right": "navidrome",
+    "counts": {
+     "left": 14,
+     "items": 9,
+     "matched": 7,
+     "items_matched": 7,
+     "left_unmatched": 7,
+     "items_unmatched": 2
+    },
+    "tiers": {
+     "plex": 4,
+     "file": 1,
+     "mbid": 1,
+     "tags": 1
+    },
+    "notes": {
+     "loose": 0,
+     "shared_file": 0
+    },
+    "unmatched_left": {
+     "no_path": 1,
+     "outside_roots": 1,
+     "ambiguous": 2,
+     "hidden_path": 3
+    },
+    "unmatched_items": {
+     "ambiguous": 1,
+     "hidden_path": 1
+    },
+    "rules": {
+     "left": "Items in the jellyfin snapshot.",
+     "items": "Items in the navidrome snapshot.",
+     "matched": "Items matched to one navidrome item, at the tier said.",
+     "items_matched": "Distinct navidrome items matched (a shared file counts once).",
+     "left_unmatched": "Not matched; each with one reason, so the reasons add up to this.",
+     "items_unmatched": "navidrome items nothing matched; each with one reason.",
+     "plex": "Jellyfin ↔ Navidrome: both items are matched to the same Plex copy.",
+     "file": "The same file key (the path below each server's music folder); then the same loose key (case-folded), only when exactly one item has it.",
+     "mbid": "The same MusicBrainz recording and release, from the server's tags. A Plex copy has none of its own: it uses the IDs of the item its file matched on the other server.",
+     "tags": "The same match key (artist|title, normalised as listens are), album, disc and track number, and durations within 2 s; only when exactly one candidate is left.",
+     "loose": "Matched by the loose key: the file key with other capitals.",
+     "shared_file": "Two or more Plex copies point at one file; they all match its one item."
+    },
+    "rows": {
+     "all": "server=jellyfin-navidrome",
+     "plex": "server=jellyfin-navidrome&tier=plex",
+     "file": "server=jellyfin-navidrome&tier=file",
+     "mbid": "server=jellyfin-navidrome&tier=mbid",
+     "tags": "server=jellyfin-navidrome&tier=tags",
+     "ambiguous": "server=jellyfin-navidrome&reason=ambiguous",
+     "hidden_path": "server=jellyfin-navidrome&reason=hidden_path",
+     "no_path": "server=jellyfin-navidrome&reason=no_path",
+     "outside_roots": "server=jellyfin-navidrome&reason=outside_roots"
+    }
+   }
+  ],
+  "missing": [],
+  "tiers": [
+   {
+    "tier": "file",
+    "rule": "The same file key (the path below each server's music folder); then the same loose key (case-folded), only when exactly one item has it."
+   },
+   {
+    "tier": "mbid",
+    "rule": "The same MusicBrainz recording and release, from the server's tags. A Plex copy has none of its own: it uses the IDs of the item its file matched on the other server."
+   },
+   {
+    "tier": "tags",
+    "rule": "The same match key (artist|title, normalised as listens are), album, disc and track number, and durations within 2 s; only when exactly one candidate is left."
+   },
+   {
+    "tier": "plex",
+    "rule": "Jellyfin ↔ Navidrome: both items are matched to the same Plex copy."
+   }
+  ],
+  "reasons": {
+   "no_path": "No file to match by: Plex gives no path for the copy, or the server none for the item; the MusicBrainz and tag tiers found nothing either.",
+   "outside_roots": "The file is outside the known music folders, so it has no file key; the MusicBrainz and tag tiers found nothing either.",
+   "not_on_server": "No item on the other server has this file, MusicBrainz IDs or tags.",
+   "ambiguous": "More than one candidate at the first tier that had any (or one candidate two copies want): traqfreq doesn't guess.",
+   "hidden_path": "The server gives no real path (Navidrome without Report Real Path), so the file tier can't be used, and the MusicBrainz and tag tiers found nothing.",
+   "not_in_plex": "An item no Plex copy matched: a file Plex doesn't list.",
+   "multi_part": "Another part of a multi-part Plex copy (same folder, disc and track): Plex keeps only the first part's file, which is matched; this part is not."
+  },
+  "tolerance_ms": 2000,
+  "read_only": "Matched from stored snapshots; nothing is sent to any server.",
+  "version": 1,
+  "copy": {
+   "rating_key": 105,
+   "live": true
+  },
+  "rows": {
+   "total": 2,
+   "offset": 0,
+   "limit": 50,
+   "rule": "every pair, Plex copy 105 (its match or reason; Jellyfin ↔ Navidrome matched through it)",
+   "rows": [
+    {
+     "pair": "jellyfin",
+     "side": "both",
+     "tier": "file",
+     "how": "exact",
+     "shared": false,
+     "multi_part": false,
+     "mbid_from": null,
+     "via": null,
+     "reason": null,
+     "left": {
+      "rating_key": 105,
+      "title": "Coil",
+      "artist": "Ada Vey",
+      "track_artist": null,
+      "album": "Quiet Engines",
+      "disc": 1,
+      "track_no": 1,
+      "duration_ms": 402000,
+      "plex_path": "/music/Ada Vey/Quiet Engines/01 Coil.flac",
+      "parts": 1,
+      "file": "Ada Vey/Quiet Engines/01 Coil.flac",
+      "issues": []
+     },
+     "right": {
+      "id": "a0000000000000000000000000000069",
+      "path": "/data/music/Ada Vey/Quiet Engines/01 Coil.flac",
+      "hidden": false,
+      "file": "Ada Vey/Quiet Engines/01 Coil.flac",
+      "title": "Coil",
+      "artist": "Ada Vey",
+      "album_artist": "Ada Vey",
+      "album": "Quiet Engines",
+      "disc": 1,
+      "track": 1,
+      "duration_ms": 402000,
+      "mb_recording": null,
+      "mb_release": null,
+      "size": 41000000,
+      "play_count": 0
+     }
+    },
+    {
+     "pair": "navidrome",
+     "side": "left",
+     "tier": null,
+     "reason": "hidden_path",
+     "left": {
+      "rating_key": 105,
+      "title": "Coil",
+      "artist": "Ada Vey",
+      "track_artist": null,
+      "album": "Quiet Engines",
+      "disc": 1,
+      "track_no": 1,
+      "duration_ms": 402000,
+      "plex_path": "/music/Ada Vey/Quiet Engines/01 Coil.flac",
+      "parts": 1,
+      "file": "Ada Vey/Quiet Engines/01 Coil.flac",
+      "issues": []
+     },
+     "right": null
+    }
+   ]
+  }
+ },
+ "/api/servers/copies?rating_key=101": {
+  "total": 1,
+  "offset": 0,
+  "limit": 50,
+  "sort": "file",
+  "rule": "live copies, rating key 101",
+  "copies": [
+   {
+    "rating_key": 101,
+    "guid": null,
+    "title": "Westkreuz",
+    "artist": "Kollektiv Nord",
+    "track_artist": null,
+    "album": "Ringbahn",
+    "album_key": 201,
+    "artist_key": 301,
+    "disc": 1,
+    "track_no": 1,
+    "duration_ms": 312000,
+    "plex_path": "/music/Kollektiv Nord/Ringbahn/01 Westkreuz.flac",
+    "parts": 1,
+    "file_size": 39400000,
+    "root": "/music",
+    "file": "Kollektiv Nord/Ringbahn/01 Westkreuz.flac",
+    "loose": "kollektiv nord/ringbahn/01 westkreuz.flac",
+    "song": "kollektivnordwestkreuz",
+    "match_key": "kollektivnord|westkreuz",
+    "issues": [],
+    "song_copies": 1
+   }
+  ]
+ },
+ "/api/servers/copies?rating_key=104": {
+  "total": 1,
+  "offset": 0,
+  "limit": 50,
+  "sort": "file",
+  "rule": "live copies, rating key 104",
+  "copies": [
+   {
+    "rating_key": 104,
+    "guid": null,
+    "title": "Static Gulls",
+    "artist": "The Paper Lanterns",
+    "track_artist": null,
+    "album": "Low Tide Radio",
+    "album_key": 202,
+    "artist_key": 302,
+    "disc": 1,
+    "track_no": 2,
+    "duration_ms": 245000,
+    "plex_path": "/music/The Paper Lanterns/Low Tide Radio/02 Static Gulls.flac",
+    "parts": 2,
+    "file_size": 9800000,
+    "root": "/music",
+    "file": "The Paper Lanterns/Low Tide Radio/02 Static Gulls.flac",
+    "loose": "the paper lanterns/low tide radio/02 static gulls.flac",
+    "song": "paperlanternsstaticgulls",
+    "match_key": "paperlanterns|staticgulls",
+    "issues": [
+     "multi_part"
+    ],
+    "song_copies": 1
+   }
+  ]
+ },
+ "/api/servers/copies?rating_key=105": {
+  "total": 1,
+  "offset": 0,
+  "limit": 50,
+  "sort": "file",
+  "rule": "live copies, rating key 105",
+  "copies": [
+   {
+    "rating_key": 105,
+    "guid": null,
+    "title": "Coil",
+    "artist": "Ada Vey",
+    "track_artist": null,
+    "album": "Quiet Engines",
+    "album_key": 203,
+    "artist_key": 303,
+    "disc": 1,
+    "track_no": 1,
+    "duration_ms": 402000,
+    "plex_path": "/music/Ada Vey/Quiet Engines/01 Coil.flac",
+    "parts": 1,
+    "file_size": 41000000,
+    "root": "/music",
+    "file": "Ada Vey/Quiet Engines/01 Coil.flac",
+    "loose": "ada vey/quiet engines/01 coil.flac",
+    "song": "adaveycoil",
+    "match_key": "adavey|coil",
+    "issues": [],
+    "song_copies": 1
+   }
+  ]
+ },
+ "/api/servers/matches?server=navidrome&reason=hidden_path": {
+  "snapshots": [
+   {
+    "server": "jellyfin",
+    "snapshot": true,
+    "read_at": 1793847600.0,
+    "age_s": 7200,
+    "stamp": {
+     "items": 14,
+     "newest_created": "2026-11-20T21:00:00.0000000Z"
+    },
+    "folders": [
+     "/data/music"
+    ],
+    "folder_source": "server",
+    "folder_rule": "the server's own music folders",
+    "items": 14,
+    "hidden_paths": 0
+   },
+   {
+    "server": "navidrome",
+    "snapshot": true,
+    "read_at": 1793847600.0,
+    "age_s": 7200,
+    "stamp": {
+     "items": 9,
+     "last_scan": "2026-11-23T03:00:00Z",
+     "hidden_paths": 4
+    },
+    "folders": [
+     "/music"
+    ],
+    "folder_source": "common",
+    "folder_rule": "the folder every real path shares (the server names no folder paths)",
+    "items": 9,
+    "hidden_paths": 4
+   }
+  ],
+  "pairs": [
+   {
+    "pair": "jellyfin",
+    "left": "plex",
+    "right": "jellyfin",
+    "counts": {
+     "copies": 5,
+     "items": 14,
+     "matched": 5,
+     "items_matched": 5,
+     "copies_unmatched": 0,
+     "items_unmatched": 9
+    },
+    "tiers": {
+     "file": 5,
+     "mbid": 0,
+     "tags": 0
+    },
+    "notes": {
+     "loose": 1,
+     "shared_file": 0,
+     "multi_part": 1
+    },
+    "unmatched_left": {},
+    "unmatched_items": {
+     "no_path": 1,
+     "outside_roots": 1,
+     "not_in_plex": 6,
+     "multi_part": 1
+    },
+    "rules": {
+     "copies": "Live Plex copies (identity).",
+     "items": "Items in the jellyfin snapshot.",
+     "matched": "Copies matched to one jellyfin item, at the tier said.",
+     "items_matched": "Distinct jellyfin items matched (a shared file counts once).",
+     "copies_unmatched": "Not matched; each with one reason, so the reasons add up to this.",
+     "items_unmatched": "jellyfin items nothing matched; each with one reason.",
+     "file": "The same file key (the path below each server's music folder); then the same loose key (case-folded), only when exactly one item has it.",
+     "mbid": "The same MusicBrainz recording and release, from the server's tags. A Plex copy has none of its own: it uses the IDs of the item its file matched on the other server.",
+     "tags": "The same match key (artist|title, normalised as listens are), album, disc and track number, and durations within 2 s; only when exactly one candidate is left.",
+     "loose": "Matched by the loose key: the file key with other capitals.",
+     "shared_file": "Two or more Plex copies point at one file; they all match its one item.",
+     "multi_part": "A multi-part Plex copy, matched by its first part's file."
+    },
+    "rows": {
+     "all": "server=jellyfin",
+     "file": "server=jellyfin&tier=file",
+     "mbid": "server=jellyfin&tier=mbid",
+     "tags": "server=jellyfin&tier=tags",
+     "multi_part": "server=jellyfin&reason=multi_part",
+     "outside_roots": "server=jellyfin&reason=outside_roots",
+     "no_path": "server=jellyfin&reason=no_path",
+     "not_in_plex": "server=jellyfin&reason=not_in_plex"
+    }
+   },
+   {
+    "pair": "navidrome",
+    "left": "plex",
+    "right": "navidrome",
+    "counts": {
+     "copies": 5,
+     "items": 9,
+     "matched": 4,
+     "items_matched": 4,
+     "copies_unmatched": 1,
+     "items_unmatched": 5
+    },
+    "tiers": {
+     "file": 2,
+     "mbid": 1,
+     "tags": 1
+    },
+    "notes": {
+     "loose": 0,
+     "shared_file": 0,
+     "multi_part": 1
+    },
+    "unmatched_left": {
+     "hidden_path": 1
+    },
+    "unmatched_items": {
+     "hidden_path": 2,
+     "not_in_plex": 3
+    },
+    "rules": {
+     "copies": "Live Plex copies (identity).",
+     "items": "Items in the navidrome snapshot.",
+     "matched": "Copies matched to one navidrome item, at the tier said.",
+     "items_matched": "Distinct navidrome items matched (a shared file counts once).",
+     "copies_unmatched": "Not matched; each with one reason, so the reasons add up to this.",
+     "items_unmatched": "navidrome items nothing matched; each with one reason.",
+     "file": "The same file key (the path below each server's music folder); then the same loose key (case-folded), only when exactly one item has it.",
+     "mbid": "The same MusicBrainz recording and release, from the server's tags. A Plex copy has none of its own: it uses the IDs of the item its file matched on the other server.",
+     "tags": "The same match key (artist|title, normalised as listens are), album, disc and track number, and durations within 2 s; only when exactly one candidate is left.",
+     "loose": "Matched by the loose key: the file key with other capitals.",
+     "shared_file": "Two or more Plex copies point at one file; they all match its one item.",
+     "multi_part": "A multi-part Plex copy, matched by its first part's file."
+    },
+    "rows": {
+     "all": "server=navidrome",
+     "file": "server=navidrome&tier=file",
+     "mbid": "server=navidrome&tier=mbid",
+     "tags": "server=navidrome&tier=tags",
+     "hidden_path": "server=navidrome&reason=hidden_path",
+     "not_in_plex": "server=navidrome&reason=not_in_plex"
+    }
+   },
+   {
+    "pair": "jellyfin-navidrome",
+    "left": "jellyfin",
+    "right": "navidrome",
+    "counts": {
+     "left": 14,
+     "items": 9,
+     "matched": 7,
+     "items_matched": 7,
+     "left_unmatched": 7,
+     "items_unmatched": 2
+    },
+    "tiers": {
+     "plex": 4,
+     "file": 1,
+     "mbid": 1,
+     "tags": 1
+    },
+    "notes": {
+     "loose": 0,
+     "shared_file": 0
+    },
+    "unmatched_left": {
+     "no_path": 1,
+     "outside_roots": 1,
+     "ambiguous": 2,
+     "hidden_path": 3
+    },
+    "unmatched_items": {
+     "ambiguous": 1,
+     "hidden_path": 1
+    },
+    "rules": {
+     "left": "Items in the jellyfin snapshot.",
+     "items": "Items in the navidrome snapshot.",
+     "matched": "Items matched to one navidrome item, at the tier said.",
+     "items_matched": "Distinct navidrome items matched (a shared file counts once).",
+     "left_unmatched": "Not matched; each with one reason, so the reasons add up to this.",
+     "items_unmatched": "navidrome items nothing matched; each with one reason.",
+     "plex": "Jellyfin ↔ Navidrome: both items are matched to the same Plex copy.",
+     "file": "The same file key (the path below each server's music folder); then the same loose key (case-folded), only when exactly one item has it.",
+     "mbid": "The same MusicBrainz recording and release, from the server's tags. A Plex copy has none of its own: it uses the IDs of the item its file matched on the other server.",
+     "tags": "The same match key (artist|title, normalised as listens are), album, disc and track number, and durations within 2 s; only when exactly one candidate is left.",
+     "loose": "Matched by the loose key: the file key with other capitals.",
+     "shared_file": "Two or more Plex copies point at one file; they all match its one item."
+    },
+    "rows": {
+     "all": "server=jellyfin-navidrome",
+     "plex": "server=jellyfin-navidrome&tier=plex",
+     "file": "server=jellyfin-navidrome&tier=file",
+     "mbid": "server=jellyfin-navidrome&tier=mbid",
+     "tags": "server=jellyfin-navidrome&tier=tags",
+     "ambiguous": "server=jellyfin-navidrome&reason=ambiguous",
+     "hidden_path": "server=jellyfin-navidrome&reason=hidden_path",
+     "no_path": "server=jellyfin-navidrome&reason=no_path",
+     "outside_roots": "server=jellyfin-navidrome&reason=outside_roots"
+    }
+   }
+  ],
+  "missing": [],
+  "tiers": [
+   {
+    "tier": "file",
+    "rule": "The same file key (the path below each server's music folder); then the same loose key (case-folded), only when exactly one item has it."
+   },
+   {
+    "tier": "mbid",
+    "rule": "The same MusicBrainz recording and release, from the server's tags. A Plex copy has none of its own: it uses the IDs of the item its file matched on the other server."
+   },
+   {
+    "tier": "tags",
+    "rule": "The same match key (artist|title, normalised as listens are), album, disc and track number, and durations within 2 s; only when exactly one candidate is left."
+   },
+   {
+    "tier": "plex",
+    "rule": "Jellyfin ↔ Navidrome: both items are matched to the same Plex copy."
+   }
+  ],
+  "reasons": {
+   "no_path": "No file to match by: Plex gives no path for the copy, or the server none for the item; the MusicBrainz and tag tiers found nothing either.",
+   "outside_roots": "The file is outside the known music folders, so it has no file key; the MusicBrainz and tag tiers found nothing either.",
+   "not_on_server": "No item on the other server has this file, MusicBrainz IDs or tags.",
+   "ambiguous": "More than one candidate at the first tier that had any (or one candidate two copies want): traqfreq doesn't guess.",
+   "hidden_path": "The server gives no real path (Navidrome without Report Real Path), so the file tier can't be used, and the MusicBrainz and tag tiers found nothing.",
+   "not_in_plex": "An item no Plex copy matched: a file Plex doesn't list.",
+   "multi_part": "Another part of a multi-part Plex copy (same folder, disc and track): Plex keeps only the first part's file, which is matched; this part is not."
+  },
+  "tolerance_ms": 2000,
+  "read_only": "Matched from stored snapshots; nothing is sent to any server.",
+  "version": 1,
+  "rows": {
+   "total": 3,
+   "offset": 0,
+   "limit": 50,
+   "rule": "pair navidrome, unmatched because hidden_path",
+   "rows": [
+    {
+     "pair": "navidrome",
+     "side": "left",
+     "tier": null,
+     "reason": "hidden_path",
+     "left": {
+      "rating_key": 105,
+      "title": "Coil",
+      "artist": "Ada Vey",
+      "track_artist": null,
+      "album": "Quiet Engines",
+      "disc": 1,
+      "track_no": 1,
+      "duration_ms": 402000,
+      "plex_path": "/music/Ada Vey/Quiet Engines/01 Coil.flac",
+      "parts": 1,
+      "file": "Ada Vey/Quiet Engines/01 Coil.flac",
+      "issues": []
+     },
+     "right": null
+    },
+    {
+     "pair": "navidrome",
+     "side": "right",
+     "tier": null,
+     "reason": "hidden_path",
+     "left": null,
+     "right": {
+      "id": "b0000000000000000000000000000069",
+      "path": "Ada Vey/Quiet Engines/01 - Coil.flac",
+      "hidden": true,
+      "file": null,
+      "title": "Coil",
+      "artist": "Ada Vey",
+      "album_artist": "Ada Vey",
+      "album": "Quiet Engines",
+      "disc": 1,
+      "track": 1,
+      "duration_ms": 396000,
+      "mb_recording": null,
+      "mb_release": null,
+      "size": 41000000,
+      "play_count": 3
+     }
+    },
+    {
+     "pair": "navidrome",
+     "side": "right",
+     "tier": null,
+     "reason": "hidden_path",
+     "left": null,
+     "right": {
+      "id": "b0000000000000000000000000000387",
+      "path": "Ada Vey/Loose Ends/03 - Night Bus.flac",
+      "hidden": true,
+      "file": null,
+      "title": "Night Bus",
+      "artist": "Ada Vey",
+      "album_artist": "Ada Vey",
+      "album": "Loose Ends",
+      "disc": 1,
+      "track": 3,
+      "duration_ms": 210000,
+      "mb_recording": null,
+      "mb_release": null,
+      "size": 21000000,
+      "play_count": 5
+     }
+    }
+   ]
+  }
+ },
+ "/api/servers/copies?issue=multi_part": {
+  "total": 1,
+  "offset": 0,
+  "limit": 50,
+  "sort": "file",
+  "rule": "live copies, with multi_part",
+  "copies": [
+   {
+    "rating_key": 104,
+    "guid": null,
+    "title": "Static Gulls",
+    "artist": "The Paper Lanterns",
+    "track_artist": null,
+    "album": "Low Tide Radio",
+    "album_key": 202,
+    "artist_key": 302,
+    "disc": 1,
+    "track_no": 2,
+    "duration_ms": 245000,
+    "plex_path": "/music/The Paper Lanterns/Low Tide Radio/02 Static Gulls.flac",
+    "parts": 2,
+    "file_size": 9800000,
+    "root": "/music",
+    "file": "The Paper Lanterns/Low Tide Radio/02 Static Gulls.flac",
+    "loose": "the paper lanterns/low tide radio/02 static gulls.flac",
+    "song": "paperlanternsstaticgulls",
+    "match_key": "paperlanterns|staticgulls",
+    "issues": [
+     "multi_part"
+    ],
+    "song_copies": 1
+   }
+  ]
+ },
+ "/api/library/track/101": {
+  "track": {
+   "rating_key": 101,
+   "title": "Westkreuz",
+   "artist": "Kollektiv Nord",
+   "track_artist": null,
+   "album": "Ringbahn",
+   "album_key": 201,
+   "artist_key": 301,
+   "disc": 1,
+   "track_no": 1,
+   "year": 2019,
+   "duration_ms": 312000,
+   "plex_path": "/music/Kollektiv Nord/Ringbahn/01 Westkreuz.flac",
+   "local_path": "/srv/music/Kollektiv Nord/Ringbahn/01 Westkreuz.flac",
+   "parts": 1,
+   "file_size": 39400000,
+   "container": "flac",
+   "codec": "flac",
+   "bitrate": 1011,
+   "bit_depth": 24,
+   "sample_rate": 96000,
+   "channels": 2,
+   "view_count": 3,
+   "skip_count": 0,
+   "last_viewed_at": "2026-10-30T18:00:00Z",
+   "user_rating": null,
+   "sonic_version": 1,
+   "added_at": "2025-03-01T10:00:00Z",
+   "updated_at": null,
+   "removed_at": null
+  },
+  "kind": null,
+  "live": true,
+  "plays": {
+   "plays": 3,
+   "plex": 3,
+   "history": 1,
+   "last_played": "2026-11-01T20:15:00Z"
+  },
+  "analysis": {
+   "status": "ok",
+   "version": 2,
+   "error": null,
+   "analyzed_at": "2026-11-05T02:00:00Z",
+   "seconds": null,
+   "current": true
+  },
+  "features": {
+   "bpm": 128.0,
+   "bpm_confidence": null,
+   "key": "A",
+   "scale": "minor",
+   "key_strength": null,
+   "camelot": "8A",
+   "loudness_lufs": -7.1,
+   "loudness_range": null,
+   "danceability": null,
+   "moods": [
+    "party",
+    "aggressive",
+    "happy"
+   ]
+  },
+  "analyzer_version": 2,
+  "history": {
+   "plays": 1,
+   "first": "2026-11-01T20:15:00Z",
+   "last": "2026-11-01T20:15:00Z",
+   "sources": [
+    {
+     "source": "lastfm",
+     "name": "Last.fm",
+     "plays": 1
+    }
+   ],
+   "years": [
+    {
+     "year": 2026,
+     "plays": 1,
+     "by_source": {
+      "lastfm": 1
+     }
+    }
+   ],
+   "recent": [
+    {
+     "at": "2026-11-01T20:15:00Z",
+     "source": "lastfm",
+     "name": "Last.fm",
+     "rating_key": 101,
+     "local": "2026-11-01 13:15"
+    }
+   ],
+   "timezone": "America/Denver"
+  },
+  "song": {
+   "title": "Westkreuz",
+   "artist": "Kollektiv Nord",
+   "copies": 1,
+   "versions": [],
+   "history": null
+  },
+  "rows": {
+   "plays": "track=101",
+   "song": null
+  },
+  "rules": {
+   "plays": "max(Plex view_count, history plays), never the sum (jimbo-dj's plays_of)",
+   "history": "counted listens of this copy: COALESCE(listens.rating_key, listen_matches.rating_key) = it (jimbo-dj's _track_stats; on a song with more copies, pages.song's version history)",
+   "song_history": "counted listens of every copy of the song (pages._keys_where over its versions)",
+   "versions": "other live copies of the same song: the same artist (track artist first) and title without its version, like (Live) or - Remastered (songs.Index)",
+   "analysis": "jimbo-dj's analyzer: analysis.status and version (current = ok at version 2); key, BPM and moods from its features row",
+   "sources": "counted listens per source, in jimbo-dj's source order",
+   "years": "counted listens per year, in the listening time zone"
+  }
+ },
+ "nosnap:/api/servers/matches": {
+  "snapshots": [
+   {
+    "server": "jellyfin",
+    "snapshot": false,
+    "note": "No snapshot yet: T16 refreshes snapshots, T17 and T18 read the servers."
+   },
+   {
+    "server": "navidrome",
+    "snapshot": false,
+    "note": "No snapshot yet: T16 refreshes snapshots, T17 and T18 read the servers."
+   }
+  ],
+  "pairs": [],
+  "missing": [
+   "jellyfin",
+   "navidrome",
+   "jellyfin-navidrome"
+  ],
+  "tiers": [
+   {
+    "tier": "file",
+    "rule": "The same file key (the path below each server's music folder); then the same loose key (case-folded), only when exactly one item has it."
+   },
+   {
+    "tier": "mbid",
+    "rule": "The same MusicBrainz recording and release, from the server's tags. A Plex copy has none of its own: it uses the IDs of the item its file matched on the other server."
+   },
+   {
+    "tier": "tags",
+    "rule": "The same match key (artist|title, normalised as listens are), album, disc and track number, and durations within 2 s; only when exactly one candidate is left."
+   },
+   {
+    "tier": "plex",
+    "rule": "Jellyfin ↔ Navidrome: both items are matched to the same Plex copy."
+   }
+  ],
+  "reasons": {
+   "no_path": "No file to match by: Plex gives no path for the copy, or the server none for the item; the MusicBrainz and tag tiers found nothing either.",
+   "outside_roots": "The file is outside the known music folders, so it has no file key; the MusicBrainz and tag tiers found nothing either.",
+   "not_on_server": "No item on the other server has this file, MusicBrainz IDs or tags.",
+   "ambiguous": "More than one candidate at the first tier that had any (or one candidate two copies want): traqfreq doesn't guess.",
+   "hidden_path": "The server gives no real path (Navidrome without Report Real Path), so the file tier can't be used, and the MusicBrainz and tag tiers found nothing.",
+   "not_in_plex": "An item no Plex copy matched: a file Plex doesn't list.",
+   "multi_part": "Another part of a multi-part Plex copy (same folder, disc and track): Plex keeps only the first part's file, which is matched; this part is not."
+  },
+  "tolerance_ms": 2000,
+  "read_only": "Matched from stored snapshots; nothing is sent to any server.",
+  "version": 1
+ },
+ "nosnap:/api/servers/matches?rating_key=101": {
+  "snapshots": [
+   {
+    "server": "jellyfin",
+    "snapshot": false,
+    "note": "No snapshot yet: T16 refreshes snapshots, T17 and T18 read the servers."
+   },
+   {
+    "server": "navidrome",
+    "snapshot": false,
+    "note": "No snapshot yet: T16 refreshes snapshots, T17 and T18 read the servers."
+   }
+  ],
+  "pairs": [],
+  "missing": [
+   "jellyfin",
+   "navidrome",
+   "jellyfin-navidrome"
+  ],
+  "tiers": [
+   {
+    "tier": "file",
+    "rule": "The same file key (the path below each server's music folder); then the same loose key (case-folded), only when exactly one item has it."
+   },
+   {
+    "tier": "mbid",
+    "rule": "The same MusicBrainz recording and release, from the server's tags. A Plex copy has none of its own: it uses the IDs of the item its file matched on the other server."
+   },
+   {
+    "tier": "tags",
+    "rule": "The same match key (artist|title, normalised as listens are), album, disc and track number, and durations within 2 s; only when exactly one candidate is left."
+   },
+   {
+    "tier": "plex",
+    "rule": "Jellyfin ↔ Navidrome: both items are matched to the same Plex copy."
+   }
+  ],
+  "reasons": {
+   "no_path": "No file to match by: Plex gives no path for the copy, or the server none for the item; the MusicBrainz and tag tiers found nothing either.",
+   "outside_roots": "The file is outside the known music folders, so it has no file key; the MusicBrainz and tag tiers found nothing either.",
+   "not_on_server": "No item on the other server has this file, MusicBrainz IDs or tags.",
+   "ambiguous": "More than one candidate at the first tier that had any (or one candidate two copies want): traqfreq doesn't guess.",
+   "hidden_path": "The server gives no real path (Navidrome without Report Real Path), so the file tier can't be used, and the MusicBrainz and tag tiers found nothing.",
+   "not_in_plex": "An item no Plex copy matched: a file Plex doesn't list.",
+   "multi_part": "Another part of a multi-part Plex copy (same folder, disc and track): Plex keeps only the first part's file, which is matched; this part is not."
+  },
+  "tolerance_ms": 2000,
+  "read_only": "Matched from stored snapshots; nothing is sent to any server.",
+  "version": 1,
+  "copy": {
+   "rating_key": 101,
+   "live": true
+  },
+  "rows": {
+   "total": 0,
+   "offset": 0,
+   "limit": 50,
+   "rule": "every pair, Plex copy 101 (its match or reason; Jellyfin ↔ Navidrome matched through it)",
+   "rows": []
+  }
+ }
+}

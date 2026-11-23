@@ -1,6 +1,6 @@
 import { lazy, Suspense, useEffect } from 'react';
 import { t, type StringKey } from './copy/t';
-import { useModules } from './app/api';
+import { useModules, type ModuleSwitch } from './app/api';
 import { BottomBar, TopBar } from './app/Nav';
 import { parseRoute, usePath, type Route } from './app/route';
 import { History } from './pages/History';
@@ -19,6 +19,7 @@ import { ModulePage } from './pages/ModulePage';
 import { NotFound } from './pages/NotFound';
 import { Search } from './pages/Search';
 import { Setup } from './pages/Setup';
+import { ServerCopies, ServerMatches, SetupServers } from './pages/Servers';
 import './app/app.css';
 
 // The kit board is dev only: import.meta.env.DEV is false in production, so Vite drops it from the build (D1).
@@ -61,7 +62,7 @@ export function Shell() {
       <main className={r.page === 'module' ? 'is-banded' : undefined} aria-busy={waiting || undefined}>
         {r.page === 'map' && <MapHome modules={modules} navigate={navigate} />}
         {r.page === 'search' && <Search navigate={navigate} />}
-        {r.page === 'module' && r.module === 'S' && <Setup modules={modules} navigate={navigate} />}
+        {r.page === 'module' && r.module === 'S' && <SetupPage sub={r.sub} modules={modules} query={path.replace(/^[^?]*/, '')} navigate={navigate} />}
         {r.page === 'module' && r.module === 'H' && !waiting && <HistoryPage sub={r.sub} query={path.replace(/^[^?]*/, '')} navigate={navigate} />}
         {r.page === 'module' && r.module === 'L' && <LibraryPage sub={r.sub} entityKey={r.key} query={path.replace(/^[^?]*/, '')} navigate={navigate} />}
         {r.page === 'module' && r.module !== 'S' && r.module !== 'H' && r.module !== 'L' && !waiting && <ModulePage module={r.module} navigate={navigate} />}
@@ -70,6 +71,14 @@ export function Shell() {
       <BottomBar modules={modules} route={r} navigate={navigate} />
     </>
   );
+}
+
+/** SETUP's pages: the overview, and SERVERS with the rows behind its counts (T15). */
+function SetupPage({ sub, modules, query, navigate }: { sub?: string; modules: ModuleSwitch[]; query: string; navigate: (href: string) => void }) {
+  if (sub === 'servers') return <SetupServers query={query} navigate={navigate} />;
+  if (sub === 'serverCopies') return <ServerCopies query={query} navigate={navigate} />;
+  if (sub === 'serverMatches') return <ServerMatches query={query} navigate={navigate} />;
+  return <Setup modules={modules} navigate={navigate} />;
 }
 
 /** HISTORY's pages: the overview and its subpages (rows, Counted once, Years, Wrapped, Top, the P1 comparison). */

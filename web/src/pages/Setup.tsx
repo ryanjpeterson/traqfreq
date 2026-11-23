@@ -6,6 +6,7 @@ import type { Compare } from '../app/periods';
 import type { LibraryGate } from '../app/library';
 import { CompareCard } from './HistoryCompare';
 import { LibraryCompareCard } from './LibraryCompare';
+import { ServersCard } from './Servers';
 
 /** SETUP, read-only: what traqfreq can read from jimbo-dj's database, and which modules are on. */
 export function Setup({ modules, navigate }: { modules: ModuleSwitch[]; navigate: (href: string) => void }) {
@@ -52,6 +53,7 @@ export function Setup({ modules, navigate }: { modules: ModuleSwitch[]; navigate
           </Card>
 
           <SetupLibraryCompare navigate={navigate} />
+          <ServersCard navigate={navigate} />
           {historyOn && <SetupCompare navigate={navigate} />}
 
           <Card label={t('setup.scan')}>

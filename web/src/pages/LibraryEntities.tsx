@@ -10,6 +10,7 @@ import {
   type Album, type Artist, type EntityList, type ListKind, type PageTrack, type Plays, type Summary, type Track,
 } from '../app/entities';
 import { TracksLink } from './Library';
+import { OnServers } from './Servers';
 
 type Nav = { navigate: (href: string) => void };
 
@@ -477,6 +478,7 @@ function TrackBody({ d, navigate }: { d: Track } & Nav) {
             </div>
           </Card>
         )}
+        {d.live && <OnServers rk={tr.rating_key} plexPlays={p.plex} navigate={navigate} />}
         <Card label={t('entity.file')}>
           <ul className="rows lib-paths" aria-label={t('entity.file')}>
             <Fact label={t('entity.file.codec')}>{[str(tr.codec) ?? t('library.none'), str(tr.container) && tr.container !== tr.codec ? tf('library.why.in', { c: String(tr.container) }) : ''].filter(Boolean).join(' ')}</Fact>
