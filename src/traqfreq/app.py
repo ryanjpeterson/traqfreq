@@ -9,7 +9,7 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
-from . import __version__, counted, entities, history, legacy, library, library_gate, periods, store
+from . import __version__, counted, entities, history, identity, legacy, library, library_gate, periods, servers, store
 from .settings import CORE, MODULES, Settings
 
 
@@ -289,6 +289,55 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         """The counted listens behind an album's, artist's or track's history numbers, newest first."""
         return read_entity(lambda c: entities.plays(c, track, album, artist, song, source or None, limit, offset,
                                                     settings.tz))
+
+    # --- T13: SERVERS, track identity (the Plex side) ------------------------------------------------------
+
+    @app.get("/api/servers")
+    def servers_status() -> dict:
+        """Plex (through jimbo-dj's database), Jellyfin and Navidrome: set up or not, with which settings
+        (secrets only as set or not set). traqfreq never writes to any server."""
+        conn = None
+        if settings.legacy_db is not None:
+            try:
+                conn = legacy.connect(settings.legacy_db)
+            except legacy.LegacyDBMissing:
+                conn = None
+        try:
+            return servers.status(conn, settings)
+        finally:
+            if conn is not None:
+                conn.close()
+
+    def read_identity(fn):
+        def run(conn):
+            try:
+                return fn(conn)
+            except identity.NoLibrary as e:
+                raise HTTPException(404, str(e))
+            except ValueError as e:
+                raise HTTPException(400, str(e))
+        return read_legacy(run)
+
+    @app.get("/api/servers/identity")
+    def servers_identity() -> dict:
+        """Every live Plex copy's identity: file key, song, match key; Plex's music folders and where they come
+        from; each count with its rule and its rows. Read from the stats cache (servers.identity)."""
+        def run(conn):
+            value, info = store.cached(settings.data_dir, "servers.identity",
+                                       identity.cache_key(conn, settings.plex_roots),
+                                       lambda: identity.summary(conn, settings.plex_roots))
+            return {**value, "cache": info}
+        return read_identity(run)
+
+    @app.get("/api/servers/copies")
+    def servers_copies(issue: str | None = None, song: str | None = None, file: str | None = None,
+                       has_file: bool | None = None, versions: bool | None = None, rating_key: int | None = None,
+                       sort: str = "file", limit: int = 50, offset: int = 0) -> dict:
+        """The copies behind each identity count: by issue, song key, file key, with or without a file key,
+        songs with more than one copy, or one rating key."""
+        return read_identity(lambda c: identity.copies(c, settings.plex_roots, issue or None, song or None,
+                                                       file or None, has_file, versions, rating_key, sort,
+                                                       limit, offset))
 
     @app.get("/api/modules")
     def modules() -> dict:

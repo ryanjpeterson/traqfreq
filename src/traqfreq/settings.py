@@ -37,6 +37,14 @@ class Settings:
     web_dir: Path = DEFAULT_WEB_DIR
     modules: frozenset[str] = CORE
     tz: str | None = None  # TZ: jimbo-dj's listening time zone when its meta history_tz isn't set
+    # P3 SERVERS (docs/specs/t13-servers.md). Empty = not set up. Secrets are never shown or logged.
+    plex_roots: tuple[str, ...] = ()  # Plex's music folders, only if jimbo-dj stored none
+    jellyfin_url: str | None = None
+    jellyfin_key: str | None = None
+    jellyfin_user: str | None = None
+    navidrome_url: str | None = None
+    navidrome_user: str | None = None
+    navidrome_password: str | None = None
 
     @classmethod
     def from_env(cls, env: dict[str, str] | None = None) -> "Settings":
@@ -50,4 +58,11 @@ class Settings:
             web_dir=Path(env.get("TRAQFREQ_WEB_DIR", str(DEFAULT_WEB_DIR))),
             modules=parse_modules(env.get("TRAQFREQ_MODULES")),
             tz=env.get("TZ") or None,
+            plex_roots=tuple(r.strip() for r in (env.get("TRAQFREQ_PLEX_ROOTS") or "").split(",") if r.strip()),
+            jellyfin_url=env.get("TRAQFREQ_JELLYFIN_URL") or None,
+            jellyfin_key=env.get("TRAQFREQ_JELLYFIN_KEY") or None,
+            jellyfin_user=env.get("TRAQFREQ_JELLYFIN_USER") or None,
+            navidrome_url=env.get("TRAQFREQ_NAVIDROME_URL") or None,
+            navidrome_user=env.get("TRAQFREQ_NAVIDROME_USER") or None,
+            navidrome_password=env.get("TRAQFREQ_NAVIDROME_PASSWORD") or None,
         )
