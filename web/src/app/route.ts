@@ -9,7 +9,7 @@ export const MODULE_PATH: Record<ModuleId, string> = {
 export type Route =
   | { page: 'map' }
   | { page: 'search' }
-  | { page: 'module'; module: ModuleId; sub?: HistorySub }
+  | { page: 'module'; module: ModuleId; sub?: HistorySub | LibrarySub }
   | { page: 'notFound' };
 
 /** HISTORY's rows page: the listens behind a number (query string = the filters). */
@@ -29,10 +29,15 @@ const HISTORY_SUBS: Record<string, HistorySub> = {
   [HISTORY_WRAPPED]: 'wrapped', [HISTORY_TOP]: 'top', [HISTORY_COMPARE]: 'compare',
 };
 
+/** LIBRARY's rows page (T10): the tracks behind a number (query string = the filters of /api/library/tracks). */
+export const LIBRARY_TRACKS = '/library/tracks';
+export type LibrarySub = 'tracks';
+
 export function parseRoute(pathname: string): Route {
   const path = pathname.replace(/[?#].*$/, '').replace(/\/+$/, '') || '/';
   if (path === '/') return { page: 'map' };
   if (path === '/search') return { page: 'search' };
+  if (path === LIBRARY_TRACKS) return { page: 'module', module: 'L', sub: 'tracks' };
   if (HISTORY_SUBS[path]) return { page: 'module', module: 'H', sub: HISTORY_SUBS[path] };
   const module = MODULE_IDS.find((m) => MODULE_PATH[m] === path);
   return module ? { page: 'module', module } : { page: 'notFound' };

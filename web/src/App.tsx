@@ -10,6 +10,8 @@ import { HistoryRows } from './pages/HistoryRows';
 import { HistoryTop } from './pages/HistoryTop';
 import { HistoryWrapped } from './pages/HistoryWrapped';
 import { HistoryYears } from './pages/HistoryYears';
+import { Library } from './pages/Library';
+import { LibraryRows } from './pages/LibraryRows';
 import { MapHome } from './pages/MapHome';
 import { ModulePage } from './pages/ModulePage';
 import { NotFound } from './pages/NotFound';
@@ -59,7 +61,10 @@ export function Shell() {
         {r.page === 'search' && <Search navigate={navigate} />}
         {r.page === 'module' && r.module === 'S' && <Setup modules={modules} navigate={navigate} />}
         {r.page === 'module' && r.module === 'H' && !waiting && <HistoryPage sub={r.sub} query={path.replace(/^[^?]*/, '')} navigate={navigate} />}
-        {r.page === 'module' && r.module !== 'S' && r.module !== 'H' && !waiting && <ModulePage module={r.module} navigate={navigate} />}
+        {r.page === 'module' && r.module === 'L' && (r.sub === 'tracks'
+          ? <LibraryRows query={path.replace(/^[^?]*/, '')} navigate={navigate} />
+          : <Library navigate={navigate} />)}
+        {r.page === 'module' && r.module !== 'S' && r.module !== 'H' && r.module !== 'L' && !waiting && <ModulePage module={r.module} navigate={navigate} />}
         {r.page === 'notFound' && <NotFound navigate={navigate} />}
       </main>
       <BottomBar modules={modules} route={r} navigate={navigate} />

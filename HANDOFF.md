@@ -125,8 +125,20 @@ T8 merged to `main` (e9166ee, PR #2) and deployed on the Mac mini. From the lapt
 - No page: API only (the LIBRARY page is T10), so nothing to check in the browser this session.
 - Tests: pytest 91 (`tests/test_library.py`, 10), Vitest 97, brand checks and 13 self-tests pass. Not timed on live data yet; `stats` is about fifteen `COUNT`s over 54k rows.
 
-## Next: T10
-LIBRARY page (`/library`), from `/api/library/stats` and `/api/library/tracks` (spec: `docs/specs/t9-library.md`, T10). Every number opens its rows via the `rows` map; analysed rows show key/BPM. After deploying T9, a quick live check worth doing: `curl http://macmini:4492/api/library/stats` vs jimbo-dj's `/api/stats` (tracks 52,779 …).
+## T9 deployed and checked: 2026-11-22
+After the deploy, jimbo-dj's `/api/stats` at :4490 and traqfreq's `/api/library/stats` at :4492 were compared field by field (folders and built_at left out): **all 48 fields equal, 0 differ.**
+- 52,779 tracks, 4,306 albums, 1,297 artists, 3,649.6 h, 1,644.7 GB; 5,291 played (10.0 %), 9,250 Plex plays; Plex sonic analysis 52,767.
+- jimbo-dj's analyzer: 52,395 ok at version 2 (99.3 %), 7 errors.
+- jimbo-dj's stored `library.stats` row was fresh. traqfreq's first build took 0.15 s.
+
+## T10 done (2026-11-22, `claude/t10-library-page`, from `main` 4cee499; laptop over SMB like T3–T9)
+- **LIBRARY page** (`web/src/pages/Library.tsx`, LIBRARY is always on; replaces the empty state): tracks headline with its rule and whether jimbo-dj's stored copy is fresh; albums, artists, playing time, size; Files (codecs, containers, bitrate: lists with share bars in LIBRARY red, aria-hidden, plus a one-line summary, L6; bitrate keeps jimbo-dj's bucket order and says how many tracks have no bitrate); Play history (played %, Plex plays, rated; Plex top artists from `top_artist_keys`, each opening that artist's played tracks); Analysis (Plex sonic analysis and jimbo-dj's analyzer side by side, each saying whose it is; analyzer errors); Paths (mapped, not mapped = tracks − mapped with the first five Plex paths, multi-part, removed) and Music folders (`Status` off "Not compared", as jimbo-dj stored them). Every number carries its rule (`rules`) and opens its rows through the `rows` map; a zero is shown without a link.
+- **Rows page** `/library/tracks?…` (`LibraryRows.tsx`, filters in `app/library.ts`): the API's filters (codec, container incl. `?`, bitrate bucket, played, rated, sonic, analysis, mapped, multi_part, removed, artist_key, album_key, sort, offset; `name` labels an artist key), 50 a page with Previous/Next, order as `NavItem` links (by artist, most Plex plays, newest added), the rule with its parameters and the plays rule. Each track a `StationRow` with Camelot key and BPM only where analysed at the current version; the "why" gives codec/container, bitrate, size, length, parts, the path (or not mapped), Plex sonic, jimbo-dj's analysis, plays (`plays_of`: Plex n, history n, the larger counts), last played, rating, added, removed.
+- No API change. pytest adds one check that every `rows` query string, sent as the page sends it (encoded `?`, `<`, `>`), is accepted and lists as many tracks as its number.
+- Tests: pytest 92, Vitest 111 (`web/src/pages/library.test.tsx`, 14), brand checks and 13 self-tests pass. Checked in the browser against the fixture: light and dark desktop, tablet (dark), 375 px (page and rows with the why open: no page side-scroll).
+
+## Next: T11
+Albums, artists, a track (spec: `docs/specs/t9-library.md`, T11). Read jimbo-dj's `routes/entities.py` for what it shows and match its numbers. The rows page already filters by `artist_key` and `album_key`, so artist and album pages can link their tracks there.
 
 ## Open questions
 1. ~~**Forgejo mirror**~~ *Done 2026-11-22:* Forgejo is live as a pull mirror of GitHub (`http://macmini:4470/ryanjpeterson/traqfreq`, syncs every 10 minutes, default branch `main`).
