@@ -1,0 +1,559 @@
+{
+ "_comment": "Invented Jellyfin answers (T14): /Library/VirtualFolders and two pages of /Items?IncludeItemTypes=Audio&Recursive=true&Fields=Path,ProviderIds,MediaSources,ParentId&StartIndex=&Limit=10. Not real data.",
+ "virtual_folders": [
+  {
+   "Name": "Music",
+   "Locations": [
+    "/data/music"
+   ],
+   "CollectionType": "music",
+   "ItemId": "d0000000000000000000000000000001",
+   "RefreshStatus": "Idle"
+  },
+  {
+   "Name": "Audiobooks",
+   "Locations": [
+    "/data/audiobooks"
+   ],
+   "CollectionType": "books",
+   "ItemId": "d0000000000000000000000000000002",
+   "RefreshStatus": "Idle"
+  }
+ ],
+ "items_pages": [
+  {
+   "Items": [
+    {
+     "Name": "Westkreuz",
+     "ServerId": "f00dfeedf00dfeedf00dfeedf00dfeed",
+     "Id": "a0000000000000000000000000000065",
+     "DateCreated": "2025-03-01T10:02:11.0000000Z",
+     "Type": "Audio",
+     "IsFolder": false,
+     "ParentIndexNumber": 1,
+     "IndexNumber": 1,
+     "Artists": [
+      "Kollektiv Nord"
+     ],
+     "AlbumArtist": "Kollektiv Nord",
+     "Album": "Ringbahn",
+     "ProviderIds": {
+      "MusicBrainzRecording": "7a3e5d10-0000-4000-8000-000000000101",
+      "MusicBrainzTrack": "9c0d5d10-0000-4000-8000-000000000101",
+      "MusicBrainzAlbum": "4f1c9a2e-0000-4000-8000-00000000b201"
+     },
+     "ParentId": "c000000000000000000000000000000a",
+     "MediaType": "Audio",
+     "UserData": {
+      "PlayCount": 4,
+      "IsFavorite": false,
+      "Played": true,
+      "Key": "a0000000000000000000000000000065"
+     },
+     "RunTimeTicks": 3120000000,
+     "Path": "/data/music/Kollektiv Nord/Ringbahn/01 Westkreuz.flac",
+     "MediaSources": [
+      {
+       "Protocol": "File",
+       "Id": "a0000000000000000000000000000065",
+       "Path": "/data/music/Kollektiv Nord/Ringbahn/01 Westkreuz.flac",
+       "Type": "Default",
+       "Container": "flac",
+       "Size": 39400000,
+       "Name": "Westkreuz"
+      }
+     ]
+    },
+    {
+     "Name": "Ostkreuz",
+     "ServerId": "f00dfeedf00dfeedf00dfeedf00dfeed",
+     "Id": "a0000000000000000000000000000066",
+     "DateCreated": "2025-03-01T10:02:12.0000000Z",
+     "Type": "Audio",
+     "IsFolder": false,
+     "ParentIndexNumber": 1,
+     "IndexNumber": 2,
+     "Artists": [
+      "Kollektiv Nord"
+     ],
+     "AlbumArtist": "Kollektiv Nord",
+     "Album": "Ringbahn",
+     "ProviderIds": {
+      "MusicBrainzRecording": "7a3e5d10-0000-4000-8000-000000000102",
+      "MusicBrainzTrack": "9c0d5d10-0000-4000-8000-000000000102",
+      "MusicBrainzAlbum": "4f1c9a2e-0000-4000-8000-00000000b201"
+     },
+     "ParentId": "c000000000000000000000000000000a",
+     "MediaType": "Audio",
+     "UserData": {
+      "PlayCount": 1,
+      "IsFavorite": false,
+      "Played": true,
+      "Key": "a0000000000000000000000000000066"
+     },
+     "RunTimeTicks": 2980000000,
+     "Path": "/data/music/Kollektiv Nord/Ringbahn/02 Ostkreuz.flac",
+     "MediaSources": [
+      {
+       "Protocol": "File",
+       "Id": "a0000000000000000000000000000066",
+       "Path": "/data/music/Kollektiv Nord/Ringbahn/02 Ostkreuz.flac",
+       "Type": "Default",
+       "Container": "flac",
+       "Size": 4800000,
+       "Name": "Ostkreuz"
+      }
+     ]
+    },
+    {
+     "Name": "Harbour Lights",
+     "ServerId": "f00dfeedf00dfeedf00dfeedf00dfeed",
+     "Id": "a0000000000000000000000000000067",
+     "DateCreated": "2026-06-12T09:01:00.0000000Z",
+     "Type": "Audio",
+     "IsFolder": false,
+     "ParentIndexNumber": 2,
+     "IndexNumber": 1,
+     "Artists": [
+      "The Paper Lanterns"
+     ],
+     "AlbumArtist": "The Paper Lanterns",
+     "Album": "Low Tide Radio",
+     "ProviderIds": {
+      "MusicBrainzRecording": "7a3e5d10-0000-4000-8000-000000000103",
+      "MusicBrainzTrack": "9c0d5d10-0000-4000-8000-000000000103",
+      "MusicBrainzAlbum": "4f1c9a2e-0000-4000-8000-00000000b202"
+     },
+     "ParentId": "c000000000000000000000000000000a",
+     "MediaType": "Audio",
+     "UserData": {
+      "PlayCount": 0,
+      "IsFavorite": false,
+      "Played": false,
+      "Key": "a0000000000000000000000000000067"
+     },
+     "RunTimeTicks": 2210000000,
+     "Path": "/data/music/the paper lanterns/low tide radio/01 Harbour Lights.flac",
+     "MediaSources": [
+      {
+       "Protocol": "File",
+       "Id": "a0000000000000000000000000000067",
+       "Path": "/data/music/the paper lanterns/low tide radio/01 Harbour Lights.flac",
+       "Type": "Default",
+       "Container": "flac",
+       "Size": 7100000,
+       "Name": "Harbour Lights"
+      }
+     ]
+    },
+    {
+     "Name": "Static Gulls",
+     "ServerId": "f00dfeedf00dfeedf00dfeedf00dfeed",
+     "Id": "a0000000000000000000000000000068",
+     "DateCreated": "2026-06-12T09:01:01.0000000Z",
+     "Type": "Audio",
+     "IsFolder": false,
+     "ParentIndexNumber": 1,
+     "IndexNumber": 2,
+     "Artists": [
+      "The Paper Lanterns"
+     ],
+     "AlbumArtist": "The Paper Lanterns",
+     "Album": "Low Tide Radio",
+     "ProviderIds": {},
+     "ParentId": "c000000000000000000000000000000a",
+     "MediaType": "Audio",
+     "UserData": {
+      "PlayCount": 2,
+      "IsFavorite": false,
+      "Played": true,
+      "Key": "a0000000000000000000000000000068"
+     },
+     "RunTimeTicks": 2450000000,
+     "Path": "/data/music/The Paper Lanterns/Low Tide Radio/02 Static Gulls.flac",
+     "MediaSources": [
+      {
+       "Protocol": "File",
+       "Id": "a0000000000000000000000000000068",
+       "Path": "/data/music/The Paper Lanterns/Low Tide Radio/02 Static Gulls.flac",
+       "Type": "Default",
+       "Container": "flac",
+       "Size": 5100000,
+       "Name": "Static Gulls"
+      }
+     ]
+    },
+    {
+     "Name": "Static Gulls (Part 2)",
+     "ServerId": "f00dfeedf00dfeedf00dfeedf00dfeed",
+     "Id": "a0000000000000000000000000000412",
+     "DateCreated": "2026-06-12T09:01:02.0000000Z",
+     "Type": "Audio",
+     "IsFolder": false,
+     "ParentIndexNumber": 1,
+     "IndexNumber": 2,
+     "Artists": [
+      "The Paper Lanterns"
+     ],
+     "AlbumArtist": "The Paper Lanterns",
+     "Album": "Low Tide Radio",
+     "ProviderIds": {},
+     "ParentId": "c000000000000000000000000000000a",
+     "MediaType": "Audio",
+     "UserData": {
+      "PlayCount": 0,
+      "IsFavorite": false,
+      "Played": false,
+      "Key": "a0000000000000000000000000000412"
+     },
+     "RunTimeTicks": 1180000000,
+     "Path": "/data/music/The Paper Lanterns/Low Tide Radio/02 Static Gulls (part 2).flac",
+     "MediaSources": [
+      {
+       "Protocol": "File",
+       "Id": "a0000000000000000000000000000412",
+       "Path": "/data/music/The Paper Lanterns/Low Tide Radio/02 Static Gulls (part 2).flac",
+       "Type": "Default",
+       "Container": "flac",
+       "Size": 4700000,
+       "Name": "Static Gulls (Part 2)"
+      }
+     ]
+    },
+    {
+     "Name": "Coil",
+     "ServerId": "f00dfeedf00dfeedf00dfeedf00dfeed",
+     "Id": "a0000000000000000000000000000069",
+     "DateCreated": "2026-09-20T15:31:00.0000000Z",
+     "Type": "Audio",
+     "IsFolder": false,
+     "ParentIndexNumber": 1,
+     "IndexNumber": 1,
+     "Artists": [
+      "Ada Vey"
+     ],
+     "AlbumArtist": "Ada Vey",
+     "Album": "Quiet Engines",
+     "ProviderIds": {},
+     "ParentId": "c000000000000000000000000000000a",
+     "MediaType": "Audio",
+     "UserData": {
+      "PlayCount": 0,
+      "IsFavorite": false,
+      "Played": false,
+      "Key": "a0000000000000000000000000000069"
+     },
+     "RunTimeTicks": 4020000000,
+     "Path": "/data/music/Ada Vey/Quiet Engines/01 Coil.flac",
+     "MediaSources": [
+      {
+       "Protocol": "File",
+       "Id": "a0000000000000000000000000000069",
+       "Path": "/data/music/Ada Vey/Quiet Engines/01 Coil.flac",
+       "Type": "Default",
+       "Container": "flac",
+       "Size": 41000000,
+       "Name": "Coil"
+      }
+     ]
+    },
+    {
+     "Name": "Westkreuz (Live)",
+     "ServerId": "f00dfeedf00dfeedf00dfeedf00dfeed",
+     "Id": "a000000000000000000000000000006b",
+     "DateCreated": "2026-10-02T08:00:00.0000000Z",
+     "Type": "Audio",
+     "IsFolder": false,
+     "ParentIndexNumber": 1,
+     "IndexNumber": 1,
+     "Artists": [
+      "Kollektiv Nord"
+     ],
+     "AlbumArtist": "Kollektiv Nord",
+     "Album": "Live am Ring",
+     "ProviderIds": {
+      "MusicBrainzRecording": "7a3e5d10-0000-4000-8000-000000000107",
+      "MusicBrainzTrack": "9c0d5d10-0000-4000-8000-000000000107",
+      "MusicBrainzAlbum": "4f1c9a2e-0000-4000-8000-00000000b205"
+     },
+     "ParentId": "c000000000000000000000000000000a",
+     "MediaType": "Audio",
+     "UserData": {
+      "PlayCount": 0,
+      "IsFavorite": false,
+      "Played": false,
+      "Key": "a000000000000000000000000000006b"
+     },
+     "RunTimeTicks": 3304000000,
+     "Path": "/data/music/Kollektiv Nord/Live am Ring/01 Westkreuz (Live).m4a",
+     "MediaSources": [
+      {
+       "Protocol": "File",
+       "Id": "a000000000000000000000000000006b",
+       "Path": "/data/music/Kollektiv Nord/Live am Ring/01 Westkreuz (Live).m4a",
+       "Type": "Default",
+       "Container": "m4a",
+       "Size": 9900000,
+       "Name": "Westkreuz (Live)"
+      }
+     ]
+    },
+    {
+     "Name": "Stray",
+     "ServerId": "f00dfeedf00dfeedf00dfeedf00dfeed",
+     "Id": "a000000000000000000000000000006d",
+     "DateCreated": "2026-10-03T08:00:00.0000000Z",
+     "Type": "Audio",
+     "IsFolder": false,
+     "ParentIndexNumber": 1,
+     "IndexNumber": 1,
+     "Artists": [
+      "Ada Vey"
+     ],
+     "AlbumArtist": "Ada Vey",
+     "Album": "Loose Ends",
+     "ProviderIds": {},
+     "ParentId": "c000000000000000000000000000000a",
+     "MediaType": "Audio",
+     "UserData": {
+      "PlayCount": 0,
+      "IsFavorite": false,
+      "Played": false,
+      "Key": "a000000000000000000000000000006d"
+     },
+     "RunTimeTicks": 1809000000,
+     "Path": "/data/music/Ada Vey/Loose Ends/01 Stray.flac",
+     "MediaSources": [
+      {
+       "Protocol": "File",
+       "Id": "a000000000000000000000000000006d",
+       "Path": "/data/music/Ada Vey/Loose Ends/01 Stray.flac",
+       "Type": "Default",
+       "Container": "flac",
+       "Size": 18000000,
+       "Name": "Stray"
+      }
+     ]
+    },
+    {
+     "Name": "Ghost",
+     "ServerId": "f00dfeedf00dfeedf00dfeedf00dfeed",
+     "Id": "a000000000000000000000000000006e",
+     "DateCreated": "2026-10-03T08:00:01.0000000Z",
+     "Type": "Audio",
+     "IsFolder": false,
+     "ParentIndexNumber": 1,
+     "IndexNumber": 2,
+     "Artists": [
+      "Ada Vey"
+     ],
+     "AlbumArtist": "Ada Vey",
+     "Album": "Loose Ends",
+     "ProviderIds": {},
+     "ParentId": "c000000000000000000000000000000b",
+     "MediaType": "Audio",
+     "UserData": {
+      "PlayCount": 0,
+      "IsFavorite": false,
+      "Played": false,
+      "Key": "a000000000000000000000000000006e"
+     },
+     "MediaSources": []
+    },
+    {
+     "Name": "Kreuzberg",
+     "ServerId": "f00dfeedf00dfeedf00dfeedf00dfeed",
+     "Id": "a0000000000000000000000000000457",
+     "DateCreated": "2026-10-04T08:00:00.0000000Z",
+     "Type": "Audio",
+     "IsFolder": false,
+     "ParentIndexNumber": 1,
+     "IndexNumber": 1,
+     "Artists": [
+      "Mötley Kru"
+     ],
+     "AlbumArtist": "Mötley Kru",
+     "Album": "Über",
+     "ProviderIds": {},
+     "ParentId": "c000000000000000000000000000000b",
+     "MediaType": "Audio",
+     "UserData": {
+      "PlayCount": 0,
+      "IsFavorite": false,
+      "Played": false,
+      "Key": "a0000000000000000000000000000457"
+     },
+     "RunTimeTicks": 2000000000,
+     "Path": "/data/music/mötley kru/über/01 kreuzberg.flac",
+     "MediaSources": [
+      {
+       "Protocol": "File",
+       "Id": "a0000000000000000000000000000457",
+       "Path": "/data/music/mötley kru/über/01 kreuzberg.flac",
+       "Type": "Default",
+       "Container": "flac",
+       "Size": 20000000,
+       "Name": "Kreuzberg"
+      }
+     ]
+    }
+   ],
+   "TotalRecordCount": 14,
+   "StartIndex": 0
+  },
+  {
+   "Items": [
+    {
+     "Name": "Kreuzberg",
+     "ServerId": "f00dfeedf00dfeedf00dfeedf00dfeed",
+     "Id": "a0000000000000000000000000000458",
+     "DateCreated": "2026-10-04T08:00:01.0000000Z",
+     "Type": "Audio",
+     "IsFolder": false,
+     "ParentIndexNumber": 1,
+     "IndexNumber": 1,
+     "Artists": [
+      "Mötley Kru"
+     ],
+     "AlbumArtist": "Mötley Kru",
+     "Album": "Über",
+     "ProviderIds": {},
+     "ParentId": "c000000000000000000000000000000b",
+     "MediaType": "Audio",
+     "UserData": {
+      "PlayCount": 0,
+      "IsFavorite": false,
+      "Played": false,
+      "Key": "a0000000000000000000000000000458"
+     },
+     "RunTimeTicks": 2000000000,
+     "Path": "/data/music/MÖTLEY KRU/ÜBER/01 KREUZBERG.flac",
+     "MediaSources": [
+      {
+       "Protocol": "File",
+       "Id": "a0000000000000000000000000000458",
+       "Path": "/data/music/MÖTLEY KRU/ÜBER/01 KREUZBERG.flac",
+       "Type": "Default",
+       "Container": "flac",
+       "Size": 20000000,
+       "Name": "Kreuzberg"
+      }
+     ]
+    },
+    {
+     "Name": "Nobody",
+     "ServerId": "f00dfeedf00dfeedf00dfeedf00dfeed",
+     "Id": "a0000000000000000000000000000385",
+     "DateCreated": "2026-11-01T08:00:00.0000000Z",
+     "Type": "Audio",
+     "IsFolder": false,
+     "ParentIndexNumber": 1,
+     "IndexNumber": 1,
+     "Artists": [
+      "Orphan Tapes"
+     ],
+     "AlbumArtist": "Orphan Tapes",
+     "Album": "Unlisted",
+     "ProviderIds": {},
+     "ParentId": "c000000000000000000000000000005a",
+     "MediaType": "Audio",
+     "UserData": {
+      "PlayCount": 0,
+      "IsFavorite": false,
+      "Played": false,
+      "Key": "a0000000000000000000000000000385"
+     },
+     "RunTimeTicks": 1500000000,
+     "Path": "/data/music/Orphan Tapes/Unlisted/01 Nobody.flac",
+     "MediaSources": [
+      {
+       "Protocol": "File",
+       "Id": "a0000000000000000000000000000385",
+       "Path": "/data/music/Orphan Tapes/Unlisted/01 Nobody.flac",
+       "Type": "Default",
+       "Container": "flac",
+       "Size": 15000000,
+       "Name": "Nobody"
+      }
+     ]
+    },
+    {
+     "Name": "Chapter 1",
+     "ServerId": "f00dfeedf00dfeedf00dfeedf00dfeed",
+     "Id": "a0000000000000000000000000000386",
+     "DateCreated": "2026-11-02T08:00:00.0000000Z",
+     "Type": "Audio",
+     "IsFolder": false,
+     "ParentIndexNumber": 1,
+     "IndexNumber": 1,
+     "Artists": [
+      "Some Author"
+     ],
+     "AlbumArtist": "Some Author",
+     "Album": "A Long Book",
+     "ProviderIds": {},
+     "ParentId": "c000000000000000000000000000005a",
+     "MediaType": "Audio",
+     "UserData": {
+      "PlayCount": 0,
+      "IsFavorite": false,
+      "Played": false,
+      "Key": "a0000000000000000000000000000386"
+     },
+     "RunTimeTicks": 18000000000,
+     "Path": "/data/audiobooks/Some Author/A Long Book/Chapter 1.mp3",
+     "MediaSources": [
+      {
+       "Protocol": "File",
+       "Id": "a0000000000000000000000000000386",
+       "Path": "/data/audiobooks/Some Author/A Long Book/Chapter 1.mp3",
+       "Type": "Default",
+       "Container": "mp3",
+       "Size": 28000000,
+       "Name": "Chapter 1"
+      }
+     ]
+    },
+    {
+     "Name": "Night Bus",
+     "ServerId": "f00dfeedf00dfeedf00dfeedf00dfeed",
+     "Id": "a0000000000000000000000000000387",
+     "DateCreated": "2026-11-20T21:00:00.0000000Z",
+     "Type": "Audio",
+     "IsFolder": false,
+     "ParentIndexNumber": 1,
+     "IndexNumber": 3,
+     "Artists": [
+      "Ada Vey"
+     ],
+     "AlbumArtist": "Ada Vey",
+     "Album": "Loose Ends",
+     "ProviderIds": {},
+     "ParentId": "c000000000000000000000000000005a",
+     "MediaType": "Audio",
+     "UserData": {
+      "PlayCount": 1,
+      "IsFavorite": false,
+      "Played": true,
+      "Key": "a0000000000000000000000000000387"
+     },
+     "RunTimeTicks": 2100000000,
+     "Path": "/data/music/Ada Vey/Loose Ends/03 Night Bus.flac",
+     "MediaSources": [
+      {
+       "Protocol": "File",
+       "Id": "a0000000000000000000000000000387",
+       "Path": "/data/music/Ada Vey/Loose Ends/03 Night Bus.flac",
+       "Type": "Default",
+       "Container": "flac",
+       "Size": 21000000,
+       "Name": "Night Bus"
+      }
+     ]
+    }
+   ],
+   "TotalRecordCount": 14,
+   "StartIndex": 10
+  }
+ ]
+}

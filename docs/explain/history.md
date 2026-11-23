@@ -8,7 +8,7 @@
 | 2026-11-22 | P0 shell: repo, read-only legacy DB, fixture, CI (T1); web shell and tokens (T2); the eleven kit components (T3); nav, map home, SETUP, container on :4492 (T4); deployed, gate passed |
 | 2026-11-22 | P1 HISTORY: read API counted with jimbo-dj's vendored code (T5), overview (T6), counted once (T7), Years, Wrapped, Top and the gate (T8); gate passed, 862 of 862 numbers |
 | 2026-11-22 | P2 LIBRARY: numbers and rows (T9), the page (T10), albums, artists and tracks (T11), plays from every source |
-| 2026-11-23 | P2 gate built (T12) and passed on live data, 60 of 60 fields; P3 spec and track identity on the Plex side (T13); `.env.example` |
+| 2026-11-23 | P2 gate built (T12) and passed on live data, 60 of 60 fields; P3 spec and track identity on the Plex side (T13); `.env.example`; jimbo-explain docs; matching on snapshots (T14) |
 
 ## Milestones
 
@@ -25,4 +25,4 @@
 
 ## By the numbers
 
-First commit 2026-11-22 (84579ad), latest 2026-11-23 (341088e). 45 commits, 23 on the main line, 10 pull requests. CHANGELOG versions 2026.11.0 and 2026.11.1; no tags. Built by Ryan with Claude Code sessions T1–T13.
+First commit 2026-11-22 (84579ad), latest 2026-11-23 (341088e). 45 commits, 23 on the main line, 10 pull requests. CHANGELOG versions 2026.11.0 and 2026.11.1; no tags. Built by Ryan with Claude Code sessions T1–T14.

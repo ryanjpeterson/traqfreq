@@ -2,6 +2,13 @@
 
 ## Log
 
+### 2026-11-23 — Matching never guesses, and Plex borrows MusicBrainz IDs
+
+- **Decision:** a tier that finds two candidates, or one candidate two copies want, stops with `ambiguous`; every unmatched copy and item gets exactly one reason. Plex copies have no track MusicBrainz ID, so for the `mbid` tier a copy uses the IDs of the item its file matched on the other server. Navidrome's music folder is the folder its real paths share (Subsonic names none).
+- **Why:** a wrong match is worse than a missing one (transparent, W3), and the reasons must add up to the unmatched count.
+- **Alternatives:** best-of-several by score; asking MusicBrainz (no lookups in P3).
+- **Consequences:** some songs stay unmatched until their tags are fixed; a Navidrome library in one artist folder would need a folder setting (T18).
+
 ### 2026-11-23 — The file is the anchor for one song across servers
 
 - **Decision:** match a Plex copy to Jellyfin and Navidrome by its path below the music folder, then MusicBrainz ID, then tags; no fingerprints.

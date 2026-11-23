@@ -35,7 +35,7 @@ Spec: [t9-library.md](t9-library.md).
 ## P3 SERVERS: T13–T19
 Spec: [t13-servers.md](t13-servers.md).
 - **T13** Track identity, the Plex side: file key, song and match key of every copy, its problems; the three servers' settings and status. *Done* (API only; the page is T15).
-- **T14** Matching on snapshots: file, MusicBrainz ID, tags; one to one; every unmatched copy and item with its reason.
+- **T14** Matching on snapshots: file, MusicBrainz ID, tags; one to one; every unmatched copy and item with its reason. *Done* (API only, on invented snapshots).
 - **T15** SERVERS page on SETUP; "On servers" on LIBRARY's track page.
 - **T16** Reading servers: the GET-only client, snapshot refresh, plays on other servers shown beside, never added.
 - **T17** Jellyfin. **T18** Navidrome (both need their URL and keys: HANDOFF).

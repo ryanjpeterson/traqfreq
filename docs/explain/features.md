@@ -2,7 +2,7 @@
 
 ## Summary
 
-Read-only views of jimbo-dj's data in the Berlin · Gelb look, each number with its rule and its rows, and a gate page per module comparing traqfreq with what jimbo-dj stored. 26 features in 4 areas.
+Read-only views of jimbo-dj's data in the Berlin · Gelb look, each number with its rule and its rows, and a gate page per module comparing traqfreq with what jimbo-dj stored. 28 features in 4 areas.
 
 ## Features
 
@@ -48,6 +48,8 @@ Read-only views of jimbo-dj's data in the Berlin · Gelb look, each number with 
 | Server status | Plex through jimbo-dj's DB; Jellyfin and Navidrome set up or not (secrets never shown) | `GET /api/servers`, `src/traqfreq/servers.py` | new |
 | Track identity | Plex's music folders, each copy's file key, loose key, song and match key, and its issues | `GET /api/servers/identity`, `src/traqfreq/identity.py` | new |
 | Identity rows | The copies behind each count: by issue, song, file | `GET /api/servers/copies` | new |
+| Server snapshots | Jellyfin `/Items` and Navidrome `search3` answers in one item shape, stored per server with when read and the server's stamp (invented fixtures until T17/T18) | `src/traqfreq/snapshots.py`, `snapshots` table | new |
+| Matches | Each Plex copy matched to one Jellyfin item and one Navidrome song (file, MusicBrainz ID, tags; one to one), Jellyfin to Navidrome, every miss with its reason | `GET /api/servers/matches`, `src/traqfreq/matching.py` | new |
 
 ### Throughout
 
