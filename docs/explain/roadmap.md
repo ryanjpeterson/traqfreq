@@ -4,13 +4,11 @@ The phases and sessions are planned in [docs/specs/README.md](../specs/README.md
 
 ## Now
 
-- **P3 SERVERS, T18: Navidrome.** Fill `reading.READERS["navidrome"]` (Subsonic `ping`, `getMusicFolders`, every song through `search3`, OpenSubsonic fields), refresh on live data and check the matches. Needs Navidrome's URL, a user and Report Real Path in the deploy's `.env`. Spec: `docs/specs/t13-servers.md`.
-- **Jellyfin from the container**: T17 read it live from the laptop (53,133 of 53,133 Plex copies matched by file); after the deploy, press Refresh Jellyfin on SERVERS to check `host.docker.internal` from inside the container.
+- **P3 SERVERS, T19: the gate "One song, three servers".** `scripts/p3_gate.py` and `GET /api/servers/compare`, run on live data. Before it: deploy T18, press Refresh Navidrome from the container, and turn on Report Real Path for traqfreq's Navidrome player (T18 read 52,985 songs, all with hidden paths). Spec: `docs/specs/t13-servers.md`.
 
 ## Next
 
-1. **T19** gate "One song, three servers" on live data (small).
-2. **P4 TAGS** read-only (4 sessions), **P5 PLAYLISTS** Junction preview (5 sessions). After P5, traqfreq shows everything jimbo-dj shows, read-only.
+1. **P4 TAGS** read-only (4 sessions), **P5 PLAYLISTS** Junction preview (5 sessions). After P5, traqfreq shows everything jimbo-dj shows, read-only.
 
 ## Later
 

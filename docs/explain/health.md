@@ -2,7 +2,7 @@
 
 ## Snapshot
 
-Healthy and moving fast: P0–P2 done and gated on live data in two days, P3 under way. Used daily by one listener beside jimbo-dj. Upkeep is low (no jobs, cache only). Matching works on invented snapshots (T14), SETUP shows it (T15), the GET-only client and refresh are in place (T16), and Jellyfin is read live (T17: 53,133 of 53,133 Plex copies matched by file); the most useful next thing is Navidrome's login from Ryan, then its reader (T18).
+Healthy and moving fast: P0–P2 done and gated on live data in two days, P3 under way. Used daily by one listener beside jimbo-dj. Upkeep is low (no jobs, cache only). Matching works on invented snapshots (T14), SETUP shows it (T15), the GET-only client and refresh are in place (T16), Jellyfin is read live (T17: 53,133 of 53,133 Plex copies matched by file, also from the deployed container) and so is Navidrome (T18: 52,712 of 53,133 by MusicBrainz ID and tags, since its paths are hidden); the most useful next thing is Report Real Path on for traqfreq's Navidrome player, then the P3 gate (T19).
 
 ## Risks
 
@@ -29,5 +29,5 @@ Healthy and moving fast: P0–P2 done and gated on live data in two days, P3 und
 
 ## Open questions
 
-- Navidrome: which user and password traqfreq reads as, and is Report Real Path on (T18 waits on them)? Jellyfin is answered: on the Mac mini, key and user in the deploy's `.env`.
+- Navidrome: will Report Real Path be turned on for the `traqfreq` player? Without it no Navidrome song matches by file (52,985 hidden paths on 2026-11-23). Its last scan also reports 'stat /music: bad file descriptor'.
 - Audience and status are inferred (self, active); confirm if anything differs.

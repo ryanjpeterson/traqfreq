@@ -13,7 +13,8 @@ own total; at most ``MAX_PAGES`` pages.
 
 **Readers** (``READERS``): one per server, ``read(client, settings) -> (snapshot, counts)`` with the snapshot in
 ``snapshots.snapshot`` shape. Jellyfin's (``read_jellyfin``, T17) reads System/Info, the music folders, every
-audio item and one user's play counts; Navidrome's is T18 and until then says so (``ReaderMissing``). Tests run
+audio item and one user's play counts; Navidrome's (``read_navidrome``, T18) reads ping, the music folders, the
+scan status, every album and every song over Subsonic. Tests run
 them on the invented answers (``scripts/fixture_*.json``) over ``httpx.MockTransport``.
 
 **Refresh** (``refresh``): reads one server whole and stores its snapshot in traqfreq's own database, replacing the
@@ -41,6 +42,8 @@ from .servers import NAMES, READER, REQUIRED, SETTINGS
 from .settings import Settings
 
 log = logging.getLogger("traqfreq.reading")
+# httpx logs each request's full URL at INFO; Navidrome's carries its token and salt (replayable), so keep it quiet.
+logging.getLogger("httpx").setLevel(logging.WARNING)
 
 TIMEOUT = httpx.Timeout(20.0, connect=5.0)
 PAGE_SIZE = 500
@@ -273,9 +276,90 @@ def read_jellyfin(client: Client, settings: Settings) -> tuple[dict, dict]:
                   "version": info.get("Version"), "user": user, "played": len(played) if user else None}
 
 
-# T18 replaces READERS["navidrome"] (ping, getMusicFolders, getScanStatus, paged getAlbumList2 and search3 →
-# from_navidrome). Each returns (snapshot, counts) with counts at least {"pages": n}.
-READERS: dict[str, Reader] = {"jellyfin": read_jellyfin, "navidrome": _missing("navidrome")}
+# --- Navidrome (T18) -----------------------------------------------------------------------------------------
+
+NAVIDROME_PAGE = PAGE_SIZE  # songs per search3 page and albums per getAlbumList2 page (Subsonic caps lists at 500)
+
+
+def _sub(answer: dict, key: str) -> dict:
+    """The ``key`` part of a Subsonic answer; ServerError with Navidrome's own message when it says failed."""
+    r = (answer or {}).get("subsonic-response") if isinstance(answer, dict) else None
+    if not isinstance(r, dict):
+        raise ServerError("navidrome", "Navidrome answered with something that isn't a Subsonic answer.")
+    if r.get("status") != "ok":
+        err = r.get("error") or {}
+        code = f" (Subsonic error {err['code']})" if err.get("code") is not None else ""
+        raise ServerError("navidrome", f"Navidrome said {err.get('message') or r.get('status')!r}{code}.")
+    return r.get(key) or {}
+
+
+def _songs(page: dict) -> list[dict]:
+    return _sub(page, "searchResult3").get("song") or []
+
+
+def _navidrome_whole(before: dict, after: dict, song_pages: list[dict]) -> None:
+    """ServerError when the songs read aren't one whole list. Subsonic's ``search3`` has no sort order to ask
+    for, so a scan during the read can shift the pages: the read counts only when no scan ran (``scanning``
+    false and the same ``lastScan`` and ``count`` before and after), no song came twice, and the distinct
+    songs are the scan's own ``count``."""
+    b, a = _sub(before, "scanStatus"), _sub(after, "scanStatus")
+    ids = [s.get("id") for p in song_pages for s in _songs(p)]
+    twice = len(ids) - len(set(ids))
+    count = a.get("count")
+    why = None
+    if b.get("scanning") or a.get("scanning"):
+        why = "a library scan was running"
+    elif (b.get("lastScan"), b.get("count")) != (a.get("lastScan"), a.get("count")):
+        why = "a library scan finished during the read"
+    elif twice or (count is not None and len(set(ids)) != int(count)):
+        why = "the song list moved under the pages"
+    if why:
+        raise ServerError("navidrome", (
+            f"Navidrome's song list changed while traqfreq read it ({len(set(ids))} distinct songs of {count}"
+            f"{f', {twice} read twice' if twice else ''}; {why}). Nothing was stored: refresh again when the "
+            f"scan is done."))
+
+
+def read_navidrome(client: Client, settings: Settings) -> tuple[dict, dict]:
+    """Navidrome over Subsonic, GET only: ``ping`` (``type``, ``serverVersion``, OpenSubsonic or not),
+    ``getMusicFolders`` (names only: Subsonic gives no paths), ``getScanStatus``, every album through
+    ``getAlbumList2`` (``alphabeticalByName``, paged; each album's ``musicBrainzId`` is the release), every
+    song through ``search3`` with an empty query (``songCount``/``songOffset``), then ``getScanStatus`` again.
+    OpenSubsonic songs carry ``musicBrainzId``, ``path`` (real only with "Report Real Path"), ``played`` and
+    ``playCount`` (the logged-in user's; absent = never played = 0). A read a scan tore is not stored
+    (``_navidrome_whole``). The music folder is ``TRAQFREQ_NAVIDROME_ROOTS`` if set, else the folder every real
+    path shares."""
+    size = NAVIDROME_PAGE
+    info = client.get("/rest/ping")
+    _sub(info, "")  # a wrong user or password stops here, with Navidrome's own message
+    music_folders = client.get("/rest/getMusicFolders")
+    _sub(music_folders, "musicFolders")
+    before = client.get("/rest/getScanStatus")
+    _sub(before, "scanStatus")
+    albums = list(pages(lambda o: client.get("/rest/getAlbumList2", {"type": "alphabeticalByName", "size": size,
+                                                                     "offset": o}),
+                        count=lambda p: len(_sub(p, "albumList2").get("album") or []), size=size))
+    songs = list(pages(lambda o: client.get("/rest/search3", {"query": "", "songCount": size, "songOffset": o,
+                                                              "albumCount": 0, "artistCount": 0}),
+                       count=lambda p: len(_songs(p)), size=size))
+    after = client.get("/rest/getScanStatus")
+    _navidrome_whole(before, after, songs)
+    for page in songs:
+        for s in _songs(page):
+            s.setdefault("playCount", 0)  # OpenSubsonic leaves it out for a song never played
+    user = settings.navidrome_user
+    snap = snapshots.from_navidrome(after, albums, songs, folders=settings.navidrome_roots, info=info, user=user,
+                                    music_folders=music_folders)
+    ping = info.get("subsonic-response") or {}
+    return snap, {"pages": len(albums) + len(songs), "album_pages": len(albums), "song_pages": len(songs),
+                  "albums": sum(len(_sub(p, "albumList2").get("album") or []) for p in albums),
+                  "server_name": ping.get("type"), "version": ping.get("serverVersion"), "user": user,
+                  "music_folders": len(_sub(music_folders, "musicFolders").get("musicFolder") or []),
+                  "played": sum(1 for i in snap["items"] if i.get("play_count"))}
+
+
+# Each reader returns (snapshot, counts) with counts at least {"pages": n}.
+READERS: dict[str, Reader] = {"jellyfin": read_jellyfin, "navidrome": read_navidrome}
 
 
 # --- refresh -----------------------------------------------------------------------------------------------

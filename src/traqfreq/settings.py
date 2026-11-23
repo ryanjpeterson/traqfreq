@@ -45,6 +45,7 @@ class Settings:
     navidrome_url: str | None = None
     navidrome_user: str | None = None
     navidrome_password: str | None = None
+    navidrome_roots: tuple[str, ...] = ()  # Navidrome's music folders as its real paths show them (T18), if needed
 
     @classmethod
     def from_env(cls, env: dict[str, str] | None = None) -> "Settings":
@@ -65,4 +66,5 @@ class Settings:
             navidrome_url=env.get("TRAQFREQ_NAVIDROME_URL") or None,
             navidrome_user=env.get("TRAQFREQ_NAVIDROME_USER") or None,
             navidrome_password=env.get("TRAQFREQ_NAVIDROME_PASSWORD") or None,
+            navidrome_roots=tuple(r.strip() for r in (env.get("TRAQFREQ_NAVIDROME_ROOTS") or "").split(",") if r.strip()),
         )

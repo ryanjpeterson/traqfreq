@@ -77,7 +77,7 @@ describe('the SERVERS page', () => {
     expect(screen.queryByText(/TRAQFREQ_JELLYFIN_KEY.*set \(not shown\)/)).toBeNull();
   });
 
-  it("shows Jellyfin's name, version and whose plays it read, from its snapshot (T17)", async () => {
+  it("shows each server's name, version and whose plays it read, from its snapshot (T17, T18)", async () => {
     api(all());
     open('/setup/servers');
     const jf = (await screen.findByText('Invented Jellyfin')).closest('section')!;
@@ -86,7 +86,11 @@ describe('the SERVERS page', () => {
     expect(within(jf).getByText('listener')).toBeTruthy();
     expect(within(jf).getByText(/never added/)).toBeTruthy();
     const nd = screen.getByText('Snapshot 2 h old: 9 items').closest('section')!;
-    expect(within(nd).queryByText('Server (as read)')).toBeNull();  // Navidrome's reader is T18
+    expect(within(nd).getByText('Server (as read)')).toBeTruthy();
+    expect(within(nd).getByText('navidrome')).toBeTruthy();
+    expect(within(nd).getByText('0.53.3 (invented)')).toBeTruthy();
+    expect(within(nd).getByText('listener')).toBeTruthy();
+    expect(within(nd).getByText('TRAQFREQ_NAVIDROME_ROOTS')).toBeTruthy();
   });
 
   it('shows the identity counts, each opening its copies', async () => {

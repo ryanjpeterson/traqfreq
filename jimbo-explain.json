@@ -1,7 +1,7 @@
 {
   "version": "0.1.0",
   "docs": "docs/explain",
-  "synced": { "commit": "b97953e", "date": "2026-11-23" },
+  "synced": { "commit": "0f5bc64", "date": "2026-11-23" },
   "facts": {
     "name": "traqfreq",
     "tagline": "jimbo-dj's successor, built beside it: listening history, library and servers, every number showing its rows",
@@ -18,7 +18,7 @@
       { "name": "Tailscale", "kind": "self-hosted", "direction": "read", "required": true, "what": "the only way in" }
     ],
     "standards": ["jimbo-deploy", "jimbo-explain"],
-    "now": ["P3 SERVERS: T18 Navidrome (its reader, then refresh and matching on live data; needs its URL, user and Report Real Path)", "Jellyfin read live (T17): 53,133 of 53,133 Plex copies matched by file; check Refresh from the deployed container"]
+    "now": ["P3 SERVERS: T19, the gate \"One song, three servers\" (scripts/p3_gate.py, run on live data)", "Navidrome read live (T18): 52,985 songs, paths hidden (Report Real Path off), 52,712 of 53,133 Plex copies by MusicBrainz ID and tags; Jellyfin 53,133 of 53,133 by file, also from the deployed container"]
   },
   "files": {}
 }
