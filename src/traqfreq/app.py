@@ -9,7 +9,7 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
-from . import __version__, counted, entities, history, legacy, library, periods, store
+from . import __version__, counted, entities, history, legacy, library, library_gate, periods, store
 from .settings import CORE, MODULES, Settings
 
 
@@ -222,13 +222,30 @@ def create_app(settings: Settings | None = None) -> FastAPI:
                        played: bool | None = None, rated: bool | None = None, sonic: bool | None = None,
                        analysis: str | None = None, mapped: bool | None = None, multi_part: bool | None = None,
                        removed: bool = False, artist_key: int | None = None, album_key: int | None = None,
-                       sort: str = "artist", limit: int = 50, offset: int = 0) -> dict:
+                       sort: str = "artist", limit: int = 50, offset: int = 0, facet: str | None = None,
+                       value: str | None = None) -> dict:
         """The rows behind each LIBRARY number: live tracks (or removed ones) by codec, container, bitrate
         bucket, played, rated, Plex sonic analysis, jimbo-dj's analyzer (ok, error, older, none), mapped,
-        multi-part, artist or album; each with its plays (jimbo-dj's plays_of)."""
+        multi-part, artist or album, or (T12) one bar of jimbo-dj's Library charts (facet and value, e.g.
+        facet=format&value=FLAC); each with its plays (jimbo-dj's plays_of)."""
         return read_library(lambda c: library.tracks(
             c, codec, container, bitrate or None, played, rated, sonic, analysis or None, mapped, multi_part,
-            removed, artist_key, album_key, sort, limit, offset, settings.tz))
+            removed, artist_key, album_key, sort, limit, offset, settings.tz, facet or None,
+            value if facet else None))
+
+    @app.get("/api/library/compare")
+    def library_compare() -> dict:
+        """The P2 gate: every LIBRARY number jimbo-dj stored (stats library.stats and library.charts) next to
+        traqfreq's, with matches and whether the stored row is fresh. Folders, genres and styles aren't
+        compared (shown as stored). Read from the stats cache."""
+        def run(conn):
+            tz = library_gate.zone(conn, settings.tz)
+            stats_of = lambda: store.cached(settings.data_dir, "library.stats", library.cache_key(conn),  # noqa: E731
+                                            lambda: library.stats(conn))[0]
+            value, info = store.cached(settings.data_dir, "library.compare", library_gate.cache_key(conn, tz),
+                                       lambda: library_gate.compare(conn, tz, stats_of=stats_of))
+            return {**value, "cache": info}
+        return read_library(run)
 
     # --- T11: albums, artists, a track ---------------------------------------------------------------------
 

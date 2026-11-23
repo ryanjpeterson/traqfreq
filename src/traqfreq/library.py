@@ -176,11 +176,12 @@ def tracks(conn: sqlite3.Connection, codec: str | None = None, container: str | 
            sonic: bool | None = None, analysis: str | None = None, mapped: bool | None = None,
            multi_part: bool | None = None, removed: bool = False, artist_key: int | None = None,
            album_key: int | None = None, sort: str = "artist", limit: int = 50, offset: int = 0,
-           default_tz: str | None = None) -> dict:
+           default_tz: str | None = None, facet: str | None = None, value: str | None = None) -> dict:
     """The rows behind a LIBRARY number: live tracks (or, with ``removed``, the tracks a sync no longer saw)
     with one codec or container (``?`` = none), in one bitrate bucket, played or not, rated or not, Plex
     sonic-analysed or not, analysed by jimbo-dj's analyzer (``analysis`` ok, error, older, none), mapped or
-    not, multi-part or not, of one artist or album; each with its plays (jimbo-dj's ``plays_of``)."""
+    not, multi-part or not, of one artist or album, or (T12) behind one bar of jimbo-dj's Library charts
+    (``facet`` and ``value``, its facets.members); each with its plays (jimbo-dj's ``plays_of``)."""
     tables = _tables(conn)
     where, args = [("removed_at IS NOT NULL" if removed else LIVE).replace("removed_at", "t.removed_at")], []
     for col, v in (("codec", codec), ("container", container)):
@@ -209,6 +210,16 @@ def tracks(conn: sqlite3.Connection, codec: str | None = None, container: str | 
         if v is not None:
             where.append(f"t.{col} = ?")
             args.append(v)
+    chart_rule = keys_arg = None
+    if facet is not None or value is not None:
+        from . import library_gate  # the P2 gate's charts (T12)
+        if facet is None or value is None:
+            raise ValueError("facet and value go together")
+        zone = library_gate.zone(conn, default_tz)
+        where.append("t.rating_key IN (SELECT value FROM json_each(?))")
+        keys_arg = json.dumps(library_gate.facet_keys(conn, facet, value, zone))
+        args.append(keys_arg)
+        chart_rule = f"{facet} is {value} (jimbo-dj's chart rule, facets.members; time zone {zone})"
     has_analysis = "analysis" in tables
     has_features = "features" in tables
     if analysis is not None:
@@ -252,10 +263,14 @@ def tracks(conn: sqlite3.Connection, codec: str | None = None, container: str | 
                          "added_at": legacy._iso(m["added_at"]) if m["added_at"] else None,
                          "removed_at": legacy._iso(m["removed_at"]) if m["removed_at"] else None})
     rule = w.replace("t.", "").replace("a.", "analysis.")
+    if chart_rule:
+        rule = rule.replace("rating_key IN (SELECT value FROM json_each(?))", chart_rule)
+    shown = [a for a in args if a is not keys_arg]
     return {
         "filters": {"codec": codec, "container": container, "bitrate": bitrate, "played": played, "rated": rated,
                     "sonic": sonic, "analysis": analysis, "mapped": mapped, "multi_part": multi_part,
-                    "removed": removed, "artist_key": artist_key, "album_key": album_key},
+                    "removed": removed, "artist_key": artist_key, "album_key": album_key, "facet": facet,
+                    "value": value},
         "sort": sort, "total": total, "limit": limit, "offset": offset,
-        "rule": f"tracks WHERE {rule}", "params": args, "plays_rule": RULES["plays"], "rows": out_rows,
+        "rule": f"tracks WHERE {rule}", "params": shown, "plays_rule": RULES["plays"], "rows": out_rows,
     }
