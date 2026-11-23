@@ -9,6 +9,9 @@ one row per name.
 ``snapshots`` (T14) holds each media server's item list as traqfreq last read it: the server, when it was read,
 the server's own stamp, its music folders and the items (``snapshots.py`` item shape). One row per server: a
 new read replaces the old one. Only traqfreq writes here; no server is ever written to.
+
+``refreshes`` (T16) logs every snapshot refresh, done or failed: the server, when it started and ended, its counts
+(items, pages, requests, added, removed, …) or its error (the server's own message, no secrets).
 """
 
 from __future__ import annotations
@@ -28,6 +31,10 @@ CREATE TABLE IF NOT EXISTS stats (
 );
 CREATE TABLE IF NOT EXISTS snapshots (
     server TEXT PRIMARY KEY, read_at REAL NOT NULL, stamp TEXT NOT NULL, folders TEXT NOT NULL, items TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS refreshes (
+    id INTEGER PRIMARY KEY AUTOINCREMENT, server TEXT NOT NULL, started_at REAL NOT NULL, finished_at REAL NOT NULL,
+    ok INTEGER NOT NULL, counts TEXT NOT NULL, error TEXT
 );
 """
 
@@ -120,3 +127,34 @@ def snapshot_stamps(data_dir: Path) -> tuple:
         return tuple(conn.execute("SELECT server, read_at FROM snapshots ORDER BY server").fetchall())
     finally:
         conn.close()
+
+
+def log_refresh(data_dir: Path, server: str, started_at: float, finished_at: float, ok: bool, counts: dict,
+                error: str | None) -> dict:
+    """Log one refresh (T16) and return the entry."""
+    conn = connect(data_dir)
+    try:
+        with conn:
+            cur = conn.execute("INSERT INTO refreshes (server, started_at, finished_at, ok, counts, error) "
+                               "VALUES (?, ?, ?, ?, ?, ?)", (server, started_at, finished_at, int(ok), json.dumps(counts), error))
+        rid = cur.lastrowid
+    finally:
+        conn.close()
+    return {"id": rid, "server": server, "started_at": started_at, "finished_at": finished_at, "ok": ok,
+            "counts": counts, "error": error}
+
+
+def refreshes(data_dir: Path, server: str | None = None, limit: int = 20) -> list[dict]:
+    """The refresh log, newest first, for one server or all."""
+    conn = connect(data_dir)
+    try:
+        q = "SELECT id, server, started_at, finished_at, ok, counts, error FROM refreshes"
+        args: tuple = ()
+        if server:
+            q += " WHERE server = ?"
+            args = (server,)
+        rows = conn.execute(q + " ORDER BY id DESC LIMIT ?", (*args, max(1, min(limit, 200)))).fetchall()
+    finally:
+        conn.close()
+    return [{"id": i, "server": s, "started_at": a, "finished_at": b, "ok": bool(ok), "counts": json.loads(c), "error": e}
+            for i, s, a, b, ok, c, e in rows]

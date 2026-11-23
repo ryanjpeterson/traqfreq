@@ -4,10 +4,11 @@
 
     browser → traqfreq web (React, served by FastAPI :4492) → API (src/traqfreq/app.py)
                                                               ├→ jimbo-dj's SQLite (read-only, /legacy)
-                                                              └→ traqfreq.sqlite (caches, /data)
+                                                              ├→ traqfreq.sqlite (caches, snapshots, refresh log, /data)
+                                                              └→ Jellyfin, Navidrome (GET only, on refresh; readers T17/T18)
 
 - `src/traqfreq/app.py`: the FastAPI app and every route; serves `web/dist`.
-- `legacy.py` (the read-only connection), `history.py`, `counted.py`, `periods.py` (HISTORY), `library.py`, `entities.py`, `library_gate.py` (LIBRARY), `identity.py`, `servers.py`, `snapshots.py`, `matching.py` (SERVERS), `store.py` (cache and server snapshots), `vendor/` (jimbo-dj's code).
+- `legacy.py` (the read-only connection), `history.py`, `counted.py`, `periods.py` (HISTORY), `library.py`, `entities.py`, `library_gate.py` (LIBRARY), `identity.py`, `servers.py`, `snapshots.py`, `matching.py`, `reading.py` (the GET-only server client and refresh) (SERVERS), `store.py` (cache, server snapshots and the refresh log), `vendor/` (jimbo-dj's code).
 - `web/src/pages` (pages, importing only from `web/src/components/kit`), `web/src/app` (nav, routes, API calls), `web/src/copy/strings.json` (all copy).
 
 ## Data flow

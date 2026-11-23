@@ -17,7 +17,7 @@ Docker compose on the Mac mini (service `web`, port 4492), deployed with jimbo-d
 ## Data and storage
 
 - jimbo-dj's SQLite (`jimbodj.sqlite`, about 600 MB, mostly embeddings): read-only.
-- `data/traqfreq.sqlite`: traqfreq's own `stats` table of built summaries; rebuildable at any time.
+- `data/traqfreq.sqlite`: traqfreq's own `stats` table of built summaries (rebuildable at any time), server `snapshots` and the `refreshes` log.
 - `tokens/berlin.json`: the design tokens, generated into `web/src/styles/tokens.css`.
 
 ## Dependencies
@@ -28,8 +28,8 @@ Docker compose on the Mac mini (service `web`, port 4492), deployed with jimbo-d
 |-|-|-|
 | fastapi | >=0.115 | the API and static file serving |
 | uvicorn | >=0.30 | the server |
+| httpx | >=0.27 | the GET-only server client (T16) and FastAPI's test client |
 | pytest (dev) | >=8 | tests |
-| httpx (dev) | >=0.27 | FastAPI's test client; from T16 also the GET-only server client |
 
 ### Web (`web/package.json`)
 

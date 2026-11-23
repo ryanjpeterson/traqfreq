@@ -2,6 +2,13 @@
 
 ## Log
 
+### 2026-11-23 — Servers are read with GET only, never retried, refreshed by hand
+
+- **Decision:** one `httpx` client whose only verb is GET, with a timeout, no retries and no redirects; a snapshot is refreshed only when someone presses Refresh on SETUP, one at a time per server, and every refresh is logged with its counts or the server's own message.
+- **Why:** traqfreq must never write to a server (B2), a failed read should be seen rather than hidden by retries, and a redirect could carry the key elsewhere.
+- **Alternatives:** a scheduled refresh (a job to watch before P6); retries with backoff.
+- **Consequences:** snapshots age until someone refreshes them (the page shows the age); a flaky server needs a second press.
+
 ### 2026-11-23 — Matching never guesses, and Plex borrows MusicBrainz IDs
 
 - **Decision:** a tier that finds two candidates, or one candidate two copies want, stops with `ambiguous`; every unmatched copy and item gets exactly one reason. Plex copies have no track MusicBrainz ID, so for the `mbid` tier a copy uses the IDs of the item its file matched on the other server. Navidrome's music folder is the folder its real paths share (Subsonic names none).

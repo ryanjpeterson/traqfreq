@@ -8,10 +8,22 @@ export const OTHER_SERVERS: ServerId[] = ['jellyfin', 'navidrome'];
 export type PairId = 'jellyfin' | 'navidrome' | 'jellyfin-navidrome';
 
 export type ServerSetting = { env: string; set: boolean; secret: boolean; value: string | null };
+
+/** T16: one snapshot refresh as logged: its counts when done, the server's own message when failed. */
+export type RefreshEntry = {
+  id: number; server: ServerId; started_at: number; finished_at: number; ok: boolean; error: string | null;
+  counts: { items?: number; pages?: number; requests?: number; added?: number; removed?: number; before?: number | null;
+    hidden_paths?: number; seconds?: number };
+};
+export type RefreshState = {
+  server: ServerId; set_up: boolean; missing: string[]; running: boolean; last: RefreshEntry | null; log: RefreshEntry[]; rule: string;
+};
+export const refreshApi = (s: ServerId) => `/api/servers/${s}/refresh`;
+export const refreshesApi = (s: ServerId) => `/api/servers/${s}/refreshes?limit=5`;
 export type ServerStatus = {
   server: ServerId; name: string; set_up: boolean; read: boolean; settings: ServerSetting[]; note?: string;
   source?: string; server_name?: string | null; version?: string | null; section?: string | null;
-  last_sync?: number | null; tracks?: number | null; url?: string | null; missing?: string[];
+  last_sync?: number | null; tracks?: number | null; url?: string | null; missing?: string[]; refresh?: RefreshState;
 };
 export type Servers = { servers: ServerStatus[]; read_only: string };
 
