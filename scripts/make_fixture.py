@@ -357,7 +357,34 @@ def build(out: Path, checks: bool = False) -> Path:
     return out
 
 
+# T14: invented Jellyfin and Navidrome answers, in each API's shape (scripts/fixture_jellyfin.json,
+# fixture_navidrome.json). They are matched against the live copies 101-105 here and, in tests, against a
+# scratch copy with the problem cases (tests/test_identity.py EXTRA, 107-112), so between them they cover every
+# tier and every reason. The legacy DB is untouched: T5-T13's counts stay.
+SNAPSHOT_READ_AT = SYNC + 3600
+
+
+def snapshot_answers() -> tuple[dict, dict]:
+    here = Path(__file__).resolve().parent
+    return tuple(json.loads((here / f"fixture_{s}.json").read_text(encoding="utf-8")) for s in ("jellyfin", "navidrome"))
+
+
+def load_snapshots(data_dir: Path) -> list[str]:
+    """Parse the invented answers into snapshots and store them in traqfreq's database under data_dir
+    (needs traqfreq importable: PYTHONPATH=src). Never a real data dir."""
+    from traqfreq import snapshots, store
+    jf, nd = snapshot_answers()
+    snaps = [snapshots.from_jellyfin(jf["virtual_folders"], jf["items_pages"], read_at=SNAPSHOT_READ_AT),
+             snapshots.from_navidrome(nd["scan_status"], nd["album_pages"], nd["song_pages"], read_at=SNAPSHOT_READ_AT)]
+    for snap in snaps:
+        store.save_snapshot(Path(data_dir), snap)
+    return [s["server"] for s in snaps]
+
+
 if __name__ == "__main__":
+    if "--snapshots" in sys.argv:  # python scripts/make_fixture.py --snapshots <data dir>
+        print(load_snapshots(Path(sys.argv[sys.argv.index("--snapshots") + 1])))
+        sys.exit(0)
     args = [a for a in sys.argv[1:] if a != "--checks"]
     target = Path(args[0]) if args else Path(__file__).resolve().parents[1] / "tests/fixtures/legacy.sqlite"
     print(build(target, checks="--checks" in sys.argv))

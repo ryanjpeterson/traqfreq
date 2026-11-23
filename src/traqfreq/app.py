@@ -9,7 +9,7 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
-from . import __version__, counted, entities, history, identity, legacy, library, library_gate, periods, servers, store
+from . import __version__, counted, entities, history, identity, legacy, library, library_gate, matching, periods, servers, store
 from .settings import CORE, MODULES, Settings
 
 
@@ -338,6 +338,18 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         return read_identity(lambda c: identity.copies(c, settings.plex_roots, issue or None, song or None,
                                                        file or None, has_file, versions, rating_key, sort,
                                                        limit, offset))
+
+    # --- T14: SERVERS, matching on snapshots -----------------------------------------------------------
+
+    @app.get("/api/servers/matches")
+    def servers_matches(server: str | None = None, tier: str | None = None, reason: str | None = None,
+                        limit: int = 50, offset: int = 0) -> dict:
+        """Every Plex copy matched to the Jellyfin and Navidrome items in their stored snapshots (file, then
+        MusicBrainz IDs, then tags; one to one), and Jellyfin to Navidrome; every unmatched copy and item with
+        its reason. Each count with its rule and its rows: ``server`` (jellyfin, navidrome,
+        jellyfin-navidrome), ``tier`` or ``reason``. Nothing is sent to any server."""
+        return read_identity(lambda c: matching.report(c, settings.data_dir, settings.plex_roots, server or None,
+                                                       tier or None, reason or None, limit, offset))
 
     @app.get("/api/modules")
     def modules() -> dict:
