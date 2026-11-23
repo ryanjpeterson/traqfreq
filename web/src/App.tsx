@@ -4,8 +4,12 @@ import { useModules } from './app/api';
 import { BottomBar, TopBar } from './app/Nav';
 import { parseRoute, usePath, type Route } from './app/route';
 import { History } from './pages/History';
+import { HistoryCompare } from './pages/HistoryCompare';
 import { HistoryCounted } from './pages/HistoryCounted';
 import { HistoryRows } from './pages/HistoryRows';
+import { HistoryTop } from './pages/HistoryTop';
+import { HistoryWrapped } from './pages/HistoryWrapped';
+import { HistoryYears } from './pages/HistoryYears';
 import { MapHome } from './pages/MapHome';
 import { ModulePage } from './pages/ModulePage';
 import { NotFound } from './pages/NotFound';
@@ -53,15 +57,23 @@ export function Shell() {
       <main className={r.page === 'module' ? 'is-banded' : undefined} aria-busy={waiting || undefined}>
         {r.page === 'map' && <MapHome modules={modules} navigate={navigate} />}
         {r.page === 'search' && <Search navigate={navigate} />}
-        {r.page === 'module' && r.module === 'S' && <Setup modules={modules} />}
-        {r.page === 'module' && r.module === 'H' && !waiting && (r.sub === 'listens'
-          ? <HistoryRows query={path.replace(/^[^?]*/, '')} navigate={navigate} />
-          : r.sub === 'counted' ? <HistoryCounted navigate={navigate} />
-            : <History navigate={navigate} />)}
+        {r.page === 'module' && r.module === 'S' && <Setup modules={modules} navigate={navigate} />}
+        {r.page === 'module' && r.module === 'H' && !waiting && <HistoryPage sub={r.sub} query={path.replace(/^[^?]*/, '')} navigate={navigate} />}
         {r.page === 'module' && r.module !== 'S' && r.module !== 'H' && !waiting && <ModulePage module={r.module} navigate={navigate} />}
         {r.page === 'notFound' && <NotFound navigate={navigate} />}
       </main>
       <BottomBar modules={modules} route={r} navigate={navigate} />
     </>
   );
+}
+
+/** HISTORY's pages: the overview and its subpages (rows, Counted once, Years, Wrapped, Top, the P1 comparison). */
+function HistoryPage({ sub, query, navigate }: { sub?: string; query: string; navigate: (href: string) => void }) {
+  if (sub === 'listens') return <HistoryRows query={query} navigate={navigate} />;
+  if (sub === 'counted') return <HistoryCounted navigate={navigate} />;
+  if (sub === 'years') return <HistoryYears navigate={navigate} />;
+  if (sub === 'wrapped') return <HistoryWrapped query={query} navigate={navigate} />;
+  if (sub === 'top') return <HistoryTop query={query} navigate={navigate} />;
+  if (sub === 'compare') return <HistoryCompare navigate={navigate} />;
+  return <History navigate={navigate} />;
 }

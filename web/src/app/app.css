@@ -87,6 +87,8 @@ main > .kit-text.is-body { max-width: 64ch; margin-bottom: 24px; }
 .hist-bar { display: block; height: 6px; max-width: 320px; }
 .hist-bar > span { display: block; height: 100%; background: var(--mod-h); }
 
+.hist-choices { display: flex; flex-wrap: wrap; gap: 4px 8px; }
+.hist-choices .kit-nav { border: 1px solid var(--rule); }
 .hist-sources { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); align-items: start; }
 
 /* the year heatmap: weeks are columns, Monday on top; five levels of HISTORY blue (tokens --heat-0…4) */

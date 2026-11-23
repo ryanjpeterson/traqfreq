@@ -64,7 +64,9 @@ export type RowsFilter = {
   offset?: number;
   /** T7: the source a repeat or duplicate is of; its gap ("a-b" seconds or "none"); a span in UTC epoch seconds. */
   of?: string; gap?: string; start?: number; end?: number;
-  /** The artist's one name (Names), for the rows page heading only; the API filters by ``artist``, its key. */
+  /** T8: one song (its match_key), one album (Top's key, artist|album normalised), an hour 0-23 or weekday 0-6. */
+  song?: string; album?: string; hour?: number; weekday?: number;
+  /** The artist's, song's or album's one name (Names), for the rows page heading only; the API filters by its key. */
   name?: string;
 };
 
@@ -79,7 +81,7 @@ export function rowsHref(f: RowsFilter): string {
 
 export const fmt = (n: number) => n.toLocaleString('en');
 
-type Unit = 'play' | 'listen' | 'day' | 'song' | 'artist' | 'finding';
+type Unit = 'play' | 'listen' | 'day' | 'song' | 'artist' | 'album' | 'finding' | 'field' | 'row';
 /** "1 play", "1,234 plays" (W3: numbers carry units). */
 export function count(n: number, unit: Unit): string {
   return `${fmt(n)} ${t(`unit.${unit}.${n === 1 ? 'one' : 'other'}` as StringKey)}`;
