@@ -110,11 +110,11 @@ export function partPeriod(period: string, part: number): string | null {
   return null;
 }
 
-/** What a part of a Wrapped period is called: "Jan", "1", "13:00". */
+/** What a part of a Wrapped period is called: "Jan", "1 Nov 2026", "13:00". */
 export function partLabel(period: string, p: Part): string {
   if (period.length === 4) return monthLabel(`${period}-${String(p.part).padStart(2, '0')}`, 'short');
   if (period.length === 10) return tf('rows.title.hour', { h: p.label });
-  return p.label;
+  return dayLabel(`${period}-${String(p.part).padStart(2, '0')}`);
 }
 
 export const weekdayName = (i: number) => t(`wrapped.weekday.${i}` as StringKey);
