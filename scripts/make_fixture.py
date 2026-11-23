@@ -374,7 +374,8 @@ def load_snapshots(data_dir: Path) -> list[str]:
     (needs traqfreq importable: PYTHONPATH=src). Never a real data dir."""
     from traqfreq import snapshots, store
     jf, nd = snapshot_answers()
-    snaps = [snapshots.from_jellyfin(jf["virtual_folders"], jf["items_pages"], read_at=SNAPSHOT_READ_AT),
+    snaps = [snapshots.from_jellyfin(jf["virtual_folders"], jf["items_pages"], read_at=SNAPSHOT_READ_AT,
+                                     info=jf["system_info"], user="listener"),
              snapshots.from_navidrome(nd["scan_status"], nd["album_pages"], nd["song_pages"], read_at=SNAPSHOT_READ_AT)]
     for snap in snaps:
         store.save_snapshot(Path(data_dir), snap)

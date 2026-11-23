@@ -27,6 +27,7 @@ SETTINGS = {
 }
 REQUIRED = {"jellyfin": ("jellyfin_url", "jellyfin_key"), "navidrome": ("navidrome_url", "navidrome_user", "navidrome_password")}
 READER = {"jellyfin": "T17", "navidrome": "T18"}
+READ_NOW = ("jellyfin",)  # servers whose reader has landed (T17); Navidrome's is T18
 
 
 def _safe_url(url: str | None) -> str | None:
@@ -82,7 +83,8 @@ def _other(server: str, settings: Settings) -> dict:
         "server": server, "name": NAMES[server], "set_up": set_up, "read": False,
         "url": _safe_url(getattr(settings, f"{server}_url")),
         "settings": rows, "missing": missing,
-        "note": (f"Set up; traqfreq reads it from {READER[server]} on (GET only)." if set_up
+        "note": (("Set up; traqfreq reads it when you refresh it (GET requests only)." if server in READ_NOW
+                  else f"Set up; traqfreq reads it from {READER[server]} on (GET only).") if set_up
                  else f"Not set up: {', '.join(missing)} missing. Every page works without it."),
     }
 

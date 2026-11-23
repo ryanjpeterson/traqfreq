@@ -68,11 +68,14 @@ def snapshot(server: str, items: list[dict], folders: list[str], folder_source: 
             "folders": folders, "folder_source": folder_source, "items": items}
 
 
-def from_jellyfin(virtual_folders: list[dict], pages: list[dict], read_at: float | None = None) -> dict:
+def from_jellyfin(virtual_folders: list[dict], pages: list[dict], read_at: float | None = None,
+                  info: dict | None = None, user: str | None = None) -> dict:
     """A Jellyfin snapshot from ``/Library/VirtualFolders`` (its music libraries' ``Locations``) and the pages
     of ``/Items?IncludeItemTypes=Audio&Recursive=true&Fields=Path,ProviderIds,MediaSources,ParentId``.
     Duration is ``RunTimeTicks`` (100 ns); the file size is the first media source's; the play count is
-    ``UserData.PlayCount`` (the user the key reads as)."""
+    ``UserData.PlayCount`` (T17's reader fills it from one user's ``/Users/{id}/Items``, else leaves none).
+    ``info`` is ``/System/Info/Public``: its ``ServerName`` and ``Version`` go in the stamp, with ``user``
+    (whose play counts these are)."""
     raw = [it for page in pages for it in (page.get("Items") or []) if it.get("Type", "Audio") == "Audio"]
     locs = [loc for vf in virtual_folders or [] if vf.get("CollectionType") in (None, "music")
             for loc in vf.get("Locations") or []]
@@ -92,8 +95,10 @@ def from_jellyfin(virtual_folders: list[dict], pages: list[dict], read_at: float
             play_count=_int((it.get("UserData") or {}).get("PlayCount"))))
     created = [it.get("DateCreated") for it in raw if it.get("DateCreated")]
     total = pages[0].get("TotalRecordCount") if pages else 0
-    return snapshot("jellyfin", items, roots, source,
-                    {"items": total, "newest_created": max(created) if created else None}, read_at)
+    stamp = {"items": total, "newest_created": max(created) if created else None}
+    if info is not None:
+        stamp.update(server_name=info.get("ServerName") or None, version=info.get("Version") or None, user=user)
+    return snapshot("jellyfin", items, roots, source, stamp, read_at)
 
 
 def _subsonic(answer: dict, key: str) -> dict:

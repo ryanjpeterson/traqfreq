@@ -12,9 +12,9 @@ back is blanked.
 own total; at most ``MAX_PAGES`` pages.
 
 **Readers** (``READERS``): one per server, ``read(client, settings) -> (snapshot, counts)`` with the snapshot in
-``snapshots.snapshot`` shape. Jellyfin's reader is T17 and Navidrome's T18; until then each says so
-(``ReaderMissing``). Tests plug in readers that page through the invented answers (``scripts/fixture_*.json``)
-over ``httpx.MockTransport``.
+``snapshots.snapshot`` shape. Jellyfin's (``read_jellyfin``, T17) reads System/Info, the music folders, every
+audio item and one user's play counts; Navidrome's is T18 and until then says so (``ReaderMissing``). Tests run
+them on the invented answers (``scripts/fixture_*.json``) over ``httpx.MockTransport``.
 
 **Refresh** (``refresh``): reads one server whole and stores its snapshot in traqfreq's own database, replacing the
 one before (``store.save_snapshot``); nothing is written anywhere else. One refresh at a time per server (a second
@@ -36,7 +36,7 @@ from typing import Callable, Iterator
 
 import httpx
 
-from . import store
+from . import snapshots, store
 from .servers import NAMES, READER, REQUIRED, SETTINGS
 from .settings import Settings
 
@@ -189,10 +189,72 @@ def _missing(server: str) -> Reader:
     return read
 
 
-# T17 replaces READERS["jellyfin"] (System/Info/Public, Library/VirtualFolders, paged /Items → from_jellyfin);
+# --- Jellyfin (T17) ------------------------------------------------------------------------------------------
+
+JELLYFIN_PAGE = PAGE_SIZE  # items per /Items page (tests make it smaller)
+JELLYFIN_FIELDS = "Path,ProviderIds,MediaSources,ParentId"
+
+
+def _jellyfin_pages(client: Client, path: str, params: dict) -> list[dict]:
+    """Every page of a Jellyfin item list (``StartIndex``/``Limit``, total ``TotalRecordCount``)."""
+    size = JELLYFIN_PAGE
+    return list(pages(lambda o: client.get(path, {**params, "StartIndex": o, "Limit": size}),
+                      count=lambda p: len(p.get("Items") or []), size=size, total=lambda p: p.get("TotalRecordCount")))
+
+
+def _norm_id(v: str) -> str:
+    return str(v or "").replace("-", "").lower()
+
+
+def jellyfin_user(client: Client, wanted: str) -> dict:
+    """The Jellyfin user ``TRAQFREQ_JELLYFIN_USER`` names, by ID (with or without dashes) or by name (any case).
+    ServerError when no user or more than one has that name."""
+    users = client.get("/Users")
+    users = users if isinstance(users, list) else []
+    by_id = [u for u in users if _norm_id(u.get("Id")) == _norm_id(wanted)]
+    if by_id:
+        return by_id[0]
+    by_name = [u for u in users if str(u.get("Name") or "").casefold() == wanted.strip().casefold()]
+    if len(by_name) == 1:
+        return by_name[0]
+    why = "two users have that name" if by_name else "no user has that name or ID"
+    raise ServerError("jellyfin", f"Jellyfin has no single user {wanted!r} (TRAQFREQ_JELLYFIN_USER): {why}. "
+                                  f"Its users: {', '.join(sorted(str(u.get('Name')) for u in users)) or 'none'}.")
+
+
+def read_jellyfin(client: Client, settings: Settings) -> tuple[dict, dict]:
+    """Jellyfin, GET only: ``/System/Info/Public`` (name, version), ``/Library/VirtualFolders`` (music folders),
+    every audio item through ``/Items`` page by page, and, when ``TRAQFREQ_JELLYFIN_USER`` is set, that user's
+    play counts through ``/Users/{id}/Items`` (played items only). The item list doesn't depend on the user: a
+    user who can't see a library takes no items away. Without a user there are no play counts (an API key
+    belongs to no user)."""
+    info = client.get("/System/Info/Public")
+    info = info if isinstance(info, dict) else {}
+    folders = client.get("/Library/VirtualFolders")
+    items = _jellyfin_pages(client, "/Items", {"IncludeItemTypes": "Audio", "Recursive": "true",
+                                               "Fields": JELLYFIN_FIELDS, "EnableUserData": "false"})
+    for page in items:  # play counts come only from the named user, below
+        for it in page.get("Items") or []:
+            it.pop("UserData", None)
+    user, user_pages, played = None, [], {}
+    if settings.jellyfin_user:
+        u = jellyfin_user(client, settings.jellyfin_user)
+        user = u.get("Name")
+        user_pages = _jellyfin_pages(client, f"/Users/{u.get('Id')}/Items",
+                                     {"IncludeItemTypes": "Audio", "Recursive": "true", "Filters": "IsPlayed",
+                                      "EnableUserData": "true", "Fields": "ParentId"})
+        played = {it.get("Id"): it.get("UserData") or {} for p in user_pages for it in p.get("Items") or []}
+        for page in items:
+            for it in page.get("Items") or []:
+                it["UserData"] = played.get(it.get("Id"), {"PlayCount": 0})
+    snap = snapshots.from_jellyfin(folders, items, info=info, user=user)
+    return snap, {"pages": len(items) + len(user_pages), "server_name": info.get("ServerName"),
+                  "version": info.get("Version"), "user": user, "played": len(played) if user else None}
+
+
 # T18 replaces READERS["navidrome"] (ping, getMusicFolders, getScanStatus, paged getAlbumList2 and search3 →
 # from_navidrome). Each returns (snapshot, counts) with counts at least {"pages": n}.
-READERS: dict[str, Reader] = {"jellyfin": _missing("jellyfin"), "navidrome": _missing("navidrome")}
+READERS: dict[str, Reader] = {"jellyfin": read_jellyfin, "navidrome": _missing("navidrome")}
 
 
 # --- refresh -----------------------------------------------------------------------------------------------

@@ -1,5 +1,28 @@
 {
- "_comment": "Invented Jellyfin answers (T14): /Library/VirtualFolders and two pages of /Items?IncludeItemTypes=Audio&Recursive=true&Fields=Path,ProviderIds,MediaSources,ParentId&StartIndex=&Limit=10. Not real data.",
+ "_comment": "Invented Jellyfin answers (T14, T17): /System/Info/Public, /Users, /Library/VirtualFolders, two pages of /Items?IncludeItemTypes=Audio&Recursive=true&Fields=Path,ProviderIds,MediaSources,ParentId&StartIndex=&Limit=10, and user_played: the user 'listener''s played audio items (/Users/{id}/Items?Filters=IsPlayed), one page. Not real data.",
+ "system_info": {
+  "LocalAddress": "http://jellyfin.test:8096",
+  "ServerName": "Invented Jellyfin",
+  "Version": "10.10.3",
+  "ProductName": "Jellyfin Server",
+  "OperatingSystem": "",
+  "Id": "f00dfeedf00dfeedf00dfeedf00dfeed",
+  "StartupWizardCompleted": true
+ },
+ "users": [
+  {
+   "Name": "admin",
+   "ServerId": "f00dfeedf00dfeedf00dfeedf00dfeed",
+   "Id": "e0000000000000000000000000000001",
+   "HasPassword": true
+  },
+  {
+   "Name": "listener",
+   "ServerId": "f00dfeedf00dfeedf00dfeedf00dfeed",
+   "Id": "e0000000000000000000000000000002",
+   "HasPassword": true
+  }
+ ],
  "virtual_folders": [
   {
    "Name": "Music",
@@ -555,5 +578,59 @@
    "TotalRecordCount": 14,
    "StartIndex": 10
   }
- ]
+ ],
+ "user_played": {
+  "Items": [
+   {
+    "Name": "Westkreuz",
+    "Id": "a0000000000000000000000000000065",
+    "Type": "Audio",
+    "ParentId": "c000000000000000000000000000000a",
+    "UserData": {
+     "PlayCount": 4,
+     "IsFavorite": false,
+     "Played": true,
+     "Key": "a0000000000000000000000000000065"
+    }
+   },
+   {
+    "Name": "Ostkreuz",
+    "Id": "a0000000000000000000000000000066",
+    "Type": "Audio",
+    "ParentId": "c000000000000000000000000000000a",
+    "UserData": {
+     "PlayCount": 1,
+     "IsFavorite": false,
+     "Played": true,
+     "Key": "a0000000000000000000000000000066"
+    }
+   },
+   {
+    "Name": "Static Gulls",
+    "Id": "a0000000000000000000000000000068",
+    "Type": "Audio",
+    "ParentId": "c000000000000000000000000000000a",
+    "UserData": {
+     "PlayCount": 2,
+     "IsFavorite": false,
+     "Played": true,
+     "Key": "a0000000000000000000000000000068"
+    }
+   },
+   {
+    "Name": "Night Bus",
+    "Id": "a0000000000000000000000000000387",
+    "Type": "Audio",
+    "ParentId": "c000000000000000000000000000005a",
+    "UserData": {
+     "PlayCount": 1,
+     "IsFavorite": false,
+     "Played": true,
+     "Key": "a0000000000000000000000000000387"
+    }
+   }
+  ],
+  "TotalRecordCount": 4,
+  "StartIndex": 0
+ }
 }
