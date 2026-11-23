@@ -4,6 +4,7 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 ### Added
+- `.env.example`: every setting by phase, the ones read now (P0–P3) and the ones later phases will need (P6–P8, with jimbo-dj's equivalents), secrets marked.
 - T13: P3 spec (`docs/specs/t13-servers.md`): one song on Plex, Jellyfin and Navidrome; how jimbo-dj identifies a track; file key and match tiers; sessions T13–T19.
 - T13: track identity, the Plex side (`GET /api/servers/identity`, `/api/servers/copies`): Plex's music folders and where they come from, every live copy's file key (path below the folder, NFC), loose key, song and match key, and its issues (no path, outside the folders, shared file, case clash, multi-part, no duration), each count with its rule and its rows.
 - T13: `GET /api/servers`: Plex (through jimbo-dj's database), Jellyfin and Navidrome set up or not; new optional settings `TRAQFREQ_PLEX_ROOTS`, `TRAQFREQ_JELLYFIN_URL|KEY|USER`, `TRAQFREQ_NAVIDROME_URL|USER|PASSWORD` (secrets never shown), passed through by `docker-compose.yml`.

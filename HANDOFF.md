@@ -191,6 +191,7 @@ PR #8 (every source) and PR #9 (T12) merged to `main` (bbc6cf9) and deployed on 
 - Not checked on live data yet: after the deploy, open `/api/servers/identity` and look at `root_source` (expect `jimbodj`), `outside_roots` and `shared_file`. Live, jimbo-dj's PATH_MAP folder decides every file key.
 
 ## Needed from Ryan before T17 and T18
+`.env.example` lists them (and every other setting by phase); copy the lines into the deploy's `.env`.
 Jellyfin and Navidrome readers need, in the deploy's `.env` (never in the repo): whether each runs on the Mac mini and its URL (as the traqfreq container reaches it); a Jellyfin API key (Dashboard → API Keys) and optionally the user whose play counts to show; a Navidrome user and password for read-only use, with real paths reported (`ND_SUBSONIC_DEFAULTREPORTREALPATH=true` or the player's "Report Real Path"). T14–T16 don't need them (they run on invented snapshots).
 
 ## Next: T14, matching on snapshots
