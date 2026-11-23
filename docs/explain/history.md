@@ -16,6 +16,7 @@
 - 2026-11-22, PR #2/#3: P1 gate passed, HISTORY equal to jimbo-dj's.
 - 2026-11-23, PR #9 (bbc6cf9): P2 gate, passed on live data the same day.
 - 2026-11-23, PR #10 (341088e): P3 begins: one song across servers.
+- 2026-11-23, PR #14 (bf15089): traqfreq can read servers: the GET-only client and snapshot refresh (T16).
 
 ## Pivots and renames
 
@@ -25,4 +26,4 @@
 
 ## By the numbers
 
-First commit 2026-11-22 (84579ad), latest 2026-11-23 (341088e). 45 commits, 23 on the main line, 10 pull requests. CHANGELOG versions 2026.11.0 and 2026.11.1; no tags. Built by Ryan with Claude Code sessions T1–T16.
+First commit 2026-11-22 (84579ad), latest 2026-11-23 (bf15089, T16 merged). 61 commits, 27 on the main line, 14 pull requests. CHANGELOG versions 2026.11.0 and 2026.11.1; no tags. Built by Ryan with Claude Code sessions T1–T16.
