@@ -9,14 +9,17 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
-from . import __version__, counted, entities, history, identity, legacy, library, library_gate, matching, periods, servers, store
+from . import __version__, counted, entities, history, identity, legacy, library, library_gate, matching, periods, reading, servers, store
 from .settings import CORE, MODULES, Settings
 
 
-def create_app(settings: Settings | None = None) -> FastAPI:
+def create_app(settings: Settings | None = None, server_transport=None) -> FastAPI:
+    """``server_transport``: an ``httpx`` transport for the server readers (tests: ``httpx.MockTransport``)."""
     settings = settings or Settings.from_env()
     app = FastAPI(title="traqfreq", version=__version__)
     app.state.settings = settings
+    app.state.server_transport = server_transport
+    app.state.readers = None  # None = reading.READERS; tests put their own here
 
     @app.get("/api/health")
     def health() -> dict:
@@ -303,10 +306,14 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             except legacy.LegacyDBMissing:
                 conn = None
         try:
-            return servers.status(conn, settings)
+            out = servers.status(conn, settings)
         finally:
             if conn is not None:
                 conn.close()
+        for s in out["servers"]:
+            if s["server"] in reading.READERS:
+                s["refresh"] = reading.state(settings, s["server"], limit=1)
+        return out
 
     def read_identity(fn):
         def run(conn):
@@ -351,6 +358,40 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         "On servers", T15). Nothing is sent to any server."""
         return read_identity(lambda c: matching.report(c, settings.data_dir, settings.plex_roots, server or None,
                                                        tier or None, reason or None, limit, offset, rating_key))
+
+    # --- T16: SERVERS, reading servers (GET only) ---------------------------------------------------------
+
+    def known_server(server: str) -> None:
+        if server == "plex":
+            raise HTTPException(400, {"error": "plex", "message": "Plex is read through jimbo-dj's database (its last "
+                                      "sync), not by traqfreq: there is nothing to refresh here."})
+        if server not in reading.READERS:
+            raise HTTPException(404, {"error": "unknown", "message": f"No server called {server!r}."})
+
+    @app.post("/api/servers/{server}/refresh")
+    def servers_refresh(server: str) -> dict:
+        """Read one server whole (GET requests only) and store its snapshot in traqfreq's own database, replacing
+        the one before. One refresh at a time per server; each is logged with its counts or its error. Writes
+        nothing to the server, to jimbo-dj's database or to any file but traqfreq's database."""
+        known_server(server)
+        try:
+            entry = reading.refresh(server, settings, app.state.server_transport, app.state.readers)
+        except reading.NotSetUp as e:
+            raise HTTPException(409, {"error": "not_set_up", "message": str(e),
+                                      "missing": reading.missing_settings(server, settings)})
+        except reading.Busy as e:
+            raise HTTPException(409, {"error": "busy", "message": str(e)})
+        except reading.ReaderMissing as e:
+            raise HTTPException(501, {"error": "no_reader", "message": str(e)})
+        except reading.ServerError as e:
+            raise HTTPException(502, {"error": "server", "message": e.message, "status": e.status})
+        return {"refresh": entry, **reading.state(settings, server)}
+
+    @app.get("/api/servers/{server}/refreshes")
+    def servers_refreshes(server: str, limit: int = 10) -> dict:
+        """A server's refresh log, newest first: when, done or failed, its counts or the server's message."""
+        known_server(server)
+        return reading.state(settings, server, limit)
 
     @app.get("/api/modules")
     def modules() -> dict:
