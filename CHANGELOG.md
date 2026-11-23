@@ -4,6 +4,7 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 ### Added
+- LIBRARY's play history counts every source, not Plex alone: played tracks and plays by `plays_of` (Plex's count or the history's per track, the larger, never both), plays by source (Last.fm, Plex, Spotify, Apple Music; a list with bars and a summary, each opening its tracks) and top artists from every source. jimbo-dj's Plex-only numbers stay beside them, labelled, for the P2 gate. `GET /api/library/stats` adds `plays_all`; `/api/library/tracks` adds `heard`, `source` and the order `plays`.
 - T11: album and artist lists (`/library/albums`, `/library/artists`; LIBRARY's album and artist counts open them): jimbo-dj's Library → Albums and Artists (`browse._grouped`) with tracks, plays (SUM of `plays_of`), newest added and year; ordered by plays or added (jimbo-dj's) or by name or year (traqfreq's). Each number opens its tracks.
 - T11: album page (`/library/album/<key>`): tracks in disc and track order with plays, key and moods and how many copies of each song the library has; jimbo-dj's year (MusicBrainz's first release, else Plex's), Plex's year, release date and label, MusicBrainz as jimbo-dj cached it; its listens by source and year (lists with a summary, L6).
 - T11: artist page (`/library/artist/<key>`; Plex top artists on LIBRARY open it): tracks, plays, albums oldest first (and ones it appears on), top songs (every copy's plays added up, jimbo-dj's `_top_songs`), listens by source and year.

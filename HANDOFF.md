@@ -156,6 +156,13 @@ T10 merged to `main` (2367558, PR #5) and deployed on the Mac mini. Checked from
 - Tests: pytest 102 (`tests/test_entities.py`, 10), Vitest 126 (`web/src/pages/entities.test.tsx`, 14, answers generated from the API on the fixture in `entities.answers.json`; kit +1), brand checks and 13 self-tests pass. Checked in the browser against the `--checks` fixture plus a scratch live copy: light and dark desktop, tablet (dark), 375 px light (album, lists, listens: no page side-scroll), no console errors.
 - Not checked on live data yet: after the deploy, compare a few artists' and albums' plays with jimbo-dj's `/api/artist?key=` and `/api/album/<key>` and the lists with `/api/browse?group=albums`.
 
+## T11 follow-up: every source (2026-11-22, `claude/t11-all-sources`, from `main` 192ab9c)
+Ryan asked for the library's play stats to count Apple Music, Spotify and Last.fm, not just Plex. jimbo-dj's `library.stats` (and so its `play_history`) is Plex-only (`view_count`); those fields stay as they are for the P2 gate, labelled "Plex only (jimbo-dj's numbers)".
+- `library.stats` adds `plays_all` (traqfreq's, `LIBRARY_VERSION` 2): `played_tracks` (`plays_of > 0`), `plays` (SUM `plays_of`), `history_plays`, `by_source` and `tracks_by_source` (counted listens on live tracks, from `_track_stats`' sources; they overlap, so they add up to more than `plays`), `top_artists` (SUM `plays_of` by `artist_key`). Rules `all.*`, rows `all.*`.
+- `/api/library/tracks`: `heard=true|false` (`plays_of` > 0, as an SQL function on the read-only connection), `source=` (tracks with counted listens from that source, `_track_stats`' match), `sort=plays`.
+- LIBRARY: an "Every source" card and "Top artists, every source" before the Plex cards; the rows page has "Most plays" and titles `heard`/`source`.
+- On the fixture: Plex alone 2 played tracks, 5 plays; every source 5 tracks, 8 plays. pytest 104, Vitest 128, brand checks pass (`Plexamp` added to the proper nouns). Browser: desktop light, 375 px dark, a source opening its tracks.
+
 ## Next: T12
 LIBRARY gate (spec: `docs/specs/t9-library.md`, T12): `scripts/p2_gate.py` and `GET /api/library/compare` (every field of jimbo-dj's stored `library.stats` and the non-genre parts of `library.charts` next to traqfreq's), shown on SETUP and LIBRARY; run on the Mac mini.
 

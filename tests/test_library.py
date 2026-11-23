@@ -133,7 +133,7 @@ def test_api_stats_cached(client, tmp_path, legacy_db):
     a = client.get("/api/library/stats").json()
     b = client.get("/api/library/stats").json()
     assert a["tracks"] == 5 and a["cache"]["hit"] is False and b["cache"]["hit"] is True
-    assert a["cache"]["key"].startswith("v1|1793844000|1793847900.5|a2|4|")
+    assert a["cache"]["key"].startswith("v2|1793844000|1793847900.5|a2|4|")
     assert a["paths"]["folders"] == {"/music": {"read_from": "/srv/music", "readable_here": True, "tracks": 5}}
     assert legacy_db.read_bytes() == before  # read-only
 
@@ -184,3 +184,33 @@ def test_api_rows_queries_as_the_page_sends_them(client):
     assert total(s["rows"]["tracks"]) == s["tracks"]
     assert total(s["rows"]["unmapped"]) == s["tracks"] - s["paths"]["mapped"]
     assert total(s["rows"]["containers"]["?"]) == 1  # container=%3F: no container given
+
+
+def test_play_history_from_every_source(legacy_db):
+    """Plays from Plex, Last.fm, Spotify and Apple Music (plays_of per track), beside jimbo-dj's Plex-only numbers."""
+    s = _stats(legacy_db)
+    a = s["plays_all"]
+    assert (s["play_history"]["played_tracks"], a["played_tracks"]) == (2, 5)  # Plex alone misses 3 played tracks
+    assert (s["play_history"]["total_plays"], a["plays"]) == (5, 8)
+    # 101: Plex 3, history 1 → 3 (not 4); 102, 103, 105 only in the history; 104 Plex 2, history 1 → 2
+    by = {r["rating_key"]: r["plays"] for r in _rows(legacy_db, heard=True, sort="plays")["rows"]}
+    assert by == {101: 3, 104: 2, 102: 1, 103: 1, 105: 1} and sum(by.values()) == a["plays"]
+    assert a["by_source"] == {"lastfm": 2, "plex": 1, "spotify": 1, "applemusic": 1}  # jimbo-dj's source order
+    assert a["history_plays"] == sum(a["by_source"].values()) == 5
+    assert [(x["artist"], x["plays"]) for x in a["top_artists"]] == [
+        ("Kollektiv Nord", 4), ("The Paper Lanterns", 3), ("Ada Vey", 1)]
+    assert "never the sum" in s["rules"]["all.plays"]
+
+
+def test_every_source_number_opens_its_rows(client):
+    s = client.get("/api/library/stats").json()
+    a = s["plays_all"]
+    total = lambda q: client.get(f"/api/library/tracks?{q}").json()["total"]  # noqa: E731
+    assert total(s["rows"]["all.played_tracks"]) == a["played_tracks"]
+    for src, q in s["rows"]["all.by_source"].items():
+        assert total(q) == a["tracks_by_source"][src], src
+    for art in a["top_artists"]:
+        rows = client.get(f"/api/library/tracks?{s['rows']['all.top_artists'][str(art['artist_key'])]}").json()["rows"]
+        assert sum(r["plays"] for r in rows) == art["plays"]
+    assert client.get("/api/library/tracks", params={"heard": "false"}).json()["total"] == 0
+    assert [r["rating_key"] for r in client.get("/api/library/tracks", params={"sort": "plays"}).json()["rows"]][:2] == [101, 104]
