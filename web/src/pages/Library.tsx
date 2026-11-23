@@ -2,6 +2,7 @@ import { Band, Button, Card, Status, Text } from '../components/kit';
 import { t, tf } from '../copy/t';
 import { useGet } from '../app/api';
 import { formatUtc } from '../app/time';
+import { sourceName } from '../app/history';
 import { count, fmt1, pct, tracksHref, valueLabel, type LibraryGate, type LibraryStats } from '../app/library';
 import { artistHref, listHref } from '../app/entities';
 import { EmptyState } from './ModulePage';
@@ -105,6 +106,13 @@ function LibraryBody({ s, navigate }: { s: LibraryStats } & Nav) {
       <section aria-labelledby="l-plays">
         <Text variant="label" id="l-plays">{t('library.plays')}</Text>
         <div className="hist-grid">
+          {s.plays_all && <EverySource s={s} navigate={navigate} />}
+          {s.plays_all && (
+            <Card label={t('library.top.all')}>
+              <TopArtists s={s} top={s.plays_all.top_artists} rowsKey="all.top_artists" label={t('library.top.all')}
+                ruleKey="all.top_artists" note={t('library.top.allNote')} navigate={navigate} />
+            </Card>
+          )}
           <Card label={t('library.plays.plex')}>
             <div className="stack">
               <ul className="rows" aria-label={t('library.plays.plex')}>
@@ -125,7 +133,8 @@ function LibraryBody({ s, navigate }: { s: LibraryStats } & Nav) {
             </div>
           </Card>
           <Card label={t('library.top')}>
-            <TopArtists s={s} navigate={navigate} />
+            <TopArtists s={s} top={s.top_artist_keys} rowsKey="top_artists" label={t('library.top')}
+              ruleKey="top_artists" note={t('library.top.note')} navigate={navigate} />
           </Card>
         </div>
       </section>
@@ -266,13 +275,55 @@ function Bars({ s, k, label, values, ordered = false, navigate }: {
 }
 
 /** Plex top artists (SUM(view_count) by artist_key), with share bars; each opens that artist's played tracks. */
-function TopArtists({ s, navigate }: { s: LibraryStats } & Nav) {
-  const top = s.top_artist_keys;
+/** Play history from every source (traqfreq's: plays_of per track), with plays by source as a list with bars and
+ *  a summary (L6); each number opens its tracks. */
+function EverySource({ s, navigate }: { s: LibraryStats } & Nav) {
+  const a = s.plays_all!;
+  const sources = Object.entries(a.by_source);
+  const most = Math.max(1, ...sources.map(([, n]) => n));
+  const top = [...sources].sort((x, y) => y[1] - x[1])[0];
+  return (
+    <Card label={t('library.all')}>
+      <div className="stack">
+        <Text>{t('library.all.what')}</Text>
+        <ul className="rows" aria-label={t('library.all')}>
+          <li>
+            <span><strong>{t('library.all.played')}</strong><span className="sub">{`${pct(a.played_pct)} · ${rule(s, 'all.played_tracks')}`}</span></span>
+            <TracksLink text={count(a.played_tracks, 'track')} n={a.played_tracks} query={q(s, 'all.played_tracks')} navigate={navigate} />
+          </li>
+          <li>
+            <span><strong>{t('library.all.plays')}</strong><span className="sub">{rule(s, 'all.plays')}</span></span>
+            <TracksLink text={count(a.plays, 'play')} n={a.played_tracks} query={q(s, 'all.plays')} navigate={navigate} />
+          </li>
+        </ul>
+        <Text variant="label">{t('library.all.bySource')}</Text>
+        {top && <Text>{tf('library.all.sourceSummary', { top: sourceName(top[0]), n: count(top[1], 'play'), t: count(a.tracks_by_source[top[0]] ?? 0, 'track') })}</Text>}
+        <ul className="rows hist-top" aria-label={t('library.all.bySource')}>
+          {sources.map(([src, n]) => (
+            <li key={src}>
+              <span className="hist-top-text">
+                <strong>{sourceName(src)}</strong>
+                <span className="sub">{count(n, 'play')}</span>
+                <span className="hist-bar lib-bar" aria-hidden="true"><span style={{ width: `${(100 * n) / most}%` }} /></span>
+              </span>
+              <TracksLink text={tf('library.all.onTracks', { n: count(a.tracks_by_source[src] ?? 0, 'track') })} n={a.tracks_by_source[src] ?? 0} query={qOf(s, 'all.by_source', src)} navigate={navigate} />
+            </li>
+          ))}
+        </ul>
+        <Text variant="note">{`${t('library.all.overlap')} ${rule(s, 'all.by_source')}`}</Text>
+      </div>
+    </Card>
+  );
+}
+
+function TopArtists({ s, top, rowsKey, ruleKey, label, note, navigate }: {
+  s: LibraryStats; top: { artist: string; artist_key: number; plays: number }[]; rowsKey: string; ruleKey: string; label: string; note: string;
+} & Nav) {
   const most = top[0]?.plays || 1;
   return (
     <div className="stack">
       {top.length === 0 ? <Text>{t('library.top.none')}</Text> : (
-        <ol className="rows hist-top" aria-label={t('library.top')}>
+        <ol className="rows hist-top" aria-label={label}>
           {top.map((a, i) => (
             <li key={a.artist_key}>
               <span className="hist-top-name">
@@ -282,13 +333,13 @@ function TopArtists({ s, navigate }: { s: LibraryStats } & Nav) {
                   <span className="hist-bar lib-bar" aria-hidden="true"><span style={{ width: `${(100 * a.plays) / most}%` }} /></span>
                 </span>
               </span>
-              <TracksLink text={count(a.plays, 'play')} n={a.plays} query={qOf(s, 'top_artists', String(a.artist_key))}
+              <TracksLink text={count(a.plays, 'play')} n={a.plays} query={qOf(s, rowsKey, String(a.artist_key))}
                 extra={{ name: a.artist }} navigate={navigate} />
             </li>
           ))}
         </ol>
       )}
-      <Text variant="note">{`${rule(s, 'top_artists')}. ${t('library.top.note')}`}</Text>
+      <Text variant="note">{`${rule(s, ruleKey)}. ${note}`}</Text>
     </div>
   );
 }

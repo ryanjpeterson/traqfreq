@@ -18,6 +18,12 @@ export type LibraryStats = {
     mapped: number; mapped_pct: number; unmapped_examples: string[]; multi_part_tracks: number; removed_since_first_sync: number;
   };
   top_artist_keys: { artist: string; artist_key: number; plays: number }[];
+  /** traqfreq's: play history from every source (plays_of per track), beside jimbo-dj's Plex-only numbers. */
+  plays_all?: {
+    played_tracks: number; played_pct: number; plays: number; history_plays: number;
+    by_source: Record<string, number>; tracks_by_source: Record<string, number>;
+    top_artists: { artist: string; artist_key: number; plays: number }[];
+  };
   rules: Record<string, string>;
   /** The /api/library/tracks query string behind each number; by value for codecs, containers, bitrate, top artists. */
   rows: Record<string, string | Record<string, string>>;
@@ -39,8 +45,8 @@ export type Tracks = {
   rule: string; params: (string | number)[]; plays_rule: string; rows: TrackRow[];
 };
 
-export type TrackSort = 'artist' | 'plex_plays' | 'added';
-export const SORTS: TrackSort[] = ['artist', 'plex_plays', 'added'];
+export type TrackSort = 'artist' | 'plays' | 'plex_plays' | 'added';
+export const SORTS: TrackSort[] = ['artist', 'plays', 'plex_plays', 'added'];
 export const ANALYSIS = ['ok', 'error', 'older', 'none'] as const;
 export const BUCKETS = ['<192k', '192-255k', '256-319k', '320k', '>320k (lossless)'];
 /** T12: jimbo-dj's chart filters (facets.members) the rows page takes: one bar of a Files, Time or Place chart. */
@@ -55,11 +61,13 @@ export type TrackFilter = {
   artist_key?: number; album_key?: number; sort?: TrackSort; offset?: number;
   /** T12: one bar of jimbo-dj's Library charts (facet and its value, e.g. format FLAC). */
   facet?: Facet; value?: string;
+  /** Played anywhere (plays_of > 0), and tracks with counted listens from one source. */
+  heard?: boolean; source?: string;
   /** The artist's name, for the heading only; the API filters by its key. */
   name?: string;
 };
-const BOOLS = ['played', 'rated', 'sonic', 'mapped', 'multi_part', 'removed'] as const;
-const ORDER: (keyof TrackFilter)[] = ['codec', 'container', 'bitrate', ...BOOLS, 'analysis', 'artist_key', 'album_key', 'facet', 'value', 'sort', 'offset', 'name'];
+const BOOLS = ['played', 'heard', 'rated', 'sonic', 'mapped', 'multi_part', 'removed'] as const;
+const ORDER: (keyof TrackFilter)[] = ['codec', 'container', 'bitrate', ...BOOLS, 'source', 'analysis', 'artist_key', 'album_key', 'facet', 'value', 'sort', 'offset', 'name'];
 
 export function parseTrackFilter(query: string): TrackFilter {
   const q = new URLSearchParams(query);
@@ -72,6 +80,7 @@ export function parseTrackFilter(query: string): TrackFilter {
   const f: TrackFilter = {
     codec: q.get('codec') ?? undefined,
     container: q.get('container') ?? undefined,
+    source: q.get('source') || undefined,
     bitrate: b && BUCKETS.includes(b) ? b : undefined,
     analysis: ANALYSIS.find((x) => x === a),
     artist_key: num('artist_key'),

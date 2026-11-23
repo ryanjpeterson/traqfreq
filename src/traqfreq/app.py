@@ -213,7 +213,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         analyzer version and results)."""
         def run(conn):
             value, info = store.cached(settings.data_dir, "library.stats", library.cache_key(conn),
-                                       lambda: library.stats(conn))
+                                       lambda: library.stats(conn, settings.tz))
             return {**value, "cache": info}
         return read_library(run)
 
@@ -223,7 +223,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
                        analysis: str | None = None, mapped: bool | None = None, multi_part: bool | None = None,
                        removed: bool = False, artist_key: int | None = None, album_key: int | None = None,
                        sort: str = "artist", limit: int = 50, offset: int = 0, facet: str | None = None,
-                       value: str | None = None) -> dict:
+                       value: str | None = None, heard: bool | None = None, source: str | None = None) -> dict:
         """The rows behind each LIBRARY number: live tracks (or removed ones) by codec, container, bitrate
         bucket, played, rated, Plex sonic analysis, jimbo-dj's analyzer (ok, error, older, none), mapped,
         multi-part, artist or album, or (T12) one bar of jimbo-dj's Library charts (facet and value, e.g.
@@ -231,7 +231,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         return read_library(lambda c: library.tracks(
             c, codec, container, bitrate or None, played, rated, sonic, analysis or None, mapped, multi_part,
             removed, artist_key, album_key, sort, limit, offset, settings.tz, facet or None,
-            value if facet else None))
+            value if facet else None, heard, source or None))
 
     @app.get("/api/library/compare")
     def library_compare() -> dict:

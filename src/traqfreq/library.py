@@ -22,10 +22,10 @@ from urllib.parse import urlencode
 
 from . import history, legacy
 from .vendor import jimbodj_library as jd
-from .vendor.jimbodj_history import in_zone
+from .vendor.jimbodj_history import PRIORITY, in_zone
 
 # Bump when the shape of what ``stats`` builds changes, so cached copies are rebuilt (store.py).
-LIBRARY_VERSION = 1
+LIBRARY_VERSION = 2  # 2: all-source play history (plays_all)
 LIVE = legacy.LIVE
 ANALYZED = f"a.status = 'ok' AND a.version >= {jd.ANALYZER_VERSION}"  # jimbo-dj live.progress "analysed"
 ANALYSIS_ERROR = f"a.status = 'error' AND a.version >= {jd.ANALYZER_VERSION}"  # its "errors"
@@ -51,6 +51,11 @@ RULES = {
     "multi_part_tracks": f"parts > 1 AND {LIVE}",
     "removed_since_first_sync": "removed_at IS NOT NULL (every track a sync no longer saw)",
     "pct": "100 × part / tracks, rounded to 0.1 (jimbo-dj's _pct)",
+    "all.played_tracks": f"plays_of > 0 AND {LIVE}: played anywhere (Plex, Last.fm, Spotify, Apple Music)",
+    "all.plays": f"SUM(plays_of) WHERE {LIVE}; per track the larger of Plex's view_count and the history's "
+                 "counted listens, never the sum (Plexamp may scrobble to Last.fm too)",
+    "all.by_source": f"counted listens per source matched to a track WHERE {LIVE} (jimbo-dj's _track_stats)",
+    "all.top_artists": f"SUM(plays_of) GROUP BY artist_key WHERE {LIVE}, top 10 with plays (every source)",
     "plays": "max(Plex view_count, history plays), never the sum (jimbo-dj's plays_of)",
     "folders": "jimbo-dj's configured music folders and whether its container can read them: shown as "
                "jimbo-dj stored them (stats library.stats), not compared",
@@ -62,7 +67,11 @@ SORTS = {
     "artist": "t.artist COLLATE NOCASE, t.album COLLATE NOCASE, t.disc, t.track_no, t.rating_key",
     "plex_plays": "COALESCE(t.view_count, 0) DESC, t.artist COLLATE NOCASE, t.title COLLATE NOCASE, t.rating_key",
     "added": "t.added_at DESC, t.rating_key DESC",
+    "plays": "plays(t.rating_key, t.view_count) DESC, t.artist COLLATE NOCASE, t.title COLLATE NOCASE, t.rating_key",
 }
+# A track's counted listens, as jimbo-dj's _track_stats finds them (its own rating_key, else its match's).
+HEARD_FROM = ("t.rating_key IN (SELECT COALESCE(l.rating_key, m.rating_key) FROM listens l LEFT JOIN listen_matches m "
+              "ON m.match_key = l.match_key WHERE l.counted = 1 AND l.source = ?)")
 
 
 class NoLibrary(LookupError):
@@ -97,7 +106,7 @@ def _q(**params) -> str:
     return urlencode({k: ("true" if v is True else "false" if v is False else v) for k, v in params.items()})
 
 
-def stats(conn: sqlite3.Connection) -> dict:
+def stats(conn: sqlite3.Connection, default_tz: str | None = None) -> dict:
     """jimbo-dj's ``library.stats`` for this data, number for number (folders as stored), plus jimbo-dj's
     analyzer, Plex top artists with keys, each number's rule and the query for its rows (uncached)."""
     tables = _tables(conn)
@@ -122,6 +131,8 @@ def stats(conn: sqlite3.Connection) -> dict:
         "HAVING plays>0 ORDER BY plays DESC LIMIT 10").fetchall()
     out["top_artist_keys"] = [{"artist": r["artist"], "artist_key": r["artist_key"], "plays": r["plays"]} for r in top]
 
+    out["plays_all"] = plays_all(conn, total, default_tz)
+
     out["rules"] = RULES
     out["rows"] = {
         "tracks": _q(), "albums": _q(), "artists": _q(), "hours": _q(), "size_gb": _q(),
@@ -135,6 +146,10 @@ def stats(conn: sqlite3.Connection) -> dict:
         "sonic_analysis": _q(sonic=True), "analyzer": _q(analysis="ok"), "analyzer_errors": _q(analysis="error"),
         "mapped": _q(mapped=True), "unmapped": _q(mapped=False), "multi_part_tracks": _q(multi_part=True),
         "removed_since_first_sync": _q(removed=True),
+        "all.played_tracks": _q(heard=True, sort="plays"), "all.plays": _q(heard=True, sort="plays"),
+        "all.by_source": {s: _q(source=s, sort="plays") for s in out["plays_all"]["by_source"]},
+        "all.top_artists": {str(a["artist_key"]): _q(artist_key=a["artist_key"], heard=True, sort="plays")
+                            for a in out["plays_all"]["top_artists"]},
     }
     out["jimbodj"] = None
     if stored:
@@ -143,6 +158,37 @@ def stats(conn: sqlite3.Connection) -> dict:
         out["jimbodj"] = {"source": "stats.library.stats", "built_at": legacy._iso(stored[1]),
                           "stamp": row["stamp"], "fresh": row["stamp"] is not None and row["stamp"] == now}
     return out
+
+
+def plays_all(conn: sqlite3.Connection, total: int, default_tz: str | None = None) -> dict:
+    """The library's play history from every source, not Plex's alone: played tracks and plays by jimbo-dj's
+    plays_of (Plex's count or the history's, the larger, per track), the history's counted listens per source
+    on live tracks, and top artists by plays_of. traqfreq's numbers (jimbo-dj's library.stats counts Plex only)."""
+    hist = track_plays(conn, default_tz)
+    played = plays = history_plays = 0
+    by_source: dict[str, int] = {}
+    tracks_by_source: dict[str, int] = {}
+    artists: dict[int, list] = {}
+    for rk, vc, artist, ak in conn.execute(f"SELECT rating_key, view_count, artist, artist_key FROM tracks WHERE {LIVE}"):
+        n = jd.plays_of({"rating_key": rk, "view_count": vc}, hist)
+        h = hist.get(rk)
+        if h:
+            history_plays += h["plays"]
+            for s, k in h["sources"].items():
+                by_source[s] = by_source.get(s, 0) + k
+                tracks_by_source[s] = tracks_by_source.get(s, 0) + 1
+        if n:
+            played += 1
+            plays += n
+            a = artists.setdefault(ak, [artist, 0])
+            a[1] += n
+    top = sorted(((v[1], k, v[0]) for k, v in artists.items()), key=lambda x: (-x[0], x[2] or "", x[1]))[:10]
+    order = {s: i for i, s in enumerate(PRIORITY)}
+    return {"played_tracks": played, "played_pct": jd._pct(played, total), "plays": plays,
+            "history_plays": history_plays,
+            "by_source": {s: by_source[s] for s in sorted(by_source, key=lambda s: order.get(s, 99))},
+            "tracks_by_source": tracks_by_source,
+            "top_artists": [{"artist": name, "artist_key": k, "plays": n} for n, k, name in top]}
 
 
 # --- Rows ---------------------------------------------------------------------------------------------------
@@ -176,7 +222,8 @@ def tracks(conn: sqlite3.Connection, codec: str | None = None, container: str | 
            sonic: bool | None = None, analysis: str | None = None, mapped: bool | None = None,
            multi_part: bool | None = None, removed: bool = False, artist_key: int | None = None,
            album_key: int | None = None, sort: str = "artist", limit: int = 50, offset: int = 0,
-           default_tz: str | None = None, facet: str | None = None, value: str | None = None) -> dict:
+           default_tz: str | None = None, facet: str | None = None, value: str | None = None,
+           heard: bool | None = None, source: str | None = None) -> dict:
     """The rows behind a LIBRARY number: live tracks (or, with ``removed``, the tracks a sync no longer saw)
     with one codec or container (``?`` = none), in one bitrate bucket, played or not, rated or not, Plex
     sonic-analysed or not, analysed by jimbo-dj's analyzer (``analysis`` ok, error, older, none), mapped or
@@ -220,6 +267,17 @@ def tracks(conn: sqlite3.Connection, codec: str | None = None, container: str | 
         keys_arg = json.dumps(library_gate.facet_keys(conn, facet, value, zone))
         args.append(keys_arg)
         chart_rule = f"{facet} is {value} (jimbo-dj's chart rule, facets.members; time zone {zone})"
+    hist = track_plays(conn, default_tz)
+    # plays(rating_key, view_count) = jimbo-dj's plays_of, for heard and the plays order (every source)
+    conn.create_function("plays", 2, lambda rk, vc: jd.plays_of({"rating_key": rk, "view_count": vc}, hist),
+                         deterministic=True)
+    if heard is not None:
+        where.append(f"plays(t.rating_key, t.view_count) {'>' if heard else '<='} 0")
+    if source:
+        if not {"listens", "listen_matches"} <= tables:
+            raise ValueError("source needs jimbo-dj's listens")
+        where.append(HEARD_FROM)
+        args.append(source)
     has_analysis = "analysis" in tables
     has_features = "features" in tables
     if analysis is not None:
@@ -251,7 +309,6 @@ def tracks(conn: sqlite3.Connection, codec: str | None = None, container: str | 
         "t.track_no, t.year, t.duration_ms, t.plex_path, t.local_path, t.parts, t.file_size, t.container, t.codec, "
         "t.bitrate, t.view_count, t.last_viewed_at, t.user_rating, t.sonic_version, t.added_at, t.removed_at"
         f"{an}{feats} {frm} WHERE {w} ORDER BY {SORTS[sort]} LIMIT ? OFFSET ?", [*args, limit, offset]).fetchall()
-    hist = track_plays(conn, default_tz)
     out_rows = []
     for r in rows:
         m = dict(r)
@@ -270,7 +327,7 @@ def tracks(conn: sqlite3.Connection, codec: str | None = None, container: str | 
         "filters": {"codec": codec, "container": container, "bitrate": bitrate, "played": played, "rated": rated,
                     "sonic": sonic, "analysis": analysis, "mapped": mapped, "multi_part": multi_part,
                     "removed": removed, "artist_key": artist_key, "album_key": album_key, "facet": facet,
-                    "value": value},
+                    "value": value, "heard": heard, "source": source},
         "sort": sort, "total": total, "limit": limit, "offset": offset,
         "rule": f"tracks WHERE {rule}", "params": shown, "plays_rule": RULES["plays"], "rows": out_rows,
     }

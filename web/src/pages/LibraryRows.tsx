@@ -3,7 +3,7 @@ import { t, tf, type StringKey } from '../copy/t';
 import { useGet } from '../app/api';
 import { MODULE_PATH } from '../app/route';
 import { albumHref, artistHref, trackHref } from '../app/entities';
-import { dayLabel, duration, fmt } from '../app/history';
+import { dayLabel, duration, fmt, sourceName } from '../app/history';
 import {
   SORTS, count, fmt1, parseTrackFilter, trackQuery, tracksHref, valueLabel,
   type TrackFilter, type TrackRow, type Tracks,
@@ -21,6 +21,8 @@ export function filterTitle(f: TrackFilter): string {
     f.container != null && tf('library.rows.container', { v: valueLabel(f.container) }),
     f.bitrate && tf('library.rows.bitrate', { v: f.bitrate }),
     yesNo(f.played, 'library.rows.played', 'library.rows.unplayed'),
+    yesNo(f.heard, 'library.rows.heard', 'library.rows.unheard'),
+    f.source && tf('library.rows.source', { s: sourceName(f.source) }),
     yesNo(f.rated, 'library.rows.rated', 'library.rows.unrated'),
     yesNo(f.sonic, 'library.rows.sonic', 'library.rows.noSonic'),
     f.analysis && t(`library.rows.analysis.${f.analysis}` as StringKey),
