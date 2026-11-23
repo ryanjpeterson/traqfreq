@@ -1,7 +1,7 @@
 {
   "version": "0.1.0",
   "docs": "docs/explain",
-  "synced": { "commit": "9e41ecd", "date": "2026-11-23" },
+  "synced": { "commit": "262ae7d", "date": "2026-11-23" },
   "facts": {
     "name": "traqfreq",
     "tagline": "jimbo-dj's successor, built beside it: listening history, library and servers, every number showing its rows",
@@ -18,7 +18,7 @@
       { "name": "Tailscale", "kind": "self-hosted", "direction": "read", "required": true, "what": "the only way in" }
     ],
     "standards": ["jimbo-deploy", "jimbo-explain"],
-    "now": ["P3 SERVERS: T15 the SERVERS page"]
+    "now": ["P3 SERVERS: T16 reading servers (the GET-only client and snapshot refresh)"]
   },
   "files": {}
 }

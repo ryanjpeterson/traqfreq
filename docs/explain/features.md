@@ -41,7 +41,7 @@ Read-only views of jimbo-dj's data in the Berlin · Gelb look, each number with 
 | Listens behind a page | The counted plays behind an album's, artist's or track's numbers | `/library/plays` | stable |
 | P2 gate | `library.stats` and `library.charts` next to jimbo-dj's, every bar opening its tracks; `scripts/p2_gate.py` | `/library/compare`, `src/traqfreq/library_gate.py` | stable |
 
-### SERVERS (P3, API only so far)
+### SERVERS (P3, on SETUP)
 
 | Feature | What it does | Where | Status |
 |-|-|-|-|
@@ -49,7 +49,9 @@ Read-only views of jimbo-dj's data in the Berlin · Gelb look, each number with 
 | Track identity | Plex's music folders, each copy's file key, loose key, song and match key, and its issues | `GET /api/servers/identity`, `src/traqfreq/identity.py` | new |
 | Identity rows | The copies behind each count: by issue, song, file | `GET /api/servers/copies` | new |
 | Server snapshots | Jellyfin `/Items` and Navidrome `search3` answers in one item shape, stored per server with when read and the server's stamp (invented fixtures until T17/T18) | `src/traqfreq/snapshots.py`, `snapshots` table | new |
-| Matches | Each Plex copy matched to one Jellyfin item and one Navidrome song (file, MusicBrainz ID, tags; one to one), Jellyfin to Navidrome, every miss with its reason | `GET /api/servers/matches`, `src/traqfreq/matching.py` | new |
+| Matches | Each Plex copy matched to one Jellyfin item and one Navidrome song (file, MusicBrainz ID, tags; one to one), Jellyfin to Navidrome, every miss with its reason; one copy's rows by `rating_key` | `GET /api/servers/matches`, `src/traqfreq/matching.py` | new |
+| SERVERS page | The three servers with status and snapshot age, Plex's identity counts, each pair's matches by tier and by reason (lists with bars and a summary), a song's three IDs; every count opens its rows | `/setup/servers`, `/setup/servers/copies`, `/setup/servers/matches`, `web/src/pages/Servers.tsx` | new |
+| On servers | On a track's page: its Jellyfin item and Navidrome song with the tier, and each server's own play count, labelled and never added | `/library/track/<key>` | new |
 
 ### Throughout
 

@@ -343,13 +343,14 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     @app.get("/api/servers/matches")
     def servers_matches(server: str | None = None, tier: str | None = None, reason: str | None = None,
-                        limit: int = 50, offset: int = 0) -> dict:
+                        rating_key: int | None = None, limit: int = 50, offset: int = 0) -> dict:
         """Every Plex copy matched to the Jellyfin and Navidrome items in their stored snapshots (file, then
         MusicBrainz IDs, then tags; one to one), and Jellyfin to Navidrome; every unmatched copy and item with
         its reason. Each count with its rule and its rows: ``server`` (jellyfin, navidrome,
-        jellyfin-navidrome), ``tier`` or ``reason``. Nothing is sent to any server."""
+        jellyfin-navidrome), ``tier`` or ``reason``; ``rating_key`` = one Plex copy's rows (the track page's
+        "On servers", T15). Nothing is sent to any server."""
         return read_identity(lambda c: matching.report(c, settings.data_dir, settings.plex_roots, server or None,
-                                                       tier or None, reason or None, limit, offset))
+                                                       tier or None, reason or None, limit, offset, rating_key))
 
     @app.get("/api/modules")
     def modules() -> dict:

@@ -2,7 +2,7 @@
 
 ## Snapshot
 
-Healthy and moving fast: P0–P2 done and gated on live data in two days, P3 under way. Used daily by one listener beside jimbo-dj. Upkeep is low (no jobs, cache only). Matching works on invented snapshots (T14); the most useful next thing is the SERVERS page (T15), then the Jellyfin and Navidrome details from Ryan.
+Healthy and moving fast: P0–P2 done and gated on live data in two days, P3 under way. Used daily by one listener beside jimbo-dj. Upkeep is low (no jobs, cache only). Matching works on invented snapshots (T14) and SETUP shows it (T15); the most useful next thing is the read-only server client and snapshot refresh (T16), then the Jellyfin and Navidrome details from Ryan.
 
 ## Risks
 
