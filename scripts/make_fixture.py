@@ -23,6 +23,11 @@ every counting rule has a case that tells it apart from a raw row count:
   has view_count 3 and 1 history play: jimbo-dj's plays_of takes the larger (3), not the sum (4). jimbo-dj's
   analyzer: 2 tracks ok at version 2, 1 ok at version 1 (older), 1 error. jimbo-dj's stored library.stats has
   the full shape, worked out by hand.
+- T11, still on those 6 tracks (no count above changes): disc numbers, so Low Tide Radio's order (disc 1
+  "Static Gulls", then disc 2 "Harbour Lights") differs from track_no order; Plex release dates and labels on
+  two albums, and a cached MusicBrainz release (mb_releases, jimbo-dj's shape) whose first release (2020) is
+  older than Plex's year (2021), so an album's year is jimbo-dj's _release_years, not tracks.year; key, scale
+  and moods on the analysed tracks. Tests that need a second copy of a song add one to a scratch copy.
 - With --checks: T7's invented bursts, loop, steady rhythm and windows (CHECK_LISTENS), on top of the above.
 
 Usage: python scripts/make_fixture.py [--checks] [out_path]   (default tests/fixtures/legacy.sqlite)
@@ -62,6 +67,10 @@ CREATE TABLE features (
 CREATE TABLE albums (
     album_key INTEGER PRIMARY KEY, title TEXT, artist_key INTEGER, year INTEGER, released TEXT, studio TEXT,
     genres TEXT, mbid TEXT, seen_at INTEGER
+);
+CREATE TABLE mb_releases (
+    mbid TEXT PRIMARY KEY, fetched_at INTEGER NOT NULL, status TEXT NOT NULL, title TEXT, date TEXT, country TEXT,
+    labels TEXT, first_release TEXT, primary_type TEXT, secondary_types TEXT, genres TEXT
 );
 CREATE TABLE artists (
     artist_key INTEGER PRIMARY KEY, title TEXT, countries TEXT, genres TEXT, mbid TEXT, seen_at INTEGER
@@ -117,6 +126,17 @@ SERVER = {"name": "Fixture Plex", "version": "1.41.0", "machine_id": "fixture0",
           "section": "Music", "section_key": "1"}
 # rating_key, bpm, camelot, loudness_lufs
 FEATURES = [(101, 128.0, "8A", -7.1), (102, 130.0, "9A", -6.8), (103, 104.0, "5B", -9.4)]
+# T11: rating_key: disc. album_key: Plex released, studio (label), MusicBrainz release mbid.
+DISCS = {101: 1, 102: 1, 103: 2, 104: 1, 105: 1, 106: 1}
+ALBUM_INFO = {201: ("2019-04-12", "Spree Tonträger", None),
+              202: ("2021-02-05", "Harbour House", "00000000-0000-4000-8000-000000000202")}
+# mbid, title, date, country, labels, first_release, primary_type, secondary_types
+MB_RELEASES = [("00000000-0000-4000-8000-000000000202", "Low Tide Radio", "2021-02-05", "GB", ["Harbour House"],
+                "2020-10-01", "Album", [])]
+# rating_key: key, scale, moods (jimbo-dj's analyzer: {mood: score})
+KEYS = {101: ("A", "minor", {"party": 0.8, "aggressive": 0.4, "happy": 0.3, "sad": 0.1}),
+        102: ("E", "minor", {"sad": 0.6, "relaxed": 0.5}),
+        103: ("G", "major", {"relaxed": 0.7, "happy": 0.6})}
 
 
 def _t(s: str) -> int:
@@ -275,6 +295,15 @@ def build(out: Path, checks: bool = False) -> Path:
             [(*r, SYNC) for r in ANALYSIS],
         )
         conn.executemany("INSERT INTO features (rating_key, bpm, camelot, loudness_lufs) VALUES (?, ?, ?, ?)", FEATURES)
+        conn.executemany("UPDATE tracks SET disc = ? WHERE rating_key = ?", [(d, rk) for rk, d in DISCS.items()])
+        conn.executemany("UPDATE albums SET released = ?, studio = ?, mbid = ? WHERE album_key = ?",
+                         [(*v, ak) for ak, v in ALBUM_INFO.items()])
+        conn.executemany(
+            "INSERT INTO mb_releases VALUES (?, ?, 'ok', ?, ?, ?, ?, ?, ?, ?, '{}')",
+            [(m, SYNC, title, date, c, json.dumps(labels), first, kind, json.dumps(sec))
+             for m, title, date, c, labels, first, kind, sec in MB_RELEASES])
+        conn.executemany("UPDATE features SET key = ?, scale = ?, moods = ? WHERE rating_key = ?",
+                         [(k, sc, json.dumps(m), rk) for rk, (k, sc, m) in KEYS.items()])
         conn.executemany(
             "INSERT INTO listens (id, source, started_at, ms_played, artist, title, album, uri, counted, match_key,"
             " rating_key, dup_of) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",

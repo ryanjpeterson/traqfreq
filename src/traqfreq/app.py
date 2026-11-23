@@ -9,7 +9,7 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
-from . import __version__, counted, history, legacy, library, periods, store
+from . import __version__, counted, entities, history, legacy, library, periods, store
 from .settings import CORE, MODULES, Settings
 
 
@@ -229,6 +229,49 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         return read_library(lambda c: library.tracks(
             c, codec, container, bitrate or None, played, rated, sonic, analysis or None, mapped, multi_part,
             removed, artist_key, album_key, sort, limit, offset, settings.tz))
+
+    # --- T11: albums, artists, a track ---------------------------------------------------------------------
+
+    def read_entity(fn):
+        def run(conn):
+            try:
+                return fn(conn)
+            except entities.NotFound as e:
+                raise HTTPException(404, str(e))
+        return read_library(run)
+
+    @app.get("/api/library/albums")
+    def library_albums(sort: str = "plays", limit: int = 50, offset: int = 0) -> dict:
+        """jimbo-dj's Library → Albums: every live album with its tracks, plays (SUM of plays_of), newest added
+        and year; sort plays, added (jimbo-dj's), name or year."""
+        return read_entity(lambda c: entities.entity_list(c, "albums", sort, limit, offset, settings.tz))
+
+    @app.get("/api/library/artists")
+    def library_artists(sort: str = "plays", limit: int = 50, offset: int = 0) -> dict:
+        """jimbo-dj's Library → Artists, the same way."""
+        return read_entity(lambda c: entities.entity_list(c, "artists", sort, limit, offset, settings.tz))
+
+    @app.get("/api/library/album/{key}")
+    def library_album(key: int) -> dict:
+        """An album: its tracks in disc and track order with plays and other copies, and their listens."""
+        return read_entity(lambda c: entities.album(c, key, settings.tz))
+
+    @app.get("/api/library/artist/{key}")
+    def library_artist(key: int) -> dict:
+        """An artist: its albums, top songs, plays and listens."""
+        return read_entity(lambda c: entities.artist(c, key, settings.tz))
+
+    @app.get("/api/library/track/{key}")
+    def library_track(key: int) -> dict:
+        """A track: file facts, jimbo-dj's analysis, plays (plays_of), listens by source, and its song's copies."""
+        return read_entity(lambda c: entities.track(c, key, settings.tz))
+
+    @app.get("/api/library/plays")
+    def library_plays(track: int | None = None, album: int | None = None, artist: int | None = None,
+                      song: bool = False, source: str | None = None, limit: int = 50, offset: int = 0) -> dict:
+        """The counted listens behind an album's, artist's or track's history numbers, newest first."""
+        return read_entity(lambda c: entities.plays(c, track, album, artist, song, source or None, limit, offset,
+                                                    settings.tz))
 
     @app.get("/api/modules")
     def modules() -> dict:
