@@ -116,8 +116,17 @@ T8 merged to `main` (e9166ee, PR #2) and deployed on the Mac mini. From the lapt
 - First build of the comparison on live data 2.6 s, then read from the cache; `/api/history/years` 0.03 s, all-time Top songs 1.7 s on first build.
 **P1 is done.**
 
-## Next: T9
-LIBRARY read-only, first session: library numbers and their rows (spec: `docs/specs/t9-library.md`).
+## T9 done (2026-11-22, `claude/t9-library-stats`, from `main` c035a70; laptop over SMB like T3–T8)
+- **Re-read jimbo-dj at 1d8a7cb:** `library.stats` is as the spec says. Two things it doesn't say: `top_artists` is a dict keyed by artist name (from `GROUP BY artist_key`, so two artists with one name would collide; copied as is), and jimbo-dj's own "analysed" count lives in `live.progress` (Analysis page): `analysis.status = 'ok' AND version >= ANALYZER_VERSION` (2), errors the same with `'error'`. `library.stats` itself only has Plex's `sonic_analysis`.
+- **Vendored unchanged** into `vendor/jimbodj_library.py` (`VENDORED_FROM`): `_pct`, `stats` (library.py), `_track_stats`, `plays_of`, `last_of` (history.py), `ANALYZER_VERSION`. Checked byte for byte against `git show 1d8a7cb:…`. Stand-ins below the copies: `db.connect` returns the read-only connection handed in with `using(conn)` (its close does nothing), `Settings.path_map` is empty, so `stats` never touches a disk; `BITRATE_BUCKETS` is the list written inside `stats`, for the rows (a test checks they agree).
+- `src/traqfreq/library.py`: `stats(conn)` = jimbo-dj's `stats` with `paths.folders` replaced by jimbo-dj's stored copy (`folders_compared: false`), plus `analyzer` (tracks, pct, errors, version), `top_artist_keys`, `rules` (W3) and `rows` (the `/api/library/tracks` query for every number), and `jimbodj` (stored row's built_at, stamp, `fresh` = stamp equals `[last_sync, history_version]`). `tracks(conn, …)`: filters codec / container (`?` = none), bitrate bucket, played, rated, sonic, analysis ok/error/older/none, mapped, multi_part, removed, artist_key, album_key; sort artist / plex_plays / added; 50 a page; each row has `plays` (plays_of), `history_plays`, `last_played` (last_of), and key/BPM only when analysed at the current version. `_track_stats` is built once per `history.cache_key` and kept in memory.
+- API: `GET /api/library/stats` (store name `library.stats`, key `v1|last_sync|history_version|a2|analysis rows|newest analyzed_at`: analysis results arrive without a sync, so they're in the key), `GET /api/library/tracks?…` (not cached: one indexed query per page).
+- Fixture: library columns on the existing six tracks, so T5–T8 counts are unchanged (see `make_fixture.py`'s doc); `meta.server`; jimbo-dj's stored `library.stats` in full shape with a fresh stamp. A test checks every stored field equals traqfreq's (a preview of T12's gate).
+- No page: API only (the LIBRARY page is T10), so nothing to check in the browser this session.
+- Tests: pytest 91 (`tests/test_library.py`, 10), Vitest 97, brand checks and 13 self-tests pass. Not timed on live data yet; `stats` is about fifteen `COUNT`s over 54k rows.
+
+## Next: T10
+LIBRARY page (`/library`), from `/api/library/stats` and `/api/library/tracks` (spec: `docs/specs/t9-library.md`, T10). Every number opens its rows via the `rows` map; analysed rows show key/BPM. After deploying T9, a quick live check worth doing: `curl http://macmini:4492/api/library/stats` vs jimbo-dj's `/api/stats` (tracks 52,779 …).
 
 ## Open questions
 1. ~~**Forgejo mirror**~~ *Done 2026-11-22:* Forgejo is live as a pull mirror of GitHub (`http://macmini:4470/ryanjpeterson/traqfreq`, syncs every 10 minutes, default branch `main`).

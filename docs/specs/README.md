@@ -28,7 +28,7 @@ Spec: [t5-history.md](t5-history.md).
 - **T8** Years, Wrapped, This day, Top; gate script, gate on the Mac mini. *Done.* **P1 gate passed 2026-11-22** (HANDOFF).
 ## P2 LIBRARY read-only: T9–T12
 Spec: [t9-library.md](t9-library.md).
-- **T9** Library numbers (jimbo-dj's `library.stats`) and the rows behind them.
+- **T9** Library numbers (jimbo-dj's `library.stats`) and the rows behind them. *Done* (API only; the page is T10).
 - **T10** LIBRARY page.
 - **T11** Albums, artists, a track.
 - **T12** Gate script and `GET /api/library/compare`; gate on the Mac mini.

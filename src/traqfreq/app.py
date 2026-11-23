@@ -9,7 +9,7 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
-from . import __version__, counted, history, legacy, periods, store
+from . import __version__, counted, history, legacy, library, periods, store
 from .settings import CORE, MODULES, Settings
 
 
@@ -193,6 +193,42 @@ def create_app(settings: Settings | None = None) -> FastAPI:
                                         wrapped_of=lambda p: wrapped_build(conn, p)[0]))
             return {**value, "cache": info}
         return read_history(run)
+
+    # --- T9: LIBRARY numbers and their rows -------------------------------------------------------------
+
+    def read_library(fn):
+        def run(conn):
+            try:
+                return fn(conn)
+            except library.NoLibrary:
+                raise HTTPException(404, "jimbo-dj's database has no tracks table")
+            except ValueError as e:
+                raise HTTPException(400, str(e))
+        return read_legacy(run)
+
+    @app.get("/api/library/stats")
+    def library_stats() -> dict:
+        """jimbo-dj's library numbers (its library.stats, counted its way), each with its rule and the query for
+        its rows; folders as jimbo-dj stored them. Read from the stats cache (key: last sync, history version,
+        analyzer version and results)."""
+        def run(conn):
+            value, info = store.cached(settings.data_dir, "library.stats", library.cache_key(conn),
+                                       lambda: library.stats(conn))
+            return {**value, "cache": info}
+        return read_library(run)
+
+    @app.get("/api/library/tracks")
+    def library_tracks(codec: str | None = None, container: str | None = None, bitrate: str | None = None,
+                       played: bool | None = None, rated: bool | None = None, sonic: bool | None = None,
+                       analysis: str | None = None, mapped: bool | None = None, multi_part: bool | None = None,
+                       removed: bool = False, artist_key: int | None = None, album_key: int | None = None,
+                       sort: str = "artist", limit: int = 50, offset: int = 0) -> dict:
+        """The rows behind each LIBRARY number: live tracks (or removed ones) by codec, container, bitrate
+        bucket, played, rated, Plex sonic analysis, jimbo-dj's analyzer (ok, error, older, none), mapped,
+        multi-part, artist or album; each with its plays (jimbo-dj's plays_of)."""
+        return read_library(lambda c: library.tracks(
+            c, codec, container, bitrate or None, played, rated, sonic, analysis or None, mapped, multi_part,
+            removed, artist_key, album_key, sort, limit, offset, settings.tz))
 
     @app.get("/api/modules")
     def modules() -> dict:
