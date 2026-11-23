@@ -1,16 +1,16 @@
-import type { ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 import { Band, Button, Card, NavItem, Status, StationRow, Text } from '../components/kit';
 import { t, tf, tMaybe, type StringKey } from '../copy/t';
-import { useGet, type Load } from '../app/api';
+import { post, useGet, type Load, type Posted } from '../app/api';
 import { MODULE_PATH } from '../app/route';
 import { duration, fmt } from '../app/history';
 import { trackHref } from '../app/entities';
 import { formatUtc } from '../app/time';
 import {
   OTHER_SERVERS, SERVERS_PATH, ageLabel, copiesApi, matchesApi, copiesHref, copiesTitle, copyQuery, matchQuery, matchesHref, matchesTitle,
-  pairName, reasonName, serverName, tierIn, tierName,
+  pairName, reasonName, refreshApi, refreshesApi, serverName, tierIn, tierName,
   type Copies, type Copy, type Identity, type Item, type MatchRow, type Matches, type Pair, type PairId, type ServerId,
-  type ServerStatus, type Servers, type Snapshot,
+  type RefreshEntry, type RefreshState, type ServerStatus, type Servers, type Snapshot,
 } from '../app/servers';
 
 type Nav = { navigate: (href: string) => void };
@@ -18,7 +18,7 @@ type Nav = { navigate: (href: string) => void };
 const PAIRS: PairId[] = ['jellyfin', 'navidrome', 'jellyfin-navidrome'];
 const rule = (text: string | undefined) => `${t('library.rule')}: ${text ?? ''}`;
 const unixUtc = (s: number) => formatUtc(new Date(s * 1000).toISOString());
-type Unit = 'copy' | 'item' | 'file' | 'song' | 'key';
+type Unit = 'copy' | 'item' | 'file' | 'song' | 'key' | 'page' | 'request';
 /** "1 copy", "14 items" (W3: numbers carry units). */
 export const n = (v: number, unit: Unit) => `${fmt(v)} ${t(`servers.unit.${unit}.${v === 1 ? 'one' : 'other'}` as StringKey)}`;
 
@@ -49,9 +49,11 @@ function Failed({ load }: { load: { state: 'failed'; status?: number } }) {
 
 /** SETUP → SERVERS (T15): the three servers, Plex's side of each copy, the matches by tier and reason, a song's three IDs. */
 export function SetupServers({ query, navigate }: { query: string } & Nav) {
-  const servers = useGet<Servers>('/api/servers');
+  const [reload, setReload] = useState(0);  // a refresh (T16) reads the status, snapshots and matches again
+  const servers = useGet<Servers>('/api/servers', reload);
   const identity = useGet<Identity>('/api/servers/identity');
-  const matches = useGet<Matches>('/api/servers/matches');
+  const matches = useGet<Matches>('/api/servers/matches', reload);
+  const refreshed = () => setReload((r) => r + 1);
   return (
     <>
       <Band module="S">{t('servers.sub')}</Band>
@@ -67,7 +69,8 @@ export function SetupServers({ query, navigate }: { query: string } & Nav) {
           {servers.state === 'ok' && (
             <div className="setup-grid">
               {servers.data.servers.map((s) => (
-                <ServerCard key={s.server} s={s} snap={matches.state === 'ok' ? matches.data.snapshots.find((x) => x.server === s.server) : undefined} />
+                <ServerCard key={s.server} s={s} snap={matches.state === 'ok' ? matches.data.snapshots.find((x) => x.server === s.server) : undefined}
+                  reload={reload} onRefreshed={refreshed} />
               ))}
             </div>
           )}
@@ -96,7 +99,7 @@ export function SetupServers({ query, navigate }: { query: string } & Nav) {
 }
 
 /** One server's column: set up or not (secrets only as set), and how old its snapshot is; Plex is jimbo-dj's sync. */
-function ServerCard({ s, snap }: { s: ServerStatus; snap?: Snapshot }) {
+function ServerCard({ s, snap, reload, onRefreshed }: { s: ServerStatus; snap?: Snapshot; reload: number; onRefreshed: () => void }) {
   const plex = s.server === 'plex';
   return (
     <Card label={serverName(s.server)}>
@@ -118,8 +121,73 @@ function ServerCard({ s, snap }: { s: ServerStatus; snap?: Snapshot }) {
         </ul>
         {plex ? <Text variant="note">{t('servers.plex.snapshot')}</Text> : <SnapshotLine snap={snap} s={s.server} />}
         {s.note && <Text variant="note">{s.note}</Text>}
+        {!plex && s.refresh && <RefreshPanel s={s} st={s.refresh} reload={reload} onRefreshed={onRefreshed} />}
       </div>
     </Card>
+  );
+}
+
+/** "14 items in 2 pages and 3 requests; 14 new, 0 gone; 0.4 s" or the server's own message. */
+function refreshSummary(e: RefreshEntry): string {
+  if (!e.ok) return e.error ?? t('servers.refresh.noAnswer');
+  const c = e.counts;
+  return tf('servers.refresh.counts', {
+    items: n(c.items ?? 0, 'item'), pages: n(c.pages ?? 0, 'page'), requests: n(c.requests ?? 0, 'request'),
+    added: fmt(c.added ?? 0), removed: fmt(c.removed ?? 0), sec: (c.seconds ?? 0).toFixed(1),
+  });
+}
+
+/** T16: refresh a server's snapshot (GET requests to it only; B2: nothing is written to it), the last refresh and the log. */
+function RefreshPanel({ s, st, reload, onRefreshed }: { s: ServerStatus; st: RefreshState; reload: number; onRefreshed: () => void }) {
+  const [busy, setBusy] = useState(false);
+  const [result, setResult] = useState<Posted<{ refresh: RefreshEntry }> | null>(null);
+  const log = useGet<RefreshState>(refreshesApi(s.server), reload);
+  const name = serverName(s.server);
+  const entries = log.state === 'ok' ? log.data.log : st.log;
+  const last = entries[0] ?? st.last;
+  const running = busy || st.running;
+  const run = async () => {
+    setBusy(true);
+    setResult(null);
+    const r = await post<{ refresh: RefreshEntry }>(refreshApi(s.server));
+    setBusy(false);
+    setResult(r);
+    onRefreshed();
+  };
+  return (
+    <div className="stack srv-refresh">
+      <Text variant="label">{t('servers.refresh.label')}</Text>
+      <div>
+        <Button onClick={run} disabled={!st.set_up || running}>
+          {running ? t('servers.refresh.running') : tf('servers.refresh.button', { s: name })}
+        </Button>
+      </div>
+      <Text variant="note">
+        {st.set_up ? tf('servers.refresh.how', { s: name }) : tf('servers.refresh.notSetUp', { s: name })}
+      </Text>
+      <div aria-live="polite">
+        {result && (result.ok
+          ? <Status state="ready" label={tf('servers.refresh.done', { n: n(result.data.refresh.counts.items ?? 0, 'item') })} />
+          : (
+            <div className="stack">
+              <Status state="needs" label={t('servers.refresh.failed')} />
+              <Text>{result.message ?? t('servers.refresh.noAnswer')}</Text>
+            </div>
+          ))}
+      </div>
+      {last
+        ? <Text>{tf(last.ok ? 'servers.refresh.lastDone' : 'servers.refresh.lastFailed', { at: unixUtc(last.finished_at) })}</Text>
+        : <Text variant="note">{t('servers.refresh.never')}</Text>}
+      {entries.length > 0 && (
+        <ul className="rows lib-paths" aria-label={tf('servers.refresh.log', { s: name })}>
+          {entries.map((e) => (
+            <Fact key={e.id} label={unixUtc(e.finished_at)} sub={refreshSummary(e)}>
+              {t(e.ok ? 'servers.refresh.ok' : 'servers.refresh.notOk')}
+            </Fact>
+          ))}
+        </ul>
+      )}
+    </div>
   );
 }
 

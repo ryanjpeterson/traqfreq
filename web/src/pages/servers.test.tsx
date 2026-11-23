@@ -140,11 +140,59 @@ describe('the SERVERS page', () => {
   it('with no snapshot, says so in each server and each pair', async () => {
     api(noSnapshots());
     open('/setup/servers');
-    expect(await screen.findAllByText('No snapshot of Jellyfin yet, so nothing on it is matched. Snapshots are read from T16 on.')).not.toHaveLength(0);
+    expect(await screen.findAllByText('No snapshot of Jellyfin yet, so nothing on it is matched.')).not.toHaveLength(0);
     expect(screen.getByText('No snapshot of Jellyfin yet, so this pair isn\'t matched.')).toBeTruthy();
     expect(screen.getByText('No snapshot of Navidrome yet, so this pair isn\'t matched.')).toBeTruthy();
     expect(screen.getByText('No snapshot of Jellyfin, Navidrome yet, so this pair isn\'t matched.')).toBeTruthy();
     expect(screen.queryByRole('list', { name: /matched by tier/ })).toBeNull();
+  });
+
+  it('offers no refresh for a server that is not set up (T16)', async () => {
+    const f = api(all());
+    open('/setup/servers');
+    const jf = (await screen.findByRole('button', { name: 'Refresh Jellyfin' })) as HTMLButtonElement;
+    expect(jf.disabled).toBe(true);
+    expect((screen.getByRole('button', { name: 'Refresh Navidrome' }) as HTMLButtonElement).disabled).toBe(true);
+    expect(screen.getByText('Set up Jellyfin to refresh it (the settings above).')).toBeTruthy();
+    expect(screen.getAllByText('Never refreshed.')).toHaveLength(2);
+    expect(screen.queryByRole('button', { name: 'Refresh Plex' })).toBeNull();  // Plex is jimbo-dj's sync
+    expect((f.mock.calls as unknown[][]).some((c) => (c[1] as RequestInit | undefined)?.method === 'POST')).toBe(false);
+  });
+
+  it('refreshes a set-up server, then shows the last refresh and its log (T16)', async () => {
+    const answers: Record<string, unknown> = all({
+      '/api/servers': A['setup:/api/servers'],
+      '/api/servers/jellyfin/refreshes?limit=5': A['setup:/api/servers/jellyfin/refreshes?limit=5'],
+      '/api/servers/navidrome/refreshes?limit=5': A['setup:/api/servers/navidrome/refreshes?limit=5'],
+    });
+    const posts: string[] = [];
+    let next: 'ok' | 'failed' = 'ok';
+    vi.stubGlobal('fetch', vi.fn(async (url: string, init?: RequestInit) => {
+      if (init?.method === 'POST') {
+        posts.push(url);
+        const body = A[`setup:refresh-${next}`];
+        return { ok: next === 'ok', status: next === 'ok' ? 200 : 502, json: async () => body };
+      }
+      if (!(url in answers)) return { ok: false, status: 503, json: async () => ({}) };
+      return { ok: true, status: 200, json: async () => answers[url] };
+    }));
+    const user = userEvent.setup();
+    open('/setup/servers');
+    const jf = await screen.findByRole('button', { name: 'Refresh Jellyfin' });
+    expect((jf as HTMLButtonElement).disabled).toBe(false);
+    expect(screen.getByText(/Only reads Jellyfin, page by page.*Nothing is written to Jellyfin\./)).toBeTruthy();
+    const log = await screen.findByRole('list', { name: 'Jellyfin refresh log' });
+    expect(within(log).getAllByRole('listitem')).toHaveLength(2);
+    expect(within(log).getByText('14 items in 2 pages and 3 requests; 14 new, 0 gone; 0.0 s')).toBeTruthy();
+    expect(within(log).getByText('Jellyfin answered 500 Internal Server Error (GET /Items): Database is locked')).toBeTruthy();
+    expect(screen.getByText(/^Last refresh .*: failed, the snapshot before it is kept$/)).toBeTruthy();
+    await user.click(jf);
+    expect(posts).toEqual(['/api/servers/jellyfin/refresh']);
+    expect(await screen.findByText('Refreshed: 14 items')).toBeTruthy();
+    next = 'failed';
+    await user.click(screen.getByRole('button', { name: 'Refresh Jellyfin' }));
+    expect(await screen.findByText('Refresh failed')).toBeTruthy();
+    expect(screen.getAllByText('Jellyfin answered 500 Internal Server Error (GET /Items): Database is locked').length).toBeGreaterThan(1);
   });
 
   it('SETUP has a servers card opening the page', async () => {

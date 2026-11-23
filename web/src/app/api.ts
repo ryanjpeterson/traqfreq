@@ -22,8 +22,8 @@ export const CORE_ONLY: ModuleSwitch[] = (['L', 'H', 'T', 'D', 'M', 'F', 'S'] as
 
 export type Load<T> = { state: 'loading' } | { state: 'ok'; data: T } | { state: 'failed'; status?: number };
 
-/** GET a JSON endpoint once. */
-export function useGet<T>(url: string): Load<T> {
+/** GET a JSON endpoint once (again whenever `reload` changes). */
+export function useGet<T>(url: string, reload = 0): Load<T> {
   const [load, setLoad] = useState<Load<T>>({ state: 'loading' });
   useEffect(() => {
     let live = true;
@@ -32,8 +32,24 @@ export function useGet<T>(url: string): Load<T> {
       .then((data: T) => live && setLoad({ state: 'ok', data }))
       .catch((e) => live && setLoad({ state: 'failed', status: typeof e === 'number' ? e : undefined }));
     return () => { live = false; };
-  }, [url]);
+  }, [url, reload]);
   return load;
+}
+
+/** The answer to a POST to traqfreq's own API: the JSON either way, so an error shows its own message. */
+export type Posted<T> = { ok: true; data: T } | { ok: false; status: number; message: string | null };
+
+/** POST to traqfreq's own API (never to a media server: traqfreq reads those with GET only). */
+export async function post<T>(url: string): Promise<Posted<T>> {
+  try {
+    const r = await fetch(url, { method: 'POST' });
+    const body = await r.json().catch(() => null);
+    if (r.ok) return { ok: true, data: body as T };
+    const d = body?.detail;
+    return { ok: false, status: r.status, message: typeof d === 'string' ? d : (d?.message ?? null) };
+  } catch {
+    return { ok: false, status: 0, message: null };
+  }
 }
 
 /** The module switches, and whether the answer is in (false while loading). */

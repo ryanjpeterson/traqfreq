@@ -51,7 +51,19 @@
      "TRAQFREQ_JELLYFIN_URL",
      "TRAQFREQ_JELLYFIN_KEY"
     ],
-    "note": "Not set up: TRAQFREQ_JELLYFIN_URL, TRAQFREQ_JELLYFIN_KEY missing. Every page works without it."
+    "note": "Not set up: TRAQFREQ_JELLYFIN_URL, TRAQFREQ_JELLYFIN_KEY missing. Every page works without it.",
+    "refresh": {
+     "server": "jellyfin",
+     "set_up": false,
+     "missing": [
+      "TRAQFREQ_JELLYFIN_URL",
+      "TRAQFREQ_JELLYFIN_KEY"
+     ],
+     "running": false,
+     "last": null,
+     "log": [],
+     "rule": "POST /api/servers/{server}/refresh: GET requests to the server only; writes traqfreq's own database (its snapshot and this log), nothing else."
+    }
    },
    {
     "server": "navidrome",
@@ -84,7 +96,20 @@
      "TRAQFREQ_NAVIDROME_USER",
      "TRAQFREQ_NAVIDROME_PASSWORD"
     ],
-    "note": "Not set up: TRAQFREQ_NAVIDROME_URL, TRAQFREQ_NAVIDROME_USER, TRAQFREQ_NAVIDROME_PASSWORD missing. Every page works without it."
+    "note": "Not set up: TRAQFREQ_NAVIDROME_URL, TRAQFREQ_NAVIDROME_USER, TRAQFREQ_NAVIDROME_PASSWORD missing. Every page works without it.",
+    "refresh": {
+     "server": "navidrome",
+     "set_up": false,
+     "missing": [
+      "TRAQFREQ_NAVIDROME_URL",
+      "TRAQFREQ_NAVIDROME_USER",
+      "TRAQFREQ_NAVIDROME_PASSWORD"
+     ],
+     "running": false,
+     "last": null,
+     "log": [],
+     "rule": "POST /api/servers/{server}/refresh: GET requests to the server only; writes traqfreq's own database (its snapshot and this log), nothing else."
+    }
    }
   ],
   "read_only": "traqfreq never writes to any server: GET requests only, no playlists, plays or tags."
@@ -2261,6 +2286,294 @@
    "limit": 50,
    "rule": "every pair, Plex copy 101 (its match or reason; Jellyfin ↔ Navidrome matched through it)",
    "rows": []
+  }
+ },
+ "/api/servers/jellyfin/refreshes?limit=5": {
+  "server": "jellyfin",
+  "set_up": false,
+  "missing": [
+   "TRAQFREQ_JELLYFIN_URL",
+   "TRAQFREQ_JELLYFIN_KEY"
+  ],
+  "running": false,
+  "last": null,
+  "log": [],
+  "rule": "POST /api/servers/{server}/refresh: GET requests to the server only; writes traqfreq's own database (its snapshot and this log), nothing else."
+ },
+ "/api/servers/navidrome/refreshes?limit=5": {
+  "server": "navidrome",
+  "set_up": false,
+  "missing": [
+   "TRAQFREQ_NAVIDROME_URL",
+   "TRAQFREQ_NAVIDROME_USER",
+   "TRAQFREQ_NAVIDROME_PASSWORD"
+  ],
+  "running": false,
+  "last": null,
+  "log": [],
+  "rule": "POST /api/servers/{server}/refresh: GET requests to the server only; writes traqfreq's own database (its snapshot and this log), nothing else."
+ },
+ "setup:/api/servers": {
+  "servers": [
+   {
+    "server": "plex",
+    "name": "Plex",
+    "set_up": true,
+    "read": true,
+    "source": "jimbo-dj's database, read-only (its last Plex sync)",
+    "settings": [
+     {
+      "env": "TRAQFREQ_PLEX_ROOTS",
+      "set": false,
+      "secret": false,
+      "value": null
+     }
+    ],
+    "server_name": "Fixture Plex",
+    "version": "1.41.0",
+    "section": "Music",
+    "last_sync": 1793844000,
+    "tracks": 5
+   },
+   {
+    "server": "jellyfin",
+    "name": "Jellyfin",
+    "set_up": true,
+    "read": false,
+    "url": "http://jellyfin.test",
+    "settings": [
+     {
+      "env": "TRAQFREQ_JELLYFIN_URL",
+      "set": true,
+      "secret": false,
+      "value": "http://jellyfin.test"
+     },
+     {
+      "env": "TRAQFREQ_JELLYFIN_KEY",
+      "set": true,
+      "secret": true,
+      "value": null
+     },
+     {
+      "env": "TRAQFREQ_JELLYFIN_USER",
+      "set": false,
+      "secret": false,
+      "value": null
+     }
+    ],
+    "missing": [],
+    "note": "Set up; traqfreq reads it from T17 on (GET only).",
+    "refresh": {
+     "server": "jellyfin",
+     "set_up": true,
+     "missing": [],
+     "running": false,
+     "last": {
+      "id": 2,
+      "server": "jellyfin",
+      "started_at": 1795446613.04384,
+      "finished_at": 1795446613.044688,
+      "ok": false,
+      "counts": {
+       "requests": 2,
+       "seconds": 0.001
+      },
+      "error": "Jellyfin answered 500 Internal Server Error (GET /Items): Database is locked"
+     },
+     "log": [
+      {
+       "id": 2,
+       "server": "jellyfin",
+       "started_at": 1795446613.04384,
+       "finished_at": 1795446613.044688,
+       "ok": false,
+       "counts": {
+        "requests": 2,
+        "seconds": 0.001
+       },
+       "error": "Jellyfin answered 500 Internal Server Error (GET /Items): Database is locked"
+      }
+     ],
+     "rule": "POST /api/servers/{server}/refresh: GET requests to the server only; writes traqfreq's own database (its snapshot and this log), nothing else."
+    }
+   },
+   {
+    "server": "navidrome",
+    "name": "Navidrome",
+    "set_up": true,
+    "read": false,
+    "url": "http://navidrome.test",
+    "settings": [
+     {
+      "env": "TRAQFREQ_NAVIDROME_URL",
+      "set": true,
+      "secret": false,
+      "value": "http://navidrome.test"
+     },
+     {
+      "env": "TRAQFREQ_NAVIDROME_USER",
+      "set": true,
+      "secret": false,
+      "value": "reader"
+     },
+     {
+      "env": "TRAQFREQ_NAVIDROME_PASSWORD",
+      "set": true,
+      "secret": true,
+      "value": null
+     }
+    ],
+    "missing": [],
+    "note": "Set up; traqfreq reads it from T18 on (GET only).",
+    "refresh": {
+     "server": "navidrome",
+     "set_up": true,
+     "missing": [],
+     "running": false,
+     "last": null,
+     "log": [],
+     "rule": "POST /api/servers/{server}/refresh: GET requests to the server only; writes traqfreq's own database (its snapshot and this log), nothing else."
+    }
+   }
+  ],
+  "read_only": "traqfreq never writes to any server: GET requests only, no playlists, plays or tags."
+ },
+ "setup:/api/servers/jellyfin/refreshes?limit=5": {
+  "server": "jellyfin",
+  "set_up": true,
+  "missing": [],
+  "running": false,
+  "last": {
+   "id": 2,
+   "server": "jellyfin",
+   "started_at": 1795446613.04384,
+   "finished_at": 1795446613.044688,
+   "ok": false,
+   "counts": {
+    "requests": 2,
+    "seconds": 0.001
+   },
+   "error": "Jellyfin answered 500 Internal Server Error (GET /Items): Database is locked"
+  },
+  "log": [
+   {
+    "id": 2,
+    "server": "jellyfin",
+    "started_at": 1795446613.04384,
+    "finished_at": 1795446613.044688,
+    "ok": false,
+    "counts": {
+     "requests": 2,
+     "seconds": 0.001
+    },
+    "error": "Jellyfin answered 500 Internal Server Error (GET /Items): Database is locked"
+   },
+   {
+    "id": 1,
+    "server": "jellyfin",
+    "started_at": 1795446613.037241,
+    "finished_at": 1795446613.040994,
+    "ok": true,
+    "counts": {
+     "items": 14,
+     "pages": 2,
+     "requests": 3,
+     "added": 14,
+     "removed": 0,
+     "before": null,
+     "hidden_paths": 0,
+     "folders": 1,
+     "play_counts": 4,
+     "seconds": 0.004
+    },
+    "error": null
+   }
+  ],
+  "rule": "POST /api/servers/{server}/refresh: GET requests to the server only; writes traqfreq's own database (its snapshot and this log), nothing else."
+ },
+ "setup:/api/servers/navidrome/refreshes?limit=5": {
+  "server": "navidrome",
+  "set_up": true,
+  "missing": [],
+  "running": false,
+  "last": null,
+  "log": [],
+  "rule": "POST /api/servers/{server}/refresh: GET requests to the server only; writes traqfreq's own database (its snapshot and this log), nothing else."
+ },
+ "setup:refresh-ok": {
+  "refresh": {
+   "id": 1,
+   "server": "jellyfin",
+   "started_at": 1795446613.037241,
+   "finished_at": 1795446613.040994,
+   "ok": true,
+   "counts": {
+    "items": 14,
+    "pages": 2,
+    "requests": 3,
+    "added": 14,
+    "removed": 0,
+    "before": null,
+    "hidden_paths": 0,
+    "folders": 1,
+    "play_counts": 4,
+    "seconds": 0.004
+   },
+   "error": null
+  },
+  "server": "jellyfin",
+  "set_up": true,
+  "missing": [],
+  "running": false,
+  "last": {
+   "id": 1,
+   "server": "jellyfin",
+   "started_at": 1795446613.037241,
+   "finished_at": 1795446613.040994,
+   "ok": true,
+   "counts": {
+    "items": 14,
+    "pages": 2,
+    "requests": 3,
+    "added": 14,
+    "removed": 0,
+    "before": null,
+    "hidden_paths": 0,
+    "folders": 1,
+    "play_counts": 4,
+    "seconds": 0.004
+   },
+   "error": null
+  },
+  "log": [
+   {
+    "id": 1,
+    "server": "jellyfin",
+    "started_at": 1795446613.037241,
+    "finished_at": 1795446613.040994,
+    "ok": true,
+    "counts": {
+     "items": 14,
+     "pages": 2,
+     "requests": 3,
+     "added": 14,
+     "removed": 0,
+     "before": null,
+     "hidden_paths": 0,
+     "folders": 1,
+     "play_counts": 4,
+     "seconds": 0.004
+    },
+    "error": null
+   }
+  ],
+  "rule": "POST /api/servers/{server}/refresh: GET requests to the server only; writes traqfreq's own database (its snapshot and this log), nothing else."
+ },
+ "setup:refresh-failed": {
+  "detail": {
+   "error": "server",
+   "message": "Jellyfin answered 500 Internal Server Error (GET /Items): Database is locked",
+   "status": 500
   }
  }
 }
