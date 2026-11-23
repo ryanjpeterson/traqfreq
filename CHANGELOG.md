@@ -4,6 +4,7 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 ### Added
+- P2 gate passed on live data: both stored LIBRARY rows (`library.stats` 23 fields, `library.charts` 37), 60 of 60 fields, equal jimbo-dj's.
 - LIBRARY's play history counts every source, not Plex alone: played tracks and plays by `plays_of` (Plex's count or the history's per track, the larger, never both), plays by source (Last.fm, Plex, Spotify, Apple Music; a list with bars and a summary, each opening its tracks) and top artists from every source. jimbo-dj's Plex-only numbers stay beside them, labelled, for the P2 gate. `GET /api/library/stats` adds `plays_all`; `/api/library/tracks` adds `heard`, `source` and the order `plays`.
 - T12: P2 gate: `scripts/p2_gate.py` (read-only, `--url` or `--db`; exit 0 = passed) and `GET /api/library/compare` put every field jimbo-dj stored in `library.stats` and the non-genre parts of `library.charts` (keys, files, time, place, sound) next to traqfreq's, with matches and whether the stored row is fresh. Folders, genres and styles are shown as stored, not compared.
 - T12: `/library/compare`: every stored field, counts opening their rows, chart fields with their bars (jimbo-dj's next to traqfreq's), each bar opening its tracks; the gate card on LIBRARY and SETUP.

@@ -174,6 +174,12 @@ PR #8 (`claude/t11-all-sources`, LIBRARY play history from every source) was **n
 - Fixture: bit depth, sample rate, channels and stream size on the six tracks, Plex/MusicBrainz places for two artists (`mb_artists` added in jimbo-dj's shape), and jimbo-dj's stored `library.charts` (`scripts/fixture_library_charts.json`, worked out by hand in America/Denver; genres invented): **stale** (stamp from before the last sync) with FLAC 3 instead of 2, the one explained difference. Gate on the fixture: 2 stored rows, 59 of 60 fields match, PASSED. T5–T11 counts unchanged.
 - Tests: pytest 114 (`tests/test_library_gate.py`, 12), Vitest 137 (`web/src/pages/gate.test.tsx`, 11, answers generated from the fixture's API in `gate.answers.json`), brand checks and 13 self-tests pass. Checked in the browser on the `--checks` fixture: compare page light desktop (bars open) and dark, LIBRARY and SETUP cards dark, 375 px light (compare with bars open, a facet rows page: no page side-scroll), no console errors.
 
+## P2 gate: passed 2026-11-23
+PR #8 (every source) and PR #9 (T12) merged to `main` (bbc6cf9) and deployed on the Mac mini. From the laptop: `python3 scripts/p2_gate.py --url http://macmini:4492` → **PASSED**, exit 0.
+- **2 stored rows, both match, 0 differ (0 of them stale), 60 of 60 fields**: `library.stats` 23/23, `library.charts` 37/37. Not compared in P2, as planned: `paths.folders`, `genres`, `sound.genres`. Time zone America/Denver.
+- The live app, checked the same day: `/api/health` ok (version 2026.11.1); `/api/library/compare` answers 200 in 1.3 s; `/api/library/stats` has `plays_all` (52,758 tracks; 113,063 plays from every source); `/api/library/albums` lists 4,304 albums, the most played "You’re a Woman, I’m a Machine" with 1,330 plays; the artist page works (Death From Above 1979: 77 tracks, 2,248 plays by `plays_of`, 2,252 history plays).
+**P2 is done.**
+
 ## Next: P2 gate on live data, then P3 / T13
 1. **After deploying T12** (Ryan): run `python3 scripts/p2_gate.py --url http://macmini:4492` from the laptop checkout. Expect `library.stats` to match (T9/T10 already matched jimbo-dj's `/api/stats` field by field). `library.charts` is new: if a row differs and is fresh, the field and its first difference are printed; open `/library/compare` to see the bars. Record the result here as "P2 gate: passed <date>" (or what differed), then set P2 Done on the progress deck.
 2. **P3 / T13**: SERVERS, track identity (spec to write: `docs/specs/README.md` lists T13–T16 track identity, T17 Jellyfin, T18 Navidrome, T19 gate).
