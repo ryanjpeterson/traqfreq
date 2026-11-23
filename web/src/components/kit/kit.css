@@ -126,6 +126,9 @@
 .kit-station-pos { font-size: 14px; color: var(--ink2); text-align: right; font-variant-numeric: tabular-nums; }
 .kit-station-main { display: grid; min-width: 0; }
 .kit-station-title { font-size: 15px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.kit-station-title.is-link { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+.kit-station-title.is-link:hover { text-decoration-thickness: 2px; }
+.kit-station-title.is-link:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
 .kit-station-artist { font-size: 14px; color: var(--ink2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .kit-station-code { display: flex; gap: 8px; font-family: var(--label-font); font-size: 12px; color: var(--ink2); font-variant-numeric: tabular-nums; }
 .kit-station-why {

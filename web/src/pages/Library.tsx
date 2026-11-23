@@ -3,6 +3,7 @@ import { t, tf } from '../copy/t';
 import { useGet } from '../app/api';
 import { formatUtc } from '../app/time';
 import { count, fmt1, pct, tracksHref, valueLabel, type LibraryStats } from '../app/library';
+import { artistHref, listHref } from '../app/entities';
 import { EmptyState } from './ModulePage';
 
 type Nav = { navigate: (href: string) => void };
@@ -54,9 +55,9 @@ function LibraryBody({ s, navigate }: { s: LibraryStats } & Nav) {
   const ph = s.play_history;
   const p = s.paths;
   const unmapped = s.tracks - p.mapped;
-  const head: { k: string; label: string; text: string; n: number }[] = [
-    { k: 'albums', label: t('library.albums'), text: count(s.albums, 'album'), n: s.albums },
-    { k: 'artists', label: t('library.artists'), text: count(s.artists, 'artist'), n: s.artists },
+  const head: { k: string; label: string; text: string; n: number; href?: string }[] = [
+    { k: 'albums', label: t('library.albums'), text: count(s.albums, 'album'), n: s.albums, href: listHref('albums') },
+    { k: 'artists', label: t('library.artists'), text: count(s.artists, 'artist'), n: s.artists, href: listHref('artists') },
     { k: 'hours', label: t('library.hours'), text: tf('unit.hour', { n: fmt1(s.hours) }), n: s.tracks },
     { k: 'size_gb', label: t('library.size'), text: tf('unit.gb', { n: fmt1(s.size_gb) }), n: s.tracks },
   ];
@@ -75,7 +76,12 @@ function LibraryBody({ s, navigate }: { s: LibraryStats } & Nav) {
           {head.map((h) => (
             <li key={h.k}>
               <span><strong>{h.label}</strong><span className="sub">{rule(s, h.k)}</span></span>
-              <TracksLink text={h.text} n={h.n} query={q(s, h.k)} navigate={navigate} />
+              {h.href && h.n > 0 ? (
+                <Button variant="quiet" href={h.href} onClick={() => navigate(h.href!)}>
+                  {h.text}
+                  <span className="visually-hidden">{`, ${t(`entity.${h.k}.open` as 'entity.albums.open')}`}</span>
+                </Button>
+              ) : <TracksLink text={h.text} n={h.n} query={q(s, h.k)} navigate={navigate} />}
             </li>
           ))}
         </ul>
@@ -266,7 +272,7 @@ function TopArtists({ s, navigate }: { s: LibraryStats } & Nav) {
               <span className="hist-top-name">
                 <span className="hist-rank">{i + 1}</span>
                 <span className="hist-top-text">
-                  <strong>{a.artist}</strong>
+                  <strong><Button variant="quiet" href={artistHref(a.artist_key)} onClick={() => navigate(artistHref(a.artist_key))}>{a.artist}</Button></strong>
                   <span className="hist-bar lib-bar" aria-hidden="true"><span style={{ width: `${(100 * a.plays) / most}%` }} /></span>
                 </span>
               </span>

@@ -12,6 +12,7 @@ import { HistoryWrapped } from './pages/HistoryWrapped';
 import { HistoryYears } from './pages/HistoryYears';
 import { Library } from './pages/Library';
 import { LibraryRows } from './pages/LibraryRows';
+import { LibraryAlbum, LibraryArtist, LibraryList, LibraryPlays, LibraryTrack } from './pages/LibraryEntities';
 import { MapHome } from './pages/MapHome';
 import { ModulePage } from './pages/ModulePage';
 import { NotFound } from './pages/NotFound';
@@ -61,9 +62,7 @@ export function Shell() {
         {r.page === 'search' && <Search navigate={navigate} />}
         {r.page === 'module' && r.module === 'S' && <Setup modules={modules} navigate={navigate} />}
         {r.page === 'module' && r.module === 'H' && !waiting && <HistoryPage sub={r.sub} query={path.replace(/^[^?]*/, '')} navigate={navigate} />}
-        {r.page === 'module' && r.module === 'L' && (r.sub === 'tracks'
-          ? <LibraryRows query={path.replace(/^[^?]*/, '')} navigate={navigate} />
-          : <Library navigate={navigate} />)}
+        {r.page === 'module' && r.module === 'L' && <LibraryPage sub={r.sub} entityKey={r.key} query={path.replace(/^[^?]*/, '')} navigate={navigate} />}
         {r.page === 'module' && r.module !== 'S' && r.module !== 'H' && r.module !== 'L' && !waiting && <ModulePage module={r.module} navigate={navigate} />}
         {r.page === 'notFound' && <NotFound navigate={navigate} />}
       </main>
@@ -81,4 +80,16 @@ function HistoryPage({ sub, query, navigate }: { sub?: string; query: string; na
   if (sub === 'top') return <HistoryTop query={query} navigate={navigate} />;
   if (sub === 'compare') return <HistoryCompare navigate={navigate} />;
   return <History navigate={navigate} />;
+}
+
+/** LIBRARY's pages: the overview, the rows behind a number, the album and artist lists, an album, an artist, a
+ *  track, and the listens behind their history numbers (T11). */
+function LibraryPage({ sub, entityKey, query, navigate }: { sub?: string; entityKey?: number; query: string; navigate: (href: string) => void }) {
+  if (sub === 'tracks') return <LibraryRows query={query} navigate={navigate} />;
+  if (sub === 'albums' || sub === 'artists') return <LibraryList kind={sub} query={query} navigate={navigate} />;
+  if (sub === 'plays') return <LibraryPlays query={query} navigate={navigate} />;
+  if (sub === 'album' && entityKey != null) return <LibraryAlbum entityKey={entityKey} navigate={navigate} />;
+  if (sub === 'artist' && entityKey != null) return <LibraryArtist entityKey={entityKey} navigate={navigate} />;
+  if (sub === 'track' && entityKey != null) return <LibraryTrack entityKey={entityKey} navigate={navigate} />;
+  return <Library navigate={navigate} />;
 }

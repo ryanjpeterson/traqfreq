@@ -2,6 +2,7 @@ import { Band, Button, Card, NavItem, Status, StationRow, Text } from '../compon
 import { t, tf, type StringKey } from '../copy/t';
 import { useGet } from '../app/api';
 import { MODULE_PATH } from '../app/route';
+import { albumHref, artistHref, trackHref } from '../app/entities';
 import { dayLabel, duration, fmt } from '../app/history';
 import {
   SORTS, count, fmt1, parseTrackFilter, trackQuery, tracksHref, valueLabel,
@@ -67,6 +68,12 @@ export function LibraryRows({ query, navigate }: Props) {
       <div className="page stack">
         <div><Button variant="quiet" href={MODULE_PATH.L} onClick={go(MODULE_PATH.L)}>{t('library.rows.back')}</Button></div>
         <Text variant="heading">{filterTitle(f)}</Text>
+        {(f.artist_key != null || f.album_key != null) && (
+          <div className="hist-actions">
+            {f.artist_key != null && <Button variant="quiet" href={artistHref(f.artist_key)} onClick={go(artistHref(f.artist_key))}>{t('entity.rows.artist')}</Button>}
+            {f.album_key != null && <Button variant="quiet" href={albumHref(f.album_key)} onClick={go(albumHref(f.album_key))}>{t('entity.rows.album')}</Button>}
+          </div>
+        )}
         <nav className="hist-choices" aria-label={t('library.rows.sort')}>
           {SORTS.map((s) => {
             const href = tracksHref(trackQuery({ ...f, sort: s, offset: undefined }));
@@ -82,13 +89,13 @@ export function LibraryRows({ query, navigate }: Props) {
             </div>
           </Card>
         )}
-        {load.state === 'ok' && <RowsBody l={load.data} f={f} go={go} />}
+        {load.state === 'ok' && <RowsBody l={load.data} f={f} go={go} navigate={navigate} />}
       </div>
     </>
   );
 }
 
-function RowsBody({ l, f, go }: { l: Tracks; f: TrackFilter; go: (href: string) => () => void }) {
+function RowsBody({ l, f, go, navigate }: { l: Tracks; f: TrackFilter; go: (href: string) => () => void; navigate: (href: string) => void }) {
   const a = l.total ? l.offset + 1 : 0;
   const b = l.offset + l.rows.length;
   const prev = l.offset > 0 ? tracksHref(trackQuery({ ...f, offset: Math.max(0, l.offset - l.limit) })) : null;
@@ -109,6 +116,8 @@ function RowsBody({ l, f, go }: { l: Tracks; f: TrackFilter; go: (href: string) 
               musicalKey={r.camelot ?? undefined}
               bpm={r.bpm != null ? Math.round(r.bpm) : undefined}
               why={trackWhy(r)}
+              href={trackHref(r.rating_key)}
+              onNavigate={navigate}
             />
           ))}
         </ol>
