@@ -49,19 +49,25 @@ export type TrackSort = 'artist' | 'plays' | 'plex_plays' | 'added';
 export const SORTS: TrackSort[] = ['artist', 'plays', 'plex_plays', 'added'];
 export const ANALYSIS = ['ok', 'error', 'older', 'none'] as const;
 export const BUCKETS = ['<192k', '192-255k', '256-319k', '320k', '>320k (lossless)'];
+/** T12: jimbo-dj's chart filters (facets.members) the rows page takes: one bar of a Files, Time or Place chart. */
+export const FACETS = ['quality', 'format', 'bits', 'rate', 'bitrate', 'channels', 'length', 'decade', 'added', 'hour',
+  'weekday', 'country', 'city', 'formed', 'artist_type', 'label'] as const;
+export type Facet = (typeof FACETS)[number];
 
 /** The filters /api/library/tracks knows, as the rows page reads them from its address. */
 export type TrackFilter = {
   codec?: string; container?: string; bitrate?: string; played?: boolean; rated?: boolean; sonic?: boolean;
   analysis?: (typeof ANALYSIS)[number]; mapped?: boolean; multi_part?: boolean; removed?: boolean;
   artist_key?: number; album_key?: number; sort?: TrackSort; offset?: number;
+  /** T12: one bar of jimbo-dj's Library charts (facet and its value, e.g. format FLAC). */
+  facet?: Facet; value?: string;
   /** Played anywhere (plays_of > 0), and tracks with counted listens from one source. */
   heard?: boolean; source?: string;
   /** The artist's name, for the heading only; the API filters by its key. */
   name?: string;
 };
 const BOOLS = ['played', 'heard', 'rated', 'sonic', 'mapped', 'multi_part', 'removed'] as const;
-const ORDER: (keyof TrackFilter)[] = ['codec', 'container', 'bitrate', ...BOOLS, 'source', 'analysis', 'artist_key', 'album_key', 'sort', 'offset', 'name'];
+const ORDER: (keyof TrackFilter)[] = ['codec', 'container', 'bitrate', ...BOOLS, 'source', 'analysis', 'artist_key', 'album_key', 'facet', 'value', 'sort', 'offset', 'name'];
 
 export function parseTrackFilter(query: string): TrackFilter {
   const q = new URLSearchParams(query);
@@ -70,6 +76,7 @@ export function parseTrackFilter(query: string): TrackFilter {
   const a = q.get('analysis');
   const s = q.get('sort');
   const b = q.get('bitrate');
+  const facet = FACETS.find((x) => x === q.get('facet'));
   const f: TrackFilter = {
     codec: q.get('codec') ?? undefined,
     container: q.get('container') ?? undefined,
@@ -81,6 +88,8 @@ export function parseTrackFilter(query: string): TrackFilter {
     sort: SORTS.find((x) => x === s),
     offset: num('offset'),
     name: (q.get('artist_key') && q.get('name')) || undefined,
+    facet: facet && q.get('value') != null ? facet : undefined,
+    value: (facet && q.get('value')) ?? undefined,
   };
   for (const k of BOOLS) f[k] = bool(k);
   if (f.removed === false) f.removed = undefined;  // false is the default: live tracks
@@ -114,6 +123,24 @@ type Unit = 'track' | 'play' | 'album' | 'artist' | 'folder' | 'year' | 'source'
 export function count(n: number, unit: Unit): string {
   return `${fmt(n)} ${t(`unit.${unit}.${n === 1 ? 'one' : 'other'}` as StringKey)}`;
 }
+
+/** T12: the P2 gate as GET /api/library/compare answers it. A field holds both values (lists and dicts too), and
+ *  `rows`: the /api/library/tracks query for a count, or one per bar for a chart. */
+export type GateField = {
+  field: string; matches: boolean | null; jimbodj?: unknown; traqfreq?: unknown; size?: number; first_diff?: unknown;
+  skipped?: string; rows?: string | Record<string, string>;
+};
+export type GateRow = {
+  name: 'library.stats' | 'library.charts'; params: string; built_at: string | null; version: number;
+  fresh: boolean | null; stamp: string | null; current_stamp?: string; matches: boolean; fields: GateField[];
+  compared: number; matching: number; error?: string;
+};
+export type LibraryGate = {
+  rows: GateRow[]; stored: number; fields: number; matching_fields: number; matching: number; differ: number;
+  stale: number; explained: number; passed: boolean; timezone: string; not_in_p2: Record<string, string>;
+  chart_rules: Record<string, string>; rules: Record<string, string>;
+  cache?: { built_at: number; seconds: number; hit: boolean; key: string };
+};
 
 /** A value as jimbo-dj counts it: '?' is "none given" (COALESCE(col, '?')). */
 export const valueLabel = (v: string) => (v === '?' ? t('library.none') : v);

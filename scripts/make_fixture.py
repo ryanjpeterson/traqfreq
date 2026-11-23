@@ -28,6 +28,12 @@ every counting rule has a case that tells it apart from a raw row count:
   two albums, and a cached MusicBrainz release (mb_releases, jimbo-dj's shape) whose first release (2020) is
   older than Plex's year (2021), so an album's year is jimbo-dj's _release_years, not tracks.year; key, scale
   and moods on the analysed tracks. Tests that need a second copy of a song add one to a scratch copy.
+- T12, the P2 gate: bit depth, sample rate, channels and stream size on the 6 tracks (FILES), Plex and
+  MusicBrainz places for two artists (ARTIST_INFO, an mb_artists table in jimbo-dj's shape), and jimbo-dj's
+  stored library.charts (fixture_library_charts.json: Files, Time, Place, keys and Sound worked out by hand from
+  the rows here, in America/Denver; genres and styles invented, as TAGS doesn't count them in P2). That row is
+  stale: its stamp is from before the last sync, when Old Signal (FLAC) was still live, so its FLAC count is 3,
+  not 2, the one explained difference the gate shows. No count above changes.
 - With --checks: T7's invented bursts, loop, steady rhythm and windows (CHECK_LISTENS), on top of the above.
 
 Usage: python scripts/make_fixture.py [--checks] [out_path]   (default tests/fixtures/legacy.sqlite)
@@ -74,6 +80,10 @@ CREATE TABLE mb_releases (
 );
 CREATE TABLE artists (
     artist_key INTEGER PRIMARY KEY, title TEXT, countries TEXT, genres TEXT, mbid TEXT, seen_at INTEGER
+);
+CREATE TABLE mb_artists (
+    mbid TEXT PRIMARY KEY, fetched_at INTEGER NOT NULL, status TEXT NOT NULL, name TEXT, type TEXT, country TEXT,
+    area TEXT, begin_area TEXT, begin_year INTEGER, end_year INTEGER, genres TEXT
 );
 CREATE TABLE listens (
     id INTEGER PRIMARY KEY, source TEXT NOT NULL, started_at INTEGER NOT NULL, ms_played INTEGER,
@@ -137,6 +147,16 @@ MB_RELEASES = [("00000000-0000-4000-8000-000000000202", "Low Tide Radio", "2021-
 KEYS = {101: ("A", "minor", {"party": 0.8, "aggressive": 0.4, "happy": 0.3, "sad": 0.1}),
         102: ("E", "minor", {"sad": 0.6, "relaxed": 0.5}),
         103: ("G", "major", {"relaxed": 0.7, "happy": 0.6})}
+# T12: the file and place columns jimbo-dj's Library charts read (library.charts). rating_key: bit_depth,
+# sample_rate, channels, stream_size. 101 is hi-res (24-bit, 96 kHz), 105 CD-quality; 104 is mono.
+FILES = {101: (24, 96000, 2, 39_100_000), 102: (None, 44100, 2, 4_700_000), 103: (None, 44100, 2, None),
+         104: (None, 48000, 1, None), 105: (16, 44100, 2, None), 106: (16, 44100, 2, 19_900_000)}
+# artist_key: Plex countries, MusicBrainz artist mbid. The Paper Lanterns' country comes from MusicBrainz
+# (its long name, which jimbo-dj shortens), with a hometown; Ada Vey has neither.
+ARTIST_INFO = {301: (["Germany"], None), 302: (None, "00000000-0000-4000-8000-000000000302")}
+# mbid, name, type, country, area, begin_area, begin_year
+MB_ARTISTS = [("00000000-0000-4000-8000-000000000302", "The Paper Lanterns", "Group", "GB",
+               "United Kingdom of Great Britain and Northern Ireland", "Brighton", 2016)]
 
 
 def _t(s: str) -> int:
@@ -223,6 +243,11 @@ LIBRARY_STATS = {
               "multi_part_tracks": 1, "removed_since_first_sync": 1},
 }
 LIBRARY_STAMP = json.dumps([str(SYNC), "1793847900.5"])
+# T12: jimbo-dj's stored library.charts (statcache._library_charts) and its stamp (statcache._library_stamp:
+# [cache.data_stamp = analysis rows, newest analyzed_at, last_sync; mb_artists and mb_releases rows and newest
+# fetched_at; genres.version(), an in-memory counter; history_version]), from before the last sync: stale.
+LIBRARY_CHARTS = json.loads((Path(__file__).with_name("fixture_library_charts.json")).read_text(encoding="utf-8"))
+CHARTS_STAMP = json.dumps([[3, OLD_SYNC, str(OLD_SYNC)], [[1, OLD_SYNC], [1, OLD_SYNC]], 5, "1793240000.0"])
 STATS = [
     ("library.stats", LIBRARY_STATS, 1),
     ("history.overview", {"plays": 6, "songs": 6, "songs_matched": 5, "matched_pct": 83.3,
@@ -304,6 +329,12 @@ def build(out: Path, checks: bool = False) -> Path:
              for m, title, date, c, labels, first, kind, sec in MB_RELEASES])
         conn.executemany("UPDATE features SET key = ?, scale = ?, moods = ? WHERE rating_key = ?",
                          [(k, sc, json.dumps(m), rk) for rk, (k, sc, m) in KEYS.items()])
+        conn.executemany("UPDATE tracks SET bit_depth = ?, sample_rate = ?, channels = ?, stream_size = ? WHERE rating_key = ?",
+                         [(*v, rk) for rk, v in FILES.items()])
+        conn.executemany("UPDATE artists SET countries = ?, mbid = ? WHERE artist_key = ?",
+                         [(json.dumps(c) if c else None, m, ak) for ak, (c, m) in ARTIST_INFO.items()])
+        conn.executemany("INSERT INTO mb_artists VALUES (?, ?, 'ok', ?, ?, ?, ?, ?, ?, NULL, '{}')",
+                         [(m, SYNC, *rest) for m, *rest in MB_ARTISTS])
         conn.executemany(
             "INSERT INTO listens (id, source, started_at, ms_played, artist, title, album, uri, counted, match_key,"
             " rating_key, dup_of) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
@@ -316,6 +347,8 @@ def build(out: Path, checks: bool = False) -> Path:
             [(name, json.dumps(value), version, LIBRARY_STAMP if name == "library.stats" else None, SYNC + 60)
              for name, value, version in STATS],
         )
+        conn.execute("INSERT INTO stats VALUES ('library.charts', '', ?, 1, ?, ?, 0.4)",
+                     (json.dumps(LIBRARY_CHARTS, ensure_ascii=False, separators=(",", ":")), CHARTS_STAMP, OLD_SYNC + 60))
         conn.executemany(
             "INSERT INTO stats VALUES ('history.wrapped', ?, ?, 2, ?, ?, 0.1)",
             [(params, json.dumps(value), stamp, SYNC + 120) for params, value, stamp in WRAPPED_STATS],

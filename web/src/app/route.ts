@@ -35,9 +35,12 @@ export const LIBRARY_TRACKS = '/library/tracks';
 export const LIBRARY_ALBUMS = '/library/albums';
 export const LIBRARY_ARTISTS = '/library/artists';
 export const LIBRARY_PLAYS = '/library/plays';
-export type LibrarySub = 'tracks' | 'albums' | 'artists' | 'plays' | 'album' | 'artist' | 'track';
+/** T12: the P2 gate's comparison with jimbo-dj's stored library numbers. */
+export const LIBRARY_COMPARE = '/library/compare';
+export type LibrarySub = 'tracks' | 'albums' | 'artists' | 'plays' | 'album' | 'artist' | 'track' | 'compare';
 const LIBRARY_SUBS: Record<string, LibrarySub> = {
   [LIBRARY_TRACKS]: 'tracks', [LIBRARY_ALBUMS]: 'albums', [LIBRARY_ARTISTS]: 'artists', [LIBRARY_PLAYS]: 'plays',
+  [LIBRARY_COMPARE]: 'compare',
 };
 
 export function parseRoute(pathname: string): Route {

@@ -31,7 +31,7 @@ Spec: [t9-library.md](t9-library.md).
 - **T9** Library numbers (jimbo-dj's `library.stats`) and the rows behind them. *Done* (API only; the page is T10).
 - **T10** LIBRARY page. *Done.*
 - **T11** Albums, artists, a track. *Done.*
-- **T12** Gate script and `GET /api/library/compare`; gate on the Mac mini.
+- **T12** Gate script and `GET /api/library/compare`, the compare page, the gate card on SETUP and LIBRARY. *Done;* the gate run on live data follows the deploy (HANDOFF).
 ## P3 SERVERS
 - T13–T16 track identity · T17 Jellyfin · T18 Navidrome · T19 gate.
 ## P4 TAGS read-only: T20–T23

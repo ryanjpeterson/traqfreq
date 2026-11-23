@@ -12,6 +12,7 @@ import { HistoryWrapped } from './pages/HistoryWrapped';
 import { HistoryYears } from './pages/HistoryYears';
 import { Library } from './pages/Library';
 import { LibraryRows } from './pages/LibraryRows';
+import { LibraryCompare } from './pages/LibraryCompare';
 import { LibraryAlbum, LibraryArtist, LibraryList, LibraryPlays, LibraryTrack } from './pages/LibraryEntities';
 import { MapHome } from './pages/MapHome';
 import { ModulePage } from './pages/ModulePage';
@@ -83,7 +84,7 @@ function HistoryPage({ sub, query, navigate }: { sub?: string; query: string; na
 }
 
 /** LIBRARY's pages: the overview, the rows behind a number, the album and artist lists, an album, an artist, a
- *  track, and the listens behind their history numbers (T11). */
+ *  track, and the listens behind their history numbers (T11), and the P2 comparison (T12). */
 function LibraryPage({ sub, entityKey, query, navigate }: { sub?: string; entityKey?: number; query: string; navigate: (href: string) => void }) {
   if (sub === 'tracks') return <LibraryRows query={query} navigate={navigate} />;
   if (sub === 'albums' || sub === 'artists') return <LibraryList kind={sub} query={query} navigate={navigate} />;
@@ -91,5 +92,6 @@ function LibraryPage({ sub, entityKey, query, navigate }: { sub?: string; entity
   if (sub === 'album' && entityKey != null) return <LibraryAlbum entityKey={entityKey} navigate={navigate} />;
   if (sub === 'artist' && entityKey != null) return <LibraryArtist entityKey={entityKey} navigate={navigate} />;
   if (sub === 'track' && entityKey != null) return <LibraryTrack entityKey={entityKey} navigate={navigate} />;
+  if (sub === 'compare') return <LibraryCompare navigate={navigate} />;
   return <Library navigate={navigate} />;
 }

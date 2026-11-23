@@ -81,7 +81,7 @@ export function rowsHref(f: RowsFilter): string {
 
 export const fmt = (n: number) => n.toLocaleString('en');
 
-type Unit = 'play' | 'listen' | 'day' | 'song' | 'artist' | 'album' | 'finding' | 'field' | 'row';
+type Unit = 'play' | 'listen' | 'day' | 'song' | 'artist' | 'album' | 'finding' | 'field' | 'row' | 'bar' | 'entry';
 /** "1 play", "1,234 plays" (W3: numbers carry units). */
 export function count(n: number, unit: Unit): string {
   return `${fmt(n)} ${t(`unit.${unit}.${n === 1 ? 'one' : 'other'}` as StringKey)}`;

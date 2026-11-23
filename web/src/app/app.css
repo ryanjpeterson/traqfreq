@@ -71,6 +71,10 @@ main > .kit-text.is-body { max-width: 64ch; margin-bottom: 24px; }
 .history { gap: 28px; }
 .history > section { display: grid; gap: 12px; }
 .hist-head { gap: 4px; }
+/* T12: the P2 gate's compare page: a section's heading beside its state, a field's bars indented under it. */
+.gate-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
+.rows li.gate-field > span { min-width: 0; overflow-wrap: anywhere; }
+.gate-bars { margin-top: 4px; padding-left: 16px; }
 .hist-big { margin: 0; font-size: var(--h1); font-weight: var(--h1-weight); letter-spacing: var(--h1-tracking); line-height: 1.1; font-variant-numeric: tabular-nums; }
 .hist-grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); align-items: start; }
 .hist-num { padding: 0 8px; font-size: 15px; font-weight: 500; white-space: nowrap; font-variant-numeric: tabular-nums; }
