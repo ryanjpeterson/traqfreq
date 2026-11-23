@@ -147,3 +147,8 @@ main > .kit-text.is-body { max-width: 64ch; margin-bottom: 24px; }
   .rows li { flex-wrap: wrap; }
   .rows li > :last-child:not(:first-child) { margin-left: auto; }
 }
+
+/* ---------- LIBRARY (T10): share bars in LIBRARY red; paths wrap ---------- */
+.lib-bar > span { background: var(--mod-l); }
+.lib-paths .mono { overflow-wrap: anywhere; }
+.lib-paths li > span { min-width: 0; }

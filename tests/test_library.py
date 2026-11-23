@@ -167,3 +167,20 @@ def test_api_without_tracks_table(tmp_path):
     c = TestClient(create_app(Settings(data_dir=tmp_path / "d", legacy_db=db, port=4492, host="127.0.0.1")))
     assert c.get("/api/library/stats").status_code == 404
     assert c.get("/api/library/tracks").status_code == 404
+
+
+def test_api_rows_queries_as_the_page_sends_them(client):
+    """T10: the LIBRARY page sends each `rows` query string as is (encoded `?`, `<`, `>`, spaces) to
+    /api/library/tracks; every one is accepted and lists as many tracks as its number."""
+    s = client.get("/api/library/stats").json()
+    total = lambda q: client.get(f"/api/library/tracks?{q}" if q else "/api/library/tracks").json()["total"]  # noqa: E731
+    for k, q in s["rows"].items():
+        for sub in (q.values() if isinstance(q, dict) else [q]):
+            r = client.get(f"/api/library/tracks?{sub}")
+            assert r.status_code == 200, (k, sub)
+    for group in ("codecs", "containers", "bitrate_kbps"):
+        for v, n in s[group].items():
+            assert total(s["rows"][group][v]) == n, (group, v)
+    assert total(s["rows"]["tracks"]) == s["tracks"]
+    assert total(s["rows"]["unmapped"]) == s["tracks"] - s["paths"]["mapped"]
+    assert total(s["rows"]["containers"]["?"]) == 1  # container=%3F: no container given
