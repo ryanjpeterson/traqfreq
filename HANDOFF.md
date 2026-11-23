@@ -137,6 +137,13 @@ After the deploy, jimbo-dj's `/api/stats` at :4490 and traqfreq's `/api/library/
 - No API change. pytest adds one check that every `rows` query string, sent as the page sends it (encoded `?`, `<`, `>`), is accepted and lists as many tracks as its number.
 - Tests: pytest 92, Vitest 111 (`web/src/pages/library.test.tsx`, 14), brand checks and 13 self-tests pass. Checked in the browser against the fixture: light and dark desktop, tablet (dark), 375 px (page and rows with the why open: no page side-scroll).
 
+## T10 deployed and checked: 2026-11-22
+T10 merged to `main` (2367558, PR #5) and deployed on the Mac mini. Checked from the laptop over Tailscale (read-only):
+- `/api/health` ok; `/library` answers 200 and shows every section on live data.
+- traqfreq's `/api/library/stats` against jimbo-dj's `/api/stats` at :4490, field by field (folders and built_at left out): **0 differ**. 52,779 tracks, 4,306 albums, 1,297 artists, 3,649.6 h, 1,644.7 GB; 5,291 played, 9,250 Plex plays; analyzer 52,395 ok at version 2 (99.3 %), 7 errors. jimbo-dj's stored row is fresh.
+- Rows answer with their numbers' totals: `analysis=ok` 52,395 (first row has key and BPM), lossless bitrate 51,605, `played=true&sort=plex_plays` 5,291 (first row 24 plays), `mapped=false` 0 (every live track has a local path).
+- Worth knowing on live data: rated is 20 tracks, which jimbo-dj's `_pct` rounds to 0.0 %; 377 tracks have no bitrate and so fall in no bucket (the page says so). Codecs: flac 52,020, mp3 537, aac 163, alac 43, opus 16.
+
 ## Next: T11
 Albums, artists, a track (spec: `docs/specs/t9-library.md`, T11). Read jimbo-dj's `routes/entities.py` for what it shows and match its numbers. The rows page already filters by `artist_key` and `album_key`, so artist and album pages can link their tracks there.
 
