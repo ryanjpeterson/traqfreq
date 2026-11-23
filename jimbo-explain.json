@@ -1,0 +1,24 @@
+{
+  "version": "0.1.0",
+  "docs": "docs/explain",
+  "synced": { "commit": "341088e", "date": "2026-11-23" },
+  "facts": {
+    "name": "traqfreq",
+    "tagline": "jimbo-dj's successor, built beside it: listening history, library and servers, every number showing its rows",
+    "status": "active",
+    "audience": "self",
+    "url": "http://macmini:4492",
+    "repo": "ryanjpeterson/traqfreq",
+    "stack": ["Python", "FastAPI", "React", "TypeScript", "SQLite"],
+    "integrations": [
+      { "name": "jimbo-dj", "kind": "jimbo", "direction": "read", "required": true, "what": "its database: library, listening history, stored stats" },
+      { "name": "Plex", "kind": "self-hosted", "direction": "read", "required": true, "what": "the library and Plex plays, through jimbo-dj's sync" },
+      { "name": "Jellyfin", "kind": "self-hosted", "direction": "read", "required": false, "what": "one song across servers (P3)" },
+      { "name": "Navidrome", "kind": "self-hosted", "direction": "read", "required": false, "what": "one song across servers (P3)" },
+      { "name": "Tailscale", "kind": "self-hosted", "direction": "read", "required": true, "what": "the only way in" }
+    ],
+    "standards": ["jimbo-deploy", "jimbo-explain"],
+    "now": ["P3 SERVERS: T14 matching on snapshots"]
+  },
+  "files": {}
+}

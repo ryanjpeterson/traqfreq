@@ -18,3 +18,6 @@ Yellow chrome `#F0D722` with black text; square module badges **L1 H2 T3 D4 M5 F
 - One session = one 5-hour usage window = one pushed branch (`claude/tN-<slug>`). Read only CLAUDE.md, HANDOFF.md and the one spec you need (`docs/specs/README.md` lists them).
 - Stop at the last green commit if the window runs low.
 - At the end: tests green, push, update HANDOFF.md and CHANGELOG.md, then update the progress deck (Slides artifact "traqfreq: build phases": `status`, the phase slide, `log`).
+
+## Docs (jimbo-explain)
+This repo's docs follow jimbo-explain (`docs/explain/`, `jimbo-explain.json`). When a change adds, removes or changes a feature, dependency, integration, roadmap item or key decision, update the matching doc and facts in the same change, and move `synced` to HEAD. Check with the jimbo-explain skill's `scripts/check.mjs`.
