@@ -16,6 +16,13 @@ every counting rule has a case that tells it apart from a raw row count:
 - stats: jimbo-dj's own stored summaries (library.stats, history.overview, T8: history.wrapped), trimmed to the counts and the
   top artists.
 
+- T9, the library columns on those same 6 tracks (LIBRARY below), so T5-T8's counts stay: a lossless FLAC
+  and a 128k MP3, a 256k AAC and a 320k MP3 (two parts), one FLAC with no bitrate or container (in no bucket,
+  so the buckets add up to 4 of 5) and no local path (unmapped). Played and rated tracks, Plex sonic analysis
+  on 3; the removed track is played 50 times, rated and analysed, so every live rule leaves it out. Track 101
+  has view_count 3 and 1 history play: jimbo-dj's plays_of takes the larger (3), not the sum (4). jimbo-dj's
+  analyzer: 2 tracks ok at version 2, 1 ok at version 1 (older), 1 error. jimbo-dj's stored library.stats has
+  the full shape, worked out by hand.
 - With --checks: T7's invented bursts, loop, steady rhythm and windows (CHECK_LISTENS), on top of the above.
 
 Usage: python scripts/make_fixture.py [--checks] [out_path]   (default tests/fixtures/legacy.sqlite)
@@ -93,8 +100,21 @@ TRACKS = [
 ALBUMS = [(201, "Ringbahn", 301, 2019), (202, "Low Tide Radio", 302, 2021), (203, "Quiet Engines", 303, 2023),
           (204, "Gone Album", 304, 2011)]
 ARTISTS = [(301, "Kollektiv Nord"), (302, "The Paper Lanterns"), (303, "Ada Vey"), (304, "Former Band")]
-# rating_key, status, error
-ANALYSIS = [(101, "ok", None), (102, "ok", None), (103, "ok", None), (105, "error", "decode failed")]
+# rating_key, version, status, error (jimbo-dj's ANALYZER_VERSION is 2: version 1 needs analysing again)
+ANALYSIS = [(101, 2, "ok", None), (102, 1, "ok", None), (103, 2, "ok", None), (105, 2, "error", "decode failed")]
+
+# T9: the library columns of TRACKS (rating_key: codec, container, bitrate kbps, file_size, parts, local_path,
+# view_count, last_viewed_at, user_rating, sonic_version, added_at). local_path None = outside the music root.
+LIBRARY = {
+    101: ("flac", "flac", 1011, 39_400_000, 1, True, 3, "2026-10-30T18:00:00Z", None, 1, "2025-03-01T10:00:00Z"),
+    102: ("mp3", "mp3", 128, 4_800_000, 1, True, 0, None, 4.0, None, "2025-03-01T10:00:00Z"),
+    103: ("aac", "mp4", 256, 7_100_000, 1, True, 0, None, None, 1, "2026-06-12T09:00:00Z"),
+    104: ("mp3", "mp3", 320, 9_800_000, 2, True, 2, "2026-11-04T21:00:00Z", 8.0, 1, "2026-06-12T09:00:00Z"),
+    105: ("flac", None, None, 41_000_000, 1, False, 0, None, None, None, "2026-09-20T15:30:00Z"),
+    106: ("flac", "flac", 900, 20_000_000, 1, True, 50, "2026-01-02T12:00:00Z", 10.0, 1, "2012-01-01T00:00:00Z"),
+}
+SERVER = {"name": "Fixture Plex", "version": "1.41.0", "machine_id": "fixture0", "plex_pass": True,
+          "section": "Music", "section_key": "1"}
 # rating_key, bpm, camelot, loudness_lufs
 FEATURES = [(101, 128.0, "8A", -7.1), (102, 130.0, "9A", -6.8), (103, 104.0, "5B", -9.4)]
 
@@ -159,7 +179,8 @@ CHECK_LISTENS = _check_listens()
 MATCHES = [("kollektivnord|westkreuz", 101), ("kollektivnord|ostkreuz", 102), ("paperlanterns|harbourlights", 103),
            ("paperlanterns|staticgulls", 104), ("adavey|coil", 105), ("nobodyknown|ghostsong", None)]
 
-META = [("last_sync", str(SYNC)), ("history_version", "1793847900.5"), ("match_version", "3")]
+META = [("last_sync", str(SYNC)), ("history_version", "1793847900.5"), ("match_version", "3"),
+        ("server", json.dumps(SERVER))]
 # Shape of jimbo-dj's history_imports (history.py); times are Unix seconds.
 IMPORTS = [
     (1, "lastfm", 1793840400, 120, 4, None),
@@ -167,8 +188,23 @@ IMPORTS = [
     (3, "spotify", 1793847900, 0, 0, "file not found"),
 ]
 # jimbo-dj's stored summaries (statcache.py), cut down to the numbers traqfreq compares with.
+# T9: library.stats in full (library.py stats), by hand from TRACKS + LIBRARY: 5 live tracks, 1,478,000 ms =
+# 0.4 h, 102.1 MB = 0.1 GB. Its stamp (statcache: [last_sync, history_version]) is fresh.
+LIBRARY_STATS = {
+    "server": SERVER, "last_sync": SYNC, "tracks": 5, "artists": 3, "albums": 3, "hours": 0.4, "size_gb": 0.1,
+    "codecs": {"flac": 2, "mp3": 2, "aac": 1},
+    "containers": {"mp3": 2, "flac": 1, "mp4": 1, "?": 1},
+    "bitrate_kbps": {"<192k": 1, "192-255k": 0, "256-319k": 1, "320k": 1, ">320k (lossless)": 1},
+    "play_history": {"played_tracks": 2, "played_pct": 40.0, "total_plays": 5, "rated_tracks": 2, "rated_pct": 40.0,
+                     "top_artists": {"Kollektiv Nord": 3, "The Paper Lanterns": 2}},
+    "sonic_analysis": {"tracks": 3, "pct": 60.0},
+    "paths": {"folders": {"/music": {"read_from": "/srv/music", "readable_here": True, "tracks": 5}},
+              "mapped": 4, "mapped_pct": 80.0, "unmapped_examples": ["/music/Ada Vey/Quiet Engines/01 Coil.flac"],
+              "multi_part_tracks": 1, "removed_since_first_sync": 1},
+}
+LIBRARY_STAMP = json.dumps([str(SYNC), "1793847900.5"])
 STATS = [
-    ("library.stats", {"last_sync": SYNC, "tracks": 5, "albums": 3, "artists": 3}, 1),
+    ("library.stats", LIBRARY_STATS, 1),
     ("history.overview", {"plays": 6, "songs": 6, "songs_matched": 5, "matched_pct": 83.3,
                           "years": [{"year": 2025, "plays": 1}, {"year": 2026, "plays": 5}],
                           "top_artists": [{"name": "Kollektiv Nord", "plays": 2, "artist_key": 301},
@@ -227,7 +263,15 @@ def build(out: Path, checks: bool = False) -> Path:
         conn.executemany("INSERT INTO artists (artist_key, title, seen_at) VALUES (?, ?, ?)",
                          [(*r, SYNC) for r in ARTISTS])
         conn.executemany(
-            "INSERT INTO analysis (rating_key, version, status, error, analyzed_at) VALUES (?, 7, ?, ?, ?)",
+            "UPDATE tracks SET codec = ?, container = ?, bitrate = ?, file_size = ?, parts = ?, local_path = ?,"
+            " view_count = ?, last_viewed_at = ?, user_rating = ?, sonic_version = ?, added_at = ? WHERE rating_key = ?",
+            [(c, ct, br, size, parts, plex_path.replace("/music/", "/srv/music/", 1) if mapped else None, views,
+              _t(last) if last else None, rating, sonic, _t(added), rk)
+             for rk, (c, ct, br, size, parts, mapped, views, last, rating, sonic, added) in LIBRARY.items()
+             for (plex_path,) in conn.execute("SELECT plex_path FROM tracks WHERE rating_key = ?", (rk,))],
+        )
+        conn.executemany(
+            "INSERT INTO analysis (rating_key, version, status, error, analyzed_at) VALUES (?, ?, ?, ?, ?)",
             [(*r, SYNC) for r in ANALYSIS],
         )
         conn.executemany("INSERT INTO features (rating_key, bpm, camelot, loudness_lufs) VALUES (?, ?, ?, ?)", FEATURES)
@@ -239,8 +283,9 @@ def build(out: Path, checks: bool = False) -> Path:
         conn.executemany("INSERT INTO listen_matches VALUES (?, ?)", MATCHES)
         conn.executemany("INSERT INTO history_imports VALUES (?, ?, ?, ?, ?, ?)", IMPORTS)
         conn.executemany(
-            "INSERT INTO stats VALUES (?, '', ?, ?, NULL, ?, 0.1)",
-            [(name, json.dumps(value), version, SYNC + 60) for name, value, version in STATS],
+            "INSERT INTO stats VALUES (?, '', ?, ?, ?, ?, 0.1)",
+            [(name, json.dumps(value), version, LIBRARY_STAMP if name == "library.stats" else None, SYNC + 60)
+             for name, value, version in STATS],
         )
         conn.executemany(
             "INSERT INTO stats VALUES ('history.wrapped', ?, ?, 2, ?, ?, 0.1)",
