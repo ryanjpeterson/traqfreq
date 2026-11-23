@@ -113,6 +113,7 @@ function ServerCard({ s, snap, reload, onRefreshed }: { s: ServerStatus; snap?: 
           {plex && s.last_sync != null && <Fact label={t('servers.plex.sync')}>{unixUtc(s.last_sync)}</Fact>}
           {plex && s.tracks != null && <Fact label={t('servers.plex.tracks')}>{n(s.tracks, 'copy')}</Fact>}
           {!plex && s.url && <Fact label={t('servers.url')} mono>{s.url}</Fact>}
+          {!plex && <SnapshotFacts snap={snap} />}
           {s.settings.map((x) => (
             <Fact key={x.env} label={x.env} mono>
               {!x.set ? t('servers.setting.unset') : x.secret ? t('servers.setting.secret') : (x.value ?? t('servers.setting.set'))}
@@ -188,6 +189,27 @@ function RefreshPanel({ s, st, reload, onRefreshed }: { s: ServerStatus; st: Ref
         </ul>
       )}
     </div>
+  );
+}
+
+/** T17: what the server said of itself in its snapshot (name, version) and whose play counts it holds. */
+function SnapshotFacts({ snap }: { snap?: Snapshot }) {
+  if (!snap || !snap.snapshot) return null;
+  const st = snap.stamp;
+  const str = (k: string) => (typeof st[k] === 'string' && st[k] ? (st[k] as string) : null);
+  const name = str('server_name');
+  const version = str('version');
+  if (!name && !version && !('user' in st)) return null;
+  return (
+    <>
+      {name && <Fact label={t('servers.snapshot.name')}>{name}</Fact>}
+      {version && <Fact label={t('servers.snapshot.version')}>{version}</Fact>}
+      {'user' in st && (
+        <Fact label={t('servers.snapshot.plays')} sub={str('user') ? t('servers.snapshot.playsWhy') : t('servers.snapshot.noUserWhy')}>
+          {str('user') ?? t('servers.snapshot.noUser')}
+        </Fact>
+      )}
+    </>
   );
 }
 

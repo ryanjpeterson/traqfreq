@@ -2,7 +2,7 @@
 
 ## Snapshot
 
-Healthy and moving fast: P0–P2 done and gated on live data in two days, P3 under way. Used daily by one listener beside jimbo-dj. Upkeep is low (no jobs, cache only). Matching works on invented snapshots (T14), SETUP shows it (T15), and the GET-only client and refresh are in place (T16); the most useful next thing is the Jellyfin and Navidrome details from Ryan, then their readers (T17, T18).
+Healthy and moving fast: P0–P2 done and gated on live data in two days, P3 under way. Used daily by one listener beside jimbo-dj. Upkeep is low (no jobs, cache only). Matching works on invented snapshots (T14), SETUP shows it (T15), the GET-only client and refresh are in place (T16), and Jellyfin is read live (T17: 53,133 of 53,133 Plex copies matched by file); the most useful next thing is Navidrome's login from Ryan, then its reader (T18).
 
 ## Risks
 
@@ -29,5 +29,5 @@ Healthy and moving fast: P0–P2 done and gated on live data in two days, P3 und
 
 ## Open questions
 
-- Jellyfin and Navidrome: do they run on the Mac mini, at which URLs, with which keys and user (needed before T17 and T18)?
+- Navidrome: which user and password traqfreq reads as, and is Report Real Path on (T18 waits on them)? Jellyfin is answered: on the Mac mini, key and user in the deploy's `.env`.
 - Audience and status are inferred (self, active); confirm if anything differs.

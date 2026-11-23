@@ -2,6 +2,13 @@
 
 ## Log
 
+### 2026-11-23 — Jellyfin's items don't depend on a user; play counts come from one named user
+
+- **Decision:** the reader lists every audio item through `/Items` with the API key, and reads play counts separately from one user (`TRAQFREQ_JELLYFIN_USER`, by name or ID) through `/Users/{id}/Items?Filters=IsPlayed`; without a user there are no play counts.
+- **Why:** an API key belongs to no user, so its play counts would be nobody's; reading the items through a user would drop the libraries that user can't see.
+- **Alternatives:** read everything through `/Users/{id}/Items`; require a user.
+- **Consequences:** one more paged request when a user is set; SERVERS says whose plays they are, shown beside traqfreq's, never added.
+
 ### 2026-11-23 — Servers are read with GET only, never retried, refreshed by hand
 
 - **Decision:** one `httpx` client whose only verb is GET, with a timeout, no retries and no redirects; a snapshot is refreshed only when someone presses Refresh on SETUP, one at a time per server, and every refresh is logged with its counts or the server's own message.

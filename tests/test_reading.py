@@ -1,7 +1,9 @@
-"""T16: reading servers (docs/specs/t13-servers.md): the read-only client, paging, errors, refresh and its log.
+"""T16/T17: reading servers (docs/specs/t13-servers.md): the read-only client, paging, errors, refresh and its log,
+and Jellyfin's reader (T17).
 
 No network: every answer comes from ``httpx.MockTransport`` serving the invented answers in
-``scripts/fixture_jellyfin.json`` and ``fixture_navidrome.json``. The readers here stand in for T17's and T18's.
+``scripts/fixture_jellyfin.json`` and ``fixture_navidrome.json``. Jellyfin is read by the real reader
+(``reading.read_jellyfin``); the Navidrome reader here stands in for T18's.
 """
 
 import hashlib
@@ -35,6 +37,8 @@ def _make_fixture():
 
 JF, ND = _make_fixture().snapshot_answers()
 JF_PAGE = len(JF["items_pages"][0]["Items"])  # 10
+JF_ITEMS = [it for p in JF["items_pages"] for it in p["Items"]]
+JF_PLAYED = {it["Id"]: it["UserData"]["PlayCount"] for it in JF["user_played"]["Items"]}
 ND_PAGE = len(ND["song_pages"][0]["subsonic-response"]["searchResult3"]["song"])  # 5
 
 
@@ -54,13 +58,24 @@ class Servers:
                 raise f
             return f
         if req.url.host == "jellyfin.test":
-            if req.headers.get("X-Emby-Token") != KEY:
+            if path == "/System/Info/Public":  # public: no key needed, as on Jellyfin
+                return httpx.Response(200, json=JF["system_info"])
+            if req.headers.get("Authorization") != f'MediaBrowser Token="{KEY}"':  # as Jellyfin 12: no X-Emby-Token
                 return httpx.Response(401, text="Access token is invalid or expired.")
+            start, limit = int(q.get("StartIndex", 0)), int(q.get("Limit", 100))
             if path == "/Library/VirtualFolders":
                 return httpx.Response(200, json=JF["virtual_folders"])
-            if path == "/Items":
-                start = int(q.get("StartIndex", 0))
-                return httpx.Response(200, json=JF["items_pages"][start // JF_PAGE])
+            if path == "/Users":
+                return httpx.Response(200, json=JF["users"])
+            if path == "/Items":  # as Jellyfin: no user, no UserData
+                page = [{k: v for k, v in it.items() if k != "UserData"} for it in JF_ITEMS[start:start + limit]]
+                return httpx.Response(200, json={"Items": page, "TotalRecordCount": len(JF_ITEMS), "StartIndex": start})
+            if path == f"/Users/{JF['users'][1]['Id']}/Items":
+                played = JF["user_played"]["Items"]
+                return httpx.Response(200, json={"Items": played[start:start + limit], "TotalRecordCount": len(played),
+                                                 "StartIndex": start})
+            if path.startswith("/Users/"):
+                return httpx.Response(200, json={"Items": [], "TotalRecordCount": 0, "StartIndex": start})
         if req.url.host == "navidrome.test":
             if q.get("t") != hashlib.md5((PASSWORD + q.get("s", "")).encode()).hexdigest():
                 return httpx.Response(200, json={"subsonic-response": {
@@ -77,15 +92,6 @@ class Servers:
         return httpx.Response(404, json={"message": f"No route {path}"})
 
 
-def read_jellyfin(client, settings):
-    """Stands in for T17's reader: folders, then /Items page by page."""
-    folders = client.get("/Library/VirtualFolders")
-    got = list(reading.pages(
-        lambda o: client.get("/Items", {"IncludeItemTypes": "Audio", "Recursive": "true", "StartIndex": o, "Limit": JF_PAGE}),
-        count=lambda p: len(p.get("Items") or []), size=JF_PAGE, total=lambda p: p.get("TotalRecordCount")))
-    return snapshots.from_jellyfin(folders, got), {"pages": len(got)}
-
-
 def read_navidrome(client, settings):
     """Stands in for T18's reader: scan status, albums, then every song through search3."""
     scan = client.get("/rest/getScanStatus")
@@ -96,12 +102,18 @@ def read_navidrome(client, settings):
     return snapshots.from_navidrome(scan, albums, songs), {"pages": len(albums) + len(songs)}
 
 
-READERS = {"jellyfin": read_jellyfin, "navidrome": read_navidrome}
+READERS = {"jellyfin": reading.read_jellyfin, "navidrome": read_navidrome}
+
+
+@pytest.fixture(autouse=True)
+def small_pages(monkeypatch):
+    """The fixture's 14 items in pages of 10, so paging shows (Jellyfin's default page is 500)."""
+    monkeypatch.setattr(reading, "JELLYFIN_PAGE", JF_PAGE)
 
 
 def _settings(tmp_path, legacy_db=None, **over):
     base = dict(data_dir=tmp_path / "data", legacy_db=legacy_db, port=4492, host="127.0.0.1",
-                jellyfin_url="http://jellyfin.test", jellyfin_key=KEY,
+                jellyfin_url="http://jellyfin.test", jellyfin_key=KEY, jellyfin_user="listener",
                 navidrome_url="http://navidrome.test", navidrome_user="reader", navidrome_password=PASSWORD)
     base.update(over)
     return Settings(**base)
@@ -140,7 +152,7 @@ def test_refresh_sends_only_gets_and_stores_the_snapshot(app_client, srv, tmp_pa
     body = r.json()
     c = body["refresh"]["counts"]
     assert body["refresh"]["ok"] and body["refresh"]["error"] is None
-    assert (c["items"], c["pages"], c["requests"], c["added"], c["removed"], c["before"]) == (14, 2, 3, 14, 0, None)
+    assert (c["items"], c["pages"], c["requests"], c["added"], c["removed"], c["before"]) == (14, 3, 6, 14, 0, None)
     assert {q.method for q in srv.requests} == {"GET"}
     assert [q.url.params.get("StartIndex") for q in srv.requests if q.url.path == "/Items"] == ["0", "10"]
     snap = store.snapshots(tmp_path / "data")["jellyfin"]
@@ -176,7 +188,7 @@ def test_server_errors_show_the_servers_own_message(app_client, srv, tmp_path):
     assert "Jellyfin answered 500 Internal Server Error (GET /Items): Database is locked" in d["message"]
     assert KEY not in r.text  # a secret the server echoes is blanked
     log = app_client.get("/api/servers/jellyfin/refreshes").json()["log"]
-    assert not log[0]["ok"] and log[0]["error"] == d["message"] and log[0]["counts"]["requests"] == 2
+    assert not log[0]["ok"] and log[0]["error"] == d["message"] and log[0]["counts"]["requests"] == 3
     assert len(store.snapshots(tmp_path / "data")["jellyfin"]["items"]) == 14  # the snapshot before is kept
 
 
@@ -197,11 +209,11 @@ def test_timeouts_and_unreachable_servers_are_not_retried(app_client, srv):
     r = app_client.post("/api/servers/jellyfin/refresh")
     assert r.status_code == 502 and r.json()["detail"]["message"] == (
         "Jellyfin didn't answer in time (GET /Library/VirtualFolders).")
-    assert len(srv.requests) == 1
+    assert len(srv.requests) == 2  # System/Info, then the folders once
     srv.fail["/Library/VirtualFolders"] = httpx.ConnectError("refused")
     r = app_client.post("/api/servers/jellyfin/refresh")
     assert r.json()["detail"]["message"] == "Couldn't reach Jellyfin (GET /Library/VirtualFolders): ConnectError."
-    assert len(srv.requests) == 2  # one request each: no retries
+    assert len(srv.requests) == 4  # one request each: no retries
 
 
 def test_not_set_up_reads_nothing(legacy_db, tmp_path, srv):
@@ -239,7 +251,7 @@ def test_two_refreshes_at_once(legacy_db, tmp_path):
     def slow(client, settings):
         gate.set()
         go.wait(5)
-        return read_jellyfin(client, settings)
+        return reading.read_jellyfin(client, settings)
 
     s = _settings(tmp_path, legacy_db)
     t = httpx.MockTransport(Servers())
@@ -254,14 +266,15 @@ def test_two_refreshes_at_once(legacy_db, tmp_path):
     assert out["a"]["ok"] and len(store.refreshes(s.data_dir, "jellyfin")) == 1
 
 
-def test_readers_wait_for_t17_and_t18(legacy_db, tmp_path, srv):
+def test_navidrome_reader_waits_for_t18(legacy_db, tmp_path, srv):
     app = create_app(_settings(tmp_path, legacy_db), server_transport=httpx.MockTransport(srv))
     c = TestClient(app)  # the shipped readers
-    r = c.post("/api/servers/jellyfin/refresh")
-    assert r.status_code == 501 and "reader comes in T17" in r.json()["detail"]["message"]
-    assert "T18" in c.post("/api/servers/navidrome/refresh").json()["detail"]["message"]
+    assert reading.READERS["jellyfin"] is reading.read_jellyfin
+    r = c.post("/api/servers/navidrome/refresh")
+    assert r.status_code == 501 and "reader comes in T18" in r.json()["detail"]["message"]
     assert srv.requests == []
-    assert c.get("/api/servers/jellyfin/refreshes").json()["last"]["ok"] is False
+    assert c.get("/api/servers/navidrome/refreshes").json()["last"]["ok"] is False
+    assert c.post("/api/servers/jellyfin/refresh").status_code == 200  # Jellyfin's is T17's, shipped
 
 
 def test_plex_and_unknown_servers(app_client):
@@ -315,3 +328,132 @@ def test_pages_stop_at_the_total_a_short_page_or_the_limit():
     assert len(list(reading.pages(f2, lambda p: len(p["items"]), 10))) == 3 and calls == [0, 10, 20]  # no total: empty page ends it
     with pytest.raises(reading.ServerError, match="didn't end"):
         list(reading.pages(lambda o: {"items": [0] * 10}, lambda p: len(p["items"]), 10, max_pages=3))
+
+
+# --- Jellyfin's reader (T17) -------------------------------------------------------------------------------
+
+def _jf(srv, tmp_path, **over):
+    s = _settings(tmp_path, **over)
+    with reading.client_for("jellyfin", s, httpx.MockTransport(srv)) as client:
+        return reading.read_jellyfin(client, s)
+
+
+def test_jellyfin_reads_info_folders_items_and_one_users_plays(srv, tmp_path):
+    snap, counts = _jf(srv, tmp_path)
+    assert [q.url.path for q in srv.requests] == [
+        "/System/Info/Public", "/Library/VirtualFolders", "/Items", "/Items", "/Users",
+        f"/Users/{JF['users'][1]['Id']}/Items"]
+    assert {q.method for q in srv.requests} == {"GET"}
+    items_q = [q.url.params for q in srv.requests if q.url.path == "/Items"]
+    assert [(p["StartIndex"], p["Limit"]) for p in items_q] == [("0", "10"), ("10", "10")]
+    assert all(p["IncludeItemTypes"] == "Audio" and p["Recursive"] == "true"
+               and p["Fields"] == "Path,ProviderIds,MediaSources,ParentId,DateCreated" for p in items_q)
+    user_q = srv.requests[-1].url.params
+    assert user_q["Filters"] == "IsPlayed" and user_q["IncludeItemTypes"] == "Audio"
+    assert counts == {"pages": 3, "server_name": "Invented Jellyfin", "version": "10.10.3", "user": "listener", "played": 4}
+    assert snap["stamp"] == {"items": 14, "newest_created": snap["stamp"]["newest_created"],
+                             "server_name": "Invented Jellyfin", "version": "10.10.3", "user": "listener"}
+    assert snap["folders"] == ["/data/music"] and len(snap["items"]) == 14
+    assert {i["id"]: i["play_count"] for i in snap["items"] if i["play_count"]} == JF_PLAYED
+    assert all(i["play_count"] == 0 for i in snap["items"] if i["id"] not in JF_PLAYED)
+    # the same snapshot as the T14 parser makes from the fixture's own answers
+    want = snapshots.from_jellyfin(JF["virtual_folders"], JF["items_pages"])
+    assert [{k: v for k, v in i.items()} for i in snap["items"]] == want["items"]
+
+
+def test_jellyfin_without_a_user_has_no_play_counts(srv, tmp_path):
+    snap, counts = _jf(srv, tmp_path, jellyfin_user=None)
+    assert not any(q.url.path.startswith("/Users") for q in srv.requests)
+    assert all(i["play_count"] is None for i in snap["items"])
+    assert counts["user"] is None and counts["played"] is None and snap["stamp"]["user"] is None
+
+
+def test_jellyfin_user_by_id_or_name(srv, tmp_path):
+    uid = JF["users"][1]["Id"]
+    dashed = f"{uid[:8]}-{uid[8:12]}-{uid[12:16]}-{uid[16:20]}-{uid[20:]}".upper()
+    for who in (uid, dashed, "LISTENER", " listener "):
+        srv.requests.clear()
+        assert _jf(srv, tmp_path, jellyfin_user=who)[1]["user"] == "listener"
+        assert srv.requests[-1].url.path == f"/Users/{uid}/Items"
+
+
+def test_jellyfin_unknown_user_fails_and_keeps_the_snapshot(legacy_db, tmp_path, srv):
+    s = _settings(tmp_path, legacy_db)
+    t = httpx.MockTransport(srv)
+    reading.refresh("jellyfin", s, t)
+    bad = _settings(tmp_path, legacy_db, jellyfin_user="nobody")
+    with pytest.raises(reading.ServerError) as e:
+        reading.refresh("jellyfin", bad, t)
+    assert "no user has that name or ID" in e.value.message and "admin, listener" in e.value.message
+    assert len(store.snapshots(s.data_dir)["jellyfin"]["items"]) == 14
+    assert store.refreshes(s.data_dir, "jellyfin")[0]["ok"] is False
+
+
+def test_jellyfin_items_dont_depend_on_the_user(srv, tmp_path):
+    """A user who sees no library gives no play counts, and takes no items away."""
+    s = _settings(tmp_path)
+    other = dict(JF["users"][0])
+    JF["users"].append({**other, "Name": "kid", "Id": "e0000000000000000000000000000003"})
+    try:
+        snap, counts = _jf(srv, tmp_path, jellyfin_user="kid")
+    finally:
+        JF["users"].pop()
+    assert len(snap["items"]) == 14 and counts["played"] == 0
+    assert all(i["play_count"] == 0 for i in snap["items"])
+    assert s.jellyfin_user == "listener"
+
+
+def test_jellyfin_default_page_is_one_request_for_the_fixture(srv, tmp_path, monkeypatch):
+    monkeypatch.setattr(reading, "JELLYFIN_PAGE", reading.PAGE_SIZE)
+    snap, counts = _jf(srv, tmp_path)
+    assert [q.url.params["Limit"] for q in srv.requests if q.url.path == "/Items"] == ["500"]
+    assert counts["pages"] == 2 and len(snap["items"]) == 14
+
+
+def test_jellyfin_name_and_version_on_servers(app_client):
+    assert app_client.post("/api/servers/jellyfin/refresh").status_code == 200
+    m = app_client.get("/api/servers/matches").json()
+    jf = next(x for x in m["snapshots"] if x["server"] == "jellyfin")
+    assert (jf["stamp"]["server_name"], jf["stamp"]["version"], jf["stamp"]["user"]) == ("Invented Jellyfin", "10.10.3", "listener")
+    log = app_client.get("/api/servers/jellyfin/refreshes").json()["last"]["counts"]
+    assert (log["server_name"], log["version"], log["user"], log["play_counts"]) == ("Invented Jellyfin", "10.10.3", "listener", 4)
+    pair = next(p for p in m["pairs"] if p["pair"] == "jellyfin")
+    assert pair["tiers"].get("file", 0) >= 4
+
+
+class Scanning(Servers):
+    """Jellyfin with a scan running: after the first /Items page, a new item appears at the front of the list."""
+
+    def __init__(self, sort_ok: bool):
+        super().__init__()
+        self.sort_ok, self.calls = sort_ok, 0
+
+    def __call__(self, req):
+        global JF_ITEMS
+        if req.url.path == "/Items":
+            self.calls += 1
+            if self.calls == 2:
+                new = dict(JF_ITEMS[0], Id="a00000000000000000000000000new01", Path="/data/music/New/Song.flac")
+                # sorted oldest first, the new item goes last; unsorted (as before T17's fix) it goes first
+                JF_ITEMS = JF_ITEMS + [new] if self.sort_ok else [new] + JF_ITEMS
+        return super().__call__(req)
+
+
+def test_jellyfin_torn_read_is_not_stored(legacy_db, tmp_path, monkeypatch):
+    s = _settings(tmp_path, legacy_db)
+    reading.refresh("jellyfin", s, httpx.MockTransport(Servers()))
+    monkeypatch.setattr(__import__(__name__), "JF_ITEMS", list(JF_ITEMS))
+    with pytest.raises(reading.ServerError) as e:  # an item read twice: the list moved under the pages
+        reading.refresh("jellyfin", s, httpx.MockTransport(Scanning(sort_ok=False)))
+    assert "changed while traqfreq read it (14 distinct items of 15, 1 read twice)" in e.value.message
+    assert len(store.snapshots(s.data_dir)["jellyfin"]["items"]) == 14 and not store.refreshes(s.data_dir, "jellyfin")[0]["ok"]
+
+
+def test_jellyfin_reads_oldest_first_so_a_scan_adds_at_the_end(legacy_db, tmp_path, monkeypatch):
+    s = _settings(tmp_path, legacy_db)
+    monkeypatch.setattr(__import__(__name__), "JF_ITEMS", list(JF_ITEMS))
+    srv = Scanning(sort_ok=True)
+    entry = reading.refresh("jellyfin", s, httpx.MockTransport(srv))
+    assert entry["ok"] and entry["counts"]["items"] == 15
+    q = [r.url.params for r in srv.requests if r.url.path == "/Items"][0]
+    assert (q["SortBy"], q["SortOrder"]) == ("DateCreated,SortName", "Ascending")

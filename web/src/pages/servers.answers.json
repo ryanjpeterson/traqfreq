@@ -193,7 +193,10 @@
     "age_s": 7200,
     "stamp": {
      "items": 14,
-     "newest_created": "2026-11-20T21:00:00.0000000Z"
+     "newest_created": "2026-11-20T21:00:00.0000000Z",
+     "server_name": "Invented Jellyfin",
+     "version": "10.10.3",
+     "user": "listener"
     },
     "folders": [
      "/data/music"
@@ -555,7 +558,10 @@
     "age_s": 7200,
     "stamp": {
      "items": 14,
-     "newest_created": "2026-11-20T21:00:00.0000000Z"
+     "newest_created": "2026-11-20T21:00:00.0000000Z",
+     "server_name": "Invented Jellyfin",
+     "version": "10.10.3",
+     "user": "listener"
     },
     "folders": [
      "/data/music"
@@ -932,7 +938,10 @@
     "age_s": 7200,
     "stamp": {
      "items": 14,
-     "newest_created": "2026-11-20T21:00:00.0000000Z"
+     "newest_created": "2026-11-20T21:00:00.0000000Z",
+     "server_name": "Invented Jellyfin",
+     "version": "10.10.3",
+     "user": "listener"
     },
     "folders": [
      "/data/music"
@@ -1313,7 +1322,10 @@
     "age_s": 7200,
     "stamp": {
      "items": 14,
-     "newest_created": "2026-11-20T21:00:00.0000000Z"
+     "newest_created": "2026-11-20T21:00:00.0000000Z",
+     "server_name": "Invented Jellyfin",
+     "version": "10.10.3",
+     "user": "listener"
     },
     "folders": [
      "/data/music"
@@ -1722,7 +1734,10 @@
     "age_s": 7200,
     "stamp": {
      "items": 14,
-     "newest_created": "2026-11-20T21:00:00.0000000Z"
+     "newest_created": "2026-11-20T21:00:00.0000000Z",
+     "server_name": "Invented Jellyfin",
+     "version": "10.10.3",
+     "user": "listener"
     },
     "folders": [
      "/data/music"
@@ -2362,7 +2377,7 @@
      }
     ],
     "missing": [],
-    "note": "Set up; traqfreq reads it from T17 on (GET only).",
+    "note": "Set up; traqfreq reads it when you refresh it (GET requests only).",
     "refresh": {
      "server": "jellyfin",
      "set_up": true,

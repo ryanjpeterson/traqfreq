@@ -1,7 +1,7 @@
 {
   "version": "0.1.0",
   "docs": "docs/explain",
-  "synced": { "commit": "2907c22", "date": "2026-11-23" },
+  "synced": { "commit": "b97953e", "date": "2026-11-23" },
   "facts": {
     "name": "traqfreq",
     "tagline": "jimbo-dj's successor, built beside it: listening history, library and servers, every number showing its rows",
@@ -18,7 +18,7 @@
       { "name": "Tailscale", "kind": "self-hosted", "direction": "read", "required": true, "what": "the only way in" }
     ],
     "standards": ["jimbo-deploy", "jimbo-explain"],
-    "now": ["P3 SERVERS: T17 Jellyfin (its reader, then refresh and matching on live data; needs its URL and key)"]
+    "now": ["P3 SERVERS: T18 Navidrome (its reader, then refresh and matching on live data; needs its URL, user and Report Real Path)", "Jellyfin read live (T17): 53,133 of 53,133 Plex copies matched by file; check Refresh from the deployed container"]
   },
   "files": {}
 }

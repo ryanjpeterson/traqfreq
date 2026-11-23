@@ -57,7 +57,7 @@ Vendored already, unchanged: `songs.py` (song keys, `Index`) and history.py's `n
 - The read-only client base: GET only, timeouts, paging, retries off, errors shown with the server's own message; snapshot refresh (`POST /api/servers/{server}/refresh` writes only traqfreq's database), one refresh at a time per server, logged with its counts.
 - Plays on other servers shown beside Plex's and the history's, never added.
 ### T17: Jellyfin
-- `/System/Info/Public` (name, version), `/Library/VirtualFolders` (folders), `/Items?IncludeItemTypes=Audio&Recursive=true&Fields=Path,ProviderIds,MediaSources,ParentId&StartIndex=&Limit=` (`X-Emby-Token`), user data from `/Users/{id}/Items` when a user is set. Snapshot, match, check on live data (needs the URL and key).
+- `/System/Info/Public` (name, version), `/Library/VirtualFolders` (folders), `/Items?IncludeItemTypes=Audio&Recursive=true&Fields=Path,ProviderIds,MediaSources,ParentId&StartIndex=&Limit=` (T17 adds `DateCreated` for the stamp; `Authorization: MediaBrowser Token="…"`; Jellyfin 12 refuses the old `X-Emby-Token`), user data from `/Users/{id}/Items` when a user is set. Snapshot, match, check on live data (needs the URL and key).
 ### T18: Navidrome
 - Subsonic: `ping`, `getMusicFolders`, every song through `search3` (empty query, `songCount`/`songOffset` paging), OpenSubsonic fields (`musicBrainzId`, `path`, `played`, `playCount`). Snapshot, match, check on live data (needs the URL, user and Report Real Path).
 ### T19: gate
