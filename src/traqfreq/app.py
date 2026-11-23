@@ -7,8 +7,9 @@ from fastapi.staticfiles import StaticFiles
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from datetime import datetime
+from zoneinfo import ZoneInfo
 
-from . import __version__, counted, history, legacy, store
+from . import __version__, counted, history, legacy, periods, store
 from .settings import CORE, MODULES, Settings
 
 
@@ -97,13 +98,101 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     def history_listens(status: str = "play", source: str | None = None, year: int | None = None,
                         period: str | None = None, artist: str | None = None, matched: bool | None = None,
                         of: str | None = None, gap: str | None = None, start: int | None = None,
-                        end: int | None = None, limit: int = 50, offset: int = 0) -> dict:
+                        end: int | None = None, song: str | None = None, album: str | None = None,
+                        hour: int | None = None, weekday: int | None = None, limit: int = 50, offset: int = 0) -> dict:
         """The rows behind each HISTORY number (status play, too_short, repeat or duplicate; optional source,
         year, period YYYY / YYYY-MM / YYYY-MM-DD, artist key, matched, of = dup_of, gap a-b / none, start and
-        end in UTC epoch seconds)."""
+        end in UTC epoch seconds; T8: song = match_key, album = Top's album key, hour 0-23, weekday 0-6)."""
         return read_history(lambda c: history.listens(c, status, source or None, year, limit, offset, settings.tz,
                                                       period or None, artist or None, matched, of or None,
-                                                      gap or None, start, end))
+                                                      gap or None, start, end, song or None, album or None,
+                                                      hour, weekday))
+
+    # --- T8: Years, On this day, Wrapped, Top, and the P1 gate ---------------------------------------------
+
+    def period_ctx(conn):
+        """(time zone, cache key, Names) for jimbo-dj's data as it is now."""
+        tz = history.listen_tz(conn, settings.tz)
+        key = f"{history.cache_key(conn, settings.tz)}|p{periods.PERIOD_VERSION}"
+        return tz, key, periods.names(conn, key)
+
+    def jd_today() -> str:
+        """Today in jimbo-dj's TZ (schedule.tz: TZ, else America/Denver): its daily rows' stamps end with it."""
+        try:
+            zone = ZoneInfo(settings.tz or history.DEFAULT_TZ)
+        except Exception:  # noqa: BLE001
+            zone = ZoneInfo("UTC")
+        return datetime.now(zone).date().isoformat()
+
+    def daily_build(conn):
+        tz, key, nm = period_ctx(conn)
+        today = datetime.now(tz).date()
+        return store.cached(settings.data_dir, "history.daily", f"{key}|{today.isoformat()}",
+                            lambda: periods.daily(conn, tz, nm, today))
+
+    def wrapped_build(conn, period: str):
+        y, m, d = periods.parse_wrapped(period)
+        p = periods.wrapped_key(y, m, d)
+        tz, key, nm = period_ctx(conn)
+        return store.cached(settings.data_dir, f"history.wrapped:{p}", key, lambda: periods.wrapped(conn, tz, nm, y, m, d))
+
+    @app.get("/api/history/years")
+    def history_years() -> dict:
+        """Every year's plays and hours, on this day in earlier years, and jimbo-dj's overview highlights,
+        worked out the way jimbo-dj's overview works them out. Rebuilt daily and when the data changes."""
+        def run(conn):
+            value, info = daily_build(conn)
+            return {**value, "cache": info}
+        return read_history(run)
+
+    @app.get("/api/history/on-this-day")
+    def history_on_this_day() -> dict:
+        """Today's date in earlier years: plays and the top three songs of each year."""
+        def run(conn):
+            value, info = daily_build(conn)
+            return {"today": value.get("today"), "on_this_day": value.get("on_this_day", []),
+                    "timezone": value.get("timezone"), "cache": info}
+        return read_history(run)
+
+    @app.get("/api/history/wrapped")
+    def history_wrapped(period: str) -> dict:
+        """Wrapped for a year (YYYY), a month (YYYY-MM) or a day (YYYY-MM-DD), number for number as jimbo-dj's."""
+        def run(conn):
+            value, info = wrapped_build(conn, period)
+            return {**value, "cache": info}
+        return read_history(run)
+
+    @app.get("/api/history/top")
+    def history_top(period: str = "all", kind: str = "artists", sort: str = "plays", source: str | None = None,
+                    page: int = 1, per: int = 48) -> dict:
+        """Top artists, songs or albums for a period (all, 30d, 12m, YYYY, YYYY-MM) by plays or minutes."""
+        def run(conn):
+            if kind not in periods.TOP_KINDS:
+                raise ValueError(f"kind is one of {', '.join(periods.TOP_KINDS)}")
+            if sort not in periods.TOP_SORTS:
+                raise ValueError("sort is plays or minutes")
+            tz, key, nm = period_ctx(conn)
+            if period in ("30d", "12m"):
+                key = f"{key}|{datetime.now(tz).date().isoformat()}"
+            periods.top_range(conn, tz, period)  # a bad period is a 400 before anything is built
+            value, info = store.cached(settings.data_dir, f"history.top:{period}:{source or ''}", key,
+                                       lambda: periods.top(conn, tz, nm, period, source or None))
+            return {**periods.top_page(value, kind, sort, page, per), "cache": info}
+        return read_history(run)
+
+    @app.get("/api/history/compare")
+    def history_compare() -> dict:
+        """The P1 gate: every HISTORY number jimbo-dj stored (stats history.overview and every history.wrapped)
+        next to traqfreq's for the same period, with matches; a stale stored row is said to be stale."""
+        def run(conn):
+            tz, key, nm = period_ctx(conn)
+            today = jd_today()
+            value, info = store.cached(
+                settings.data_dir, "history.compare", f"{key}|{today}|{datetime.now(tz).date()}|{periods.gate_key(conn)}",
+                lambda: periods.compare(conn, tz, nm, today, overview_of=lambda: daily_build(conn)[0],
+                                        wrapped_of=lambda p: wrapped_build(conn, p)[0]))
+            return {**value, "cache": info}
+        return read_history(run)
 
     @app.get("/api/modules")
     def modules() -> dict:

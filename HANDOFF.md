@@ -92,9 +92,31 @@ Deployed from the server checkout on `claude/t6-history-overview` (65942b2; `mai
 - Fixed: `test_api_tz_from_env` wrote its cache into `./data` (the deployed app's data folder in the server checkout). Now a temp folder.
 - Tests: pytest 69 (`tests/test_counted.py`), Vitest 90, brand checks and 13 self-tests pass. Checked in the browser on the `--checks` fixture: dark desktop, light 375 px (no page side-scroll), rows of a gap and of a burst, why line. Timed on an invented dense copy (370k listens, scratchpad only): gaps 0.2 s, checks 0.5 s.
 
-## Next: T8
-Years, Wrapped, This day, Top; vendor `_minutes` and period ranges; gate script `scripts/p1_gate.py` and `GET /api/history/compare`; gate run on the Mac mini (spec: `docs/specs/t5-history.md`, T8).
-- Deploy check for T7 on live data: `/history` opens (needs the `.env` redeploy), `/api/history/counted` `not_found` is 0 or each one explained, gap buckets add up to the overview's repeats and duplicates, and look at what the checks find before T8.
+## T7 deployed and checked: 2026-11-22
+Deployed from `main` (ea02d96) with `TRAQFREQ_MODULES=H` in `.env`. Checked from the laptop over Tailscale (read-only):
+- `/api/modules`: L, H and S on. `/history` and `/history/counted` answer 200.
+- `/api/history/counted`: for each source pair the gap buckets + `not_found` + `beyond` equal the overview's numbers: Last.fm repeats 16,230, Plex repeats 32, Spotify repeats 1,907; Plex duplicates of Last.fm 8,179, Spotify of Last.fm 16,671, Apple Music of Last.fm 173 and of Plex 1. Totals 18,169 repeats and 25,024 duplicates, as the overview. **`not_found` is 0** everywhere, `beyond` 0.
+- Checks on 167,180 plays (report only): **burst** 4,402 findings, 33,128 plays held (37,530 in bursts), almost all Last.fm runs of 3–15 album tracks scrobbled seconds apart (a whole album sent at once, e.g. King Crimson 18 Nov 2026, 15 plays in 5 s). **Loop** 2 findings, 20 plays: Apple Music "White Noise Waterfall" 10 times on 29 and 30 Mar 2020 (one of jimbo-dj's `APPLEMUSIC_NOT_MUSIC` artists). **Rhythm** 0.
+- What this means for later: the burst rule as written would hold about a fifth of the plays; before any check changes a count (P6, explicit and undoable), Last.fm batch scrobbles need their own rule. Nothing changes now.
+
+## T8 done (2026-11-22, `claude/t8-years-gate`, from `main` ea02d96; laptop over SMB like T3–T7)
+- **Vendored unchanged** into `vendor/jimbodj_history.py` (jimbo-dj 1d8a7cb): `DAY`, `_range`, `_minutes`, `TOP_PERIODS`, `top_range`. They call jimbo-dj's `listen_tz(con)`; a marked stand-in below the copies returns the zone traqfreq hands in (`in_zone(tz)`, a context variable), so the copies stay as they are.
+- `src/traqfreq/periods.py`: jimbo-dj's `_overview` (years with plays and hours, on this day, Home's highlights), `_wrapped` (year, month, day) and `_top` (artists, songs, albums; all, 30d, 12m, YYYY, YYYY-MM; by plays or minutes), number for number. Plays are read with jimbo-dj's own `_plays` query text, so ties, float sums and rounding come out the same. Not in P1: Wrapped's styles, decades and sound, Top's genres (library and tags: P2/P4); the pages and the compare say so.
+- **P1 gate:** `periods.compare` puts every stored `history.overview` and `history.wrapped` field next to traqfreq's, with `matches` and `fresh` (the row's stamp is jimbo-dj's current `[history_version, last_sync, history_tz]`, plus today for the overview, and its builder version is 2). Passed = every row matches or each one that differs is stale. `scripts/p1_gate.py --url http://macmini:4492` (or `--db` with the DB, read-only) prints it; exit 0 = passed.
+- API: `GET /api/history/years`, `/on-this-day`, `/wrapped?period=`, `/top?period=&kind=&sort=&source=&page=&per=`, `/compare`. Cached in traqfreq's store (`history.daily` per day, `history.wrapped:<period>`, `history.top:<period>:<source>`, `history.compare`); Names and first-seen are kept in memory per data version. `/api/history/listens` adds `song` (match_key), `album` (Top's album key; a listen with no album counts for its library track's), `hour`, `weekday`.
+- Pages: `/history/years` (every year, on this day, highlights), `/history/wrapped?period=` (totals, sources, top artists/songs/albums, by month/day/hour, hour of day, weekday, every play of a day; earlier/later/up), `/history/top?…` (period, what and order as `NavItem` links with `aria-current`), `/history/compare`. The overview gets a "By period" card and the gate card; SETUP shows the gate card when HISTORY is on. Every number opens its rows; bar lists are lists with a one-line summary (L6).
+- Fixture: invented stored `history.wrapped` rows (2025, 2026, 2026-11-01 fresh; 2026-10 stale with a wrong play count, so the gate shows an explained difference). T5–T7 counts unchanged. Found on the way: 1 Nov 2026 is a 25-hour day in Denver (clocks go back); the tests say so.
+- Tests: pytest 81 (`tests/test_periods.py`), Vitest 97 (`web/src/pages/periods.test.tsx`), brand checks and 13 self-tests pass. Checked in the browser on the `--checks` fixture: dark desktop (Wrapped, Top, Compare, overview), light 375 px (Years, Top, Compare, a day's Wrapped: no page side-scroll). Not timed on a dense copy; first live build of `/api/history/compare` builds every stored Wrapped period (about 40) once.
+
+## P1 gate: not run yet
+Needs T8 deployed. Then, from the laptop:
+```
+python3 scripts/p1_gate.py --url http://macmini:4492
+```
+(or open `http://macmini:4492/history/compare`). Record the result here: all rows match, or each differing row stale (rerun after jimbo-dj's next hourly rebuild). P1 is done when it passes.
+
+## Next: T9
+LIBRARY read-only, first session: library numbers and their rows (spec: `docs/specs/t9-library.md`). First run the P1 gate above if it hasn't been run.
 
 ## Open questions
 1. ~~**Forgejo mirror**~~ *Done 2026-11-22:* Forgejo is live as a pull mirror of GitHub (`http://macmini:4470/ryanjpeterson/traqfreq`, syncs every 10 minutes, default branch `main`).

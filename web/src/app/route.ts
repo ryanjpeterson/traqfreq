@@ -9,7 +9,7 @@ export const MODULE_PATH: Record<ModuleId, string> = {
 export type Route =
   | { page: 'map' }
   | { page: 'search' }
-  | { page: 'module'; module: ModuleId; sub?: 'listens' | 'counted' }
+  | { page: 'module'; module: ModuleId; sub?: HistorySub }
   | { page: 'notFound' };
 
 /** HISTORY's rows page: the listens behind a number (query string = the filters). */
@@ -17,12 +17,23 @@ export const HISTORY_LISTENS = '/history/listens';
 /** HISTORY's Counted once page (T7): why each listen that isn't a play isn't one, and the read-only checks. */
 export const HISTORY_COUNTED = '/history/counted';
 
+/** T8: Years and On this day; Wrapped for a period (?period=YYYY, YYYY-MM or YYYY-MM-DD); Top (?period=&kind=&sort=);
+ *  the P1 gate's comparison with jimbo-dj's stored numbers. */
+export const HISTORY_YEARS = '/history/years';
+export const HISTORY_WRAPPED = '/history/wrapped';
+export const HISTORY_TOP = '/history/top';
+export const HISTORY_COMPARE = '/history/compare';
+export type HistorySub = 'listens' | 'counted' | 'years' | 'wrapped' | 'top' | 'compare';
+const HISTORY_SUBS: Record<string, HistorySub> = {
+  [HISTORY_LISTENS]: 'listens', [HISTORY_COUNTED]: 'counted', [HISTORY_YEARS]: 'years',
+  [HISTORY_WRAPPED]: 'wrapped', [HISTORY_TOP]: 'top', [HISTORY_COMPARE]: 'compare',
+};
+
 export function parseRoute(pathname: string): Route {
   const path = pathname.replace(/[?#].*$/, '').replace(/\/+$/, '') || '/';
   if (path === '/') return { page: 'map' };
   if (path === '/search') return { page: 'search' };
-  if (path === HISTORY_LISTENS) return { page: 'module', module: 'H', sub: 'listens' };
-  if (path === HISTORY_COUNTED) return { page: 'module', module: 'H', sub: 'counted' };
+  if (HISTORY_SUBS[path]) return { page: 'module', module: 'H', sub: HISTORY_SUBS[path] };
   const module = MODULE_IDS.find((m) => MODULE_PATH[m] === path);
   return module ? { page: 'module', module } : { page: 'notFound' };
 }

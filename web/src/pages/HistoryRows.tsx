@@ -29,7 +29,11 @@ export function parseFilter(query: string): RowsFilter {
     gap: (q.get('gap') && /^(\d+-\d+|none)$/.test(q.get('gap')!) ? q.get('gap')! : undefined),
     start: num('start'),
     end: num('end'),
-    name: (q.get('artist') && q.get('name')) || undefined,
+    song: q.get('song') || undefined,
+    album: q.get('album') || undefined,
+    hour: num('hour'),
+    weekday: num('weekday'),
+    name: ((q.get('artist') || q.get('song') || q.get('album')) && q.get('name')) || undefined,
   };
 }
 
@@ -83,6 +87,8 @@ export function HistoryRows({ query, navigate }: Props) {
     f.year != null && String(f.year),
     f.period && periodLabel(f.period),
     f.name,
+    f.hour != null && tf('rows.title.hour', { h: String(f.hour).padStart(2, '0') }),
+    f.weekday != null && t(`wrapped.weekday.${f.weekday}` as StringKey),
     f.matched === true && t('rows.matchedYes'),
     f.matched === false && t('rows.matchedNo'),
     f.of && f.of !== f.source && tf('history.sources.dupOf', { source: sourceName(f.of) }),

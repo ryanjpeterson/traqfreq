@@ -3,7 +3,9 @@ import { Band, Button, Card, Status, Text } from '../components/kit';
 import { t, tf, type StringKey } from '../copy/t';
 import { useGet } from '../app/api';
 import { formatUtc } from '../app/time';
-import { HISTORY_COUNTED } from '../app/route';
+import { HISTORY_COUNTED, HISTORY_YEARS } from '../app/route';
+import { topHref, wrappedHref, type Compare } from '../app/periods';
+import { CompareCard } from './HistoryCompare';
 import {
   NOT_PLAYS, count, dayLabel, fmt, monthLabel, rowsHref, sourceName,
   type Heatmap, type Overview, type RowsFilter, type SourceRow,
@@ -51,6 +53,8 @@ export function History({ navigate }: Nav) {
 }
 
 function OverviewBody({ o, navigate }: { o: Overview } & Nav) {
+  const gate = useGet<Compare>('/api/history/compare');
+  const thisYear = String(new Date().getFullYear());
   const [heatYear, setHeatYear] = useState<number | null>(null);
   const heatRef = useRef<HTMLElement>(null);
   const jd = o.jimbodj;
@@ -125,6 +129,20 @@ function OverviewBody({ o, navigate }: { o: Overview } & Nav) {
         </Card>
       </div>
 
+      <div className="hist-grid">
+        <Card label={t('history.periods')}>
+          <div className="stack">
+            <Text>{t('history.periods.body')}</Text>
+            <div className="hist-actions">
+              <Button href={HISTORY_YEARS} onClick={() => navigate(HISTORY_YEARS)}>{t('history.periods.years')}</Button>
+              <Button href={wrappedHref(thisYear)} onClick={() => navigate(wrappedHref(thisYear))}>{tf('history.periods.wrapped', { year: thisYear })}</Button>
+              <Button href={topHref({})} onClick={() => navigate(topHref({}))}>{t('history.periods.top')}</Button>
+            </div>
+          </div>
+        </Card>
+        <CompareCard load={gate} navigate={navigate} />
+      </div>
+
       <section className="hist-heat" aria-labelledby="h-heat" ref={heatRef} tabIndex={-1}>
         <Text variant="label" id="h-heat">{t('history.heat')}</Text>
         <HeatSection year={heatYear} setYear={setHeatYear} years={o.years.map((y) => y.year)} navigate={navigate} />
@@ -155,6 +173,10 @@ function OverviewBody({ o, navigate }: { o: Overview } & Nav) {
                 </span>
               </span>
               <span className="hist-actions">
+                <Button variant="quiet" href={wrappedHref(String(y.year))} onClick={() => navigate(wrappedHref(String(y.year)))}>
+                  {t('history.years.wrapped')}
+                  <span className="visually-hidden">{` ${y.year}`}</span>
+                </Button>
                 <Button variant="quiet" onClick={() => { setHeatYear(y.year); heatRef.current?.focus(); heatRef.current?.scrollIntoView?.(); }}>
                   {t('history.years.days')}
                   <span className="visually-hidden">{` ${y.year}`}</span>

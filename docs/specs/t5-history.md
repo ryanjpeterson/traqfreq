@@ -37,7 +37,7 @@ Built as below; details in HANDOFF (T6 done). Heatmap levels: 0 = no plays, 1–
 - A stats cache in traqfreq's own database (`TRAQFREQ_DATA_DIR`, never the legacy DB): built summaries keyed by jimbo-dj's meta `history_version` and the time zone, rebuilt when either changes. The overview loops over every play (350,953 listens live), so pages read the cache.
 - Kit only (K1), copy in `strings.json` (W1); phone and tablet layouts; Vitest.
 
-### T7: Counted once
+### T7 (done): Counted once
 - Duplicates and repeats with their reasons: for each listen that isn't a play, the play it duplicates (same `match_key`, the winning source, within jimbo-dj's window: `DEDUPE_SECONDS`, `REPEAT_SECONDS`, `window_sql`; vendored) and how far apart they were.
 - Held bursts and new bot checks, **read-only**: traqfreq flags patterns jimbo-dj doesn't (bursts of plays too close together to have been heard, one song looped, scrobbler-bot shapes), each with its reason and rows. They are reports only: the play count stays jimbo-dj's (`counted = 1`) until HISTORY's cut-over, so the gate still holds. Proposed rules go in this session's spec addition first.
 
@@ -55,7 +55,7 @@ Built as below; details in HANDOFF (T6 done). Heatmap levels: 0 = no plays, 1–
 - Each finding: first and last play (UTC and the listening zone), plays, songs, and its rows (`/api/history/listens?status=play&start=&end=`, UTC epoch seconds, inclusive). The report lists the newest 25 findings of each check and the totals.
 - Built in the same stats cache (name `history.counted`, same key as the summary).
 
-### T8: Years, Wrapped, This day, Top
+### T8 (done): Years, Wrapped, This day, Top
 - Vendor `_minutes` and the period ranges. Years (plays and hours), Wrapped for a year, month or day, On this day, Top artists / songs / albums for a period (`all`, `30d`, `12m`, `YYYY`, `YYYY-MM`) by plays or minutes.
 - Gate script (`scripts/p1_gate.py`, read-only): every stored jimbo-dj history number (`stats.history.overview`, every `stats.history.wrapped` row) next to traqfreq's for the same period, with `matches`. Also `GET /api/history/compare` for SETUP and HISTORY.
 - Gate run on the Mac mini (live data): all match, or each difference explained by a stale stored row. Record it in HANDOFF.

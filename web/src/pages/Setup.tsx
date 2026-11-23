@@ -2,9 +2,12 @@ import { Band, Card, LineBullet, Status, Text, type ModuleId } from '../componen
 import { t, tMaybe, type StringKey } from '../copy/t';
 import { useGet, type Activity, type Measure, type ModuleSwitch, type Summary } from '../app/api';
 import { formatUtc } from '../app/time';
+import type { Compare } from '../app/periods';
+import { CompareCard } from './HistoryCompare';
 
 /** SETUP, read-only: what traqfreq can read from jimbo-dj's database, and which modules are on. */
-export function Setup({ modules }: { modules: ModuleSwitch[] }) {
+export function Setup({ modules, navigate }: { modules: ModuleSwitch[]; navigate: (href: string) => void }) {
+  const historyOn = modules.find((m) => m.id === 'H')?.on ?? false;
   const summary = useGet<Summary>('/api/legacy/summary');
   const activity = useGet<Activity>('/api/legacy/activity');
   return (
@@ -45,6 +48,8 @@ export function Setup({ modules }: { modules: ModuleSwitch[] }) {
               </div>
             )}
           </Card>
+
+          {historyOn && <SetupCompare navigate={navigate} />}
 
           <Card label={t('setup.scan')}>
             {activity.state === 'loading' && <Text>{t('setup.db.loading')}</Text>}
@@ -121,4 +126,10 @@ function MeasureRow({ m }: { m: Measure }) {
       <span>{m.value.toLocaleString('en')}</span>
     </li>
   );
+}
+
+/** The P1 gate (T8): HISTORY's numbers next to jimbo-dj's stored ones. Only when HISTORY is on (L2). */
+function SetupCompare({ navigate }: { navigate: (href: string) => void }) {
+  const load = useGet<Compare>('/api/history/compare');
+  return <CompareCard load={load} navigate={navigate} />;
 }

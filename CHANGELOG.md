@@ -4,6 +4,12 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 ### Added
+- T8: Years (`/history/years`: every year's plays and hours, on this day in earlier years, jimbo-dj's highlights), Wrapped for a year, month or day (`/history/wrapped?period=`), Top artists, songs and albums for all time, 30 days, 12 months, a year or a month by plays or minutes (`/history/top`). The same numbers as jimbo-dj's (its `_overview`, `_wrapped`, `_top`), each opening its rows.
+- T8: P1 gate: `scripts/p1_gate.py` (read-only, `--url` or `--db`) and `GET /api/history/compare` put every number jimbo-dj stored for HISTORY next to traqfreq's, with matches and whether the stored row is stale; shown at `/history/compare`, on the overview and on SETUP.
+- T8: `GET /api/history/years`, `/on-this-day`, `/wrapped`, `/top`, `/compare`; `/api/history/listens` adds `song`, `album`, `hour`, `weekday`.
+- T8: vendored unchanged from jimbo-dj: `_range`, `_minutes`, `TOP_PERIODS`, `top_range`.
+- T7 deployed: gap buckets equal the overview's repeats and duplicates for every source pair on live data, none unfound.
+- `docs/specs/t9-library.md`: plan for T9–T12 (LIBRARY read-only).
 - T7: Counted once page (`/history/counted`, linked from the overview's "Every listen, counted once"): for each repeat and duplicate, the listen it repeats or duplicates, found again with jimbo-dj's own conditions (`window_sql` vendored unchanged), and how far apart, in gap buckets per source pair; "no listen in the window" is shown, not hidden.
 - T7: read-only checks over the plays: bursts (plays starting under 30 s apart, all but the first held), one song looped, steady rhythm (scrobbler-bot shape). Report only; plays stay jimbo-dj's `counted = 1`.
 - T7: `GET /api/history/counted` (stats cache `history.counted`); `/api/history/listens` adds `of`, `gap` (`a-b` seconds or `none`), `start`/`end` (UTC epoch seconds), and each repeat or duplicate row carries `of` (its listen, gap, window). The rows' "why" line says which play and how far apart.
