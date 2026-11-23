@@ -4,14 +4,13 @@ The phases and sessions are planned in [docs/specs/README.md](../specs/README.md
 
 ## Now
 
-- **P3 SERVERS, T15: the SERVERS page.** On SETUP (`/setup/servers`): the three servers with snapshot age, identity and match counts by tier and reason, each opening its rows; "On servers" on LIBRARY's track page. Done = light, dark and 375 px checked on the fixture's snapshots. Spec: `docs/specs/t13-servers.md`.
+- **P3 SERVERS, T16: reading servers.** The GET-only client base (timeouts, paging, no retries, the server's own error shown) and snapshot refresh (`POST /api/servers/{server}/refresh`, writing only traqfreq's database, one at a time, logged with its counts); plays on other servers shown beside, never added. Spec: `docs/specs/t13-servers.md`.
 
 ## Next
 
-1. **T16** the GET-only server client and snapshot refresh (medium).
-2. **T17 Jellyfin, T18 Navidrome**: read their libraries (medium each; need their URLs and keys).
-3. **T19** gate "One song, three servers" on live data (small).
-4. **P4 TAGS** read-only (4 sessions), **P5 PLAYLISTS** Junction preview (5 sessions). After P5, traqfreq shows everything jimbo-dj shows, read-only.
+1. **T17 Jellyfin, T18 Navidrome**: read their libraries (medium each; need their URLs and keys).
+2. **T19** gate "One song, three servers" on live data (small).
+3. **P4 TAGS** read-only (4 sessions), **P5 PLAYLISTS** Junction preview (5 sessions). After P5, traqfreq shows everything jimbo-dj shows, read-only.
 
 ## Later
 

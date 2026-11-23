@@ -18,7 +18,7 @@
       { "name": "Tailscale", "kind": "self-hosted", "direction": "read", "required": true, "what": "the only way in" }
     ],
     "standards": ["jimbo-deploy", "jimbo-explain"],
-    "now": ["P3 SERVERS: T15 the SERVERS page"]
+    "now": ["P3 SERVERS: T16 reading servers (the GET-only client and snapshot refresh)"]
   },
   "files": {}
 }
