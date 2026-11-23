@@ -18,7 +18,7 @@
       { "name": "Tailscale", "kind": "self-hosted", "direction": "read", "required": true, "what": "the only way in" }
     ],
     "standards": ["jimbo-deploy", "jimbo-explain"],
-    "now": ["P3 SERVERS: T17 Jellyfin (its reader, then refresh and matching on live data; needs its URL and key)"]
+    "now": ["P3 SERVERS: T18 Navidrome (its reader, then refresh and matching on live data; needs its URL, user and Report Real Path)", "Jellyfin on live data: T17's reader is built; refresh it once its URL and key are in the deploy's .env"]
   },
   "files": {}
 }

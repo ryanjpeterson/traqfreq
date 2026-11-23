@@ -4,13 +4,13 @@ The phases and sessions are planned in [docs/specs/README.md](../specs/README.md
 
 ## Now
 
-- **P3 SERVERS, T17: Jellyfin.** Fill `reading.READERS["jellyfin"]` (System/Info, VirtualFolders, paged `/Items`, the user's play counts), refresh on live data and check the matches. Needs Jellyfin's URL and API key in the deploy's `.env`. Spec: `docs/specs/t13-servers.md`.
+- **P3 SERVERS, T18: Navidrome.** Fill `reading.READERS["navidrome"]` (Subsonic `ping`, `getMusicFolders`, every song through `search3`, OpenSubsonic fields), refresh on live data and check the matches. Needs Navidrome's URL, a user and Report Real Path in the deploy's `.env`. Spec: `docs/specs/t13-servers.md`.
+- **Jellyfin on live data** (T17 left it): once its URL and API key are in the deploy's `.env`, refresh it on SERVERS and record the match counts.
 
 ## Next
 
-1. **T18 Navidrome**: read its library over Subsonic (medium; needs its URL, a user and Report Real Path).
-2. **T19** gate "One song, three servers" on live data (small).
-3. **P4 TAGS** read-only (4 sessions), **P5 PLAYLISTS** Junction preview (5 sessions). After P5, traqfreq shows everything jimbo-dj shows, read-only.
+1. **T19** gate "One song, three servers" on live data (small).
+2. **P4 TAGS** read-only (4 sessions), **P5 PLAYLISTS** Junction preview (5 sessions). After P5, traqfreq shows everything jimbo-dj shows, read-only.
 
 ## Later
 

@@ -38,7 +38,8 @@ Spec: [t13-servers.md](t13-servers.md).
 - **T14** Matching on snapshots: file, MusicBrainz ID, tags; one to one; every unmatched copy and item with its reason. *Done* (API only, on invented snapshots).
 - **T15** SERVERS page on SETUP; "On servers" on LIBRARY's track page. *Done* (on invented snapshots; `rating_key` filter on `/api/servers/matches`).
 - **T16** Reading servers: the GET-only client, snapshot refresh, plays on other servers shown beside, never added. *Done* (client, refresh and its log, the button on SERVERS; the readers are T17 and T18).
-- **T17** Jellyfin. **T18** Navidrome (both need their URL and keys: HANDOFF).
+- **T17** Jellyfin. *Done* (the reader: System/Info, folders, paged `/Items`, one user's play counts; name and version on SERVERS; the live check waits for its URL and key: HANDOFF).
+- **T18** Navidrome (needs its URL, user and Report Real Path: HANDOFF).
 - **T19** Gate "One song, three servers": `scripts/p3_gate.py`, `GET /api/servers/compare`, run on live data.
 ## P4 TAGS read-only: T20–T23
 ## P5 PLAYLISTS Junction preview: T24–T28

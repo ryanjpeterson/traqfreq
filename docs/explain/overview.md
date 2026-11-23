@@ -28,4 +28,4 @@ jimbo-dj grew from a Plex playlist editor into the home of the whole listening h
 
 ## Status
 
-Active since 2026-11-22. P0 (shell), P1 (HISTORY) and P2 (LIBRARY) are done and passed their gates on live data; P3 (SERVERS) is under way (T13–T16 done: identity, matching, the SERVERS page and the GET-only client with refresh, on invented snapshots). Done would be P8: jimbo-dj off for a week with traqfreq doing everything it did.
+Active since 2026-11-22. P0 (shell), P1 (HISTORY) and P2 (LIBRARY) are done and passed their gates on live data; P3 (SERVERS) is under way (T13–T17 done: identity, matching, the SERVERS page, the GET-only client with refresh, and Jellyfin's reader, so far on invented answers). Done would be P8: jimbo-dj off for a week with traqfreq doing everything it did.

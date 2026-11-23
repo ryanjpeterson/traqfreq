@@ -2,7 +2,7 @@
 
 ## Summary
 
-One required: jimbo-dj's database, read-only. Jellyfin and Navidrome are optional (P3, read-only: GET requests only, on a refresh from SETUP; the client is in place, the readers come in T17 and T18). Nothing leaves the tailnet.
+One required: jimbo-dj's database, read-only. Jellyfin and Navidrome are optional (P3, read-only: GET requests only, on a refresh from SETUP; Jellyfin's reader is in place (T17), Navidrome's comes in T18). Nothing leaves the tailnet.
 
 ## Services
 
@@ -10,7 +10,7 @@ One required: jimbo-dj's database, read-only. Jellyfin and Navidrome are optiona
 |-|-|-|-|-|-|
 | jimbo-dj | jimbo | its SQLite: library, listening history, stored stats (and through it Plex's library) | read | yes | file mount, read-only |
 | Plex | self-hosted | the library and Plex plays, only as jimbo-dj synced them; never called directly until P6 | read | yes (via jimbo-dj) | none in traqfreq |
-| Jellyfin | self-hosted | P3: map each song to its Jellyfin item (T17) | read | no | API key (`TRAQFREQ_JELLYFIN_KEY`) |
+| Jellyfin | self-hosted | P3: map each song to its Jellyfin item; server name and version, music folders, every audio item, one user's play counts (T17) | read | no | API key (`TRAQFREQ_JELLYFIN_KEY`), optional user (`TRAQFREQ_JELLYFIN_USER`) |
 | Navidrome | self-hosted | P3: map each song to its Navidrome song over Subsonic (T18) | read | no | user and password (`TRAQFREQ_NAVIDROME_USER`, `TRAQFREQ_NAVIDROME_PASSWORD`), token auth |
 | Tailscale | self-hosted | the only way in | read | yes | tailnet |
 
