@@ -2,7 +2,7 @@
 
 ## Summary
 
-Read-only views of jimbo-dj's data in the Berlin · Gelb look, each number with its rule and its rows, and a gate page per module comparing traqfreq with what jimbo-dj stored. 29 features in 4 areas.
+Read-only views of jimbo-dj's data in the Berlin · Gelb look, each number with its rule and its rows, and a gate page per module comparing traqfreq with what jimbo-dj stored. 32 features in 5 areas.
 
 ## Features
 
@@ -54,6 +54,14 @@ Read-only views of jimbo-dj's data in the Berlin · Gelb look, each number with 
 | SERVERS page | The three servers with status and snapshot age, Plex's identity counts, each pair's matches by tier and by reason (lists with bars and a summary), a song's three IDs; a refresh per server with the last refresh and its log; every count opens its rows | `/setup/servers`, `/setup/servers/copies`, `/setup/servers/matches`, `web/src/pages/Servers.tsx` | new |
 | P3 gate | One to one per server, reasons that add up, a spot check asking each server by ID (file, duration within 2 s); `scripts/p3_gate.py`; the gate card on SETUP | `GET /api/servers/compare`, `src/traqfreq/servers_gate.py`, `web/src/pages/ServersGate.tsx` | new |
 | On servers | On a track's page: its Jellyfin item and Navidrome song with the tier, and each server's own play count, labelled and never added | `/library/track/<key>` | new |
+
+### TAGS (module T, switched on by `TRAQFREQ_MODULES`; P4, read-only)
+
+| Feature | What it does | Where | Status |
+|-|-|-|-|
+| The ladder | Every genre tag in use on its rungs, broad to specific, any depth, shared parents: jimbo-dj's tag rules (vendored) name each tag and its broad tag, the rungs between come from the tags' names under the same broad tag; tags with no broad tag listed apart | `/tags`, `GET /api/tags/ladder`, `src/traqfreq/tags.py` | new |
+| Same as jimbo-dj's families | Each broad tag's albums under it, carrying it, missing it and its children, next to jimbo-dj's rules run here and its stored `library.tags`; every ladder ends at jimbo-dj's broad tag | `/tags` | new |
+| Tag rows | The albums carrying a tag, under it or missing it, and the artists carrying it, each saying why; the tags behind each summary number | `/tags/albums`, `/tags/artists`, `/tags/list`, `GET /api/tags/albums`, `GET /api/tags/artists` | new |
 
 ### Throughout
 

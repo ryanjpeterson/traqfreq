@@ -4,7 +4,7 @@ The phases and sessions are planned in [docs/specs/README.md](../specs/README.md
 
 ## Now
 
-- **P4 TAGS read-only, T20–T23.** The ladder, tags track by track, the proposals inbox (shown, not written), genre pages. Spec still to write. P3 SERVERS passed its gate on 2026-11-24.
+- **P4 TAGS read-only, T20–T23** ([spec](../specs/t20-tags.md)). T20 done: the ladder on jimbo-dj's vendored tag rules, checked against its families. Next: T21 albums tagged track by track (the analyzer's styles vendored), T22 the proposals inbox (shown, not written), T23 genre pages, the genre map and the gate.
 
 ## Next
 

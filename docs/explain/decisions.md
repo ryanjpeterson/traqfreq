@@ -2,6 +2,13 @@
 
 ## Log
 
+### 2026-11-24 — The ladder adds rungs inside jimbo-dj's broad tags, never across them
+
+- **Decision:** keep jimbo-dj's tag rules (tags.py, tag_rules.json, `genres.family`) vendored unchanged and build the ladder on them: a tag's parents are the nearest tags in use whose name is its head (leading words dropped, or one part of a hyphenated word kept), only under the same broad tag; with none, the broad tag. A head under another broad tag is shown, not made a rung.
+- **Why:** P4's gate is agreement with jimbo-dj's tag rules: a broad tag's descendants must be exactly jimbo-dj's family, so the ladder can add depth (Metal → Black Metal → Atmospheric Black Metal) and shared parents (Death-Doom Metal under Death Metal and Doom Metal) without moving any tag to another family.
+- **Alternatives:** a hand-written genre tree (a second set of rules to keep in step); MusicBrainz's genre relations (lookups traqfreq doesn't make); several broad tags per tag (contradicts jimbo-dj's Fix in Plex).
+- **Consequences:** a few name heads are refused (Post-Punk isn't under Punk: it is Rock in jimbo-dj); tags whose names don't share words (Shoegaze, Blackgaze) meet only at the broad tag, until movements (T23) name them together.
+
 ### 2026-11-23 — A Navidrome read counts only when no scan ran during it
 
 - **Decision:** read every song through `search3` page by page, with `getScanStatus` before and after; store the read only when no scan ran (not scanning, the same `lastScan` and `count`), no song came twice and the distinct songs are the scan's own `count`. Otherwise the refresh fails, says why, and keeps the snapshot before.
