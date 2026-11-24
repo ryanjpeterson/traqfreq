@@ -3,6 +3,8 @@
 All notable changes to this project are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions are CalVer (`YYYY.MM.N`).
 
 ## [Unreleased]
+### Fixed
+- T23: a tag's page and the albums by sound rebuilt the ladder and the analyzer-styles-per-album table on every request (1–13 s live). Both are now kept with the Library, once per data stamp; the answers are unchanged.
 ### Added
 - T23: a page per tag (`/tags/tag/<key>`, `GET /api/tags/tag/{key}`): its ladders up to the broad tag (every path), its children, the rule that gives its broad tag (override or family match), each Plex spelling and the tag rules that made it, its issues linked to the inbox, and its numbers, each opening its rows: albums carrying it, under it, missing it, artists, live tracks (jimbo-dj's per-track rule, `/tags/tracks`, `GET /api/tags/tracks?tag=&sort=plays|album`), plays (HISTORY's counted plays of those tracks: jimbo-dj's Top genres rule) and sound (albums by the analyzer's styles, `set=sound` on `/api/tags/albums`; what its plays sounded like, jimbo-dj's `history.sound_of`, vendored unchanged with `SOUND_COLS`).
 - T23: the genre map (`/tags/map`, `GET /api/tags/map`, cached as `tags.map`): one line per broad tag, drawn with CSS from `LineBullet`s like the map home, with a visually hidden summary; every tag a station on its rung, and a shared tag a station on each branch; the tags with no broad tag.

@@ -361,6 +361,19 @@ Run with `scripts/p4_gate.py --url http://macmini:4492` on the deployed app. Tha
    - To pass: run the gate again once jimbo-dj's stored row is built from a caught-up Library. Its background cache rebuilds within `min_interval`/`max_age`, but the row is only rewritten at the next stamp change, such as a sync or a MusicBrainz fetch with no further change. Or fix `statcache` in jimbo-dj, which this work never changes.
 - After PR #25 is deployed, also check `/tags/map` and a tag page on live data, and confirm `GET /api/tags/compare` gives the same as the script.
 
+## T23 deployed and checked: 2026-11-24
+PR #25 merged to `main` (70786bb) and deployed. Checked from the laptop over Tailscale, GET only:
+- `/tags/map` and `/tags/tag/black%20metal` answer 200.
+- **The map:** 15 lines, 555 tags, 137 with no broad tag, 2 shared, deepest rung 2. Its first build took 50.9 s, then it is read from the cache. All five movements cross two or three broad tags, and every tag is in use except one in "Post-punk and after" (6 of 7).
+- **Black Metal's page:**
+  - Carried by 167 albums, 195 under it, 50 artists. One ladder (Metal, Black Metal).
+  - 1,756 tracks and 2,351 plays; `/api/tags/tracks` gives the same totals.
+  - Sound: 219 albums by the analyzer's styles, and the `set=sound` rows list 219. What its plays sounded like: 129.9 BPM, aggressive 0.85, −9.1 LUFS, over 2,351 plays. (Metal itself has 0 by sound: Discogs styles name "Black Metal", not "Metal".)
+- **Rule questions:** 5 (Drill and Bass, Ambient Drone, Chamber Music, Glitch Hop, Indie Dance), under the `p2|` key.
+- **The gate:** `GET /api/tags/compare` answers [passed, passed, not passed], the same as `scripts/p4_gate.py`. Check 3 still has the same 5 tags differing (Pop Punk tracks 1,774 here vs 1,815 stored, and four sound counts), with the stored row fresh: jimbo-dj's lag, as above.
+- **Slow and uneven:** the same requests ranged widely. The tag page took 1.1 to 13 s, `set=sound` 1.2 to 4.9 s, and even the cached `/api/tags/ladder` 0.55 to 4.3 s. Some of that is the Mac mini being busy (jimbo-dj ran history imports at 18:22 UTC). Some is traqfreq: every tag page and `set=sound` request rebuilt the ladder and the albums-by-sound table.
+- **Fixed in `claude/t23-tag-speed`:** the ladder (`tags.ladder`) and the albums-by-sound index (`tagpages.sound_index`, tag key → albums) are now worked out once per Library, which is one per data stamp, and kept with it. The answers don't change, so no cache version moves. Test `test_ladder_and_sound_kept_with_the_library`. Time the tag page again after that deploy.
+
 ## Next: T24 (P5 PLAYLISTS)
 P4 is built, and its gate waits only on check 3 (above). P5 is the Junction preview (T24–T28; spec to write in T24). **Planned for P5/P6 (Ryan, 2026-11-24):** every playlist and mix has three separate switches, Plex, Jellyfin and Navidrome (in docs/specs/README.md under P5 and P6). Navidrome also has NaviBeat connected to it.
 Also worth a look on Navidrome's side: its scan error "stat /music: bad file descriptor" (from T18; not seen since the restart).

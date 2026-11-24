@@ -126,16 +126,28 @@ def _tracks_of(conn: sqlite3.Connection, key: str) -> list[int]:
     return [rk for rk, ks in tags.jimbodj_track_tags(conn).items() if key in ks]
 
 
+def sound_index(conn: sqlite3.Connection, lib: jd.Library) -> dict[str, set[int]]:
+    """tag key → the albums whose analyzer styles name it at SOUND_SHARE (what jimbo-dj's index counts as
+    ``sound``). Worked out once per Library (one per data stamp; the styles' stamp is in it) and kept with it."""
+    hit = getattr(lib, "_traqfreq_sound", None)
+    if hit is not None:
+        return hit
+    out: dict[str, set[int]] = {}
+    if {"features", "analysis"} <= legacy.table_names(conn):
+        try:
+            by_album = jd._sound_by_album(conn)
+        except Exception:  # noqa: BLE001 - no analysis yet, as jimbo-dj's Library has it
+            by_album = {}
+        R = lib.rules
+        for a, s in by_album.items():
+            for k in {p["key"] for g, v in s.items() if v >= jd.SOUND_SHARE for p in R.parse(g)}:
+                out.setdefault(k, set()).add(a)
+    lib._traqfreq_sound = out
+    return out
+
+
 def _sound_albums(conn: sqlite3.Connection, lib: jd.Library, key: str) -> set[int]:
-    """Albums whose analyzer styles name the tag at SOUND_SHARE (what jimbo-dj's index counts as ``sound``)."""
-    if not {"features", "analysis"} <= legacy.table_names(conn):
-        return set()
-    try:
-        by_album = jd._sound_by_album(conn)
-    except Exception:  # noqa: BLE001 - no analysis yet, as jimbo-dj's Library has it
-        return set()
-    R = lib.rules
-    return {a for a, s in by_album.items() if key in {p["key"] for g, v in s.items() if v >= jd.SOUND_SHARE for p in R.parse(g)}}
+    return set(sound_index(conn, lib).get(key, ()))
 
 
 # --- a tag's page -------------------------------------------------------------------------------------------
