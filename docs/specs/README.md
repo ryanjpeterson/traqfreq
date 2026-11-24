@@ -44,7 +44,7 @@ Spec: [t13-servers.md](t13-servers.md).
 ## P4 TAGS read-only: T20–T23
 Spec: [t20-tags.md](t20-tags.md).
 - **T20** The ladder: broad to specific, any depth, shared parents, on jimbo-dj's vendored tag rules; the ladder's agreement with jimbo-dj's families; the TAGS page. *Done.*
-- **T21** Albums tagged track by track (per-track tags by source, the analyzer's styles vendored).
+- **T21** Albums tagged track by track (per-track tags by source, the analyzer's styles vendored). *Done* (the album and track pages on TAGS, linked from LIBRARY; gate check 2 in `GET /api/tags/tracks/check`).
 - **T22** Proposals inbox: jimbo-dj's audit and suggestions, shown, not written.
 - **T23** Genre pages, the genre map, movements; gate script `scripts/p4_gate.py`, run on live data.
 ## P5 PLAYLISTS Junction preview: T24–T28
