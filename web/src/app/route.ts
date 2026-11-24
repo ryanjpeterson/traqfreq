@@ -50,8 +50,10 @@ const SETUP_SUBS: Record<string, SetupSub> = {
 };
 
 /** T20: TAGS' rows pages: the albums and artists behind a tag's numbers, the tags behind a summary number. */
-export type TagsSub = 'albums' | 'artists' | 'list' | 'album' | 'track';
-const TAGS_SUBS: Record<string, TagsSub> = { '/tags/albums': 'albums', '/tags/artists': 'artists', '/tags/list': 'list' };
+export type TagsSub = 'albums' | 'artists' | 'list' | 'album' | 'track' | 'proposals' | 'proposalAlbums';
+/** T22: the proposals inbox and the albums behind its numbers. */
+const TAGS_SUBS: Record<string, TagsSub> = { '/tags/albums': 'albums', '/tags/artists': 'artists', '/tags/list': 'list',
+  '/tags/proposals': 'proposals', '/tags/proposals/albums': 'proposalAlbums' };
 
 export function parseRoute(pathname: string): Route {
   const path = pathname.replace(/[?#].*$/, '').replace(/\/+$/, '') || '/';

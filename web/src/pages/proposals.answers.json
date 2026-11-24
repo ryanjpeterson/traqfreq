@@ -1,0 +1,1399 @@
+{
+ "/api/tags/proposals": {
+  "summary": {
+   "albums": 4,
+   "proposed": 3,
+   "issues": 3,
+   "clean": 1,
+   "with_recs": 2,
+   "fixable": 2,
+   "ladder": 1,
+   "rules": 0
+  },
+  "kinds": [
+   {
+    "kind": "junk",
+    "label": "Not a genre",
+    "albums": 1,
+    "fixable": true
+   },
+   {
+    "kind": "split",
+    "label": "Several genres in one tag",
+    "albums": 0,
+    "fixable": true
+   },
+   {
+    "kind": "spelling",
+    "label": "Non-standard spelling",
+    "albums": 0,
+    "fixable": true
+   },
+   {
+    "kind": "case",
+    "label": "Odd casing",
+    "albums": 1,
+    "fixable": true
+   },
+   {
+    "kind": "broad",
+    "label": "Missing its broad tag",
+    "albums": 2,
+    "fixable": true
+   },
+   {
+    "kind": "niche",
+    "label": "Too niche",
+    "albums": 2,
+    "fixable": false
+   },
+   {
+    "kind": "untagged",
+    "label": "No tags at all",
+    "albums": 0,
+    "fixable": false
+   }
+  ],
+  "fixable": [
+   {
+    "kind": "broad",
+    "label": "Missing its broad tag",
+    "albums": 2
+   },
+   {
+    "kind": "spelling",
+    "label": "Non-standard spelling",
+    "albums": 0
+   },
+   {
+    "kind": "case",
+    "label": "Odd casing",
+    "albums": 1
+   },
+   {
+    "kind": "split",
+    "label": "Several genres in one tag",
+    "albums": 0
+   },
+   {
+    "kind": "junk",
+    "label": "Not a genre",
+    "albums": 1
+   }
+  ],
+  "default": [
+   "broad"
+  ],
+  "fixes": [
+   {
+    "op": "remove",
+    "kind": "junk",
+    "tag": "2010s",
+    "to": [],
+    "albums": 1,
+    "id": "650b30fd5f",
+    "label": "Not a genre"
+   },
+   {
+    "op": "add",
+    "kind": "broad",
+    "tag": "Hip Hop",
+    "to": [],
+    "albums": 1,
+    "id": "2892c7b777",
+    "label": "Missing its broad tag"
+   },
+   {
+    "op": "add",
+    "kind": "broad",
+    "tag": "Metal",
+    "to": [],
+    "albums": 1,
+    "id": "0c327bb48a",
+    "label": "Missing its broad tag"
+   },
+   {
+    "op": "rename",
+    "kind": "case",
+    "tag": "doom metal",
+    "to": [
+     "Doom Metal"
+    ],
+    "albums": 1,
+    "id": "8045b6a014",
+    "label": "Odd casing"
+   }
+  ],
+  "suggestions": [
+   {
+    "tag": "Ambient",
+    "albums": 1,
+    "key": "ambient",
+    "in_use": true
+   },
+   {
+    "tag": "Death Metal",
+    "albums": 1,
+    "key": "death metal",
+    "in_use": true
+   },
+   {
+    "tag": "Post-Punk",
+    "albums": 1,
+    "key": "post-punk",
+    "in_use": true
+   },
+   {
+    "tag": "Drone",
+    "albums": 1,
+    "key": "drone",
+    "in_use": false
+   }
+  ],
+  "ladder": [
+   {
+    "key": "death metal",
+    "tag": "Death Metal",
+    "rung": 1,
+    "albums": 1,
+    "because": [
+     "Death-Doom Metal"
+    ]
+   }
+  ],
+  "rules": [],
+  "check": {
+   "rule": "every tag's numbers (albums, artists, tracks, MusicBrainz, sound, issues), the album issue counts, the fixes and the suggestions equal jimbo-dj's stored library.tags; a stored row that differs passes only when it is stale",
+   "source": "jimbo-dj's stats table, library.tags",
+   "fresh": true,
+   "built_at": 1793844090.0,
+   "stored": true,
+   "tags": {
+    "tags": 13,
+    "ok": 13,
+    "differ": 0,
+    "differing": [],
+    "only_here": 0,
+    "only_stored": 0,
+    "fields": [
+     "albums",
+     "artists",
+     "tracks",
+     "musicbrainz",
+     "sound",
+     "issues"
+    ],
+    "matches": true,
+    "stored": true
+   },
+   "issues": {
+    "rows": [
+     {
+      "kind": "junk",
+      "label": "Not a genre",
+      "traqfreq": 1,
+      "jimbodj": 1,
+      "matches": true
+     },
+     {
+      "kind": "split",
+      "label": "Several genres in one tag",
+      "traqfreq": 0,
+      "jimbodj": 0,
+      "matches": true
+     },
+     {
+      "kind": "spelling",
+      "label": "Non-standard spelling",
+      "traqfreq": 0,
+      "jimbodj": 0,
+      "matches": true
+     },
+     {
+      "kind": "case",
+      "label": "Odd casing",
+      "traqfreq": 1,
+      "jimbodj": 1,
+      "matches": true
+     },
+     {
+      "kind": "broad",
+      "label": "Missing its broad tag",
+      "traqfreq": 2,
+      "jimbodj": 2,
+      "matches": true
+     },
+     {
+      "kind": "niche",
+      "label": "Too niche",
+      "traqfreq": 2,
+      "jimbodj": 2,
+      "matches": true
+     },
+     {
+      "kind": "untagged",
+      "label": "No tags at all",
+      "traqfreq": 0,
+      "jimbodj": 0,
+      "matches": true
+     }
+    ],
+    "ok": 7,
+    "kinds": 7,
+    "matches": true,
+    "stored": true
+   },
+   "fixes": {
+    "items": 4,
+    "ok": 4,
+    "differ": 0,
+    "rows": [
+     {
+      "at": 1,
+      "traqfreq": {
+       "op": "remove",
+       "kind": "junk",
+       "tag": "2010s",
+       "to": [],
+       "albums": 1
+      },
+      "jimbodj": {
+       "op": "remove",
+       "kind": "junk",
+       "tag": "2010s",
+       "to": [],
+       "albums": 1
+      },
+      "matches": true
+     },
+     {
+      "at": 2,
+      "traqfreq": {
+       "op": "add",
+       "kind": "broad",
+       "tag": "Hip Hop",
+       "to": [],
+       "albums": 1
+      },
+      "jimbodj": {
+       "op": "add",
+       "kind": "broad",
+       "tag": "Hip Hop",
+       "to": [],
+       "albums": 1
+      },
+      "matches": true
+     },
+     {
+      "at": 3,
+      "traqfreq": {
+       "op": "add",
+       "kind": "broad",
+       "tag": "Metal",
+       "to": [],
+       "albums": 1
+      },
+      "jimbodj": {
+       "op": "add",
+       "kind": "broad",
+       "tag": "Metal",
+       "to": [],
+       "albums": 1
+      },
+      "matches": true
+     },
+     {
+      "at": 4,
+      "traqfreq": {
+       "op": "rename",
+       "kind": "case",
+       "tag": "doom metal",
+       "to": [
+        "Doom Metal"
+       ],
+       "albums": 1
+      },
+      "jimbodj": {
+       "op": "rename",
+       "kind": "case",
+       "tag": "doom metal",
+       "to": [
+        "Doom Metal"
+       ],
+       "albums": 1
+      },
+      "matches": true
+     }
+    ],
+    "differing": [],
+    "matches": true,
+    "stored": true
+   },
+   "suggestions": {
+    "items": 4,
+    "ok": 4,
+    "differ": 0,
+    "rows": [
+     {
+      "at": 1,
+      "traqfreq": {
+       "tag": "Ambient",
+       "key": "ambient",
+       "albums": 1,
+       "in_use": true
+      },
+      "jimbodj": {
+       "tag": "Ambient",
+       "key": "ambient",
+       "albums": 1,
+       "in_use": true
+      },
+      "matches": true
+     },
+     {
+      "at": 2,
+      "traqfreq": {
+       "tag": "Death Metal",
+       "key": "death metal",
+       "albums": 1,
+       "in_use": true
+      },
+      "jimbodj": {
+       "tag": "Death Metal",
+       "key": "death metal",
+       "albums": 1,
+       "in_use": true
+      },
+      "matches": true
+     },
+     {
+      "at": 3,
+      "traqfreq": {
+       "tag": "Post-Punk",
+       "key": "post-punk",
+       "albums": 1,
+       "in_use": true
+      },
+      "jimbodj": {
+       "tag": "Post-Punk",
+       "key": "post-punk",
+       "albums": 1,
+       "in_use": true
+      },
+      "matches": true
+     },
+     {
+      "at": 4,
+      "traqfreq": {
+       "tag": "Drone",
+       "key": "drone",
+       "albums": 1,
+       "in_use": false
+      },
+      "jimbodj": {
+       "tag": "Drone",
+       "key": "drone",
+       "albums": 1,
+       "in_use": false
+      },
+      "matches": true
+     }
+    ],
+    "differing": [],
+    "matches": true,
+    "stored": true
+   },
+   "matches": true,
+   "passed": true
+  },
+  "fix_in_plex": {
+   "where": "jimbo-dj",
+   "path": "/library/tags",
+   "port": 4490,
+   "until": "P6"
+  },
+  "rule": {
+   "all": "every album with a proposed change: an issue jimbo-dj's audit finds, a genre it suggests, or a ladder proposal of traqfreq's",
+   "kind": "albums whose Plex album tags have this kind of issue (jimbo-dj's audit, summary.issues)",
+   "fix": "albums this one fix would change (jimbo-dj's fixes(): the same change on every album)",
+   "suggest": "albums jimbo-dj's audit suggests this genre for (its sources back it and the album lacks it)",
+   "ladder": "traqfreq's proposal: albums carrying a tag below this one on the ladder but not this one (the broad tag itself is jimbo-dj's Missing its broad tag)",
+   "rule": "traqfreq's question: the albums carrying a tag whose broad tag comes from genres.family matching a word before its last one, while no shorter name inside it has a broad tag",
+   "before": "the album's Plex genres now",
+   "after": "the album's Plex genres after Fix in Plex's fixes of these kinds (jimbo-dj's tagwrite.proposal); nothing here applies them",
+   "proposed": "jimbo-dj's proposed list: the tags it keeps, the broad tags it adds and the genres it suggests",
+   "check": "every tag's numbers (albums, artists, tracks, MusicBrainz, sound, issues), the album issue counts, the fixes and the suggestions equal jimbo-dj's stored library.tags; a stored row that differs passes only when it is stale"
+  }
+ },
+ "/api/tags/proposals/albums?group=all": {
+  "group": "all",
+  "value": null,
+  "kinds": [
+   "broad",
+   "spelling",
+   "case",
+   "split",
+   "junk"
+  ],
+  "rule": "every album with a proposed change: an issue jimbo-dj's audit finds, a genre it suggests, or a ladder proposal of traqfreq's",
+  "total": 3,
+  "limit": 50,
+  "offset": 0,
+  "items": [
+   {
+    "album_key": 203,
+    "title": "Quiet Engines",
+    "artist": "Ada Vey",
+    "artist_key": 303,
+    "year": 2023,
+    "before": [
+     "Lo-Fi Hip Hop",
+     "Soundtrack",
+     "2010s"
+    ],
+    "after": [
+     "Lo-Fi Hip Hop",
+     "Soundtrack",
+     "Hip Hop"
+    ],
+    "changes": [
+     {
+      "kind": "junk",
+      "op": "remove",
+      "tag": "2010s"
+     },
+     {
+      "kind": "broad",
+      "op": "add",
+      "tag": "Hip Hop",
+      "because": [
+       "Lo-Fi Hip Hop"
+      ]
+     }
+    ],
+    "issues": [
+     {
+      "kind": "junk",
+      "op": "remove",
+      "tag": "2010s",
+      "rule": "decades"
+     },
+     {
+      "kind": "niche",
+      "op": "remove",
+      "tag": "Lo-Fi Hip Hop"
+     },
+     {
+      "kind": "niche",
+      "op": "remove",
+      "tag": "Soundtrack"
+     },
+     {
+      "kind": "broad",
+      "op": "add",
+      "tag": "Hip Hop",
+      "because": [
+       "Lo-Fi Hip Hop"
+      ]
+     }
+    ],
+    "recs": [],
+    "proposed": [
+     "Hip Hop"
+    ],
+    "score": 10,
+    "ladder": []
+   },
+   {
+    "album_key": 201,
+    "title": "Ringbahn",
+    "artist": "Kollektiv Nord",
+    "artist_key": 301,
+    "year": 2019,
+    "before": [
+     "Atmospheric Black Metal",
+     "Black Metal",
+     "Metal"
+    ],
+    "after": [
+     "Atmospheric Black Metal",
+     "Black Metal",
+     "Metal"
+    ],
+    "changes": [],
+    "issues": [
+     {
+      "kind": "niche",
+      "op": "remove",
+      "tag": "Atmospheric Black Metal"
+     }
+    ],
+    "recs": [
+     {
+      "tag": "Ambient",
+      "key": "ambient",
+      "sources": {
+       "plex-track": 0.5,
+       "file": 0.5,
+       "sound": 0.5
+      },
+      "score": 0.65,
+      "release_votes": 0,
+      "artist_votes": 0
+     }
+    ],
+    "proposed": [
+     "Black Metal",
+     "Metal",
+     "Ambient"
+    ],
+    "score": 1,
+    "ladder": []
+   },
+   {
+    "album_key": 202,
+    "title": "Low Tide Radio",
+    "artist": "The Paper Lanterns",
+    "artist_key": 302,
+    "year": 2021,
+    "before": [
+     "Death-Doom Metal",
+     "doom metal"
+    ],
+    "after": [
+     "Death-Doom Metal",
+     "Doom Metal",
+     "Metal"
+    ],
+    "changes": [
+     {
+      "kind": "case",
+      "op": "rename",
+      "tag": "doom metal",
+      "to": [
+       "Doom Metal"
+      ]
+     },
+     {
+      "kind": "broad",
+      "op": "add",
+      "tag": "Metal",
+      "because": [
+       "Death-Doom Metal",
+       "Doom Metal"
+      ]
+     }
+    ],
+    "issues": [
+     {
+      "kind": "case",
+      "op": "rename",
+      "tag": "doom metal",
+      "to": [
+       "Doom Metal"
+      ],
+      "rules": [
+       "case"
+      ]
+     },
+     {
+      "kind": "broad",
+      "op": "add",
+      "tag": "Metal",
+      "because": [
+       "Death-Doom Metal",
+       "Doom Metal"
+      ]
+     }
+    ],
+    "recs": [
+     {
+      "tag": "Death Metal",
+      "key": "death metal",
+      "sources": {
+       "plex-artist": 1,
+       "mb-artist": 4
+      },
+      "score": 0.8,
+      "release_votes": 0,
+      "artist_votes": 4
+     },
+     {
+      "tag": "Post-Punk",
+      "key": "post-punk",
+      "sources": {
+       "plex-artist": 1,
+       "mb-artist": 2
+      },
+      "score": 0.55,
+      "release_votes": 0,
+      "artist_votes": 2
+     },
+     {
+      "tag": "Drone",
+      "key": "drone",
+      "sources": {
+       "file": 0.5
+      },
+      "score": 0.4,
+      "release_votes": 0,
+      "artist_votes": 0
+     }
+    ],
+    "proposed": [
+     "Doom Metal",
+     "Death-Doom Metal",
+     "Metal",
+     "Death Metal",
+     "Post-Punk",
+     "Drone"
+    ],
+    "score": 5,
+    "ladder": [
+     {
+      "key": "death metal",
+      "tag": "Death Metal",
+      "because": [
+       "Death-Doom Metal"
+      ],
+      "rung": 1
+     }
+    ]
+   }
+  ],
+  "rules": {
+   "all": "every album with a proposed change: an issue jimbo-dj's audit finds, a genre it suggests, or a ladder proposal of traqfreq's",
+   "kind": "albums whose Plex album tags have this kind of issue (jimbo-dj's audit, summary.issues)",
+   "fix": "albums this one fix would change (jimbo-dj's fixes(): the same change on every album)",
+   "suggest": "albums jimbo-dj's audit suggests this genre for (its sources back it and the album lacks it)",
+   "ladder": "traqfreq's proposal: albums carrying a tag below this one on the ladder but not this one (the broad tag itself is jimbo-dj's Missing its broad tag)",
+   "rule": "traqfreq's question: the albums carrying a tag whose broad tag comes from genres.family matching a word before its last one, while no shorter name inside it has a broad tag",
+   "before": "the album's Plex genres now",
+   "after": "the album's Plex genres after Fix in Plex's fixes of these kinds (jimbo-dj's tagwrite.proposal); nothing here applies them",
+   "proposed": "jimbo-dj's proposed list: the tags it keeps, the broad tags it adds and the genres it suggests",
+   "check": "every tag's numbers (albums, artists, tracks, MusicBrainz, sound, issues), the album issue counts, the fixes and the suggestions equal jimbo-dj's stored library.tags; a stored row that differs passes only when it is stale"
+  }
+ },
+ "/api/tags/proposals/albums?group=kind&value=broad": {
+  "group": "kind",
+  "value": "broad",
+  "label": "Missing its broad tag",
+  "kinds": [
+   "broad"
+  ],
+  "rule": "albums whose Plex album tags have this kind of issue (jimbo-dj's audit, summary.issues)",
+  "total": 2,
+  "limit": 50,
+  "offset": 0,
+  "items": [
+   {
+    "album_key": 203,
+    "title": "Quiet Engines",
+    "artist": "Ada Vey",
+    "artist_key": 303,
+    "year": 2023,
+    "before": [
+     "Lo-Fi Hip Hop",
+     "Soundtrack",
+     "2010s"
+    ],
+    "after": [
+     "Lo-Fi Hip Hop",
+     "Soundtrack",
+     "2010s",
+     "Hip Hop"
+    ],
+    "changes": [
+     {
+      "kind": "broad",
+      "op": "add",
+      "tag": "Hip Hop",
+      "because": [
+       "Lo-Fi Hip Hop"
+      ]
+     }
+    ],
+    "issues": [
+     {
+      "kind": "junk",
+      "op": "remove",
+      "tag": "2010s",
+      "rule": "decades"
+     },
+     {
+      "kind": "niche",
+      "op": "remove",
+      "tag": "Lo-Fi Hip Hop"
+     },
+     {
+      "kind": "niche",
+      "op": "remove",
+      "tag": "Soundtrack"
+     },
+     {
+      "kind": "broad",
+      "op": "add",
+      "tag": "Hip Hop",
+      "because": [
+       "Lo-Fi Hip Hop"
+      ]
+     }
+    ],
+    "recs": [],
+    "proposed": [
+     "Hip Hop"
+    ],
+    "score": 10,
+    "ladder": []
+   },
+   {
+    "album_key": 202,
+    "title": "Low Tide Radio",
+    "artist": "The Paper Lanterns",
+    "artist_key": 302,
+    "year": 2021,
+    "before": [
+     "Death-Doom Metal",
+     "doom metal"
+    ],
+    "after": [
+     "Death-Doom Metal",
+     "doom metal",
+     "Metal"
+    ],
+    "changes": [
+     {
+      "kind": "broad",
+      "op": "add",
+      "tag": "Metal",
+      "because": [
+       "Death-Doom Metal",
+       "Doom Metal"
+      ]
+     }
+    ],
+    "issues": [
+     {
+      "kind": "case",
+      "op": "rename",
+      "tag": "doom metal",
+      "to": [
+       "Doom Metal"
+      ],
+      "rules": [
+       "case"
+      ]
+     },
+     {
+      "kind": "broad",
+      "op": "add",
+      "tag": "Metal",
+      "because": [
+       "Death-Doom Metal",
+       "Doom Metal"
+      ]
+     }
+    ],
+    "recs": [
+     {
+      "tag": "Death Metal",
+      "key": "death metal",
+      "sources": {
+       "plex-artist": 1,
+       "mb-artist": 4
+      },
+      "score": 0.8,
+      "release_votes": 0,
+      "artist_votes": 4
+     },
+     {
+      "tag": "Post-Punk",
+      "key": "post-punk",
+      "sources": {
+       "plex-artist": 1,
+       "mb-artist": 2
+      },
+      "score": 0.55,
+      "release_votes": 0,
+      "artist_votes": 2
+     },
+     {
+      "tag": "Drone",
+      "key": "drone",
+      "sources": {
+       "file": 0.5
+      },
+      "score": 0.4,
+      "release_votes": 0,
+      "artist_votes": 0
+     }
+    ],
+    "proposed": [
+     "Doom Metal",
+     "Death-Doom Metal",
+     "Metal",
+     "Death Metal",
+     "Post-Punk",
+     "Drone"
+    ],
+    "score": 5,
+    "ladder": [
+     {
+      "key": "death metal",
+      "tag": "Death Metal",
+      "because": [
+       "Death-Doom Metal"
+      ],
+      "rung": 1
+     }
+    ]
+   }
+  ],
+  "rules": {
+   "all": "every album with a proposed change: an issue jimbo-dj's audit finds, a genre it suggests, or a ladder proposal of traqfreq's",
+   "kind": "albums whose Plex album tags have this kind of issue (jimbo-dj's audit, summary.issues)",
+   "fix": "albums this one fix would change (jimbo-dj's fixes(): the same change on every album)",
+   "suggest": "albums jimbo-dj's audit suggests this genre for (its sources back it and the album lacks it)",
+   "ladder": "traqfreq's proposal: albums carrying a tag below this one on the ladder but not this one (the broad tag itself is jimbo-dj's Missing its broad tag)",
+   "rule": "traqfreq's question: the albums carrying a tag whose broad tag comes from genres.family matching a word before its last one, while no shorter name inside it has a broad tag",
+   "before": "the album's Plex genres now",
+   "after": "the album's Plex genres after Fix in Plex's fixes of these kinds (jimbo-dj's tagwrite.proposal); nothing here applies them",
+   "proposed": "jimbo-dj's proposed list: the tags it keeps, the broad tags it adds and the genres it suggests",
+   "check": "every tag's numbers (albums, artists, tracks, MusicBrainz, sound, issues), the album issue counts, the fixes and the suggestions equal jimbo-dj's stored library.tags; a stored row that differs passes only when it is stale"
+  }
+ },
+ "/api/tags/proposals/albums?group=kind&value=niche": {
+  "group": "kind",
+  "value": "niche",
+  "label": "Too niche",
+  "kinds": [],
+  "rule": "albums whose Plex album tags have this kind of issue (jimbo-dj's audit, summary.issues)",
+  "total": 2,
+  "limit": 50,
+  "offset": 0,
+  "items": [
+   {
+    "album_key": 203,
+    "title": "Quiet Engines",
+    "artist": "Ada Vey",
+    "artist_key": 303,
+    "year": 2023,
+    "before": [
+     "Lo-Fi Hip Hop",
+     "Soundtrack",
+     "2010s"
+    ],
+    "after": [
+     "Lo-Fi Hip Hop",
+     "Soundtrack",
+     "2010s"
+    ],
+    "changes": [],
+    "issues": [
+     {
+      "kind": "junk",
+      "op": "remove",
+      "tag": "2010s",
+      "rule": "decades"
+     },
+     {
+      "kind": "niche",
+      "op": "remove",
+      "tag": "Lo-Fi Hip Hop"
+     },
+     {
+      "kind": "niche",
+      "op": "remove",
+      "tag": "Soundtrack"
+     },
+     {
+      "kind": "broad",
+      "op": "add",
+      "tag": "Hip Hop",
+      "because": [
+       "Lo-Fi Hip Hop"
+      ]
+     }
+    ],
+    "recs": [],
+    "proposed": [
+     "Hip Hop"
+    ],
+    "score": 10,
+    "ladder": []
+   },
+   {
+    "album_key": 201,
+    "title": "Ringbahn",
+    "artist": "Kollektiv Nord",
+    "artist_key": 301,
+    "year": 2019,
+    "before": [
+     "Atmospheric Black Metal",
+     "Black Metal",
+     "Metal"
+    ],
+    "after": [
+     "Atmospheric Black Metal",
+     "Black Metal",
+     "Metal"
+    ],
+    "changes": [],
+    "issues": [
+     {
+      "kind": "niche",
+      "op": "remove",
+      "tag": "Atmospheric Black Metal"
+     }
+    ],
+    "recs": [
+     {
+      "tag": "Ambient",
+      "key": "ambient",
+      "sources": {
+       "plex-track": 0.5,
+       "file": 0.5,
+       "sound": 0.5
+      },
+      "score": 0.65,
+      "release_votes": 0,
+      "artist_votes": 0
+     }
+    ],
+    "proposed": [
+     "Black Metal",
+     "Metal",
+     "Ambient"
+    ],
+    "score": 1,
+    "ladder": []
+   }
+  ],
+  "rules": {
+   "all": "every album with a proposed change: an issue jimbo-dj's audit finds, a genre it suggests, or a ladder proposal of traqfreq's",
+   "kind": "albums whose Plex album tags have this kind of issue (jimbo-dj's audit, summary.issues)",
+   "fix": "albums this one fix would change (jimbo-dj's fixes(): the same change on every album)",
+   "suggest": "albums jimbo-dj's audit suggests this genre for (its sources back it and the album lacks it)",
+   "ladder": "traqfreq's proposal: albums carrying a tag below this one on the ladder but not this one (the broad tag itself is jimbo-dj's Missing its broad tag)",
+   "rule": "traqfreq's question: the albums carrying a tag whose broad tag comes from genres.family matching a word before its last one, while no shorter name inside it has a broad tag",
+   "before": "the album's Plex genres now",
+   "after": "the album's Plex genres after Fix in Plex's fixes of these kinds (jimbo-dj's tagwrite.proposal); nothing here applies them",
+   "proposed": "jimbo-dj's proposed list: the tags it keeps, the broad tags it adds and the genres it suggests",
+   "check": "every tag's numbers (albums, artists, tracks, MusicBrainz, sound, issues), the album issue counts, the fixes and the suggestions equal jimbo-dj's stored library.tags; a stored row that differs passes only when it is stale"
+  }
+ },
+ "/api/tags/proposals/albums?group=fix&value=0c327bb48a": {
+  "group": "fix",
+  "value": "0c327bb48a",
+  "fix": {
+   "op": "add",
+   "kind": "broad",
+   "tag": "Metal",
+   "to": [],
+   "label": "Missing its broad tag"
+  },
+  "kinds": [
+   "broad"
+  ],
+  "rule": "albums this one fix would change (jimbo-dj's fixes(): the same change on every album)",
+  "total": 1,
+  "limit": 50,
+  "offset": 0,
+  "items": [
+   {
+    "album_key": 202,
+    "title": "Low Tide Radio",
+    "artist": "The Paper Lanterns",
+    "artist_key": 302,
+    "year": 2021,
+    "before": [
+     "Death-Doom Metal",
+     "doom metal"
+    ],
+    "after": [
+     "Death-Doom Metal",
+     "doom metal",
+     "Metal"
+    ],
+    "changes": [
+     {
+      "kind": "broad",
+      "op": "add",
+      "tag": "Metal",
+      "because": [
+       "Death-Doom Metal",
+       "Doom Metal"
+      ]
+     }
+    ],
+    "issues": [
+     {
+      "kind": "case",
+      "op": "rename",
+      "tag": "doom metal",
+      "to": [
+       "Doom Metal"
+      ],
+      "rules": [
+       "case"
+      ]
+     },
+     {
+      "kind": "broad",
+      "op": "add",
+      "tag": "Metal",
+      "because": [
+       "Death-Doom Metal",
+       "Doom Metal"
+      ]
+     }
+    ],
+    "recs": [
+     {
+      "tag": "Death Metal",
+      "key": "death metal",
+      "sources": {
+       "plex-artist": 1,
+       "mb-artist": 4
+      },
+      "score": 0.8,
+      "release_votes": 0,
+      "artist_votes": 4
+     },
+     {
+      "tag": "Post-Punk",
+      "key": "post-punk",
+      "sources": {
+       "plex-artist": 1,
+       "mb-artist": 2
+      },
+      "score": 0.55,
+      "release_votes": 0,
+      "artist_votes": 2
+     },
+     {
+      "tag": "Drone",
+      "key": "drone",
+      "sources": {
+       "file": 0.5
+      },
+      "score": 0.4,
+      "release_votes": 0,
+      "artist_votes": 0
+     }
+    ],
+    "proposed": [
+     "Doom Metal",
+     "Death-Doom Metal",
+     "Metal",
+     "Death Metal",
+     "Post-Punk",
+     "Drone"
+    ],
+    "score": 5,
+    "ladder": [
+     {
+      "key": "death metal",
+      "tag": "Death Metal",
+      "because": [
+       "Death-Doom Metal"
+      ],
+      "rung": 1
+     }
+    ]
+   }
+  ],
+  "rules": {
+   "all": "every album with a proposed change: an issue jimbo-dj's audit finds, a genre it suggests, or a ladder proposal of traqfreq's",
+   "kind": "albums whose Plex album tags have this kind of issue (jimbo-dj's audit, summary.issues)",
+   "fix": "albums this one fix would change (jimbo-dj's fixes(): the same change on every album)",
+   "suggest": "albums jimbo-dj's audit suggests this genre for (its sources back it and the album lacks it)",
+   "ladder": "traqfreq's proposal: albums carrying a tag below this one on the ladder but not this one (the broad tag itself is jimbo-dj's Missing its broad tag)",
+   "rule": "traqfreq's question: the albums carrying a tag whose broad tag comes from genres.family matching a word before its last one, while no shorter name inside it has a broad tag",
+   "before": "the album's Plex genres now",
+   "after": "the album's Plex genres after Fix in Plex's fixes of these kinds (jimbo-dj's tagwrite.proposal); nothing here applies them",
+   "proposed": "jimbo-dj's proposed list: the tags it keeps, the broad tags it adds and the genres it suggests",
+   "check": "every tag's numbers (albums, artists, tracks, MusicBrainz, sound, issues), the album issue counts, the fixes and the suggestions equal jimbo-dj's stored library.tags; a stored row that differs passes only when it is stale"
+  }
+ },
+ "/api/tags/proposals/albums?group=suggest&value=drone": {
+  "group": "suggest",
+  "value": "drone",
+  "tag": "drone",
+  "kinds": [
+   "broad",
+   "spelling",
+   "case",
+   "split",
+   "junk"
+  ],
+  "rule": "albums jimbo-dj's audit suggests this genre for (its sources back it and the album lacks it)",
+  "total": 1,
+  "limit": 50,
+  "offset": 0,
+  "items": [
+   {
+    "album_key": 202,
+    "title": "Low Tide Radio",
+    "artist": "The Paper Lanterns",
+    "artist_key": 302,
+    "year": 2021,
+    "before": [
+     "Death-Doom Metal",
+     "doom metal"
+    ],
+    "after": [
+     "Death-Doom Metal",
+     "Doom Metal",
+     "Metal"
+    ],
+    "changes": [
+     {
+      "kind": "case",
+      "op": "rename",
+      "tag": "doom metal",
+      "to": [
+       "Doom Metal"
+      ]
+     },
+     {
+      "kind": "broad",
+      "op": "add",
+      "tag": "Metal",
+      "because": [
+       "Death-Doom Metal",
+       "Doom Metal"
+      ]
+     }
+    ],
+    "issues": [
+     {
+      "kind": "case",
+      "op": "rename",
+      "tag": "doom metal",
+      "to": [
+       "Doom Metal"
+      ],
+      "rules": [
+       "case"
+      ]
+     },
+     {
+      "kind": "broad",
+      "op": "add",
+      "tag": "Metal",
+      "because": [
+       "Death-Doom Metal",
+       "Doom Metal"
+      ]
+     }
+    ],
+    "recs": [
+     {
+      "tag": "Death Metal",
+      "key": "death metal",
+      "sources": {
+       "plex-artist": 1,
+       "mb-artist": 4
+      },
+      "score": 0.8,
+      "release_votes": 0,
+      "artist_votes": 4
+     },
+     {
+      "tag": "Post-Punk",
+      "key": "post-punk",
+      "sources": {
+       "plex-artist": 1,
+       "mb-artist": 2
+      },
+      "score": 0.55,
+      "release_votes": 0,
+      "artist_votes": 2
+     },
+     {
+      "tag": "Drone",
+      "key": "drone",
+      "sources": {
+       "file": 0.5
+      },
+      "score": 0.4,
+      "release_votes": 0,
+      "artist_votes": 0
+     }
+    ],
+    "proposed": [
+     "Doom Metal",
+     "Death-Doom Metal",
+     "Metal",
+     "Death Metal",
+     "Post-Punk",
+     "Drone"
+    ],
+    "score": 5,
+    "ladder": [
+     {
+      "key": "death metal",
+      "tag": "Death Metal",
+      "because": [
+       "Death-Doom Metal"
+      ],
+      "rung": 1
+     }
+    ]
+   }
+  ],
+  "rules": {
+   "all": "every album with a proposed change: an issue jimbo-dj's audit finds, a genre it suggests, or a ladder proposal of traqfreq's",
+   "kind": "albums whose Plex album tags have this kind of issue (jimbo-dj's audit, summary.issues)",
+   "fix": "albums this one fix would change (jimbo-dj's fixes(): the same change on every album)",
+   "suggest": "albums jimbo-dj's audit suggests this genre for (its sources back it and the album lacks it)",
+   "ladder": "traqfreq's proposal: albums carrying a tag below this one on the ladder but not this one (the broad tag itself is jimbo-dj's Missing its broad tag)",
+   "rule": "traqfreq's question: the albums carrying a tag whose broad tag comes from genres.family matching a word before its last one, while no shorter name inside it has a broad tag",
+   "before": "the album's Plex genres now",
+   "after": "the album's Plex genres after Fix in Plex's fixes of these kinds (jimbo-dj's tagwrite.proposal); nothing here applies them",
+   "proposed": "jimbo-dj's proposed list: the tags it keeps, the broad tags it adds and the genres it suggests",
+   "check": "every tag's numbers (albums, artists, tracks, MusicBrainz, sound, issues), the album issue counts, the fixes and the suggestions equal jimbo-dj's stored library.tags; a stored row that differs passes only when it is stale"
+  }
+ },
+ "/api/tags/proposals/albums?group=ladder&value=death%20metal": {
+  "group": "ladder",
+  "value": "death metal",
+  "tag": "Death Metal",
+  "kinds": [
+   "broad",
+   "spelling",
+   "case",
+   "split",
+   "junk"
+  ],
+  "rule": "traqfreq's proposal: albums carrying a tag below this one on the ladder but not this one (the broad tag itself is jimbo-dj's Missing its broad tag)",
+  "total": 1,
+  "limit": 50,
+  "offset": 0,
+  "items": [
+   {
+    "album_key": 202,
+    "title": "Low Tide Radio",
+    "artist": "The Paper Lanterns",
+    "artist_key": 302,
+    "year": 2021,
+    "before": [
+     "Death-Doom Metal",
+     "doom metal"
+    ],
+    "after": [
+     "Death-Doom Metal",
+     "Doom Metal",
+     "Metal"
+    ],
+    "changes": [
+     {
+      "kind": "case",
+      "op": "rename",
+      "tag": "doom metal",
+      "to": [
+       "Doom Metal"
+      ]
+     },
+     {
+      "kind": "broad",
+      "op": "add",
+      "tag": "Metal",
+      "because": [
+       "Death-Doom Metal",
+       "Doom Metal"
+      ]
+     }
+    ],
+    "issues": [
+     {
+      "kind": "case",
+      "op": "rename",
+      "tag": "doom metal",
+      "to": [
+       "Doom Metal"
+      ],
+      "rules": [
+       "case"
+      ]
+     },
+     {
+      "kind": "broad",
+      "op": "add",
+      "tag": "Metal",
+      "because": [
+       "Death-Doom Metal",
+       "Doom Metal"
+      ]
+     }
+    ],
+    "recs": [
+     {
+      "tag": "Death Metal",
+      "key": "death metal",
+      "sources": {
+       "plex-artist": 1,
+       "mb-artist": 4
+      },
+      "score": 0.8,
+      "release_votes": 0,
+      "artist_votes": 4
+     },
+     {
+      "tag": "Post-Punk",
+      "key": "post-punk",
+      "sources": {
+       "plex-artist": 1,
+       "mb-artist": 2
+      },
+      "score": 0.55,
+      "release_votes": 0,
+      "artist_votes": 2
+     },
+     {
+      "tag": "Drone",
+      "key": "drone",
+      "sources": {
+       "file": 0.5
+      },
+      "score": 0.4,
+      "release_votes": 0,
+      "artist_votes": 0
+     }
+    ],
+    "proposed": [
+     "Doom Metal",
+     "Death-Doom Metal",
+     "Metal",
+     "Death Metal",
+     "Post-Punk",
+     "Drone"
+    ],
+    "score": 5,
+    "ladder": [
+     {
+      "key": "death metal",
+      "tag": "Death Metal",
+      "because": [
+       "Death-Doom Metal"
+      ],
+      "rung": 1
+     }
+    ]
+   }
+  ],
+  "rules": {
+   "all": "every album with a proposed change: an issue jimbo-dj's audit finds, a genre it suggests, or a ladder proposal of traqfreq's",
+   "kind": "albums whose Plex album tags have this kind of issue (jimbo-dj's audit, summary.issues)",
+   "fix": "albums this one fix would change (jimbo-dj's fixes(): the same change on every album)",
+   "suggest": "albums jimbo-dj's audit suggests this genre for (its sources back it and the album lacks it)",
+   "ladder": "traqfreq's proposal: albums carrying a tag below this one on the ladder but not this one (the broad tag itself is jimbo-dj's Missing its broad tag)",
+   "rule": "traqfreq's question: the albums carrying a tag whose broad tag comes from genres.family matching a word before its last one, while no shorter name inside it has a broad tag",
+   "before": "the album's Plex genres now",
+   "after": "the album's Plex genres after Fix in Plex's fixes of these kinds (jimbo-dj's tagwrite.proposal); nothing here applies them",
+   "proposed": "jimbo-dj's proposed list: the tags it keeps, the broad tags it adds and the genres it suggests",
+   "check": "every tag's numbers (albums, artists, tracks, MusicBrainz, sound, issues), the album issue counts, the fixes and the suggestions equal jimbo-dj's stored library.tags; a stored row that differs passes only when it is stale"
+  }
+ }
+}
