@@ -116,7 +116,7 @@ addEventListener('resize', fit); fit();
 <div class="frame"><section id="status">
 <div class="bar"></div>
 <p class="barlabel">Status</p>
-<div class="barcode"><p>21 / 28</p></div>
+<div class="barcode"><p>22 / 28</p></div>
 <h2 class="head">Where the build stands</h2>
 <table class="tbl">
 <tr class="hd"><th style="width:8%">Phase</th><th style="width:30%">What</th><th style="width:12%">Sessions</th><th style="width:10%">Done</th><th style="width:14%">Status</th><th style="width:26%">Gate</th></tr>
@@ -124,7 +124,7 @@ addEventListener('resize', fit); fit();
 <tr><td>P1</td><td>HISTORY, read-only</td><td>4</td><td>4</td><td>Done</td><td>Counts match jimbo-dj</td></tr>
 <tr><td>P2</td><td>LIBRARY, read-only</td><td>4</td><td>4</td><td>Done</td><td>Counts match jimbo-dj</td></tr>
 <tr><td>P3</td><td>SERVERS: identity, Jellyfin, Navidrome</td><td>7</td><td>7</td><td>Done</td><td>One song, three servers</td></tr>
-<tr class="now"><td>P4</td><td>TAGS, read-only</td><td>4</td><td>2</td><td>In progress</td><td>Ladder and per-track tags right</td></tr>
+<tr class="now"><td>P4</td><td>TAGS, read-only</td><td>4</td><td>3</td><td>In progress</td><td>Ladder and per-track tags right</td></tr>
 <tr><td>P5</td><td>PLAYLISTS: Junction preview</td><td>5</td><td>0</td><td>Not started</td><td>Same tracks as jimbo-dj</td></tr>
 <tr><td>P6</td><td>Cut-overs, one writer at a time</td><td>~15</td><td>0</td><td>Not started</td><td>Each switched off in jimbo-dj</td></tr>
 <tr><td>P7</td><td>DISCOVER, MIXES, FETCH, language loop</td><td>~30</td><td>0</td><td>Not started</td><td>Per module</td></tr>
@@ -255,14 +255,14 @@ addEventListener('resize', fit); fit();
 <div class="frame"><section id="p4">
 <div class="bar"></div>
 <p class="barlabel">Phase P4 · TAGS</p>
-<div class="barcode"><p>2 / 4</p></div>
+<div class="barcode"><p>3 / 4</p></div>
 <div class="row"><div class="badge T"><p>P4</p></div><h2 class="head">TAGS, read-only</h2></div>
 <div class="cols2">
 <table class="tbl">
 <tr class="hd"><th style="width:14%">Session</th><th style="width:70%">Work</th><th style="width:16%">Status</th></tr>
 <tr><td>T20</td><td>The ladder: broad to specific, any depth, shared parents (Metal, Black metal, Atmospheric black metal). Spec written; rungs inside jimbo-dj’s broad tags, checked against its families. Live: 15 of 15 broad tags agree, 403 of 403 ladders end at their broad tag</td><td>Done</td></tr>
 <tr><td>T21</td><td>Album pages tagged track by track: an ambient intro on a black metal album. Each track’s tags by source on their rungs; the analyzer’s styles vendored; gate check 2 in the API</td><td>Done</td></tr>
-<tr><td>T22</td><td>Proposals inbox: sources suggest, your map decides (shown, not yet written)</td><td>To do</td></tr>
+<tr><td>T22</td><td>Proposals inbox: every album’s change from jimbo-dj’s audit, before and after as Fix in Plex previews it, plus traqfreq’s own ladder proposals and rule questions; shown, never applied. Gate check 3 in the API. Live: check 2 passes on 53,481 tracks</td><td>Done</td></tr>
 <tr><td>T23</td><td>Genre pages and the genre map; movements defined</td><td>To do</td></tr>
 </table>
 <div class="stack" style="gap:28px">
@@ -356,7 +356,8 @@ addEventListener('resize', fit); fit();
 <h2 class="head">What happened, newest first</h2>
 <table class="tbl">
 <tr class="hd"><th style="width:16%">Date</th><th style="width:16%">Session</th><th style="width:68%">What</th></tr>
-<tr class="now"><td>Next</td><td>Next: T22</td><td>The proposals inbox: jimbo-dj’s audit and suggestions, shown before and after, never written</td></tr>
+<tr class="now"><td>Next</td><td>Next: T23</td><td>Genre pages, the genre map, movements and the P4 gate (p4_gate.py running checks 1–3)</td></tr>
+<tr><td>2026-11-24</td><td>T22</td><td>PR #23 on branch claude/t22-proposals: the proposals inbox (jimbo-dj’s audit grouped by kind, fix and suggestion, before and after Fix in Plex’s preview; traqfreq’s ladder proposals and rule questions; nothing applied) and gate check 3; 217 API and 195 web tests. T21 live: check 2 passed, 53,481 of 53,481 tracks</td></tr>
 <tr><td>2026-11-24</td><td>T21</td><td>PR #20 on branch claude/t21-track-tags: jimbo-dj’s styles and per-track rule vendored; a track’s tags by source on their rungs, an album track by track (the tracks that differ marked), gate check 2 for every track; 206 API and 185 web tests. T20 on live data: 555 tags, 15 of 15 broad tags agree with jimbo-dj</td></tr>
 <tr><td>2026-11-24</td><td>T20</td><td>PR #19 on branch claude/t20-tags-ladder: P4 spec; jimbo-dj’s tag rules vendored; the ladder (any depth, shared parents, never across a broad tag) and the TAGS page, checked against jimbo-dj’s families; 194 API and 170 web tests. Not yet on live data</td></tr>
 <tr><td>2026-11-24</td><td>P3 gate</td><td>Passed on the deployed app once Navidrome reported real paths (Report Real Path on, Navidrome restarted): every pair one to one over 53,274 copies, none unmatched; spot check 44 of 44 answers agree on file and length</td></tr>

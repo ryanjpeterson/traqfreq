@@ -120,3 +120,67 @@ export const tagAlbumHref = (key: number, differs = false) => `${TAGS_ALBUM}${ke
 export const tagTrackHref = (key: number) => `${TAGS_TRACK}${key}`;
 export const tagAlbumApi = (key: number) => `/api/tags/album/${key}`;
 export const tagTrackApi = (key: number) => `/api/tags/track/${key}`;
+
+// --- T22: the proposals inbox (shown, never applied) and gate check 3 --------------------------------------
+
+export type IssueKind = 'junk' | 'split' | 'spelling' | 'case' | 'broad' | 'niche' | 'untagged';
+export type Fix = { op: 'add' | 'remove' | 'rename'; kind: IssueKind; tag: string | null; to: string[]; albums: number;
+  id: string; label: string };
+export type Suggestion = { tag: string; albums: number; key: string; in_use: boolean };
+export type LadderProposal = { key: string; tag: string; rung: number | null; albums: number; because: string[] };
+export type RuleQuestion = { key: string; tag: string; broad: string; family: string; match: string; last: string;
+  albums: number; artists: number };
+
+type ListPart<T> = { items: number; ok: number; differ: number; matches: boolean; stored: boolean;
+  differing?: { at: number; traqfreq: T | null; jimbodj: T | null; matches: boolean }[] };
+type TagNumbers = { key: string; name: string; albums: number; artists: number; tracks: number; musicbrainz: number;
+  sound: number; issues: unknown[] };
+export type AuditCheck = {
+  rule: string; source: string; stored: true | null; passed: boolean; fresh?: boolean; built_at?: number; matches?: boolean;
+  tags?: { tags: number; ok: number; differ: number; matches: boolean; stored: boolean; fields: string[];
+    differing: { key: string; name: string; traqfreq: TagNumbers | null; jimbodj: TagNumbers | null }[] };
+  issues?: { rows: { kind: IssueKind; label: string; traqfreq: number; jimbodj: number | null; matches: boolean }[];
+    ok: number; kinds: number; matches: boolean; stored: boolean };
+  fixes?: ListPart<Omit<Fix, 'id' | 'label'>>;
+  suggestions?: ListPart<Omit<Suggestion, never>>;
+};
+
+export type Inbox = {
+  summary: { albums: number; proposed: number; issues: number; clean: number; with_recs: number; fixable: number;
+    ladder: number; rules: number };
+  kinds: { kind: IssueKind; label: string; albums: number; fixable: boolean }[];
+  fixable: { kind: IssueKind; label: string; albums: number }[];
+  default: IssueKind[];
+  fixes: Fix[]; suggestions: Suggestion[]; ladder: LadderProposal[]; rules: RuleQuestion[];
+  check: AuditCheck;
+  fix_in_plex: { where: string; path: string; port: number; until: string };
+  rule: Record<string, string>;
+};
+
+export type Change = { kind: IssueKind; op: 'add' | 'remove' | 'rename'; tag: string; to?: string[]; because?: string[] };
+export type Rec = { tag: string; key: string; sources: Record<string, number>; score: number; release_votes: number; artist_votes: number };
+export type ProposalAlbum = {
+  album_key: number; title: string | null; artist: string | null; artist_key: number | null; year: number | null;
+  before: string[]; after: string[]; changes: Change[]; issues: (Change & { rule?: string })[]; recs: Rec[];
+  proposed: string[]; score: number; ladder: { key: string; tag: string; because: string[]; rung: number | null }[];
+};
+export type ProposalGroup = 'all' | 'kind' | 'fix' | 'suggest' | 'ladder' | 'rule';
+export const PROPOSAL_GROUPS: ProposalGroup[] = ['all', 'kind', 'fix', 'suggest', 'ladder', 'rule'];
+export type ProposalAlbums = {
+  group: ProposalGroup; value: string | null; label?: string; tag?: string;
+  fix?: Omit<Fix, 'id' | 'albums'>; question?: RuleQuestion;
+  kinds: IssueKind[]; rule: string; total: number; limit: number; offset: number; items: ProposalAlbum[];
+};
+
+export const TAGS_PROPOSALS = '/tags/proposals';
+export const TAGS_PROPOSAL_ALBUMS = '/tags/proposals/albums';
+export const PROPOSALS_API = '/api/tags/proposals';
+export const proposalsHref = (group: ProposalGroup = 'all', value?: string, offset?: number) =>
+  `${TAGS_PROPOSAL_ALBUMS}?${q({ group, value, offset: offset || undefined })}`;
+export const proposalsApi = (group: string, value: string | undefined, offset: number) =>
+  `/api/tags/proposals/albums?${q({ group, value, offset: offset || undefined })}`;
+
+/** Where jimbo-dj's Fix in Plex is: the same host as this page, jimbo-dj's port. */
+export function fixInPlexHref(f: Inbox['fix_in_plex'], loc: { protocol: string; hostname: string } = window.location): string {
+  return `${loc.protocol}//${loc.hostname}:${f.port}${f.path}`;
+}

@@ -6,7 +6,7 @@ import { albumHref, artistHref } from '../app/entities';
 import { count, fmt } from '../app/history';
 import { TracksCheckCard } from './TagsTracks';
 import {
-  LADDER_API, TAGS_PATH, TAG_SETS, TAG_SHOWS, albumsApi, albumsHref, artistsApi, artistsHref, listHref, params, shown,
+  LADDER_API, TAGS_PATH, TAGS_PROPOSALS, TAG_SETS, TAG_SHOWS, albumsApi, albumsHref, artistsApi, artistsHref, listHref, params, shown,
   type CheckRow, type Ladder, type TagAlbums, type TagArtists, type TagNode, type TagSet, type TagShow,
 } from '../app/tags';
 
@@ -197,6 +197,12 @@ function LadderBody({ l, navigate }: { l: Ladder } & Nav) {
       </Card>
       <LadderCheckCard l={l} navigate={navigate} />
       <TracksCheckCard navigate={navigate} />
+      <Card label={t('tags.prop.card.label')}>
+        <div className="stack">
+          <Text>{t('tags.prop.card.body')}</Text>
+          <div><Num href={TAGS_PROPOSALS} label={t('tags.prop.card.open')} navigate={navigate} /></div>
+        </div>
+      </Card>
       <section aria-labelledby="tags-ladder" className="stack">
         <Text variant="heading" id="tags-ladder">{t('tags.ladder')}</Text>
         <Text variant="note">{`${t('tags.rule.parent')}: ${l.rules.parent}.`}</Text>

@@ -9,7 +9,7 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
-from . import __version__, counted, entities, history, identity, legacy, library, library_gate, matching, periods, reading, servers, servers_gate, store, tags
+from . import __version__, counted, entities, history, identity, legacy, library, library_gate, matching, periods, proposals, reading, servers, servers_gate, store, tags
 from .settings import CORE, MODULES, Settings
 
 
@@ -462,6 +462,26 @@ def create_app(settings: Settings | None = None, server_transport=None) -> FastA
                                        lambda: tags.track_check(conn))
             return {**value, "cache": info}
         return read_tags(run)
+
+    # --- T22: the proposals inbox (shown, never applied) and gate check 3 ------------------------------------
+
+    @app.get("/api/tags/proposals")
+    def tags_proposals() -> dict:
+        """Every album's proposed change, grouped as jimbo-dj's audit groups them (kinds of issue, fixes,
+        suggestions), traqfreq's own ladder proposals and rule questions, Fix in Plex's preview counts, and gate
+        check 3 against jimbo-dj's stored library.tags. Nothing is applied: Fix in Plex stays in jimbo-dj until
+        P6. Cached (key: jimbo-dj's tag data stamp)."""
+        def run(conn):
+            value, info = store.cached(settings.data_dir, "tags.proposals", proposals.cache_key(conn),
+                                       lambda: proposals.inbox(conn))
+            return {**value, "cache": info}
+        return read_tags(run)
+
+    @app.get("/api/tags/proposals/albums")
+    def tags_proposals_albums(group: str = "all", value: str | None = None, limit: int = 50, offset: int = 0) -> dict:
+        """The albums behind one of the inbox's numbers (group all, kind, fix, suggest, ladder or rule), each
+        before and after Fix in Plex's preview, with its issues, suggestions and traqfreq's ladder proposals."""
+        return read_tags(lambda c: proposals.albums(c, group, value, limit, offset))
 
     @app.get("/api/modules")
     def modules() -> dict:

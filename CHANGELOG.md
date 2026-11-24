@@ -3,6 +3,12 @@
 All notable changes to this project are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions are CalVer (`YYYY.MM.N`).
 
 ## [Unreleased]
+### Added
+- T22: the proposals inbox (`/tags/proposals`, `GET /api/tags/proposals`, cached as `tags.proposals`): every album's proposed change from jimbo-dj's audit, grouped as jimbo-dj groups them (by kind of issue, by fix as `fixes()` makes them, by suggested genre as `suggestions()` counts them), each count opening its albums (`/tags/proposals/albums?group=&value=`, `GET /api/tags/proposals/albums`), each album before and after Fix in Plex's preview with its changes, its other issues, its suggestions with their sources and votes, and jimbo-dj's proposed list. Nothing is applied: the inbox says Fix in Plex stays in jimbo-dj until P6 and links there; no route writes.
+- T22: jimbo-dj's Fix in Plex preview vendored unchanged at 1d8a7cb: `tagwrite.FIXABLE`, `DEFAULT`, `_dedupe`, `proposal`, `plan` (pure; nothing that writes is copied).
+- T22: traqfreq's own proposals, labelled as such: ladder proposals (an album carrying a tag but not the tags above it, below the broad tag: Atmospheric Black Metal without Black Metal) and rule questions (a tag whose broad tag comes from `genres.family` matching a word before its last one while no shorter name inside it has a broad tag: T20's live "Drill and Bass" → Hip Hop).
+- T22: gate check 3 in the API and on the inbox: every tag's numbers (albums, artists, tracks, MusicBrainz, sound, issues), the album issue counts, the top fixes and the top suggestions against jimbo-dj's stored `library.tags`; a stored row that differs passes only when stale.
+- T22: fixture: the stored `library.tags` gains the tags, `summary.issues`, fixes and suggestions, by hand. No row changes, so no earlier count changes.
 ### Fixed
 - T21: gate check 2 listed a Discogs style with a slash ("Cut-up/DJ") twice, once per tag the rules split it into, so 49 live tracks seemed to differ from jimbo-dj's strict test. Each style is now listed once, and `TRACK_VERSION` 2 rebuilds the stored check.
 ### Added

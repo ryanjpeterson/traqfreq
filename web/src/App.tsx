@@ -21,6 +21,7 @@ import { Search } from './pages/Search';
 import { Setup } from './pages/Setup';
 import { TagAlbumRows, TagArtistRows, TagList, Tags } from './pages/Tags';
 import { TagAlbum, TagTrack } from './pages/TagsTracks';
+import { ProposalAlbums, Proposals } from './pages/TagsProposals';
 import { ServerCopies, ServerMatches, SetupServers } from './pages/Servers';
 import './app/app.css';
 
@@ -85,13 +86,15 @@ function SetupPage({ sub, modules, query, navigate }: { sub?: string; modules: M
 }
 
 /** TAGS' pages (T20): the ladder, the albums and artists behind a tag's numbers, the tags behind a summary number;
- *  T21: an album tagged track by track, a track's tags by source. */
+ *  T21: an album tagged track by track, a track's tags by source; T22: the proposals inbox and its albums. */
 function TagsPage({ sub, entityKey, query, navigate }: { sub?: string; entityKey?: number; query: string; navigate: (href: string) => void }) {
   if (sub === 'album' && entityKey != null) return <TagAlbum entityKey={entityKey} query={query} navigate={navigate} />;
   if (sub === 'track' && entityKey != null) return <TagTrack entityKey={entityKey} navigate={navigate} />;
   if (sub === 'albums') return <TagAlbumRows query={query} navigate={navigate} />;
   if (sub === 'artists') return <TagArtistRows query={query} navigate={navigate} />;
   if (sub === 'list') return <TagList query={query} navigate={navigate} />;
+  if (sub === 'proposals') return <Proposals navigate={navigate} />;
+  if (sub === 'proposalAlbums') return <ProposalAlbums query={query} navigate={navigate} />;
   return <Tags navigate={navigate} />;
 }
 
