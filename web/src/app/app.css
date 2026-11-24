@@ -75,6 +75,9 @@ main > .kit-text.is-body { max-width: 64ch; margin-bottom: 24px; }
 .gate-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
 .rows li.gate-field > span { min-width: 0; overflow-wrap: anywhere; }
 .gate-bars { margin-top: 4px; padding-left: 16px; }
+/* T19: the P3 gate's spot check sample: long IDs wrap, each row's state keeps its word whole. */
+.gate-spot li > span { min-width: 0; overflow-wrap: anywhere; }
+.rows li.gate-field > .kit-status, .gate-spot li > .kit-status { flex-shrink: 0; white-space: nowrap; }
 .hist-big { margin: 0; font-size: var(--h1); font-weight: var(--h1-weight); letter-spacing: var(--h1-tracking); line-height: 1.1; font-variant-numeric: tabular-nums; }
 .hist-grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); align-items: start; }
 .hist-num { padding: 0 8px; font-size: 15px; font-weight: 500; white-space: nowrap; font-variant-numeric: tabular-nums; }

@@ -1,0 +1,1878 @@
+{
+ "/api/servers/compare": {
+  "passed": false,
+  "checks": [
+   {
+    "check": "one_to_one",
+    "passed": false,
+    "rule": "Every Plex copy whose file the server can see is matched to exactly one item on that server, and no item is matched twice (two Plex copies of one file share its item, and say so). A match where both sides have a file names the same file. A server that hides its paths gives no file to check, so this check can't pass for it. Jellyfin ↔ Navidrome: no item matched twice.",
+    "pairs": [
+     {
+      "pair": "jellyfin",
+      "server": "jellyfin",
+      "passed": true,
+      "copies": 5,
+      "items": 14,
+      "visible": 5,
+      "visible_matched": 5,
+      "matched": 5,
+      "hidden_paths": 0,
+      "failures": {
+       "visible_unmatched": 0,
+       "item_twice": 0,
+       "file_differs": 0
+      },
+      "visible_unmatched": {},
+      "rows": {}
+     },
+     {
+      "pair": "navidrome",
+      "server": "navidrome",
+      "passed": false,
+      "copies": 5,
+      "items": 9,
+      "visible": 2,
+      "visible_matched": 2,
+      "matched": 4,
+      "hidden_paths": 4,
+      "failures": {
+       "visible_unmatched": 0,
+       "item_twice": 0,
+       "file_differs": 0
+      },
+      "visible_unmatched": {},
+      "rows": {}
+     },
+     {
+      "pair": "jellyfin-navidrome",
+      "server": null,
+      "passed": true,
+      "matched": 7,
+      "failures": {
+       "item_twice": 0
+      },
+      "rows": {}
+     }
+    ]
+   },
+   {
+    "check": "reasons",
+    "passed": true,
+    "rule": "Every copy and item is matched or unmatched, never both; every unmatched one has one known reason; the reasons add up to the unmatched count.",
+    "pairs": [
+     {
+      "pair": "jellyfin",
+      "left": "plex",
+      "right": "jellyfin",
+      "passed": true,
+      "sides": {
+       "left": {
+        "total": 5,
+        "matched": 5,
+        "unmatched": 0,
+        "reasons": {},
+        "reasons_sum": 0,
+        "both": 0,
+        "neither": 0,
+        "unknown": {},
+        "adds_up": true,
+        "passed": true
+       },
+       "right": {
+        "total": 14,
+        "matched": 5,
+        "unmatched": 9,
+        "reasons": {
+         "no_path": 1,
+         "outside_roots": 1,
+         "not_in_plex": 6,
+         "multi_part": 1
+        },
+        "reasons_sum": 9,
+        "both": 0,
+        "neither": 0,
+        "unknown": {},
+        "adds_up": true,
+        "passed": true
+       }
+      }
+     },
+     {
+      "pair": "navidrome",
+      "left": "plex",
+      "right": "navidrome",
+      "passed": true,
+      "sides": {
+       "left": {
+        "total": 5,
+        "matched": 4,
+        "unmatched": 1,
+        "reasons": {
+         "hidden_path": 1
+        },
+        "reasons_sum": 1,
+        "both": 0,
+        "neither": 0,
+        "unknown": {},
+        "adds_up": true,
+        "passed": true
+       },
+       "right": {
+        "total": 9,
+        "matched": 4,
+        "unmatched": 5,
+        "reasons": {
+         "hidden_path": 2,
+         "not_in_plex": 3
+        },
+        "reasons_sum": 5,
+        "both": 0,
+        "neither": 0,
+        "unknown": {},
+        "adds_up": true,
+        "passed": true
+       }
+      }
+     },
+     {
+      "pair": "jellyfin-navidrome",
+      "left": "jellyfin",
+      "right": "navidrome",
+      "passed": true,
+      "sides": {
+       "left": {
+        "total": 14,
+        "matched": 7,
+        "unmatched": 7,
+        "reasons": {
+         "no_path": 1,
+         "outside_roots": 1,
+         "ambiguous": 2,
+         "hidden_path": 3
+        },
+        "reasons_sum": 7,
+        "both": 0,
+        "neither": 0,
+        "unknown": {},
+        "adds_up": true,
+        "passed": true
+       },
+       "right": {
+        "total": 9,
+        "matched": 7,
+        "unmatched": 2,
+        "reasons": {
+         "ambiguous": 1,
+         "hidden_path": 1
+        },
+        "reasons_sum": 2,
+        "both": 0,
+        "neither": 0,
+        "unknown": {},
+        "adds_up": true,
+        "passed": true
+       }
+      }
+     }
+    ]
+   },
+   {
+    "check": "spot",
+    "passed": false,
+    "rule": "Every case (the first copy or item of each tier, note and reason on each pair) plus 20 copies at random, each asked of the server by ID now (GET only): the item is there, its file is the Plex copy's and its duration within 2 s of Plex's (jimbo-dj's last Plex sync).",
+    "seed": 19,
+    "sample": 18,
+    "cases": 17,
+    "random": 1,
+    "asked": {
+     "jellyfin": 15,
+     "navidrome": 11
+    },
+    "status": {
+     "ok": 24,
+     "differs": 2,
+     "unmatched": 1
+    },
+    "problems": {
+     "hidden_path": 2
+    },
+    "failed": 2,
+    "seconds": 0.005,
+    "missing": [],
+    "tolerance_ms": 2000,
+    "rows": [
+     {
+      "kind": "copy",
+      "rating_key": 101,
+      "why": [
+       "jellyfin: file",
+       "navidrome: file"
+      ],
+      "title": "Westkreuz",
+      "artist": "Kollektiv Nord",
+      "album": "Ringbahn",
+      "file": "Kollektiv Nord/Ringbahn/01 Westkreuz.flac",
+      "duration_ms": 312000,
+      "servers": {
+       "jellyfin": {
+        "status": "ok",
+        "id": "a0000000000000000000000000000065",
+        "tier": "file",
+        "file_ok": true,
+        "duration_ok": true,
+        "diff_ms": 0,
+        "problems": [],
+        "item": {
+         "id": "a0000000000000000000000000000065",
+         "path": "/data/music/Kollektiv Nord/Ringbahn/01 Westkreuz.flac",
+         "hidden": false,
+         "file": "Kollektiv Nord/Ringbahn/01 Westkreuz.flac",
+         "title": "Westkreuz",
+         "artist": "Kollektiv Nord",
+         "album": "Ringbahn",
+         "duration_ms": 312000
+        }
+       },
+       "navidrome": {
+        "status": "ok",
+        "id": "b0000000000000000000000000000065",
+        "tier": "file",
+        "file_ok": true,
+        "duration_ok": true,
+        "diff_ms": 0,
+        "problems": [],
+        "item": {
+         "id": "b0000000000000000000000000000065",
+         "path": "/music/Kollektiv Nord/Ringbahn/01 Westkreuz.flac",
+         "hidden": false,
+         "file": "Kollektiv Nord/Ringbahn/01 Westkreuz.flac",
+         "title": "Westkreuz",
+         "artist": "Kollektiv Nord",
+         "album": "Ringbahn",
+         "duration_ms": 312000
+        }
+       }
+      },
+      "passed": true
+     },
+     {
+      "kind": "copy",
+      "rating_key": 103,
+      "why": [
+       "jellyfin: loose",
+       "navidrome: mbid"
+      ],
+      "title": "Harbour Lights",
+      "artist": "The Paper Lanterns",
+      "album": "Low Tide Radio",
+      "file": "The Paper Lanterns/Low Tide Radio/01 Harbour Lights.flac",
+      "duration_ms": 221000,
+      "servers": {
+       "jellyfin": {
+        "status": "ok",
+        "id": "a0000000000000000000000000000067",
+        "tier": "file",
+        "file_ok": true,
+        "duration_ok": true,
+        "diff_ms": 0,
+        "problems": [],
+        "item": {
+         "id": "a0000000000000000000000000000067",
+         "path": "/data/music/the paper lanterns/low tide radio/01 Harbour Lights.flac",
+         "hidden": false,
+         "file": "the paper lanterns/low tide radio/01 Harbour Lights.flac",
+         "title": "Harbour Lights",
+         "artist": "The Paper Lanterns",
+         "album": "Low Tide Radio",
+         "duration_ms": 221000
+        }
+       },
+       "navidrome": {
+        "status": "differs",
+        "id": "b0000000000000000000000000000067",
+        "tier": "mbid",
+        "file_ok": false,
+        "duration_ok": true,
+        "diff_ms": 0,
+        "problems": [
+         "hidden_path"
+        ],
+        "item": {
+         "id": "b0000000000000000000000000000067",
+         "path": "The Paper Lanterns/Low Tide Radio/2-01 - Harbour Lights.flac",
+         "hidden": true,
+         "file": null,
+         "title": "Harbour Lights",
+         "artist": "The Paper Lanterns",
+         "album": "Low Tide Radio",
+         "duration_ms": 221000
+        }
+       }
+      },
+      "passed": false
+     },
+     {
+      "kind": "copy",
+      "rating_key": 104,
+      "why": [
+       "jellyfin: multi_part",
+       "navidrome: tags",
+       "navidrome: multi_part"
+      ],
+      "title": "Static Gulls",
+      "artist": "The Paper Lanterns",
+      "album": "Low Tide Radio",
+      "file": "The Paper Lanterns/Low Tide Radio/02 Static Gulls.flac",
+      "duration_ms": 245000,
+      "servers": {
+       "jellyfin": {
+        "status": "ok",
+        "id": "a0000000000000000000000000000068",
+        "tier": "file",
+        "file_ok": true,
+        "duration_ok": true,
+        "diff_ms": 0,
+        "problems": [],
+        "item": {
+         "id": "a0000000000000000000000000000068",
+         "path": "/data/music/The Paper Lanterns/Low Tide Radio/02 Static Gulls.flac",
+         "hidden": false,
+         "file": "The Paper Lanterns/Low Tide Radio/02 Static Gulls.flac",
+         "title": "Static Gulls",
+         "artist": "The Paper Lanterns",
+         "album": "Low Tide Radio",
+         "duration_ms": 245000
+        }
+       },
+       "navidrome": {
+        "status": "differs",
+        "id": "b0000000000000000000000000000068",
+        "tier": "tags",
+        "file_ok": false,
+        "duration_ok": true,
+        "diff_ms": 1000,
+        "problems": [
+         "hidden_path"
+        ],
+        "item": {
+         "id": "b0000000000000000000000000000068",
+         "path": "The Paper Lanterns/Low Tide Radio/1-02 - Static Gulls.flac",
+         "hidden": true,
+         "file": null,
+         "title": "Static Gulls",
+         "artist": "The Paper Lanterns",
+         "album": "Low Tide Radio",
+         "duration_ms": 246000
+        }
+       }
+      },
+      "passed": false
+     },
+     {
+      "kind": "item",
+      "server": "jellyfin",
+      "id": "a000000000000000000000000000006b",
+      "reason": "not_in_plex",
+      "other": "plex",
+      "why": [
+       "jellyfin: jellyfin item unmatched, not_in_plex"
+      ],
+      "servers": {
+       "jellyfin": {
+        "status": "ok",
+        "id": "a000000000000000000000000000006b",
+        "reason": "not_in_plex",
+        "reason_holds": true,
+        "problems": [],
+        "item": {
+         "id": "a000000000000000000000000000006b",
+         "path": "/data/music/Kollektiv Nord/Live am Ring/01 Westkreuz (Live).m4a",
+         "hidden": false,
+         "file": "Kollektiv Nord/Live am Ring/01 Westkreuz (Live).m4a",
+         "title": "Westkreuz (Live)",
+         "artist": "Kollektiv Nord",
+         "album": "Live am Ring",
+         "duration_ms": 330400
+        }
+       }
+      },
+      "passed": true
+     },
+     {
+      "kind": "item",
+      "server": "jellyfin",
+      "id": "a000000000000000000000000000006e",
+      "reason": "no_path",
+      "other": "plex",
+      "why": [
+       "jellyfin: jellyfin item unmatched, no_path",
+       "jellyfin-navidrome: jellyfin item unmatched, no_path"
+      ],
+      "servers": {
+       "jellyfin": {
+        "status": "ok",
+        "id": "a000000000000000000000000000006e",
+        "reason": "no_path",
+        "reason_holds": true,
+        "problems": [],
+        "item": {
+         "id": "a000000000000000000000000000006e",
+         "path": null,
+         "hidden": false,
+         "file": null,
+         "title": "Ghost",
+         "artist": "Ada Vey",
+         "album": "Loose Ends",
+         "duration_ms": null
+        }
+       }
+      },
+      "passed": true
+     },
+     {
+      "kind": "item",
+      "server": "jellyfin",
+      "id": "a0000000000000000000000000000386",
+      "reason": "outside_roots",
+      "other": "plex",
+      "why": [
+       "jellyfin: jellyfin item unmatched, outside_roots",
+       "jellyfin-navidrome: jellyfin item unmatched, outside_roots"
+      ],
+      "servers": {
+       "jellyfin": {
+        "status": "ok",
+        "id": "a0000000000000000000000000000386",
+        "reason": "outside_roots",
+        "reason_holds": true,
+        "problems": [],
+        "item": {
+         "id": "a0000000000000000000000000000386",
+         "path": "/data/audiobooks/Some Author/A Long Book/Chapter 1.mp3",
+         "hidden": false,
+         "file": null,
+         "title": "Chapter 1",
+         "artist": "Some Author",
+         "album": "A Long Book",
+         "duration_ms": 1800000
+        }
+       }
+      },
+      "passed": true
+     },
+     {
+      "kind": "item",
+      "server": "jellyfin",
+      "id": "a0000000000000000000000000000412",
+      "reason": "multi_part",
+      "other": "plex",
+      "why": [
+       "jellyfin: jellyfin item unmatched, multi_part"
+      ],
+      "servers": {
+       "jellyfin": {
+        "status": "ok",
+        "id": "a0000000000000000000000000000412",
+        "reason": "multi_part",
+        "reason_holds": true,
+        "problems": [],
+        "item": {
+         "id": "a0000000000000000000000000000412",
+         "path": "/data/music/The Paper Lanterns/Low Tide Radio/02 Static Gulls (part 2).flac",
+         "hidden": false,
+         "file": "The Paper Lanterns/Low Tide Radio/02 Static Gulls (part 2).flac",
+         "title": "Static Gulls (Part 2)",
+         "artist": "The Paper Lanterns",
+         "album": "Low Tide Radio",
+         "duration_ms": 118000
+        }
+       }
+      },
+      "passed": true
+     },
+     {
+      "kind": "copy",
+      "rating_key": 105,
+      "why": [
+       "navidrome: plex copy unmatched, hidden_path"
+      ],
+      "title": "Coil",
+      "artist": "Ada Vey",
+      "album": "Quiet Engines",
+      "file": "Ada Vey/Quiet Engines/01 Coil.flac",
+      "duration_ms": 402000,
+      "servers": {
+       "jellyfin": {
+        "status": "ok",
+        "id": "a0000000000000000000000000000069",
+        "tier": "file",
+        "file_ok": true,
+        "duration_ok": true,
+        "diff_ms": 0,
+        "problems": [],
+        "item": {
+         "id": "a0000000000000000000000000000069",
+         "path": "/data/music/Ada Vey/Quiet Engines/01 Coil.flac",
+         "hidden": false,
+         "file": "Ada Vey/Quiet Engines/01 Coil.flac",
+         "title": "Coil",
+         "artist": "Ada Vey",
+         "album": "Quiet Engines",
+         "duration_ms": 402000
+        }
+       },
+       "navidrome": {
+        "status": "unmatched",
+        "reason": "hidden_path"
+       }
+      },
+      "passed": true
+     },
+     {
+      "kind": "item",
+      "server": "navidrome",
+      "id": "b0000000000000000000000000000069",
+      "reason": "hidden_path",
+      "other": "plex",
+      "why": [
+       "navidrome: navidrome item unmatched, hidden_path",
+       "jellyfin-navidrome: navidrome item unmatched, hidden_path"
+      ],
+      "servers": {
+       "navidrome": {
+        "status": "ok",
+        "id": "b0000000000000000000000000000069",
+        "reason": "hidden_path",
+        "reason_holds": true,
+        "problems": [],
+        "item": {
+         "id": "b0000000000000000000000000000069",
+         "path": "Ada Vey/Quiet Engines/01 - Coil.flac",
+         "hidden": true,
+         "file": null,
+         "title": "Coil",
+         "artist": "Ada Vey",
+         "album": "Quiet Engines",
+         "duration_ms": 396000
+        }
+       }
+      },
+      "passed": true
+     },
+     {
+      "kind": "item",
+      "server": "navidrome",
+      "id": "b000000000000000000000000000006b",
+      "reason": "not_in_plex",
+      "other": "plex",
+      "why": [
+       "navidrome: navidrome item unmatched, not_in_plex"
+      ],
+      "servers": {
+       "navidrome": {
+        "status": "ok",
+        "id": "b000000000000000000000000000006b",
+        "reason": "not_in_plex",
+        "reason_holds": true,
+        "problems": [],
+        "item": {
+         "id": "b000000000000000000000000000006b",
+         "path": "/music/Kollektiv Nord/Live am Ring/01 Westkreuz (Live).flac",
+         "hidden": false,
+         "file": "Kollektiv Nord/Live am Ring/01 Westkreuz (Live).flac",
+         "title": "Westkreuz (Live)",
+         "artist": "Kollektiv Nord",
+         "album": "Live am Ring",
+         "duration_ms": 330000
+        }
+       }
+      },
+      "passed": true
+     },
+     {
+      "kind": "pair",
+      "pair": "jellyfin-navidrome",
+      "left_id": "a0000000000000000000000000000065",
+      "id": "b0000000000000000000000000000065",
+      "tier": "plex",
+      "why": [
+       "jellyfin-navidrome: plex"
+      ],
+      "servers": {
+       "jellyfin": {
+        "status": "ok",
+        "id": "a0000000000000000000000000000065",
+        "item": {
+         "id": "a0000000000000000000000000000065",
+         "path": "/data/music/Kollektiv Nord/Ringbahn/01 Westkreuz.flac",
+         "hidden": false,
+         "file": "Kollektiv Nord/Ringbahn/01 Westkreuz.flac",
+         "title": "Westkreuz",
+         "artist": "Kollektiv Nord",
+         "album": "Ringbahn",
+         "duration_ms": 312000
+        }
+       },
+       "navidrome": {
+        "status": "ok",
+        "id": "b0000000000000000000000000000065",
+        "tier": "plex",
+        "file_ok": true,
+        "duration_ok": true,
+        "diff_ms": 0,
+        "problems": [],
+        "item": {
+         "id": "b0000000000000000000000000000065",
+         "path": "/music/Kollektiv Nord/Ringbahn/01 Westkreuz.flac",
+         "hidden": false,
+         "file": "Kollektiv Nord/Ringbahn/01 Westkreuz.flac",
+         "title": "Westkreuz",
+         "artist": "Kollektiv Nord",
+         "album": "Ringbahn",
+         "duration_ms": 312000
+        }
+       }
+      },
+      "passed": true
+     },
+     {
+      "kind": "pair",
+      "pair": "jellyfin-navidrome",
+      "left_id": "a000000000000000000000000000006b",
+      "id": "b000000000000000000000000000006b",
+      "tier": "mbid",
+      "why": [
+       "jellyfin-navidrome: mbid"
+      ],
+      "servers": {
+       "jellyfin": {
+        "status": "ok",
+        "id": "a000000000000000000000000000006b",
+        "item": {
+         "id": "a000000000000000000000000000006b",
+         "path": "/data/music/Kollektiv Nord/Live am Ring/01 Westkreuz (Live).m4a",
+         "hidden": false,
+         "file": "Kollektiv Nord/Live am Ring/01 Westkreuz (Live).m4a",
+         "title": "Westkreuz (Live)",
+         "artist": "Kollektiv Nord",
+         "album": "Live am Ring",
+         "duration_ms": 330400
+        }
+       },
+       "navidrome": {
+        "status": "ok",
+        "id": "b000000000000000000000000000006b",
+        "tier": "mbid",
+        "file_ok": null,
+        "duration_ok": true,
+        "diff_ms": 400,
+        "problems": [],
+        "item": {
+         "id": "b000000000000000000000000000006b",
+         "path": "/music/Kollektiv Nord/Live am Ring/01 Westkreuz (Live).flac",
+         "hidden": false,
+         "file": "Kollektiv Nord/Live am Ring/01 Westkreuz (Live).flac",
+         "title": "Westkreuz (Live)",
+         "artist": "Kollektiv Nord",
+         "album": "Live am Ring",
+         "duration_ms": 330000
+        }
+       }
+      },
+      "passed": true
+     },
+     {
+      "kind": "pair",
+      "pair": "jellyfin-navidrome",
+      "left_id": "a0000000000000000000000000000385",
+      "id": "b0000000000000000000000000000385",
+      "tier": "file",
+      "why": [
+       "jellyfin-navidrome: file"
+      ],
+      "servers": {
+       "jellyfin": {
+        "status": "ok",
+        "id": "a0000000000000000000000000000385",
+        "item": {
+         "id": "a0000000000000000000000000000385",
+         "path": "/data/music/Orphan Tapes/Unlisted/01 Nobody.flac",
+         "hidden": false,
+         "file": "Orphan Tapes/Unlisted/01 Nobody.flac",
+         "title": "Nobody",
+         "artist": "Orphan Tapes",
+         "album": "Unlisted",
+         "duration_ms": 150000
+        }
+       },
+       "navidrome": {
+        "status": "ok",
+        "id": "b0000000000000000000000000000385",
+        "tier": "file",
+        "file_ok": true,
+        "duration_ok": true,
+        "diff_ms": 0,
+        "problems": [],
+        "item": {
+         "id": "b0000000000000000000000000000385",
+         "path": "/music/Orphan Tapes/Unlisted/01 Nobody.flac",
+         "hidden": false,
+         "file": "Orphan Tapes/Unlisted/01 Nobody.flac",
+         "title": "Nobody",
+         "artist": "Orphan Tapes",
+         "album": "Unlisted",
+         "duration_ms": 150000
+        }
+       }
+      },
+      "passed": true
+     },
+     {
+      "kind": "pair",
+      "pair": "jellyfin-navidrome",
+      "left_id": "a0000000000000000000000000000387",
+      "id": "b0000000000000000000000000000387",
+      "tier": "tags",
+      "why": [
+       "jellyfin-navidrome: tags"
+      ],
+      "servers": {
+       "jellyfin": {
+        "status": "ok",
+        "id": "a0000000000000000000000000000387",
+        "item": {
+         "id": "a0000000000000000000000000000387",
+         "path": "/data/music/Ada Vey/Loose Ends/03 Night Bus.flac",
+         "hidden": false,
+         "file": "Ada Vey/Loose Ends/03 Night Bus.flac",
+         "title": "Night Bus",
+         "artist": "Ada Vey",
+         "album": "Loose Ends",
+         "duration_ms": 210000
+        }
+       },
+       "navidrome": {
+        "status": "ok",
+        "id": "b0000000000000000000000000000387",
+        "tier": "tags",
+        "file_ok": null,
+        "duration_ok": true,
+        "diff_ms": 0,
+        "problems": [],
+        "item": {
+         "id": "b0000000000000000000000000000387",
+         "path": "Ada Vey/Loose Ends/03 - Night Bus.flac",
+         "hidden": true,
+         "file": null,
+         "title": "Night Bus",
+         "artist": "Ada Vey",
+         "album": "Loose Ends",
+         "duration_ms": 210000
+        }
+       }
+      },
+      "passed": true
+     },
+     {
+      "kind": "item",
+      "server": "jellyfin",
+      "id": "a0000000000000000000000000000069",
+      "reason": "hidden_path",
+      "other": "navidrome",
+      "why": [
+       "jellyfin-navidrome: jellyfin item unmatched, hidden_path"
+      ],
+      "servers": {
+       "jellyfin": {
+        "status": "ok",
+        "id": "a0000000000000000000000000000069",
+        "reason": "hidden_path",
+        "reason_holds": true,
+        "problems": [],
+        "item": {
+         "id": "a0000000000000000000000000000069",
+         "path": "/data/music/Ada Vey/Quiet Engines/01 Coil.flac",
+         "hidden": false,
+         "file": "Ada Vey/Quiet Engines/01 Coil.flac",
+         "title": "Coil",
+         "artist": "Ada Vey",
+         "album": "Quiet Engines",
+         "duration_ms": 402000
+        }
+       }
+      },
+      "passed": true
+     },
+     {
+      "kind": "item",
+      "server": "jellyfin",
+      "id": "a0000000000000000000000000000457",
+      "reason": "ambiguous",
+      "other": "navidrome",
+      "why": [
+       "jellyfin-navidrome: jellyfin item unmatched, ambiguous"
+      ],
+      "servers": {
+       "jellyfin": {
+        "status": "ok",
+        "id": "a0000000000000000000000000000457",
+        "reason": "ambiguous",
+        "reason_holds": true,
+        "problems": [],
+        "item": {
+         "id": "a0000000000000000000000000000457",
+         "path": "/data/music/mötley kru/über/01 kreuzberg.flac",
+         "hidden": false,
+         "file": "mötley kru/über/01 kreuzberg.flac",
+         "title": "Kreuzberg",
+         "artist": "Mötley Kru",
+         "album": "Über",
+         "duration_ms": 200000
+        }
+       }
+      },
+      "passed": true
+     },
+     {
+      "kind": "item",
+      "server": "navidrome",
+      "id": "b000000000000000000000000000006f",
+      "reason": "ambiguous",
+      "other": "jellyfin",
+      "why": [
+       "jellyfin-navidrome: navidrome item unmatched, ambiguous"
+      ],
+      "servers": {
+       "navidrome": {
+        "status": "ok",
+        "id": "b000000000000000000000000000006f",
+        "reason": "ambiguous",
+        "reason_holds": true,
+        "problems": [],
+        "item": {
+         "id": "b000000000000000000000000000006f",
+         "path": "/music/Mötley Kru/Über/01 Kreuzberg.flac",
+         "hidden": false,
+         "file": "Mötley Kru/Über/01 Kreuzberg.flac",
+         "title": "Kreuzberg",
+         "artist": "Mötley Kru",
+         "album": "Über",
+         "duration_ms": 200000
+        }
+       }
+      },
+      "passed": true
+     },
+     {
+      "kind": "copy",
+      "rating_key": 102,
+      "why": [
+       "random"
+      ],
+      "title": "Ostkreuz",
+      "artist": "Kollektiv Nord",
+      "album": "Ringbahn",
+      "file": "Kollektiv Nord/Ringbahn/02 Ostkreuz.flac",
+      "duration_ms": 298000,
+      "servers": {
+       "jellyfin": {
+        "status": "ok",
+        "id": "a0000000000000000000000000000066",
+        "tier": "file",
+        "file_ok": true,
+        "duration_ok": true,
+        "diff_ms": 0,
+        "problems": [],
+        "item": {
+         "id": "a0000000000000000000000000000066",
+         "path": "/data/music/Kollektiv Nord/Ringbahn/02 Ostkreuz.flac",
+         "hidden": false,
+         "file": "Kollektiv Nord/Ringbahn/02 Ostkreuz.flac",
+         "title": "Ostkreuz",
+         "artist": "Kollektiv Nord",
+         "album": "Ringbahn",
+         "duration_ms": 298000
+        }
+       },
+       "navidrome": {
+        "status": "ok",
+        "id": "b0000000000000000000000000000066",
+        "tier": "file",
+        "file_ok": true,
+        "duration_ok": true,
+        "diff_ms": 0,
+        "problems": [],
+        "item": {
+         "id": "b0000000000000000000000000000066",
+         "path": "/music/Kollektiv Nord/Ringbahn/02 Ostkreuz.flac",
+         "hidden": false,
+         "file": "Kollektiv Nord/Ringbahn/02 Ostkreuz.flac",
+         "title": "Ostkreuz",
+         "artist": "Kollektiv Nord",
+         "album": "Ringbahn",
+         "duration_ms": 298000
+        }
+       }
+      },
+      "passed": true
+     }
+    ]
+   }
+  ],
+  "notes": [
+   "Navidrome gives no real path for 4 of 9 items (Report Real Path is off for the player traqfreq logs in as): there is no file to check there, so checks 1 and 3 can't pass for Navidrome."
+  ],
+  "snapshots": [
+   {
+    "server": "jellyfin",
+    "snapshot": true,
+    "read_at": 1793847600.0,
+    "age_s": 7200,
+    "stamp": {
+     "items": 14,
+     "newest_created": "2026-11-20T21:00:00.0000000Z",
+     "server_name": "Invented Jellyfin",
+     "version": "10.10.3",
+     "user": "listener"
+    },
+    "folders": [
+     "/data/music"
+    ],
+    "folder_source": "server",
+    "folder_rule": "the server's own music folders",
+    "items": 14,
+    "hidden_paths": 0
+   },
+   {
+    "server": "navidrome",
+    "snapshot": true,
+    "read_at": 1793847600.0,
+    "age_s": 7200,
+    "stamp": {
+     "items": 9,
+     "last_scan": "2026-11-23T03:00:00Z",
+     "hidden_paths": 4,
+     "server_name": "navidrome",
+     "version": "0.53.3 (invented)",
+     "user": "listener",
+     "open_subsonic": true,
+     "scan_count": 9,
+     "music_folders": [
+      "Invented Music"
+     ]
+    },
+    "folders": [
+     "/music"
+    ],
+    "folder_source": "common",
+    "folder_rule": "the folder every real path shares (the server names no folder paths)",
+    "items": 9,
+    "hidden_paths": 4
+   }
+  ],
+  "copies": 5,
+  "rules": {
+   "one_to_one": "Every Plex copy whose file the server can see is matched to exactly one item on that server, and no item is matched twice (two Plex copies of one file share its item, and say so). A match where both sides have a file names the same file. A server that hides its paths gives no file to check, so this check can't pass for it. Jellyfin ↔ Navidrome: no item matched twice.",
+   "reasons": "Every copy and item is matched or unmatched, never both; every unmatched one has one known reason; the reasons add up to the unmatched count.",
+   "spot": "Every case (the first copy or item of each tier, note and reason on each pair) plus 20 copies at random, each asked of the server by ID now (GET only): the item is there, its file is the Plex copy's and its duration within 2 s of Plex's (jimbo-dj's last Plex sync).",
+   "passed": "Passed when all three checks pass."
+  },
+  "read_only": "Matched from the stored snapshots; the spot check sends GET requests only. Nothing is written to any server, to jimbo-dj's database or to traqfreq's.",
+  "version": 1
+ },
+ "real:/api/servers/compare": {
+  "passed": true,
+  "checks": [
+   {
+    "check": "one_to_one",
+    "passed": true,
+    "rule": "Every Plex copy whose file the server can see is matched to exactly one item on that server, and no item is matched twice (two Plex copies of one file share its item, and say so). A match where both sides have a file names the same file. A server that hides its paths gives no file to check, so this check can't pass for it. Jellyfin ↔ Navidrome: no item matched twice.",
+    "pairs": [
+     {
+      "pair": "jellyfin",
+      "server": "jellyfin",
+      "passed": true,
+      "copies": 5,
+      "items": 14,
+      "visible": 5,
+      "visible_matched": 5,
+      "matched": 5,
+      "hidden_paths": 0,
+      "failures": {
+       "visible_unmatched": 0,
+       "item_twice": 0,
+       "file_differs": 0
+      },
+      "visible_unmatched": {},
+      "rows": {}
+     },
+     {
+      "pair": "navidrome",
+      "server": "navidrome",
+      "passed": true,
+      "copies": 5,
+      "items": 9,
+      "visible": 5,
+      "visible_matched": 5,
+      "matched": 5,
+      "hidden_paths": 0,
+      "failures": {
+       "visible_unmatched": 0,
+       "item_twice": 0,
+       "file_differs": 0
+      },
+      "visible_unmatched": {},
+      "rows": {}
+     },
+     {
+      "pair": "jellyfin-navidrome",
+      "server": null,
+      "passed": true,
+      "matched": 8,
+      "failures": {
+       "item_twice": 0
+      },
+      "rows": {}
+     }
+    ]
+   },
+   {
+    "check": "reasons",
+    "passed": true,
+    "rule": "Every copy and item is matched or unmatched, never both; every unmatched one has one known reason; the reasons add up to the unmatched count.",
+    "pairs": [
+     {
+      "pair": "jellyfin",
+      "left": "plex",
+      "right": "jellyfin",
+      "passed": true,
+      "sides": {
+       "left": {
+        "total": 5,
+        "matched": 5,
+        "unmatched": 0,
+        "reasons": {},
+        "reasons_sum": 0,
+        "both": 0,
+        "neither": 0,
+        "unknown": {},
+        "adds_up": true,
+        "passed": true
+       },
+       "right": {
+        "total": 14,
+        "matched": 5,
+        "unmatched": 9,
+        "reasons": {
+         "no_path": 1,
+         "outside_roots": 1,
+         "not_in_plex": 6,
+         "multi_part": 1
+        },
+        "reasons_sum": 9,
+        "both": 0,
+        "neither": 0,
+        "unknown": {},
+        "adds_up": true,
+        "passed": true
+       }
+      }
+     },
+     {
+      "pair": "navidrome",
+      "left": "plex",
+      "right": "navidrome",
+      "passed": true,
+      "sides": {
+       "left": {
+        "total": 5,
+        "matched": 5,
+        "unmatched": 0,
+        "reasons": {},
+        "reasons_sum": 0,
+        "both": 0,
+        "neither": 0,
+        "unknown": {},
+        "adds_up": true,
+        "passed": true
+       },
+       "right": {
+        "total": 9,
+        "matched": 5,
+        "unmatched": 4,
+        "reasons": {
+         "not_in_plex": 4
+        },
+        "reasons_sum": 4,
+        "both": 0,
+        "neither": 0,
+        "unknown": {},
+        "adds_up": true,
+        "passed": true
+       }
+      }
+     },
+     {
+      "pair": "jellyfin-navidrome",
+      "left": "jellyfin",
+      "right": "navidrome",
+      "passed": true,
+      "sides": {
+       "left": {
+        "total": 14,
+        "matched": 8,
+        "unmatched": 6,
+        "reasons": {
+         "no_path": 1,
+         "outside_roots": 1,
+         "not_on_server": 2,
+         "ambiguous": 2
+        },
+        "reasons_sum": 6,
+        "both": 0,
+        "neither": 0,
+        "unknown": {},
+        "adds_up": true,
+        "passed": true
+       },
+       "right": {
+        "total": 9,
+        "matched": 8,
+        "unmatched": 1,
+        "reasons": {
+         "ambiguous": 1
+        },
+        "reasons_sum": 1,
+        "both": 0,
+        "neither": 0,
+        "unknown": {},
+        "adds_up": true,
+        "passed": true
+       }
+      }
+     }
+    ]
+   },
+   {
+    "check": "spot",
+    "passed": true,
+    "rule": "Every case (the first copy or item of each tier, note and reason on each pair) plus 20 copies at random, each asked of the server by ID now (GET only): the item is there, its file is the Plex copy's and its duration within 2 s of Plex's (jimbo-dj's last Plex sync).",
+    "seed": 19,
+    "sample": 16,
+    "cases": 14,
+    "random": 2,
+    "asked": {
+     "jellyfin": 14,
+     "navidrome": 10
+    },
+    "status": {
+     "ok": 24
+    },
+    "problems": {},
+    "failed": 0,
+    "seconds": 0.004,
+    "missing": [],
+    "tolerance_ms": 2000,
+    "rows": [
+     {
+      "kind": "copy",
+      "rating_key": 101,
+      "why": [
+       "jellyfin: file",
+       "navidrome: file"
+      ],
+      "title": "Westkreuz",
+      "artist": "Kollektiv Nord",
+      "album": "Ringbahn",
+      "file": "Kollektiv Nord/Ringbahn/01 Westkreuz.flac",
+      "duration_ms": 312000,
+      "servers": {
+       "jellyfin": {
+        "status": "ok",
+        "id": "a0000000000000000000000000000065",
+        "tier": "file",
+        "file_ok": true,
+        "duration_ok": true,
+        "diff_ms": 0,
+        "problems": [],
+        "item": {
+         "id": "a0000000000000000000000000000065",
+         "path": "/data/music/Kollektiv Nord/Ringbahn/01 Westkreuz.flac",
+         "hidden": false,
+         "file": "Kollektiv Nord/Ringbahn/01 Westkreuz.flac",
+         "title": "Westkreuz",
+         "artist": "Kollektiv Nord",
+         "album": "Ringbahn",
+         "duration_ms": 312000
+        }
+       },
+       "navidrome": {
+        "status": "ok",
+        "id": "b0000000000000000000000000000065",
+        "tier": "file",
+        "file_ok": true,
+        "duration_ok": true,
+        "diff_ms": 0,
+        "problems": [],
+        "item": {
+         "id": "b0000000000000000000000000000065",
+         "path": "/music/Kollektiv Nord/Ringbahn/01 Westkreuz.flac",
+         "hidden": false,
+         "file": "Kollektiv Nord/Ringbahn/01 Westkreuz.flac",
+         "title": "Westkreuz",
+         "artist": "Kollektiv Nord",
+         "album": "Ringbahn",
+         "duration_ms": 312000
+        }
+       }
+      },
+      "passed": true
+     },
+     {
+      "kind": "copy",
+      "rating_key": 103,
+      "why": [
+       "jellyfin: loose"
+      ],
+      "title": "Harbour Lights",
+      "artist": "The Paper Lanterns",
+      "album": "Low Tide Radio",
+      "file": "The Paper Lanterns/Low Tide Radio/01 Harbour Lights.flac",
+      "duration_ms": 221000,
+      "servers": {
+       "jellyfin": {
+        "status": "ok",
+        "id": "a0000000000000000000000000000067",
+        "tier": "file",
+        "file_ok": true,
+        "duration_ok": true,
+        "diff_ms": 0,
+        "problems": [],
+        "item": {
+         "id": "a0000000000000000000000000000067",
+         "path": "/data/music/the paper lanterns/low tide radio/01 Harbour Lights.flac",
+         "hidden": false,
+         "file": "the paper lanterns/low tide radio/01 Harbour Lights.flac",
+         "title": "Harbour Lights",
+         "artist": "The Paper Lanterns",
+         "album": "Low Tide Radio",
+         "duration_ms": 221000
+        }
+       },
+       "navidrome": {
+        "status": "ok",
+        "id": "b0000000000000000000000000000067",
+        "tier": "file",
+        "file_ok": true,
+        "duration_ok": true,
+        "diff_ms": 0,
+        "problems": [],
+        "item": {
+         "id": "b0000000000000000000000000000067",
+         "path": "/music/The Paper Lanterns/Low Tide Radio/01 Harbour Lights.flac",
+         "hidden": false,
+         "file": "The Paper Lanterns/Low Tide Radio/01 Harbour Lights.flac",
+         "title": "Harbour Lights",
+         "artist": "The Paper Lanterns",
+         "album": "Low Tide Radio",
+         "duration_ms": 221000
+        }
+       }
+      },
+      "passed": true
+     },
+     {
+      "kind": "copy",
+      "rating_key": 104,
+      "why": [
+       "jellyfin: multi_part",
+       "navidrome: multi_part"
+      ],
+      "title": "Static Gulls",
+      "artist": "The Paper Lanterns",
+      "album": "Low Tide Radio",
+      "file": "The Paper Lanterns/Low Tide Radio/02 Static Gulls.flac",
+      "duration_ms": 245000,
+      "servers": {
+       "jellyfin": {
+        "status": "ok",
+        "id": "a0000000000000000000000000000068",
+        "tier": "file",
+        "file_ok": true,
+        "duration_ok": true,
+        "diff_ms": 0,
+        "problems": [],
+        "item": {
+         "id": "a0000000000000000000000000000068",
+         "path": "/data/music/The Paper Lanterns/Low Tide Radio/02 Static Gulls.flac",
+         "hidden": false,
+         "file": "The Paper Lanterns/Low Tide Radio/02 Static Gulls.flac",
+         "title": "Static Gulls",
+         "artist": "The Paper Lanterns",
+         "album": "Low Tide Radio",
+         "duration_ms": 245000
+        }
+       },
+       "navidrome": {
+        "status": "ok",
+        "id": "b0000000000000000000000000000068",
+        "tier": "file",
+        "file_ok": true,
+        "duration_ok": true,
+        "diff_ms": 1000,
+        "problems": [],
+        "item": {
+         "id": "b0000000000000000000000000000068",
+         "path": "/music/The Paper Lanterns/Low Tide Radio/02 Static Gulls.flac",
+         "hidden": false,
+         "file": "The Paper Lanterns/Low Tide Radio/02 Static Gulls.flac",
+         "title": "Static Gulls",
+         "artist": "The Paper Lanterns",
+         "album": "Low Tide Radio",
+         "duration_ms": 246000
+        }
+       }
+      },
+      "passed": true
+     },
+     {
+      "kind": "item",
+      "server": "jellyfin",
+      "id": "a000000000000000000000000000006b",
+      "reason": "not_in_plex",
+      "other": "plex",
+      "why": [
+       "jellyfin: jellyfin item unmatched, not_in_plex"
+      ],
+      "servers": {
+       "jellyfin": {
+        "status": "ok",
+        "id": "a000000000000000000000000000006b",
+        "reason": "not_in_plex",
+        "reason_holds": true,
+        "problems": [],
+        "item": {
+         "id": "a000000000000000000000000000006b",
+         "path": "/data/music/Kollektiv Nord/Live am Ring/01 Westkreuz (Live).m4a",
+         "hidden": false,
+         "file": "Kollektiv Nord/Live am Ring/01 Westkreuz (Live).m4a",
+         "title": "Westkreuz (Live)",
+         "artist": "Kollektiv Nord",
+         "album": "Live am Ring",
+         "duration_ms": 330400
+        }
+       }
+      },
+      "passed": true
+     },
+     {
+      "kind": "item",
+      "server": "jellyfin",
+      "id": "a000000000000000000000000000006e",
+      "reason": "no_path",
+      "other": "plex",
+      "why": [
+       "jellyfin: jellyfin item unmatched, no_path",
+       "jellyfin-navidrome: jellyfin item unmatched, no_path"
+      ],
+      "servers": {
+       "jellyfin": {
+        "status": "ok",
+        "id": "a000000000000000000000000000006e",
+        "reason": "no_path",
+        "reason_holds": true,
+        "problems": [],
+        "item": {
+         "id": "a000000000000000000000000000006e",
+         "path": null,
+         "hidden": false,
+         "file": null,
+         "title": "Ghost",
+         "artist": "Ada Vey",
+         "album": "Loose Ends",
+         "duration_ms": null
+        }
+       }
+      },
+      "passed": true
+     },
+     {
+      "kind": "item",
+      "server": "jellyfin",
+      "id": "a0000000000000000000000000000386",
+      "reason": "outside_roots",
+      "other": "plex",
+      "why": [
+       "jellyfin: jellyfin item unmatched, outside_roots",
+       "jellyfin-navidrome: jellyfin item unmatched, outside_roots"
+      ],
+      "servers": {
+       "jellyfin": {
+        "status": "ok",
+        "id": "a0000000000000000000000000000386",
+        "reason": "outside_roots",
+        "reason_holds": true,
+        "problems": [],
+        "item": {
+         "id": "a0000000000000000000000000000386",
+         "path": "/data/audiobooks/Some Author/A Long Book/Chapter 1.mp3",
+         "hidden": false,
+         "file": null,
+         "title": "Chapter 1",
+         "artist": "Some Author",
+         "album": "A Long Book",
+         "duration_ms": 1800000
+        }
+       }
+      },
+      "passed": true
+     },
+     {
+      "kind": "item",
+      "server": "jellyfin",
+      "id": "a0000000000000000000000000000412",
+      "reason": "multi_part",
+      "other": "plex",
+      "why": [
+       "jellyfin: jellyfin item unmatched, multi_part"
+      ],
+      "servers": {
+       "jellyfin": {
+        "status": "ok",
+        "id": "a0000000000000000000000000000412",
+        "reason": "multi_part",
+        "reason_holds": true,
+        "problems": [],
+        "item": {
+         "id": "a0000000000000000000000000000412",
+         "path": "/data/music/The Paper Lanterns/Low Tide Radio/02 Static Gulls (part 2).flac",
+         "hidden": false,
+         "file": "The Paper Lanterns/Low Tide Radio/02 Static Gulls (part 2).flac",
+         "title": "Static Gulls (Part 2)",
+         "artist": "The Paper Lanterns",
+         "album": "Low Tide Radio",
+         "duration_ms": 118000
+        }
+       }
+      },
+      "passed": true
+     },
+     {
+      "kind": "item",
+      "server": "navidrome",
+      "id": "b000000000000000000000000000006b",
+      "reason": "not_in_plex",
+      "other": "plex",
+      "why": [
+       "navidrome: navidrome item unmatched, not_in_plex"
+      ],
+      "servers": {
+       "navidrome": {
+        "status": "ok",
+        "id": "b000000000000000000000000000006b",
+        "reason": "not_in_plex",
+        "reason_holds": true,
+        "problems": [],
+        "item": {
+         "id": "b000000000000000000000000000006b",
+         "path": "/music/Kollektiv Nord/Live am Ring/01 Westkreuz (Live).flac",
+         "hidden": false,
+         "file": "Kollektiv Nord/Live am Ring/01 Westkreuz (Live).flac",
+         "title": "Westkreuz (Live)",
+         "artist": "Kollektiv Nord",
+         "album": "Live am Ring",
+         "duration_ms": 330000
+        }
+       }
+      },
+      "passed": true
+     },
+     {
+      "kind": "pair",
+      "pair": "jellyfin-navidrome",
+      "left_id": "a0000000000000000000000000000065",
+      "id": "b0000000000000000000000000000065",
+      "tier": "plex",
+      "why": [
+       "jellyfin-navidrome: plex"
+      ],
+      "servers": {
+       "jellyfin": {
+        "status": "ok",
+        "id": "a0000000000000000000000000000065",
+        "item": {
+         "id": "a0000000000000000000000000000065",
+         "path": "/data/music/Kollektiv Nord/Ringbahn/01 Westkreuz.flac",
+         "hidden": false,
+         "file": "Kollektiv Nord/Ringbahn/01 Westkreuz.flac",
+         "title": "Westkreuz",
+         "artist": "Kollektiv Nord",
+         "album": "Ringbahn",
+         "duration_ms": 312000
+        }
+       },
+       "navidrome": {
+        "status": "ok",
+        "id": "b0000000000000000000000000000065",
+        "tier": "plex",
+        "file_ok": true,
+        "duration_ok": true,
+        "diff_ms": 0,
+        "problems": [],
+        "item": {
+         "id": "b0000000000000000000000000000065",
+         "path": "/music/Kollektiv Nord/Ringbahn/01 Westkreuz.flac",
+         "hidden": false,
+         "file": "Kollektiv Nord/Ringbahn/01 Westkreuz.flac",
+         "title": "Westkreuz",
+         "artist": "Kollektiv Nord",
+         "album": "Ringbahn",
+         "duration_ms": 312000
+        }
+       }
+      },
+      "passed": true
+     },
+     {
+      "kind": "pair",
+      "pair": "jellyfin-navidrome",
+      "left_id": "a000000000000000000000000000006b",
+      "id": "b000000000000000000000000000006b",
+      "tier": "mbid",
+      "why": [
+       "jellyfin-navidrome: mbid"
+      ],
+      "servers": {
+       "jellyfin": {
+        "status": "ok",
+        "id": "a000000000000000000000000000006b",
+        "item": {
+         "id": "a000000000000000000000000000006b",
+         "path": "/data/music/Kollektiv Nord/Live am Ring/01 Westkreuz (Live).m4a",
+         "hidden": false,
+         "file": "Kollektiv Nord/Live am Ring/01 Westkreuz (Live).m4a",
+         "title": "Westkreuz (Live)",
+         "artist": "Kollektiv Nord",
+         "album": "Live am Ring",
+         "duration_ms": 330400
+        }
+       },
+       "navidrome": {
+        "status": "ok",
+        "id": "b000000000000000000000000000006b",
+        "tier": "mbid",
+        "file_ok": null,
+        "duration_ok": true,
+        "diff_ms": 400,
+        "problems": [],
+        "item": {
+         "id": "b000000000000000000000000000006b",
+         "path": "/music/Kollektiv Nord/Live am Ring/01 Westkreuz (Live).flac",
+         "hidden": false,
+         "file": "Kollektiv Nord/Live am Ring/01 Westkreuz (Live).flac",
+         "title": "Westkreuz (Live)",
+         "artist": "Kollektiv Nord",
+         "album": "Live am Ring",
+         "duration_ms": 330000
+        }
+       }
+      },
+      "passed": true
+     },
+     {
+      "kind": "pair",
+      "pair": "jellyfin-navidrome",
+      "left_id": "a0000000000000000000000000000385",
+      "id": "b0000000000000000000000000000385",
+      "tier": "file",
+      "why": [
+       "jellyfin-navidrome: file"
+      ],
+      "servers": {
+       "jellyfin": {
+        "status": "ok",
+        "id": "a0000000000000000000000000000385",
+        "item": {
+         "id": "a0000000000000000000000000000385",
+         "path": "/data/music/Orphan Tapes/Unlisted/01 Nobody.flac",
+         "hidden": false,
+         "file": "Orphan Tapes/Unlisted/01 Nobody.flac",
+         "title": "Nobody",
+         "artist": "Orphan Tapes",
+         "album": "Unlisted",
+         "duration_ms": 150000
+        }
+       },
+       "navidrome": {
+        "status": "ok",
+        "id": "b0000000000000000000000000000385",
+        "tier": "file",
+        "file_ok": true,
+        "duration_ok": true,
+        "diff_ms": 0,
+        "problems": [],
+        "item": {
+         "id": "b0000000000000000000000000000385",
+         "path": "/music/Orphan Tapes/Unlisted/01 Nobody.flac",
+         "hidden": false,
+         "file": "Orphan Tapes/Unlisted/01 Nobody.flac",
+         "title": "Nobody",
+         "artist": "Orphan Tapes",
+         "album": "Unlisted",
+         "duration_ms": 150000
+        }
+       }
+      },
+      "passed": true
+     },
+     {
+      "kind": "item",
+      "server": "jellyfin",
+      "id": "a000000000000000000000000000006d",
+      "reason": "not_on_server",
+      "other": "navidrome",
+      "why": [
+       "jellyfin-navidrome: jellyfin item unmatched, not_on_server"
+      ],
+      "servers": {
+       "jellyfin": {
+        "status": "ok",
+        "id": "a000000000000000000000000000006d",
+        "reason": "not_on_server",
+        "reason_holds": true,
+        "problems": [],
+        "item": {
+         "id": "a000000000000000000000000000006d",
+         "path": "/data/music/Ada Vey/Loose Ends/01 Stray.flac",
+         "hidden": false,
+         "file": "Ada Vey/Loose Ends/01 Stray.flac",
+         "title": "Stray",
+         "artist": "Ada Vey",
+         "album": "Loose Ends",
+         "duration_ms": 180900
+        }
+       }
+      },
+      "passed": true
+     },
+     {
+      "kind": "item",
+      "server": "jellyfin",
+      "id": "a0000000000000000000000000000457",
+      "reason": "ambiguous",
+      "other": "navidrome",
+      "why": [
+       "jellyfin-navidrome: jellyfin item unmatched, ambiguous"
+      ],
+      "servers": {
+       "jellyfin": {
+        "status": "ok",
+        "id": "a0000000000000000000000000000457",
+        "reason": "ambiguous",
+        "reason_holds": true,
+        "problems": [],
+        "item": {
+         "id": "a0000000000000000000000000000457",
+         "path": "/data/music/mötley kru/über/01 kreuzberg.flac",
+         "hidden": false,
+         "file": "mötley kru/über/01 kreuzberg.flac",
+         "title": "Kreuzberg",
+         "artist": "Mötley Kru",
+         "album": "Über",
+         "duration_ms": 200000
+        }
+       }
+      },
+      "passed": true
+     },
+     {
+      "kind": "item",
+      "server": "navidrome",
+      "id": "b000000000000000000000000000006f",
+      "reason": "ambiguous",
+      "other": "jellyfin",
+      "why": [
+       "jellyfin-navidrome: navidrome item unmatched, ambiguous"
+      ],
+      "servers": {
+       "navidrome": {
+        "status": "ok",
+        "id": "b000000000000000000000000000006f",
+        "reason": "ambiguous",
+        "reason_holds": true,
+        "problems": [],
+        "item": {
+         "id": "b000000000000000000000000000006f",
+         "path": "/music/Mötley Kru/Über/01 Kreuzberg.flac",
+         "hidden": false,
+         "file": "Mötley Kru/Über/01 Kreuzberg.flac",
+         "title": "Kreuzberg",
+         "artist": "Mötley Kru",
+         "album": "Über",
+         "duration_ms": 200000
+        }
+       }
+      },
+      "passed": true
+     },
+     {
+      "kind": "copy",
+      "rating_key": 102,
+      "why": [
+       "random"
+      ],
+      "title": "Ostkreuz",
+      "artist": "Kollektiv Nord",
+      "album": "Ringbahn",
+      "file": "Kollektiv Nord/Ringbahn/02 Ostkreuz.flac",
+      "duration_ms": 298000,
+      "servers": {
+       "jellyfin": {
+        "status": "ok",
+        "id": "a0000000000000000000000000000066",
+        "tier": "file",
+        "file_ok": true,
+        "duration_ok": true,
+        "diff_ms": 0,
+        "problems": [],
+        "item": {
+         "id": "a0000000000000000000000000000066",
+         "path": "/data/music/Kollektiv Nord/Ringbahn/02 Ostkreuz.flac",
+         "hidden": false,
+         "file": "Kollektiv Nord/Ringbahn/02 Ostkreuz.flac",
+         "title": "Ostkreuz",
+         "artist": "Kollektiv Nord",
+         "album": "Ringbahn",
+         "duration_ms": 298000
+        }
+       },
+       "navidrome": {
+        "status": "ok",
+        "id": "b0000000000000000000000000000066",
+        "tier": "file",
+        "file_ok": true,
+        "duration_ok": true,
+        "diff_ms": 0,
+        "problems": [],
+        "item": {
+         "id": "b0000000000000000000000000000066",
+         "path": "/music/Kollektiv Nord/Ringbahn/02 Ostkreuz.flac",
+         "hidden": false,
+         "file": "Kollektiv Nord/Ringbahn/02 Ostkreuz.flac",
+         "title": "Ostkreuz",
+         "artist": "Kollektiv Nord",
+         "album": "Ringbahn",
+         "duration_ms": 298000
+        }
+       }
+      },
+      "passed": true
+     },
+     {
+      "kind": "copy",
+      "rating_key": 105,
+      "why": [
+       "random"
+      ],
+      "title": "Coil",
+      "artist": "Ada Vey",
+      "album": "Quiet Engines",
+      "file": "Ada Vey/Quiet Engines/01 Coil.flac",
+      "duration_ms": 402000,
+      "servers": {
+       "jellyfin": {
+        "status": "ok",
+        "id": "a0000000000000000000000000000069",
+        "tier": "file",
+        "file_ok": true,
+        "duration_ok": true,
+        "diff_ms": 0,
+        "problems": [],
+        "item": {
+         "id": "a0000000000000000000000000000069",
+         "path": "/data/music/Ada Vey/Quiet Engines/01 Coil.flac",
+         "hidden": false,
+         "file": "Ada Vey/Quiet Engines/01 Coil.flac",
+         "title": "Coil",
+         "artist": "Ada Vey",
+         "album": "Quiet Engines",
+         "duration_ms": 402000
+        }
+       },
+       "navidrome": {
+        "status": "ok",
+        "id": "b0000000000000000000000000000069",
+        "tier": "file",
+        "file_ok": true,
+        "duration_ok": true,
+        "diff_ms": 0,
+        "problems": [],
+        "item": {
+         "id": "b0000000000000000000000000000069",
+         "path": "/music/Ada Vey/Quiet Engines/01 Coil.flac",
+         "hidden": false,
+         "file": "Ada Vey/Quiet Engines/01 Coil.flac",
+         "title": "Coil",
+         "artist": "Ada Vey",
+         "album": "Quiet Engines",
+         "duration_ms": 402000
+        }
+       }
+      },
+      "passed": true
+     }
+    ]
+   }
+  ],
+  "notes": [],
+  "snapshots": [
+   {
+    "server": "jellyfin",
+    "snapshot": true,
+    "read_at": 1793847600.0,
+    "age_s": 7200,
+    "stamp": {
+     "items": 14,
+     "newest_created": "2026-11-20T21:00:00.0000000Z",
+     "server_name": "Invented Jellyfin",
+     "version": "10.10.3",
+     "user": "listener"
+    },
+    "folders": [
+     "/data/music"
+    ],
+    "folder_source": "server",
+    "folder_rule": "the server's own music folders",
+    "items": 14,
+    "hidden_paths": 0
+   },
+   {
+    "server": "navidrome",
+    "snapshot": true,
+    "read_at": 1793847600.0,
+    "age_s": 7200,
+    "stamp": {
+     "items": 9,
+     "last_scan": "2026-11-23T03:00:00Z",
+     "hidden_paths": 0
+    },
+    "folders": [
+     "/music"
+    ],
+    "folder_source": "common",
+    "folder_rule": "the folder every real path shares (the server names no folder paths)",
+    "items": 9,
+    "hidden_paths": 0
+   }
+  ],
+  "copies": 5,
+  "rules": {
+   "one_to_one": "Every Plex copy whose file the server can see is matched to exactly one item on that server, and no item is matched twice (two Plex copies of one file share its item, and say so). A match where both sides have a file names the same file. A server that hides its paths gives no file to check, so this check can't pass for it. Jellyfin ↔ Navidrome: no item matched twice.",
+   "reasons": "Every copy and item is matched or unmatched, never both; every unmatched one has one known reason; the reasons add up to the unmatched count.",
+   "spot": "Every case (the first copy or item of each tier, note and reason on each pair) plus 20 copies at random, each asked of the server by ID now (GET only): the item is there, its file is the Plex copy's and its duration within 2 s of Plex's (jimbo-dj's last Plex sync).",
+   "passed": "Passed when all three checks pass."
+  },
+  "read_only": "Matched from the stored snapshots; the spot check sends GET requests only. Nothing is written to any server, to jimbo-dj's database or to traqfreq's.",
+  "version": 1
+ }
+}

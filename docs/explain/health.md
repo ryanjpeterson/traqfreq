@@ -2,7 +2,7 @@
 
 ## Snapshot
 
-Healthy and moving fast: P0–P2 done and gated on live data in two days, P3 under way. Used daily by one listener beside jimbo-dj. Upkeep is low (no jobs, cache only). Matching works on invented snapshots (T14), SETUP shows it (T15), the GET-only client and refresh are in place (T16), Jellyfin is read live (T17: 53,133 of 53,133 Plex copies matched by file, also from the deployed container) and so is Navidrome (T18: 52,712 of 53,133 by MusicBrainz ID and tags, since its paths are hidden); the most useful next thing is Report Real Path on for traqfreq's Navidrome player, then the P3 gate (T19).
+Healthy and moving fast: P0–P3 done and gated on live data in three days. Used daily by one listener beside jimbo-dj. Upkeep is low (no jobs, cache only). Matching works on invented snapshots (T14), SETUP shows it (T15), the GET-only client and refresh are in place (T16), Jellyfin is read live (T17: 53,133 of 53,133 Plex copies matched by file, also from the deployed container) and so is Navidrome (T18: 52,712 of 53,133 by MusicBrainz ID and tags, since its paths are hidden); the P3 gate (T19) passed on live data on 2026-11-24 once Navidrome reported real paths: every pair one to one over 53,274 copies, 0 unmatched. The most useful next thing is P4 TAGS (T20).
 
 ## Risks
 

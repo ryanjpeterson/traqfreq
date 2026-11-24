@@ -358,6 +358,39 @@ def read_navidrome(client: Client, settings: Settings) -> tuple[dict, dict]:
                   "played": sum(1 for i in snap["items"] if i.get("play_count"))}
 
 
+# --- one item by ID (T19's spot check) -----------------------------------------------------------------------
+
+class NotFound(ServerError):
+    """The server has no item with that ID (any more)."""
+
+
+def jellyfin_item(client: Client, item_id: str, roots: list[str]) -> dict:
+    """One Jellyfin item by ID, GET ``/Items?Ids=`` (Jellyfin 12 answers ``/Items/{id}`` with 400 for an API
+    key without a user), in the item shape with its file key below ``roots``. NotFound when none comes back."""
+    page = client.get("/Items", {"Ids": item_id, "Fields": "Path,ProviderIds,MediaSources,ParentId"})
+    found = [it for it in (page.get("Items") if isinstance(page, dict) else None) or [] if it.get("Id") == item_id]
+    if not found:
+        raise NotFound("jellyfin", f"Jellyfin has no item {item_id} (GET /Items?Ids=).", 404)
+    return snapshots.jellyfin_item(found[0], roots)
+
+
+def navidrome_song(client: Client, song_id: str, roots: list[str]) -> dict:
+    """One Navidrome song by ID, Subsonic ``getSong``, in the item shape. NotFound for Subsonic error 70."""
+    r = client.get("/rest/getSong", {"id": song_id})
+    sub = r.get("subsonic-response") if isinstance(r, dict) else None
+    err = (sub or {}).get("error") or {}
+    if isinstance(sub, dict) and sub.get("status") != "ok" and err.get("code") == 70:
+        raise NotFound("navidrome", f"Navidrome has no song {song_id} (getSong: {err.get('message')!r}).", 404)
+    song = _sub(r, "song")
+    if song.get("id") != song_id:
+        raise NotFound("navidrome", f"Navidrome has no song {song_id} (getSong).", 404)
+    return snapshots.navidrome_song(song, roots)
+
+
+ITEM_BY_ID: dict[str, Callable[[Client, str, list[str]], dict]] = {"jellyfin": jellyfin_item,
+                                                                   "navidrome": navidrome_song}
+
+
 # Each reader returns (snapshot, counts) with counts at least {"pages": n}.
 READERS: dict[str, Reader] = {"jellyfin": read_jellyfin, "navidrome": read_navidrome}
 

@@ -62,6 +62,34 @@ def _roots(server_roots: list[str], paths: list[str]) -> tuple[list[str], str]:
     return ([c], "common") if c else ([], "none")
 
 
+def jellyfin_item(it: dict, roots: list[str]) -> dict:
+    """One Jellyfin ``/Items`` entry in the item shape, its file key below ``roots`` (a snapshot's folders)."""
+    ms = (it.get("MediaSources") or [{}])[0] or {}
+    ids = it.get("ProviderIds") or {}
+    ticks = _int(it.get("RunTimeTicks"))
+    artists = it.get("Artists") or []
+    return _item(
+        "jellyfin", roots, id=it.get("Id"), path=it.get("Path") or ms.get("Path"), title=it.get("Name"),
+        artist=artists[0] if artists else it.get("AlbumArtist"), album_artist=it.get("AlbumArtist"),
+        album=it.get("Album"), disc=_int(it.get("ParentIndexNumber")), track=_int(it.get("IndexNumber")),
+        duration_ms=ticks // 10_000 if ticks else None, mb_recording=ids.get("MusicBrainzRecording") or None,
+        mb_release=ids.get("MusicBrainzAlbum") or None, size=_int(ms.get("Size")),
+        play_count=_int((it.get("UserData") or {}).get("PlayCount")))
+
+
+def navidrome_song(s: dict, roots: list[str], album: dict | None = None) -> dict:
+    """One Subsonic song in the item shape; ``album`` (its ``getAlbumList2`` entry) gives the release ID."""
+    dur = _int(s.get("duration"))
+    album = album or {}
+    return _item(
+        "navidrome", roots, id=s.get("id"), path=s.get("path"), title=s.get("title"), artist=s.get("artist"),
+        album_artist=s.get("displayAlbumArtist") or album.get("artist"), album=s.get("album"),
+        disc=_int(s.get("discNumber")), track=_int(s.get("track")),
+        duration_ms=dur * 1000 if dur else None, mb_recording=s.get("musicBrainzId") or None,
+        mb_release=album.get("musicBrainzId") or None, size=_int(s.get("size")),
+        play_count=_int(s.get("playCount")))
+
+
 def snapshot(server: str, items: list[dict], folders: list[str], folder_source: str, stamp: dict,
              read_at: float | None = None) -> dict:
     return {"server": server, "read_at": time.time() if read_at is None else read_at, "stamp": stamp,
@@ -80,19 +108,7 @@ def from_jellyfin(virtual_folders: list[dict], pages: list[dict], read_at: float
     locs = [loc for vf in virtual_folders or [] if vf.get("CollectionType") in (None, "music")
             for loc in vf.get("Locations") or []]
     roots, source = _roots(locs, [it.get("Path") for it in raw if it.get("Path")])
-    items = []
-    for it in raw:
-        ms = (it.get("MediaSources") or [{}])[0] or {}
-        ids = it.get("ProviderIds") or {}
-        ticks = _int(it.get("RunTimeTicks"))
-        artists = it.get("Artists") or []
-        items.append(_item(
-            "jellyfin", roots, id=it.get("Id"), path=it.get("Path") or ms.get("Path"), title=it.get("Name"),
-            artist=artists[0] if artists else it.get("AlbumArtist"), album_artist=it.get("AlbumArtist"),
-            album=it.get("Album"), disc=_int(it.get("ParentIndexNumber")), track=_int(it.get("IndexNumber")),
-            duration_ms=ticks // 10_000 if ticks else None, mb_recording=ids.get("MusicBrainzRecording") or None,
-            mb_release=ids.get("MusicBrainzAlbum") or None, size=_int(ms.get("Size")),
-            play_count=_int((it.get("UserData") or {}).get("PlayCount"))))
+    items = [jellyfin_item(it, roots) for it in raw]
     created = [it.get("DateCreated") for it in raw if it.get("DateCreated")]
     total = pages[-1].get("TotalRecordCount") if pages else 0  # the newest total: it can move while pages are read
     stamp = {"items": total, "newest_created": max(created) if created else None}
@@ -122,17 +138,7 @@ def from_navidrome(scan_status: dict, album_pages: list[dict], song_pages: list[
     albums = {a.get("id"): a for page in album_pages for a in _subsonic(page, "albumList2").get("album") or []}
     raw = [s for page in song_pages for s in _subsonic(page, "searchResult3").get("song") or []]
     roots, source = _roots(list(folders), [s.get("path") for s in raw if s.get("path")])
-    items = []
-    for s in raw:
-        dur = _int(s.get("duration"))
-        album = albums.get(s.get("albumId")) or {}
-        items.append(_item(
-            "navidrome", roots, id=s.get("id"), path=s.get("path"), title=s.get("title"), artist=s.get("artist"),
-            album_artist=s.get("displayAlbumArtist") or album.get("artist"), album=s.get("album"),
-            disc=_int(s.get("discNumber")), track=_int(s.get("track")),
-            duration_ms=dur * 1000 if dur else None, mb_recording=s.get("musicBrainzId") or None,
-            mb_release=album.get("musicBrainzId") or None, size=_int(s.get("size")),
-            play_count=_int(s.get("playCount"))))
+    items = [navidrome_song(s, roots, albums.get(s.get("albumId"))) for s in raw]
     scan = _subsonic(scan_status, "scanStatus")
     stamp = {"items": len(items), "last_scan": scan.get("lastScan"), "hidden_paths": sum(i["hidden"] for i in items)}
     if info is not None:
