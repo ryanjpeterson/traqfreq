@@ -1,0 +1,736 @@
+{
+ "/api/tags/ladder": {
+  "nodes": {
+   "atmospheric black metal": {
+    "key": "atmospheric black metal",
+    "name": "Atmospheric Black Metal",
+    "in_use": true,
+    "broad": "Metal",
+    "root": false,
+    "parents": [
+     "black metal"
+    ],
+    "children": [],
+    "rung": 2,
+    "albums": 1,
+    "artists": 0,
+    "variants": [
+     "Atmospheric Black Metal"
+    ],
+    "niche": true,
+    "other_heads": [],
+    "under": 1,
+    "missing": null,
+    "below": 0
+   },
+   "metal": {
+    "key": "metal",
+    "name": "Metal",
+    "in_use": true,
+    "broad": "Metal",
+    "root": true,
+    "parents": [],
+    "children": [
+     "black metal",
+     "doom metal",
+     "death metal"
+    ],
+    "rung": 0,
+    "albums": 1,
+    "artists": 0,
+    "variants": [
+     "Metal"
+    ],
+    "niche": false,
+    "other_heads": [],
+    "under": 2,
+    "missing": 1,
+    "below": 5
+   },
+   "black metal": {
+    "key": "black metal",
+    "name": "Black Metal",
+    "in_use": true,
+    "broad": "Metal",
+    "root": false,
+    "parents": [
+     "metal"
+    ],
+    "children": [
+     "atmospheric black metal"
+    ],
+    "rung": 1,
+    "albums": 1,
+    "artists": 1,
+    "variants": [
+     "Black Metal"
+    ],
+    "niche": false,
+    "other_heads": [],
+    "under": 1,
+    "missing": null,
+    "below": 1
+   },
+   "death-doom metal": {
+    "key": "death-doom metal",
+    "name": "Death-Doom Metal",
+    "in_use": true,
+    "broad": "Metal",
+    "root": false,
+    "parents": [
+     "death metal",
+     "doom metal"
+    ],
+    "children": [],
+    "rung": 2,
+    "albums": 1,
+    "artists": 0,
+    "variants": [
+     "Death-Doom Metal"
+    ],
+    "niche": false,
+    "other_heads": [],
+    "under": 1,
+    "missing": null,
+    "below": 0
+   },
+   "doom metal": {
+    "key": "doom metal",
+    "name": "Doom Metal",
+    "in_use": true,
+    "broad": "Metal",
+    "root": false,
+    "parents": [
+     "metal"
+    ],
+    "children": [
+     "death-doom metal"
+    ],
+    "rung": 1,
+    "albums": 1,
+    "artists": 0,
+    "variants": [
+     "Doom Metal",
+     "doom metal"
+    ],
+    "niche": false,
+    "other_heads": [],
+    "under": 1,
+    "missing": null,
+    "below": 1
+   },
+   "lo-fi hip hop": {
+    "key": "lo-fi hip hop",
+    "name": "Lo-Fi Hip Hop",
+    "in_use": true,
+    "broad": "Hip Hop",
+    "root": false,
+    "parents": [
+     "hip hop"
+    ],
+    "children": [],
+    "rung": 1,
+    "albums": 1,
+    "artists": 0,
+    "variants": [
+     "Lo-Fi Hip Hop"
+    ],
+    "niche": true,
+    "other_heads": [],
+    "under": 1,
+    "missing": null,
+    "below": 0
+   },
+   "hip hop": {
+    "key": "hip hop",
+    "name": "Hip Hop",
+    "in_use": true,
+    "broad": "Hip Hop",
+    "root": true,
+    "parents": [],
+    "children": [
+     "lo-fi hip hop"
+    ],
+    "rung": 0,
+    "albums": 0,
+    "artists": 1,
+    "variants": [
+     "Hip-Hop"
+    ],
+    "niche": false,
+    "other_heads": [],
+    "under": 1,
+    "missing": 1,
+    "below": 1
+   },
+   "soundtrack": {
+    "key": "soundtrack",
+    "name": "Soundtrack",
+    "in_use": true,
+    "broad": null,
+    "root": false,
+    "parents": [],
+    "children": [],
+    "rung": null,
+    "albums": 1,
+    "artists": 0,
+    "variants": [
+     "Soundtrack"
+    ],
+    "niche": true,
+    "other_heads": [],
+    "under": 1,
+    "missing": null,
+    "below": 0
+   },
+   "punk": {
+    "key": "punk",
+    "name": "Punk",
+    "in_use": true,
+    "broad": "Punk",
+    "root": true,
+    "parents": [],
+    "children": [],
+    "rung": 0,
+    "albums": 1,
+    "artists": 0,
+    "variants": [
+     "Punk"
+    ],
+    "niche": false,
+    "other_heads": [],
+    "under": 1,
+    "missing": 0,
+    "below": 0
+   },
+   "death metal": {
+    "key": "death metal",
+    "name": "Death Metal",
+    "in_use": true,
+    "broad": "Metal",
+    "root": false,
+    "parents": [
+     "metal"
+    ],
+    "children": [
+     "death-doom metal"
+    ],
+    "rung": 1,
+    "albums": 0,
+    "artists": 1,
+    "variants": [
+     "Death Metal"
+    ],
+    "niche": false,
+    "other_heads": [],
+    "under": 1,
+    "missing": null,
+    "below": 1
+   },
+   "post-punk": {
+    "key": "post-punk",
+    "name": "Post-Punk",
+    "in_use": true,
+    "broad": "Rock",
+    "root": false,
+    "parents": [
+     "rock"
+    ],
+    "children": [],
+    "rung": 1,
+    "albums": 0,
+    "artists": 1,
+    "variants": [
+     "Post-Punk"
+    ],
+    "niche": false,
+    "other_heads": [
+     "Punk"
+    ],
+    "under": 0,
+    "missing": null,
+    "below": 0
+   },
+   "rock": {
+    "key": "rock",
+    "name": "Rock",
+    "in_use": false,
+    "broad": "Rock",
+    "root": true,
+    "parents": [],
+    "children": [
+     "post-punk"
+    ],
+    "rung": 0,
+    "albums": 0,
+    "artists": 0,
+    "variants": [],
+    "niche": false,
+    "other_heads": [],
+    "under": 0,
+    "missing": 0,
+    "below": 1
+   },
+   "ambient": {
+    "key": "ambient",
+    "name": "Ambient",
+    "in_use": true,
+    "broad": "Electronic",
+    "root": false,
+    "parents": [
+     "electronic"
+    ],
+    "children": [],
+    "rung": 1,
+    "albums": 0,
+    "artists": 0,
+    "variants": [
+     "Ambient"
+    ],
+    "niche": false,
+    "other_heads": [],
+    "under": 0,
+    "missing": null,
+    "below": 0
+   },
+   "electronic": {
+    "key": "electronic",
+    "name": "Electronic",
+    "in_use": false,
+    "broad": "Electronic",
+    "root": true,
+    "parents": [],
+    "children": [
+     "ambient"
+    ],
+    "rung": 0,
+    "albums": 0,
+    "artists": 0,
+    "variants": [],
+    "niche": false,
+    "other_heads": [],
+    "under": 0,
+    "missing": 0,
+    "below": 1
+   }
+  },
+  "roots": [
+   "metal",
+   "hip hop",
+   "punk",
+   "electronic",
+   "rock"
+  ],
+  "alone": [
+   "soundtrack"
+  ],
+  "summary": {
+   "tags": 12,
+   "roots": 5,
+   "deepest": 2,
+   "shared": 1,
+   "alone": 1,
+   "junk": 1,
+   "albums": 4,
+   "artists": 4
+  },
+  "rules": {
+   "node": "a canonical tag in use (jimbo-dj's tag rules: split, aliases, rewrites, case), junk left out",
+   "root": "a broad tag (tag_rules.json broad.families from genres.family, or an override)",
+   "parent": "the nearest tags in use whose name is its head (leading words dropped, or one part of a hyphenated word kept), under the same broad tag; else the broad tag",
+   "alone": "a tag in use whose rules give no broad tag",
+   "carries": "albums whose Plex album genres name the tag (any spelling the rules make it)",
+   "under": "albums carrying the tag or any tag below it",
+   "missing": "albums under a broad tag that don't carry it (jimbo-dj's Missing its broad tag)",
+   "artists": "artists whose Plex artist genres name the tag"
+  },
+  "check": {
+   "rules": {
+    "rows": [
+     {
+      "key": "metal",
+      "tag": "Metal",
+      "ladder": {
+       "tag": "Metal",
+       "key": "metal",
+       "albums": 2,
+       "tagged": 1,
+       "missing": 1,
+       "children": [
+        {
+         "tag": "Atmospheric Black Metal",
+         "key": "atmospheric black metal",
+         "albums": 1
+        },
+        {
+         "tag": "Black Metal",
+         "key": "black metal",
+         "albums": 1
+        },
+        {
+         "tag": "Death-Doom Metal",
+         "key": "death-doom metal",
+         "albums": 1
+        },
+        {
+         "tag": "Doom Metal",
+         "key": "doom metal",
+         "albums": 1
+        }
+       ]
+      },
+      "jimbodj": {
+       "tag": "Metal",
+       "key": "metal",
+       "albums": 2,
+       "tagged": 1,
+       "missing": 1,
+       "children": [
+        {
+         "tag": "Atmospheric Black Metal",
+         "key": "atmospheric black metal",
+         "albums": 1
+        },
+        {
+         "tag": "Black Metal",
+         "key": "black metal",
+         "albums": 1
+        },
+        {
+         "tag": "Death-Doom Metal",
+         "key": "death-doom metal",
+         "albums": 1
+        },
+        {
+         "tag": "Doom Metal",
+         "key": "doom metal",
+         "albums": 1
+        }
+       ]
+      },
+      "matches": true
+     },
+     {
+      "key": "hip hop",
+      "tag": "Hip Hop",
+      "ladder": {
+       "tag": "Hip Hop",
+       "key": "hip hop",
+       "albums": 1,
+       "tagged": 0,
+       "missing": 1,
+       "children": [
+        {
+         "tag": "Lo-Fi Hip Hop",
+         "key": "lo-fi hip hop",
+         "albums": 1
+        }
+       ]
+      },
+      "jimbodj": {
+       "tag": "Hip Hop",
+       "key": "hip hop",
+       "albums": 1,
+       "tagged": 0,
+       "missing": 1,
+       "children": [
+        {
+         "tag": "Lo-Fi Hip Hop",
+         "key": "lo-fi hip hop",
+         "albums": 1
+        }
+       ]
+      },
+      "matches": true
+     },
+     {
+      "key": "punk",
+      "tag": "Punk",
+      "ladder": {
+       "tag": "Punk",
+       "key": "punk",
+       "albums": 1,
+       "tagged": 1,
+       "missing": 0,
+       "children": []
+      },
+      "jimbodj": {
+       "tag": "Punk",
+       "key": "punk",
+       "albums": 1,
+       "tagged": 1,
+       "missing": 0,
+       "children": []
+      },
+      "matches": true
+     }
+    ],
+    "matches": true,
+    "source": "jimbo-dj's tags.py families(), vendored, run here"
+   },
+   "ends": {
+    "tags": 8,
+    "ok": 8,
+    "failing": [],
+    "matches": true,
+    "rule": "every ladder from a tag ends at the broad tag jimbo-dj's rules give it"
+   },
+   "stored": {
+    "rows": [
+     {
+      "key": "metal",
+      "tag": "Metal",
+      "ladder": {
+       "tag": "Metal",
+       "key": "metal",
+       "albums": 2,
+       "tagged": 1,
+       "missing": 1,
+       "children": [
+        {
+         "tag": "Atmospheric Black Metal",
+         "key": "atmospheric black metal",
+         "albums": 1
+        },
+        {
+         "tag": "Black Metal",
+         "key": "black metal",
+         "albums": 1
+        },
+        {
+         "tag": "Death-Doom Metal",
+         "key": "death-doom metal",
+         "albums": 1
+        },
+        {
+         "tag": "Doom Metal",
+         "key": "doom metal",
+         "albums": 1
+        }
+       ]
+      },
+      "jimbodj": {
+       "tag": "Metal",
+       "key": "metal",
+       "albums": 2,
+       "tagged": 1,
+       "missing": 1,
+       "children": [
+        {
+         "tag": "Atmospheric Black Metal",
+         "key": "atmospheric black metal",
+         "albums": 1
+        },
+        {
+         "tag": "Black Metal",
+         "key": "black metal",
+         "albums": 1
+        },
+        {
+         "tag": "Death-Doom Metal",
+         "key": "death-doom metal",
+         "albums": 1
+        },
+        {
+         "tag": "Doom Metal",
+         "key": "doom metal",
+         "albums": 1
+        }
+       ]
+      },
+      "matches": true
+     },
+     {
+      "key": "hip hop",
+      "tag": "Hip Hop",
+      "ladder": {
+       "tag": "Hip Hop",
+       "key": "hip hop",
+       "albums": 1,
+       "tagged": 0,
+       "missing": 1,
+       "children": [
+        {
+         "tag": "Lo-Fi Hip Hop",
+         "key": "lo-fi hip hop",
+         "albums": 1
+        }
+       ]
+      },
+      "jimbodj": {
+       "tag": "Hip Hop",
+       "key": "hip hop",
+       "albums": 1,
+       "tagged": 0,
+       "missing": 1,
+       "children": [
+        {
+         "tag": "Lo-Fi Hip Hop",
+         "key": "lo-fi hip hop",
+         "albums": 1
+        }
+       ]
+      },
+      "matches": true
+     },
+     {
+      "key": "punk",
+      "tag": "Punk",
+      "ladder": {
+       "tag": "Punk",
+       "key": "punk",
+       "albums": 1,
+       "tagged": 1,
+       "missing": 0,
+       "children": []
+      },
+      "jimbodj": {
+       "tag": "Punk",
+       "key": "punk",
+       "albums": 1,
+       "tagged": 1,
+       "missing": 0,
+       "children": []
+      },
+      "matches": true
+     }
+    ],
+    "matches": true,
+    "fresh": true,
+    "built_at": 1793844090.0,
+    "source": "jimbo-dj's stats table, library.tags"
+   },
+   "passed": true
+  },
+  "seconds": 0.0
+ },
+ "/api/tags/albums?tag=metal&set=missing": {
+  "tag": {
+   "key": "metal",
+   "name": "Metal",
+   "root": true
+  },
+  "set": "missing",
+  "rule": "albums under a broad tag that don't carry it (jimbo-dj's Missing its broad tag)",
+  "total": 1,
+  "limit": 50,
+  "offset": 0,
+  "items": [
+   {
+    "album_key": 202,
+    "title": "Low Tide Radio",
+    "artist": "The Paper Lanterns",
+    "artist_key": 302,
+    "year": 2021,
+    "tags": [
+     "Death-Doom Metal",
+     "doom metal"
+    ],
+    "carries": false,
+    "via": [
+     "Death-Doom Metal",
+     "Doom Metal"
+    ]
+   }
+  ]
+ },
+ "/api/tags/albums?tag=metal&set=under": {
+  "tag": {
+   "key": "metal",
+   "name": "Metal",
+   "root": true
+  },
+  "set": "under",
+  "rule": "albums carrying the tag or any tag below it",
+  "total": 2,
+  "limit": 50,
+  "offset": 0,
+  "items": [
+   {
+    "album_key": 201,
+    "title": "Ringbahn",
+    "artist": "Kollektiv Nord",
+    "artist_key": 301,
+    "year": 2019,
+    "tags": [
+     "Atmospheric Black Metal",
+     "Black Metal",
+     "Metal"
+    ],
+    "carries": true,
+    "via": [
+     "Atmospheric Black Metal",
+     "Black Metal"
+    ]
+   },
+   {
+    "album_key": 202,
+    "title": "Low Tide Radio",
+    "artist": "The Paper Lanterns",
+    "artist_key": 302,
+    "year": 2021,
+    "tags": [
+     "Death-Doom Metal",
+     "doom metal"
+    ],
+    "carries": false,
+    "via": [
+     "Death-Doom Metal",
+     "Doom Metal"
+    ]
+   }
+  ]
+ },
+ "/api/tags/albums?tag=black%20metal&set=carries": {
+  "tag": {
+   "key": "black metal",
+   "name": "Black Metal",
+   "root": false
+  },
+  "set": "carries",
+  "rule": "albums whose Plex album genres name the tag (any spelling the rules make it)",
+  "total": 1,
+  "limit": 50,
+  "offset": 0,
+  "items": [
+   {
+    "album_key": 201,
+    "title": "Ringbahn",
+    "artist": "Kollektiv Nord",
+    "artist_key": 301,
+    "year": 2019,
+    "tags": [
+     "Atmospheric Black Metal",
+     "Black Metal",
+     "Metal"
+    ],
+    "carries": true,
+    "via": [
+     "Atmospheric Black Metal"
+    ]
+   }
+  ]
+ },
+ "/api/tags/artists?tag=death%20metal": {
+  "tag": {
+   "key": "death metal",
+   "name": "Death Metal",
+   "root": false
+  },
+  "rule": "artists whose Plex artist genres name the tag",
+  "total": 1,
+  "limit": 50,
+  "offset": 0,
+  "items": [
+   {
+    "artist_key": 302,
+    "name": "The Paper Lanterns",
+    "albums": 1,
+    "tags": [
+     "Death Metal",
+     "Post-Punk"
+    ]
+   }
+  ]
+ }
+}
