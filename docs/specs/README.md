@@ -42,6 +42,11 @@ Spec: [t13-servers.md](t13-servers.md).
 - **T18** Navidrome. *Done* (the reader: ping, folders, scan status, albums, `search3`; torn reads refused; name and version on SERVERS; `TRAQFREQ_NAVIDROME_ROOTS`; live: 52,985 songs, paths hidden (Report Real Path off), 52,712 of 53,133 Plex copies by MBID and tags: HANDOFF).
 - **T19** Gate "One song, three servers": `scripts/p3_gate.py`, `GET /api/servers/compare`, run on live data. *Done* (the three checks, the gate card on SETUP). **P3 gate passed 2026-11-24** on the deployed app, after Report Real Path was turned on for traqfreq's Navidrome player: every pair one to one (53,274 of 53,274), 0 unmatched, spot check 44 of 44 answers ok (HANDOFF).
 ## P4 TAGS read-only: T20–T23
+Spec: [t20-tags.md](t20-tags.md).
+- **T20** The ladder: broad to specific, any depth, shared parents, on jimbo-dj's vendored tag rules; the ladder's agreement with jimbo-dj's families; the TAGS page. *Done.*
+- **T21** Albums tagged track by track (per-track tags by source, the analyzer's styles vendored).
+- **T22** Proposals inbox: jimbo-dj's audit and suggestions, shown, not written.
+- **T23** Genre pages, the genre map, movements; gate script `scripts/p4_gate.py`, run on live data.
 ## P5 PLAYLISTS Junction preview: T24–T28
 **Ryan's requirement (2026-11-24), for every playlist and mix:** three separate switches, *Plex*, *Jellyfin* and *Navidrome*, each deciding whether that playlist is on that server; any mix of them, none implied by another. Navidrome also has NaviBeat connected to it (to look at when the Navidrome push is built: what it reads from Navidrome's playlists). P5 shows the switches read-only (where each playlist would go); P6 makes them push.
 ## P6 Cut-overs (~15)

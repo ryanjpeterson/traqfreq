@@ -34,6 +34,16 @@ every counting rule has a case that tells it apart from a raw row count:
   the rows here, in America/Denver; genres and styles invented, as TAGS doesn't count them in P2). That row is
   stale: its stamp is from before the last sync, when Old Signal (FLAC) was still live, so its FLAC count is 3,
   not 2, the one explained difference the gate shows. No count above changes.
+- T20, TAGS (P4): invented genre tags in jimbo-dj's shape on those same rows (TAGS below; no count above
+  changes): Plex album, artist and track genres (albums.genres, artists.genres, tracks.plex_genres, JSON lists) and
+  MusicBrainz genre votes (mb_releases.genres, mb_artists.genres, JSON {genre: votes}). Chosen so the ladder has
+  every case: three rungs (Metal, Black Metal, Atmospheric Black Metal), a tag with two parents (Death-Doom
+  Metal under Death Metal and Doom Metal), an album missing its broad tag (Low Tide Radio has no Metal), a
+  misspelling ("doom metal") and an alias ("Hip-Hop"), a tag that isn't a genre ("2010s"), a tag with no broad
+  tag (Soundtrack), a name inside another under a different broad tag (Post-Punk is Rock, not Punk), a tag only
+  tracks carry (Ambient, on Westkreuz, an ambient intro on a black metal album), and the removed album's tag
+  (jimbo-dj's tags read every album row). jimbo-dj's stored library.tags (TAGS_STORED, trimmed to its families,
+  worked out by hand with tags.py's rules) is fresh.
 - With --checks: T7's invented bursts, loop, steady rhythm and windows (CHECK_LISTENS), on top of the above.
 
 Usage: python scripts/make_fixture.py [--checks] [out_path]   (default tests/fixtures/legacy.sqlite)
@@ -157,6 +167,37 @@ ARTIST_INFO = {301: (["Germany"], None), 302: (None, "00000000-0000-4000-8000-00
 # mbid, name, type, country, area, begin_area, begin_year
 MB_ARTISTS = [("00000000-0000-4000-8000-000000000302", "The Paper Lanterns", "Group", "GB",
                "United Kingdom of Great Britain and Northern Ireland", "Brighton", 2016)]
+
+# T20: genre tags (invented). album_key: Plex album genres; artist_key: Plex artist genres; rating_key: Plex track
+# genres; mbid: MusicBrainz genre votes (release, artist).
+TAGS = {
+    "albums": {201: ["Atmospheric Black Metal", "Black Metal", "Metal"], 202: ["Death-Doom Metal", "doom metal"],
+               203: ["Lo-Fi Hip Hop", "Soundtrack", "2010s"], 204: ["Punk"]},
+    "artists": {301: ["Black Metal"], 302: ["Death Metal", "Post-Punk"], 303: ["Hip-Hop"]},
+    "tracks": {101: ["Ambient", "Black Metal"], 102: ["Black Metal"], 103: ["Doom Metal"], 104: ["Doom Metal"]},
+    "mb_releases": {"00000000-0000-4000-8000-000000000202": {"death-doom metal": 3, "doom metal": 2}},
+    "mb_artists": {"00000000-0000-4000-8000-000000000302": {"death metal": 4, "post-punk": 2}},
+}
+# jimbo-dj's stored library.tags (statcache: tags.Library.overview), trimmed to the families (the broad tags, each
+# with the albums under it, those carrying it, those missing it, and its children with albums), by hand:
+# - Metal: Ringbahn carries it; Low Tide Radio's Death-Doom Metal and Doom Metal call for it: 2 albums, 1 tagged,
+#   1 missing. Children by albums, then name: Atmospheric Black Metal, Black Metal, Death-Doom Metal, Doom Metal
+#   (1 each; Death Metal is only an artist's tag, so no albums).
+# - Hip Hop: Quiet Engines' Lo-Fi Hip Hop calls for it (Ada Vey's Hip-Hop is an artist tag): 1 album, 0, 1.
+# - Punk: Gone Album carries it: 1, 1, 0, no children. Soundtrack has no broad tag; 2010s is junk; Ambient
+#   (Electronic) and Post-Punk (Rock) have no albums, so Electronic and Rock aren't families.
+# Stamp (tags.stamp): MusicBrainz releases' and artists' newest fetched_at, last_sync, genres.version(), the
+# rules file's mtime, file tags, Fix in Plex: fresh.
+TAGS_STORED = {"families": [
+    {"tag": "Metal", "key": "metal", "albums": 2, "tagged": 1, "missing": 1, "children": [
+        {"tag": "Atmospheric Black Metal", "key": "atmospheric black metal", "albums": 1},
+        {"tag": "Black Metal", "key": "black metal", "albums": 1},
+        {"tag": "Death-Doom Metal", "key": "death-doom metal", "albums": 1},
+        {"tag": "Doom Metal", "key": "doom metal", "albums": 1}]},
+    {"tag": "Hip Hop", "key": "hip hop", "albums": 1, "tagged": 0, "missing": 1, "children": [
+        {"tag": "Lo-Fi Hip Hop", "key": "lo-fi hip hop", "albums": 1}]},
+    {"tag": "Punk", "key": "punk", "albums": 1, "tagged": 1, "missing": 0, "children": []}]}
+TAGS_STAMP = json.dumps([SYNC, SYNC, str(SYNC), 7, 1795000000.0, None, None])
 
 
 def _t(s: str) -> int:
@@ -335,6 +376,15 @@ def build(out: Path, checks: bool = False) -> Path:
                          [(json.dumps(c) if c else None, m, ak) for ak, (c, m) in ARTIST_INFO.items()])
         conn.executemany("INSERT INTO mb_artists VALUES (?, ?, 'ok', ?, ?, ?, ?, ?, ?, NULL, '{}')",
                          [(m, SYNC, *rest) for m, *rest in MB_ARTISTS])
+        conn.executemany("UPDATE albums SET genres = ? WHERE album_key = ?",
+                         [(json.dumps(g), k) for k, g in TAGS["albums"].items()])
+        conn.executemany("UPDATE artists SET genres = ? WHERE artist_key = ?",
+                         [(json.dumps(g), k) for k, g in TAGS["artists"].items()])
+        conn.executemany("UPDATE tracks SET plex_genres = ? WHERE rating_key = ?",
+                         [(json.dumps(g), k) for k, g in TAGS["tracks"].items()])
+        for table in ("mb_releases", "mb_artists"):
+            conn.executemany(f"UPDATE {table} SET genres = ? WHERE mbid = ?",
+                             [(json.dumps(g), m) for m, g in TAGS[table].items()])
         conn.executemany(
             "INSERT INTO listens (id, source, started_at, ms_played, artist, title, album, uri, counted, match_key,"
             " rating_key, dup_of) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
@@ -349,6 +399,8 @@ def build(out: Path, checks: bool = False) -> Path:
         )
         conn.execute("INSERT INTO stats VALUES ('library.charts', '', ?, 1, ?, ?, 0.4)",
                      (json.dumps(LIBRARY_CHARTS, ensure_ascii=False, separators=(",", ":")), CHARTS_STAMP, OLD_SYNC + 60))
+        conn.execute("INSERT INTO stats VALUES ('library.tags', '', ?, 1, ?, ?, 0.2)",
+                     (json.dumps(TAGS_STORED), TAGS_STAMP, SYNC + 90))
         conn.executemany(
             "INSERT INTO stats VALUES ('history.wrapped', ?, ?, 2, ?, ?, 0.1)",
             [(params, json.dumps(value), stamp, SYNC + 120) for params, value, stamp in WRAPPED_STATS],

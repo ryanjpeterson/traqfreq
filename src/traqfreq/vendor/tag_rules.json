@@ -1,0 +1,457 @@
+{
+  "_about": "Genre tag rules for Library → Tags (tags.py). Read-only for now: they say what a tag should be called and which tags shouldn't exist, nothing is written to Plex. Order matters: split, then aliases, then rewrites, then aliases again, then junk, then case.",
+  "niche_max": 1,
+  "split": {
+    "id": "split",
+    "label": "One tag, one genre",
+    "why": "A tag like \"Techno/Breaks\" or \"Pop, Rock\" is several genres crammed into one. Each gets its own tag.",
+    "pattern": "\\s*[,;/|]\\s*|\\s+-\\s+|\\s*:\\s+"
+  },
+  "aliases": {
+    "id": "aliases",
+    "label": "Known aliases and typos",
+    "why": "Same genre, different spelling. One name wins.",
+    "map": {
+      "hip-hop": "hip hop",
+      "hiphop": "hip hop",
+      "rap music": "rap",
+      "synthpop": "synth-pop",
+      "synth pop": "synth-pop",
+      "elektro": "electro",
+      "electronix": "electronic",
+      "électronique": "electronic",
+      "electronic music": "electronic",
+      "industrial music": "industrial",
+      "drum & bass": "drum and bass",
+      "drum n bass": "drum and bass",
+      "drum 'n' bass": "drum and bass",
+      "drum'n'bass": "drum and bass",
+      "dnb": "drum and bass",
+      "d&b": "drum and bass",
+      "rnb": "r&b",
+      "r & b": "r&b",
+      "r and b": "r&b",
+      "rhythm and blues": "r&b",
+      "rhythm & blues": "r&b",
+      "prog rock": "progressive rock",
+      "prog-rock": "progressive rock",
+      "progressie rock": "progressive rock",
+      "prog": "progressive rock",
+      "prog metal": "progressive metal",
+      "punk-rock": "punk rock",
+      "jazz-rock": "jazz rock",
+      "trip-hop": "trip hop",
+      "glitch-hop": "glitch hop",
+      "death-metal": "death metal",
+      "death doom metal": "death-doom metal",
+      "death doom": "death-doom metal",
+      "death-doom": "death-doom metal",
+      "death n roll": "death 'n' roll",
+      "death'n'roll": "death 'n' roll",
+      "death and roll": "death 'n' roll",
+      "black n roll": "black 'n' roll",
+      "black'n'roll": "black 'n' roll",
+      "sludge": "sludge metal",
+      "doom": "doom metal",
+      "stoner": "stoner rock",
+      "lofi": "lo-fi",
+      "lo fi": "lo-fi",
+      "instumental hip hop": "instrumental hip hop",
+      "bop": "bebop",
+      "neo-soul": "neo soul",
+      "nu-metal": "nu metal",
+      "nu-disco": "nu disco",
+      "alt country": "alt-country",
+      "alternative rnb": "alternative r&b",
+      "future rnb": "future r&b",
+      "stage and screen": "soundtrack",
+      "stage & screen": "soundtrack",
+      "game soundtrack": "video game music",
+      "ost": "soundtrack",
+      "2-step": "2-step garage",
+      "downtempo/chillout": "downtempo",
+      "chillout": "downtempo",
+      "funk soul": "funk",
+      "jazz-funk": "jazz funk",
+      "instrumentalhiphop": "instrumental hip hop",
+      "ghetto tech": "ghettotech",
+      "alternative & indie": "indie",
+      "dark wave": "darkwave",
+      "vgm": "video game music"
+    }
+  },
+  "rewrites": [
+    {
+      "id": "post-hyphen",
+      "label": "post- takes a hyphen",
+      "why": "Post-punk, post-hardcore, post-rock: the prefix is hyphenated, never spaced or glued on.",
+      "pattern": "\\bpost(?:\\s+|_|(?=punk|hardcore|rock|metal|bop|black|grunge|industrial|disco))",
+      "replace": "post-"
+    },
+    {
+      "id": "prefix-hyphen",
+      "label": "neo-, proto-, avant- take a hyphen",
+      "why": "Neo-psychedelia, proto-punk, avant-garde: hyphenated prefixes, same as post-.",
+      "pattern": "\\b(neo|proto|avant)\\s+(?=garde|psychedelia|punk|prog|classical|folk)",
+      "replace": "\\1-"
+    },
+    {
+      "id": "hip-hop",
+      "label": "Hip hop has no hyphen",
+      "why": "\"Hip Hop\", \"Alternative Hip Hop\": the way MusicBrainz and most of your library spell it.",
+      "pattern": "\\bhip-hop\\b",
+      "replace": "hip hop"
+    },
+    {
+      "id": "and",
+      "label": "\"and\", not \"&\"",
+      "why": "\"Drum and Bass\", not \"Drum & Bass\". R&B keeps its ampersand, because it's R&B.",
+      "pattern": "(?<!\\br)\\s*&\\s*(?!b\\b)",
+      "replace": " and "
+    }
+  ],
+  "junk": [
+    {
+      "id": "decades",
+      "label": "Decades aren't genres",
+      "why": "\"80s\" says when, not what. The year is already on the album.",
+      "pattern": "^(\\d0|(19|20)\\d0)'?s$|^(19|20)\\d\\d$"
+    },
+    {
+      "id": "places",
+      "label": "Places aren't genres",
+      "why": "Where a band is from lives on the artist (MusicBrainz knows), not in its genre.",
+      "words": [
+        "british",
+        "english",
+        "american",
+        "canadian",
+        "australian",
+        "finnish",
+        "swedish",
+        "sweden",
+        "norwegian",
+        "norway",
+        "german",
+        "germany",
+        "french",
+        "japanese",
+        "japan",
+        "taiwanese",
+        "irish",
+        "scottish",
+        "dutch",
+        "icelandic",
+        "polish",
+        "italian",
+        "spanish",
+        "brazilian",
+        "mexican",
+        "chicago",
+        "berlin",
+        "london",
+        "new york",
+        "uk",
+        "usa",
+        "us",
+        "europe",
+        "scandinavian",
+        "los angeles",
+        "detroit",
+        "hartford",
+        "rohnert park",
+        "newcastle",
+        "manchester",
+        "seattle",
+        "texas",
+        "california",
+        "greece",
+        "greek",
+        "netherlands",
+        "russian",
+        "spain",
+        "united kingdom",
+        "united states",
+        "belgium",
+        "canada",
+        "denmark",
+        "italy",
+        "jamaica",
+        "ghana",
+        "mali",
+        "africa",
+        "new zealand",
+        "munich",
+        "antwerpen",
+        "deutsch"
+      ]
+    },
+    {
+      "id": "instruments",
+      "label": "Instruments aren't genres",
+      "why": "\"Piano\" is what's played, not what kind of music it is.",
+      "words": [
+        "piano",
+        "guitar",
+        "saxophone",
+        "sax",
+        "trumpet",
+        "drums",
+        "bass guitar",
+        "violin",
+        "cello",
+        "organ",
+        "synthesizer",
+        "vocals"
+      ]
+    },
+    {
+      "id": "moods",
+      "label": "Moods aren't genres",
+      "why": "The analyzer already hears moods. Tags are for genres.",
+      "words": [
+        "chill",
+        "chillout music",
+        "mellow",
+        "sad",
+        "happy",
+        "dark",
+        "relaxing",
+        "energetic",
+        "melancholic",
+        "melancholy",
+        "romantic",
+        "party",
+        "workout",
+        "sleep",
+        "study",
+        "beautiful",
+        "epic",
+        "deep",
+        "atmospheric",
+        "aggressive",
+        "upbeat",
+        "love",
+        "dense",
+        "aquatic",
+        "bassy",
+        "bittersweet",
+        "bright",
+        "anxious",
+        "complex",
+        "dreamy",
+        "heavy",
+        "weird",
+        "fun"
+      ]
+    },
+    {
+      "id": "descriptors",
+      "label": "Descriptions, not genres",
+      "why": "True of a record, but no use for finding one: \"instrumental\" fits jazz, post-rock and dungeon synth alike.",
+      "words": [
+        "instrumental",
+        "acoustic",
+        "female vocalists",
+        "male vocalists",
+        "female vocals",
+        "male vocals",
+        "androgynous vocals",
+        "live",
+        "cover",
+        "covers",
+        "remix",
+        "remixes",
+        "dj mix",
+        "box set",
+        "compilation",
+        "soundtracks",
+        "other",
+        "misc",
+        "unknown",
+        "various",
+        "about music",
+        "music",
+        "genre",
+        "abstract",
+        "trash",
+        "game",
+        "no genre info",
+        "non-music",
+        "featuring",
+        "skit",
+        "self-titled",
+        "silence",
+        "good",
+        "masterpiece",
+        "sex",
+        "hope",
+        "calm",
+        "meditative",
+        "actors",
+        "composers"
+      ]
+    },
+    {
+      "id": "personal",
+      "label": "Personal notes and labels",
+      "why": "\"Seen live\", favourites, awards, record labels and radio shows are bookkeeping, not genres.",
+      "words": [
+        "seen live",
+        "favorites",
+        "favourites",
+        "favorite",
+        "favourite",
+        "owned",
+        "albums i own",
+        "my collection",
+        "to listen",
+        "wishlist",
+        "awesome",
+        "best",
+        "classic",
+        "dolphin on cover",
+        "ninja tune",
+        "warp",
+        "bowie",
+        "travis scott",
+        "assassin's creed",
+        "eigen makelij",
+        "eccojams",
+        "ubisoft",
+        "musicologist"
+      ],
+      "pattern": "\\b(fm|radio|award|with dj|playlist|show with|records|chronically|meltdown|jazzthing|folker)\\b|qobuz|\\d{2}[-.–]\\d{2}|^[^a-z0-9]+$"
+    },
+    {
+      "id": "artist-names",
+      "label": "Artist names aren't genres",
+      "why": "A tag that's just the name of an artist in your library. They have a page for that.",
+      "artists": true
+    }
+  ],
+  "case": {
+    "id": "case",
+    "label": "Title Case, with the acronyms in capitals",
+    "why": "\"Black Metal\", \"Post-Hardcore\", \"IDM\", \"UK Garage\", \"Drum and Bass\": one style for every tag, like Plex shows them.",
+    "upper": [
+      "idm",
+      "ebm",
+      "edm",
+      "uk",
+      "us",
+      "dj",
+      "r&b",
+      "nwobhm",
+      "nyhc",
+      "dsbm",
+      "ost"
+    ],
+    "lower": [
+      "and",
+      "of",
+      "the",
+      "n",
+      "'n'",
+      "in",
+      "a"
+    ]
+  },
+  "broad": {
+    "_about": "Every specific genre also carries its broad parent: anything metal gets \"Metal\". The family comes from genres.family() (the same families as Library → Genres); overrides are checked first, in order.",
+    "id": "broad",
+    "label": "Specific tags bring their broad parent",
+    "why": "An album tagged Black Metal should also say Metal, so \"all my metal\" finds it.",
+    "families": {
+      "Metal": "Metal",
+      "Punk & hardcore": "Punk",
+      "Hip hop": "Hip Hop",
+      "Electronic": "Electronic",
+      "Jazz": "Jazz",
+      "Blues & soul": "Soul",
+      "Folk & country": "Folk",
+      "Classical": "Classical",
+      "Reggae": "Reggae",
+      "Pop": "Pop",
+      "Rock": "Rock"
+    },
+    "overrides": [
+      {
+        "pattern": "^(blackgaze)$",
+        "tag": "Metal"
+      },
+      {
+        "pattern": "^(d-beat)$",
+        "tag": "Punk"
+      },
+      {
+        "pattern": "^(darkwave|coldwave|ethereal wave|minimal synth|footwork|juke|breakcore|hardstyle|wonky|deconstructed club|big beat|berlin school|ghettotech|halftime|plunderphonics|progressive breaks|nightcore|kosmische)$",
+        "tag": "Electronic"
+      },
+      {
+        "pattern": "^(neo-psychedelia|madchester|crank wave|canterbury scene|zeuhl|avant-prog|symphonic prog|zolo|neue deutsche welle|mod revival|new rave|psychobilly|gothabilly)$",
+        "tag": "Rock"
+      },
+      {
+        "pattern": "^(bossa nova|third stream)$",
+        "tag": "Jazz"
+      },
+      {
+        "pattern": "^(nederhop|turntablism)$",
+        "tag": "Hip Hop"
+      },
+      {
+        "pattern": "^(two-tone)$",
+        "tag": "Reggae"
+      },
+      {
+        "pattern": "^(adult contemporary|digicore)$",
+        "tag": "Pop"
+      },
+      {
+        "pattern": "^(uk funky|uk garage|future garage|2-step garage)$",
+        "tag": "Electronic"
+      },
+      {
+        "pattern": "^new romantic$",
+        "tag": "Rock"
+      },
+      {
+        "pattern": "^(baroque pop|chamber pop)$",
+        "tag": "Pop"
+      },
+      {
+        "pattern": "new age",
+        "tag": null
+      },
+      {
+        "pattern": "^(synth-pop|electropop|synthwave|futurepop|indietronica|chillwave|vaporwave)$",
+        "tag": "Electronic"
+      },
+      {
+        "pattern": "punk blues|blues rock|^blues|chicago blues",
+        "tag": "Blues"
+      },
+      {
+        "pattern": "^(funk|p-funk|disco|post-disco|nu disco|jazz funk|dark disco)$",
+        "tag": "Funk"
+      },
+      {
+        "pattern": "country|bluegrass|americana|alt-country",
+        "tag": "Country"
+      },
+      {
+        "pattern": "^(r&b|alternative r&b|contemporary r&b|future r&b)$",
+        "tag": "R&B"
+      },
+      {
+        "pattern": "^(soundtrack|video game music|cinematic classical)$",
+        "tag": null
+      },
+      {
+        "pattern": "^(noise|experimental|avant-garde|drone|lo-fi|minimal|instrumental)$",
+        "tag": null
+      }
+    ]
+  }
+}
