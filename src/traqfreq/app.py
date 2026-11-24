@@ -9,7 +9,7 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
-from . import __version__, counted, entities, history, identity, legacy, library, library_gate, matching, periods, proposals, reading, servers, servers_gate, store, tags
+from . import __version__, counted, entities, history, identity, legacy, library, library_gate, matching, periods, proposals, reading, servers, servers_gate, store, tagpages, tags, tags_gate
 from .settings import CORE, MODULES, Settings
 
 
@@ -482,6 +482,52 @@ def create_app(settings: Settings | None = None, server_transport=None) -> FastA
         """The albums behind one of the inbox's numbers (group all, kind, fix, suggest, ladder or rule), each
         before and after Fix in Plex's preview, with its issues, suggestions and traqfreq's ladder proposals."""
         return read_tags(lambda c: proposals.albums(c, group, value, limit, offset))
+
+    # --- T23: a page per tag, the genre map, movements, and the P4 gate ---------------------------------------
+
+    def ladder_value(conn) -> dict:
+        return store.cached(settings.data_dir, "tags.ladder", tags.cache_key(conn), lambda: tags.overview(conn))[0]
+
+    def tracks_value(conn) -> dict:
+        return store.cached(settings.data_dir, "tags.tracks", tags.track_check_key(conn),
+                            lambda: tags.track_check(conn))[0]
+
+    def proposals_value(conn) -> dict:
+        return store.cached(settings.data_dir, "tags.proposals", proposals.cache_key(conn),
+                            lambda: proposals.inbox(conn))[0]
+
+    @app.get("/api/tags/map")
+    def tags_map() -> dict:
+        """The whole ladder as lines, one per broad tag, its tags as stations on their rungs; the tags with no
+        broad tag; and the movements (movements.json), which change no ladder and no count. Cached."""
+        def run(conn):
+            value, info = store.cached(settings.data_dir, "tags.map", tagpages.map_key(conn),
+                                       lambda: tagpages.overview(conn))
+            return {**value, "cache": info}
+        return read_tags(run)
+
+    @app.get("/api/tags/tag/{key:path}")
+    def tags_tag(key: str) -> dict:
+        """One tag: its ladders up to the broad tag, its children, its spellings and the rules that made it, its
+        numbers (albums, artists, tracks, plays, sound) and the movements naming it."""
+        def run(conn):
+            lib, lad = tags._ready(conn)
+            return tagpages.tag(conn, key, settings.tz, tagpages.movements(lib, lad))
+        return read_tags(run)
+
+    @app.get("/api/tags/tracks")
+    def tags_tracks(tag: str, sort: str = "plays", limit: int = 50, offset: int = 0) -> dict:
+        """The live tracks carrying a tag (jimbo-dj's per-track rule), each with its counted plays."""
+        return read_tags(lambda c: tagpages.tag_tracks(c, tag, sort, limit, offset, settings.tz))
+
+    @app.get("/api/tags/compare")
+    def tags_compare() -> dict:
+        """The P4 gate: check 1 (the ladder's check), check 2 (the per-track check) and check 3 (the inbox's
+        check), each as its own endpoint answers it, and whether all three passed."""
+        def run(conn):
+            lad, trk, prop = ladder_value(conn), tracks_value(conn), proposals_value(conn)
+            return tags_gate.compare(lad["check"], trk, prop["check"])
+        return read_tags(run)
 
     @app.get("/api/modules")
     def modules() -> dict:

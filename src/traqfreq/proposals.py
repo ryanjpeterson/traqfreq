@@ -35,7 +35,7 @@ from .vendor import genres
 from .vendor import jimbodj_tags as jd
 from .vendor import tagwrite
 
-PROPOSALS_VERSION = 1  # bump when the inbox's or the check's answers change (in the cache key)
+PROPOSALS_VERSION = 2  # bump when the inbox's or the check's answers change (in the cache key); 2: rule questions need albums or artists
 GROUPS = ("all", "kind", "fix", "suggest", "ladder", "rule")
 ALL = 10**9  # jimbo-dj's fixes() and suggestions() take a limit; the inbox lists them all
 TAG_FIELDS = ("albums", "artists", "tracks", "musicbrainz", "sound", "issues")
@@ -49,7 +49,8 @@ RULES = {
     "ladder": "traqfreq's proposal: albums carrying a tag below this one on the ladder but not this one (the "
               "broad tag itself is jimbo-dj's Missing its broad tag)",
     "rule": "traqfreq's question: the albums carrying a tag whose broad tag comes from genres.family matching a "
-            "word before its last one, while no shorter name inside it has a broad tag",
+            "word before its last one, while no shorter name inside it has a broad tag (asked only of tags an album "
+            "or an artist carries)",
     "before": "the album's Plex genres now",
     "after": "the album's Plex genres after Fix in Plex's fixes of these kinds (jimbo-dj's tagwrite.proposal); "
              "nothing here applies them",
@@ -125,11 +126,12 @@ def _family_match(key: str) -> tuple[str, re.Match] | None:
 def rule_questions(lib: jd.Library, lad: dict) -> list[dict]:
     """Tags whose broad tag rests on a word before their last one: the rules give it from ``genres.family`` (no
     override names it), the family's match ends before the tag's last word, and no shorter name inside the tag
-    has a broad tag of its own."""
+    has a broad tag of its own. T23: only tags an album or an artist carries (a tag only tracks carry, often a
+    downloader's note like "Funk Add To Lidarr Batch 10", is no question for the rules)."""
     R = lib.rules
     out = []
     for k, n in lad["nodes"].items():
-        if not n["in_use"] or n["root"] or not n["broad"] or " " not in k:
+        if not (n["albums"] or n["artists"]) or n["root"] or not n["broad"] or " " not in k:
             continue
         if any(rx.search(k) for rx, _ in R.overrides):
             continue

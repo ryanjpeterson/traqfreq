@@ -1,0 +1,36 @@
+{
+  "_about": "Movements (T23): a named set of genre tags across broad tags, the way a scene or a sound crosses jimbo-dj's families. Shown on the genre map and on each tag's page. A movement changes no ladder and no count: each tag keeps its own broad tag and its own numbers. Tags are written as Plex would spell them; traqfreq runs them through jimbo-dj's tag rules. Bump version when this file changes.",
+  "version": 1,
+  "movements": [
+    {
+      "id": "blackgaze",
+      "name": "Blackgaze",
+      "about": "Black metal played with the walls of guitar and the haze of shoegaze, from the late 2000s on.",
+      "tags": ["Blackgaze", "Atmospheric Black Metal", "Post-Black Metal", "Shoegaze", "Post-Rock", "Dream Pop"]
+    },
+    {
+      "id": "post-punk",
+      "name": "Post-punk and after",
+      "about": "What came out of punk at the end of the 1970s: post-punk, gothic rock and new wave, and the synth and dark wave sounds that grew from them.",
+      "tags": ["Post-Punk", "Gothic Rock", "New Wave", "Coldwave", "Darkwave", "Synth-Pop", "Post-Punk Revival"]
+    },
+    {
+      "id": "industrial",
+      "name": "Industrial",
+      "about": "Noise, machines and rhythm, from the industrial records of the late 1970s to the body music and the metal and rock bands that took them up.",
+      "tags": ["Industrial", "EBM", "Electro-Industrial", "Industrial Rock", "Industrial Metal", "Noise"]
+    },
+    {
+      "id": "emo",
+      "name": "Emo and post-hardcore",
+      "about": "Hardcore punk turned inward, from the mid-1980s on: emo, post-hardcore and screamo, and the math rock and pop punk around them.",
+      "tags": ["Emo", "Post-Hardcore", "Screamo", "Midwest Emo", "Math Rock", "Pop Punk"]
+    },
+    {
+      "id": "doom-drone",
+      "name": "Doom and drone",
+      "about": "Slow, heavy and long: doom and sludge metal, stoner rock, and the drone and dark ambient records that stretch the sound out further.",
+      "tags": ["Doom Metal", "Sludge Metal", "Drone Metal", "Stoner Rock", "Drone", "Dark Ambient"]
+    }
+  ]
+}

@@ -37,7 +37,7 @@ from .vendor import jimbodj_tags as jd
 
 LADDER_VERSION = 1  # bump when the ladder's shape changes (it is in the cache key)
 NEEDS = ("tracks", "albums", "artists", "mb_releases", "mb_artists", "meta")
-SETS = ("carries", "under", "missing")
+SETS = ("carries", "under", "missing", "sound")  # T23: sound
 
 RULES = {
     "node": "a canonical tag in use (jimbo-dj's tag rules: split, aliases, rewrites, case), junk left out",
@@ -49,6 +49,8 @@ RULES = {
     "under": "albums carrying the tag or any tag below it",
     "missing": "albums under a broad tag that don't carry it (jimbo-dj's Missing its broad tag)",
     "artists": "artists whose Plex artist genres name the tag",
+    "sound": "albums whose analyzer styles name the tag (a style counts for an album when at least "
+             f"{round(jd.SOUND_SHARE * 100)}% of its analysed tracks keep it: jimbo-dj's sound count)",
 }
 
 
@@ -322,8 +324,8 @@ def _page(rows: list, limit: int, offset: int) -> tuple[list, int, int]:
 
 
 def albums(conn: sqlite3.Connection, tag: str, which: str = "carries", limit: int = 50, offset: int = 0) -> dict:
-    """The albums behind a tag's number: carrying it, under it, or (a broad tag) missing it. Each with its Plex
-    album tags as they are and the tags below this one it carries."""
+    """The albums behind a tag's number: carrying it, under it, (a broad tag) missing it, or (T23) named by the
+    analyzer's styles. Each with its Plex album tags as they are and the tags below this one it carries."""
     if which not in SETS:
         raise ValueError(f"set is one of {', '.join(SETS)}")
     lib = library(conn)
@@ -340,7 +342,11 @@ def albums(conn: sqlite3.Connection, tag: str, which: str = "carries", limit: in
     for d in below:
         for a in lib.index[d]["albums"]:
             via[a].append(lad["nodes"][d]["name"])
-    keys = set(have) if which == "carries" else (set(have) | set(via)) - (set(have) if which == "missing" else set())
+    if which == "sound":
+        from .tagpages import _sound_albums
+        keys = _sound_albums(conn, lib, k)
+    else:
+        keys = set(have) if which == "carries" else (set(have) | set(via)) - (set(have) if which == "missing" else set())
     rows = [lib.albums[a] for a in keys if a in lib.albums]
     rows.sort(key=lambda a: ((a["artist"] or "").lower(), a["year"] or 0, (a["title"] or "").lower()))
     page, limit, offset = _page(rows, limit, offset)

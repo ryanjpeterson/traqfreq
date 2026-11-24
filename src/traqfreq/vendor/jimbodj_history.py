@@ -1,7 +1,7 @@
 """Pure functions vendored from jimbo-dj (ryanjpeterson/jimbo-dj, private), src/jimbodj/history.py at 1d8a7cb.
 
 Copied as is (constants, band_of, norm_artist, norm_title, match_key, Names, window_sql; T8: DAY, _range,
-_minutes, TOP_PERIODS, top_range; T21: _genre_tags, with ``log``), never edited here: traqfreq must count and match listens exactly the way jimbo-dj does
+_minutes, TOP_PERIODS, top_range; T21: _genre_tags, with ``log``; T23: SOUND_COLS, sound_of), never edited here: traqfreq must count and match listens exactly the way jimbo-dj does
 until HISTORY's cut-over (P6). To update: copy the same names again from jimbo-dj, bump VENDORED_FROM,
 and run tests/test_vendor.py (it checks these against the match keys jimbo-dj stored in the fixture).
 Why vendored, not a git dependency: jimbo-dj's repo is private (HANDOFF, open question 3).
@@ -236,3 +236,26 @@ def _genre_tags(con: sqlite3.Connection) -> tuple[dict[int, list[str]], dict[str
             by_track[rk] = ks
     names = {k: e["name"] for k, e in lib.index.items()}
     return by_track, names
+
+
+# --- T23: what some plays sounded like (a tag's sound on its TAGS page; Wrapped's sound rule). ------------------
+SOUND_COLS = ("bpm", "danceability", "aggressive", "relaxed", "happy", "sad", "voice", "loudness_lufs")
+
+
+def sound_of(con: sqlite3.Connection, played: Counter) -> dict | None:
+    """What some plays sounded like on average (each library track weighted by its plays): tempo, energy,
+    mood, voice and loudness, from the analysis. None when too few of them are analysed to say."""
+    if not played:
+        return None
+    sums, weights = Counter(), Counter()
+    for r in con.execute(f"SELECT rating_key, {', '.join(SOUND_COLS)} FROM features WHERE rating_key IN (SELECT value FROM json_each(?))",
+                         (json.dumps(list(played)),)):
+        w = played[r[0]]
+        for i, c in enumerate(SOUND_COLS, 1):
+            if r[i] is not None:
+                sums[c] += r[i] * w
+                weights[c] += w
+    if weights["bpm"] < 20:
+        return None
+    return {c: round(sums[c] / weights[c], 3 if c not in ("bpm", "loudness_lufs") else 1) for c in SOUND_COLS if weights[c]} | {
+        "plays": weights["bpm"]}

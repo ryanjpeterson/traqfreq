@@ -26,6 +26,7 @@ traqfreq = "traqfreq.__main__:main"
 where = ["src"]
 
 [tool.setuptools.package-data]
+"traqfreq" = ["movements.json"]  # T23: the movements on the genre map
 "traqfreq.vendor" = ["*.json"]  # T20: jimbo-dj's tag_rules.json, vendored beside tags.py
 
 [tool.pytest.ini_options]

@@ -39,7 +39,8 @@ def test_vendored_unchanged():
         return
     import subprocess
     for path, mine, a, b in (("genres.py", genres, "class Styles:", "# Rebuilt in the background"),
-                             ("history.py", jh, "def _genre_tags(", "def top(")):
+                             ("history.py", jh, "def _genre_tags(", "def top("),
+                             ("history.py", jh, "SOUND_COLS = (", "def listened_keys(")):  # T23
         theirs = subprocess.run(["git", "-C", str(jimbodj), "show", f"1d8a7cb:src/jimbodj/{path}"],
                                 capture_output=True, text=True, check=True).stdout
         part = theirs[theirs.index(a):theirs.index(b)].rstrip()
