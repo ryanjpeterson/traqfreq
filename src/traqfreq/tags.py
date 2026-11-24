@@ -374,7 +374,7 @@ def artists(conn: sqlite3.Connection, tag: str, limit: int = 50, offset: int = 0
 # track that differs from its album shows, and the tags its tracks carry that speak for it (TRACK_SHARE, as
 # jimbo-dj's ``_recs`` reads them).
 
-TRACK_VERSION = 1  # bump when the per-track answers change shape (in the check's cache key)
+TRACK_VERSION = 2  # bump when the per-track answers change (in the check's cache key); 2: each kept style once
 SOURCES = ("track", "file", "album", "artist", "mb-release", "mb-artist", "sound")
 TRACK_RULES = {
     "track": "the track's own Plex genres (tracks.plex_genres: what Plex read from the file, its first few values)",
