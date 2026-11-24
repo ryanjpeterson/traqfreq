@@ -274,6 +274,7 @@ Run on the deployed app (`claude/t19-gate`, c054195) with `scripts/p3_gate.py --
 - `TRAQFREQ_NAVIDROME_ROOTS` isn't needed: the shared folder is `/music`.
 
 ## Next: T20
+**Planned for P5/P6 (Ryan, 2026-11-24):** every playlist and mix has three separate switches, Plex, Jellyfin and Navidrome (in docs/specs/README.md under P5 and P6). Navidrome also has NaviBeat connected to it.
 P4 TAGS read-only (T20–T23); its spec is still to write. Also worth a look on Navidrome's side: its scan error "stat /music: bad file descriptor" (from T18; not seen since the restart).
 
 ## Open questions

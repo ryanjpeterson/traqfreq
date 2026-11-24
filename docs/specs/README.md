@@ -43,8 +43,9 @@ Spec: [t13-servers.md](t13-servers.md).
 - **T19** Gate "One song, three servers": `scripts/p3_gate.py`, `GET /api/servers/compare`, run on live data. *Done* (the three checks, the gate card on SETUP). **P3 gate passed 2026-11-24** on the deployed app, after Report Real Path was turned on for traqfreq's Navidrome player: every pair one to one (53,274 of 53,274), 0 unmatched, spot check 44 of 44 answers ok (HANDOFF).
 ## P4 TAGS read-only: T20–T23
 ## P5 PLAYLISTS Junction preview: T24–T28
+**Ryan's requirement (2026-11-24), for every playlist and mix:** three separate switches, *Plex*, *Jellyfin* and *Navidrome*, each deciding whether that playlist is on that server; any mix of them, none implied by another. Navidrome also has NaviBeat connected to it (to look at when the Navidrome push is built: what it reads from Navidrome's playlists). P5 shows the switches read-only (where each playlist would go); P6 makes them push.
 ## P6 Cut-overs (~15)
-Imports, scans, analyzer, playlists, Fix in Plex, jobs, backups. Each is switched off in jimbo-dj as traqfreq takes the write.
+Imports, scans, analyzer, playlists, Fix in Plex, jobs, backups. Each is switched off in jimbo-dj as traqfreq takes the write. The playlists cut-over pushes each playlist and mix to the servers its switches name (Plex, Jellyfin, Navidrome, each on its own; see P5), and takes it off a server when its switch goes off.
 ## P7 New modules
 DISCOVER, MIXES, FETCH, language loop.
 ## P8 Retire jimbo-dj

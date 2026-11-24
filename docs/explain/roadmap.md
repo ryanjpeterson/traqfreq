@@ -18,6 +18,7 @@ The phases and sessions are planned in [docs/specs/README.md](../specs/README.md
 
 ## Ideas
 
+- Every playlist and mix gets three separate switches, Plex, Jellyfin and Navidrome, for which servers it goes to (Ryan, 2026-11-24): shown in P5, pushed in P6. Navidrome also has NaviBeat connected to it.
 - Import Jellyfin and Navidrome plays as listens, under HISTORY's priority rules (needs a rule for overlaps first).
 - A separate rule for Last.fm batch scrobbles before any burst check changes a count (T7 found the burst rule would hold about a fifth of plays).
 

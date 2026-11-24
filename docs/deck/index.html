@@ -123,8 +123,8 @@ addEventListener('resize', fit); fit();
 <tr><td>P0</td><td>Shell: repo, tokens, kit, nav, SETUP</td><td>4</td><td>4</td><td>Done</td><td>Runs on the Mac mini at :4492</td></tr>
 <tr><td>P1</td><td>HISTORY, read-only</td><td>4</td><td>4</td><td>Done</td><td>Counts match jimbo-dj</td></tr>
 <tr><td>P2</td><td>LIBRARY, read-only</td><td>4</td><td>4</td><td>Done</td><td>Counts match jimbo-dj</td></tr>
-<tr class="now"><td>P3</td><td>SERVERS: identity, Jellyfin, Navidrome</td><td>7</td><td>7</td><td>Gate waits</td><td>One song, three servers: not passed yet, only Navidrome’s hidden paths</td></tr>
-<tr><td>P4</td><td>TAGS, read-only</td><td>4</td><td>0</td><td>Not started</td><td>Ladder and per-track tags right</td></tr>
+<tr><td>P3</td><td>SERVERS: identity, Jellyfin, Navidrome</td><td>7</td><td>7</td><td>Done</td><td>One song, three servers</td></tr>
+<tr class="now"><td>P4</td><td>TAGS, read-only</td><td>4</td><td>0</td><td>Not started</td><td>Ladder and per-track tags right</td></tr>
 <tr><td>P5</td><td>PLAYLISTS: Junction preview</td><td>5</td><td>0</td><td>Not started</td><td>Same tracks as jimbo-dj</td></tr>
 <tr><td>P6</td><td>Cut-overs, one writer at a time</td><td>~15</td><td>0</td><td>Not started</td><td>Each switched off in jimbo-dj</td></tr>
 <tr><td>P7</td><td>DISCOVER, MIXES, FETCH, language loop</td><td>~30</td><td>0</td><td>Not started</td><td>Per module</td></tr>
@@ -243,7 +243,7 @@ addEventListener('resize', fit); fit();
 <tr><td>T19</td><td>Gate: one to one, reasons that add up, a spot check asking each server by ID; p3_gate.py and the card on SETUP</td><td>Done</td></tr>
 </table>
 <div class="stack" style="gap:28px">
-<div class="card L"><p class="k">GATE</p><p class="txt">Every library track names its item on each server, or why not; nothing matched twice; a spot check agrees on file and length.</p><p class="small">2026-11-24: not passed, only because Navidrome hides its paths. Reasons add up; Plex and Jellyfin one to one; no length off. Rerun with Report Real Path on.</p></div>
+<div class="card L"><p class="k">GATE</p><p class="txt">Every library track names its item on each server, or why not; nothing matched twice; a spot check agrees on file and length.</p><p class="small">Passed 2026-11-24: Plex, Jellyfin and Navidrome one to one over 53,274 copies, none unmatched; spot check 44 of 44 answers agree.</p></div>
 <div class="card"><p class="k">STAYS IN JIMBO-DJ</p><p class="txt">Plex remains its only server.</p></div>
 <div class="card"><p class="k">NEW CODE</p><p class="txt">jimbo-dj knows only Plex, so this is traqfreq’s own.</p></div>
 </div>
@@ -356,12 +356,12 @@ addEventListener('resize', fit); fit();
 <h2 class="head">What happened, newest first</h2>
 <table class="tbl">
 <tr class="hd"><th style="width:16%">Date</th><th style="width:16%">Session</th><th style="width:68%">What</th></tr>
-<tr class="now"><td>Next</td><td>P3 gate again, then T20</td><td>Report Real Path on for traqfreq’s Navidrome player, Refresh Navidrome, rerun p3_gate.py; then P4 TAGS</td></tr>
-<tr><td>2026-11-24</td><td>T19, P3 gate</td><td>PR #18 on branch claude/t19-gate: the gate (/api/servers/compare, p3_gate.py, the card on SETUP). Run deployed: not passed, only because Navidrome hides all 52,985 paths; Plex and Jellyfin one to one (53,274 of 53,274), reasons add up on every pair, every Jellyfin answer agrees, no length off; 182 API and 160 web tests</td></tr>
+<tr class="now"><td>Next</td><td>Next: T20</td><td>P4 TAGS, read-only: the spec, then the ladder from broad to specific</td></tr>
+<tr><td>2026-11-24</td><td>P3 gate</td><td>Passed on the deployed app once Navidrome reported real paths (Report Real Path on, Navidrome restarted): every pair one to one over 53,274 copies, none unmatched; spot check 44 of 44 answers agree on file and length</td></tr>
+<tr><td>2026-11-24</td><td>T19, P3 gate</td><td>PR #18 on branch claude/t19-gate: the gate (/api/servers/compare, p3_gate.py, the card on SETUP). First run deployed: not passed, only because Navidrome hid all 52,985 paths; 182 API and 160 web tests</td></tr>
 <tr><td>2026-11-23</td><td>T18</td><td>PR #17 on branch claude/t18-navidrome: Navidrome’s reader, GET only over Subsonic (ping, music folders, scan status, every album and song); a read a scan tore is not stored; name and version on SERVERS. Live on Navidrome 0.64: 52,985 songs, paths hidden (Report Real Path off), 52,712 of 53,133 Plex copies matched by MusicBrainz ID and tags; Refresh Jellyfin works from the deployed container; 172 API and 155 web tests</td></tr>
 <tr><td>2026-11-23</td><td>T17</td><td>PR #16 on branch claude/t17-jellyfin: Jellyfin’s reader, GET only (System/Info, music folders, every audio item page by page, one named user’s play counts); server name, version and user on SERVERS. Live on Jellyfin 12.1: 53,133 items, all 53,133 Plex copies matched by file; fixed its auth header and reads torn by a running scan; 161 API and 155 web tests</td></tr>
-<tr><td>2026-11-23</td><td>T16</td><td>PR #14 merged (bf15089), docs synced in PR #15: the read-only client (GET only, timeouts, paging, no retries, the server’s own errors, secrets never shown); snapshot refresh writing only traqfreq’s database, one at a time, each logged with its counts; a refresh button per server on SERVERS; reader hooks for T17 and T18; 152 API and 154 web tests</td></tr>
-<tr><td>2026-11-23</td><td>T15</td><td>PR #13 on branch claude/t15-servers-page: SERVERS page on SETUP (three servers with snapshot age, identity counts, matches by tier and reason, each opening its rows; a song’s three IDs); “On servers” on the track page, each server’s plays beside, never added; rating_key filter; 138 API and 152 web tests</td></tr>
+<tr><td>2026-11-23</td><td>T15, T16</td><td>PRs #13 and #14: SERVERS page on SETUP and “On servers” on the track page; the GET-only client and snapshot refresh, each logged with its counts; 152 API and 154 web tests</td></tr>
 <tr><td>2026-11-23</td><td>T13, T14</td><td>PRs #10 and #12: P3 spec (one song, three servers); track identity, the Plex side; snapshots in one item shape; matching by file, MusicBrainz ID, tags, one to one, one reason for every miss; 136 API and 139 web tests</td></tr>
 <tr><td>2026-11-23</td><td>P2 gate</td><td>Passed: PRs #8 and #9 deployed; both stored LIBRARY rows, 60 of 60 fields (library.stats 23, library.charts 37), equal jimbo-dj’s</td></tr>
 <tr><td>2026-11-23</td><td>T12</td><td>PR #9 on branch claude/t12-library-gate: P2 gate script, /api/library/compare and the compare page; jimbo-dj’s library.stats and charts (files, time, place, keys, sound) vendored; gate card on LIBRARY and SETUP; fixture passes with one explained difference; 114 API and 137 web tests</td></tr>
