@@ -5,7 +5,7 @@ every source folded into one canonical list and audited. Copied unchanged at 1d8
 TAGS (P4) builds on this: the ladder (``traqfreq.tags``) puts ``Rules.broad`` and the canonical keys in
 ``Library.index`` into rungs, and checks itself against ``Library.families``. Not copied: ``_lib`` and ``get``
 (jimbo-dj's background cache; traqfreq keeps one Library per data stamp in ``traqfreq.tags``). ``genres`` is
-vendor/genres.py (``family`` and ``_support`` vendored; styles a stand-in, so ``_sound_by_album`` gives none),
+vendor/genres.py (``family``, ``_support`` and, since T21, ``Styles``: ``_sound_by_album`` gives the analyzer's styles),
 ``filetags`` and ``tagwrite`` (imported inside the copies) are vendor/filetags.py and vendor/tagwrite.py, their
 read-only parts only. Nothing here writes anything. Never edit the copies; re-copy them when jimbo-dj changes.
 """

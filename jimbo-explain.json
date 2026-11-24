@@ -1,7 +1,7 @@
 {
   "version": "0.1.0",
   "docs": "docs/explain",
-  "synced": { "commit": "a075ebb", "date": "2026-11-24" },
+  "synced": { "commit": "f908628", "date": "2026-11-24" },
   "facts": {
     "name": "traqfreq",
     "tagline": "jimbo-dj's successor, built beside it: listening history, library, servers and tags, every number showing its rows",
@@ -18,7 +18,7 @@
       { "name": "Tailscale", "kind": "self-hosted", "direction": "read", "required": true, "what": "the only way in" }
     ],
     "standards": ["jimbo-deploy", "jimbo-explain"],
-    "now": ["P4 TAGS read-only (T20–T23): T20 the ladder done, T21 albums tagged track by track next", "P3 SERVERS gate passed 2026-11-24: Plex, Jellyfin and Navidrome one to one over 53,274 copies, 0 unmatched, spot check 44 of 44"]
+    "now": ["P4 TAGS read-only (T20–T23): T20 the ladder and T21 albums tagged track by track done, T22 the proposals inbox next", "P3 SERVERS gate passed 2026-11-24: Plex, Jellyfin and Navidrome one to one over 53,274 copies, 0 unmatched, spot check 44 of 44"]
   },
   "files": {}
 }

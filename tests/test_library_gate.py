@@ -76,7 +76,11 @@ def test_charts_counted_jimbodj_way(legacy_db):
                                      {"label": "2020s", "value": 3, "plays": 2, "hours": 0}]
     assert [h["label"] for h in ch["time"]["hours"] if h["value"]] == ["12", "14"]
     assert ch["place"]["countries"] == [{"label": "Germany", "value": 2}, {"label": "United Kingdom", "value": 2}]
-    assert ch["sound"]["genres"] == [] and "not_compared" in ch["genres"]
+    # T21: the Discogs styles jimbo-dj's strict test keeps (vendored genres.Styles), on the analysed tracks at the
+    # analyzer's version (101, 103); still not compared in P2 ("genres" says TAGS).
+    assert ch["sound"]["genres"] == [{"label": g, "value": 1} for g in (
+        "Rock---Black Metal", "Electronic---Ambient", "Electronic---Dark Ambient", "Rock---Doom Metal", "Rock---Shoegaze")]
+    assert "not_compared" in ch["genres"]
     # another zone moves the hours: the gate uses the one jimbo-dj's stored charts name
     utc = g.charts(conn, ZoneInfo("UTC"))
     assert [h["label"] for h in utc["time"]["hours"] if h["value"]] == ["18", "21"]

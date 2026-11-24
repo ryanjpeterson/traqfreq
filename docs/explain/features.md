@@ -62,6 +62,9 @@ Read-only views of jimbo-dj's data in the Berlin · Gelb look, each number with 
 | The ladder | Every genre tag in use on its rungs, broad to specific, any depth, shared parents: jimbo-dj's tag rules (vendored) name each tag and its broad tag, the rungs between come from the tags' names under the same broad tag; tags with no broad tag listed apart | `/tags`, `GET /api/tags/ladder`, `src/traqfreq/tags.py` | new |
 | Same as jimbo-dj's families | Each broad tag's albums under it, carrying it, missing it and its children, next to jimbo-dj's rules run here and its stored `library.tags`; every ladder ends at jimbo-dj's broad tag | `/tags` | new |
 | Tag rows | The albums carrying a tag, under it or missing it, and the artists carrying it, each saying why; the tags behind each summary number | `/tags/albums`, `/tags/artists`, `/tags/list`, `GET /api/tags/albums`, `GET /api/tags/artists` | new |
+| A track by source | A track's tags from each source (its own and its file's genres, its album's and artist's Plex genres, MusicBrainz votes, the analyzer's styles with their scores, kept or not by jimbo-dj's strict test), each on its rung; its tags by jimbo-dj's per-track rule; linked from LIBRARY's track page | `/tags/track/<key>`, `GET /api/tags/track/{key}` | new |
+| An album, track by track | Its tracks with their tags, the ones that differ from the album marked (and listed on their own), and the tags its tracks and files carry that speak for it (half its tracks); linked from LIBRARY's album page | `/tags/album/<key>`, `GET /api/tags/album/{key}` | new |
+| Track by track, same as jimbo-dj | Gate check 2: every live track's tags against jimbo-dj's `_genre_tags` and its kept styles against `genres.Styles` (both vendored, run here), the tracks that differ with both answers | `/tags`, `GET /api/tags/tracks/check` | new |
 
 ### Throughout
 

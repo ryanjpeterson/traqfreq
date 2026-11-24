@@ -1,7 +1,7 @@
 """Pure functions vendored from jimbo-dj (ryanjpeterson/jimbo-dj, private), src/jimbodj/history.py at 1d8a7cb.
 
 Copied as is (constants, band_of, norm_artist, norm_title, match_key, Names, window_sql; T8: DAY, _range,
-_minutes, TOP_PERIODS, top_range), never edited here: traqfreq must count and match listens exactly the way jimbo-dj does
+_minutes, TOP_PERIODS, top_range; T21: _genre_tags, with ``log``), never edited here: traqfreq must count and match listens exactly the way jimbo-dj does
 until HISTORY's cut-over (P6). To update: copy the same names again from jimbo-dj, bump VENDORED_FROM,
 and run tests/test_vendor.py (it checks these against the match keys jimbo-dj stored in the fixture).
 Why vendored, not a git dependency: jimbo-dj's repo is private (HANDOFF, open question 3).
@@ -12,12 +12,16 @@ import contextlib
 import contextvars
 import datetime as dt
 import functools
+import json
+import logging
 import re
 import sqlite3
 import unicodedata
 from collections import Counter, defaultdict
 
 VENDORED_FROM = "jimbo-dj 1d8a7cb src/jimbodj/history.py"
+
+log = logging.getLogger(__name__)
 
 MIN_PLAY_MS = 30_000
 # How far apart a listen and a Last.fm scrobble of the same song can be and still be one play. Spotify's
@@ -200,3 +204,35 @@ def in_zone(tz):
         yield
     finally:
         _TZ.reset(token)
+
+
+# --- T21: the per-track genre tags (Top's genres; TAGS' gate check 2). ``tags`` is vendor/tags.py: its ``get`` is
+# traqfreq's one Library per data stamp (jimbo-dj's background cache isn't copied). --------------------------------
+def _genre_tags(con: sqlite3.Connection) -> tuple[dict[int, list[str]], dict[str, str]]:
+    """rating_key → the canonical genre tags of the track (its own Plex genres and its album's, through
+    Library → Tags' rules, junk left out), and tag key → its name. The same keys /library/tags/<key> uses."""
+    from . import tags
+    try:
+        lib = tags.get(con)
+    except Exception:  # noqa: BLE001 - no tags yet: no genres, said so on the page
+        log.exception("genre tags unavailable for Top")
+        return {}, {}
+    R = lib.rules
+    parsed: dict[str, list[str]] = {}
+
+    def keys(raws) -> list[str]:
+        out = []
+        for raw in raws:
+            if raw not in parsed:
+                parsed[raw] = [p["key"] for p in R.parse(raw) if not p["junk"] and p["key"]]
+            out += parsed[raw]
+        return out
+
+    album_tags = {k: keys(json.loads(g or "[]")) for k, g in con.execute("SELECT album_key, genres FROM albums")}
+    by_track: dict[int, list[str]] = {}
+    for rk, ak, g in con.execute("SELECT rating_key, album_key, plex_genres FROM tracks WHERE removed_at IS NULL"):
+        ks = list(dict.fromkeys(album_tags.get(ak, []) + keys(json.loads(g or "[]"))))
+        if ks:
+            by_track[rk] = ks
+    names = {k: e["name"] for k, e in lib.index.items()}
+    return by_track, names

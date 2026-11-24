@@ -2,6 +2,13 @@
 
 ## Log
 
+### 2026-11-24 — A track's tags are built from its sources, then checked against jimbo-dj's rule
+
+- **Decision:** vendor jimbo-dj's `history._genre_tags` and `genres.Styles` unchanged, but build each track's tags in traqfreq from its own per-source breakdown (the album's Plex genres, then the track's, through the rules), and compare that with the vendored rule for every live track (gate check 2). The styles shown as kept are `Styles.sound_genres`, checked track by track.
+- **Why:** the page has to show where each tag comes from, which jimbo-dj's rule doesn't say; building the tags from that breakdown and comparing keeps the page and jimbo-dj's rule from drifting apart.
+- **Alternatives:** show only the vendored rule's answer (no sources); reimplement the strict test for styles (a second copy of jimbo-dj's code to keep in step).
+- **Consequences:** the styles half of the check proves the plumbing (same tracks, same styles, same order), not an independent strict test; the P2 gate's `sound.genres` bars now come from the real styles and stay not compared.
+
 ### 2026-11-24 — The ladder adds rungs inside jimbo-dj's broad tags, never across them
 
 - **Decision:** keep jimbo-dj's tag rules (tags.py, tag_rules.json, `genres.family`) vendored unchanged and build the ladder on them: a tag's parents are the nearest tags in use whose name is its head (leading words dropped, or one part of a hyphenated word kept), only under the same broad tag; with none, the broad tag. A head under another broad tag is shown, not made a rung.

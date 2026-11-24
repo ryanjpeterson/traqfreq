@@ -1,7 +1,8 @@
 import type { ReactNode } from 'react';
 import { Band, Button, Card, NavItem, Status, StationRow, Text } from '../components/kit';
 import { t, tf, type StringKey } from '../copy/t';
-import { useGet } from '../app/api';
+import { useGet, useModules } from '../app/api';
+import { tagAlbumHref, tagTrackHref } from '../app/tags';
 import { MODULE_PATH } from '../app/route';
 import { dayLabel, duration, fmt, localTime, sourceName } from '../app/history';
 import { count, fmt1, tracksHref } from '../app/library';
@@ -292,6 +293,7 @@ function AlbumBody({ a, navigate }: { a: Album } & Nav) {
       </div>
       <section aria-labelledby="e-tracks">
         <Text variant="label" id="e-tracks">{t('entity.tracks')}</Text>
+        <TagsLink href={tagAlbumHref(info.album_key)} label={t('entity.tagsAlbum')} navigate={navigate} />
         <ol className="hist-rows">
           {a.tracks.map((tr, i) => (
             <StationRow
@@ -315,6 +317,13 @@ function AlbumBody({ a, navigate }: { a: Album } & Nav) {
       <Text variant="note">{t('entity.notHere')}</Text>
     </>
   );
+}
+
+/** T21: a link to TAGS' view of this album or track, only while TAGS is on (an off module leaves no trace, L2). */
+function TagsLink({ href, label, navigate }: { href: string; label: string } & Nav) {
+  const [modules] = useModules();
+  if (!modules.find((m) => m.id === 'T')?.on) return null;
+  return <div><Button variant="quiet" href={href} onClick={() => navigate(href)}>{label}</Button></div>;
 }
 
 // --- Artist --------------------------------------------------------------------------------------------
@@ -438,6 +447,7 @@ function TrackBody({ d, navigate }: { d: Track } & Nav) {
           {tr.album_key != null && d.live && <PageLink href={albumHref(tr.album_key)} navigate={navigate}>{tr.album || t('rows.untitled')}</PageLink>}
         </div>
         {!d.live && <Status state="off" label={tf('entity.track.removed', { d: day(tr.removed_at) })} />}
+        {d.live && <TagsLink href={tagTrackHref(tr.rating_key)} label={t('entity.tagsTrack')} navigate={navigate} />}
       </section>
       <div className="hist-grid">
         <Card label={t('entity.plays')}>

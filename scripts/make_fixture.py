@@ -44,6 +44,15 @@ every counting rule has a case that tells it apart from a raw row count:
   tracks carry (Ambient, on Westkreuz, an ambient intro on a black metal album), and the removed album's tag
   (jimbo-dj's tags read every album row). jimbo-dj's stored library.tags (TAGS_STORED, trimmed to its families,
   worked out by hand with tags.py's rules) is fresh.
+- T21, tracks tagged one by one (P4; STYLES and FILE_TAGS below; no count above changes): the analyzer's Discogs
+  styles on the three analysed tracks (features.genres, JSON {"Rock---Black Metal": score}), chosen so jimbo-dj's
+  strict test (genres.Styles) keeps a style its metadata names (Black Metal, Ambient), one of a family the metadata
+  names (Dark Ambient: Electronic, from Westkreuz's Ambient; Shoegaze: Rock, from Post-Punk), and drops one too weak
+  (Drone, under GENRE_MIN), one of another family (Punk on Westkreuz) and one the sound alone is sure of but the
+  metadata contradicts (Synth-Pop on Ostkreuz, 0.9). And jimbo-dj's file_tags table (filetags.py's shape): the
+  files' genres of the live tracks, one with a tag Plex didn't keep (Ostkreuz's Atmospheric Black Metal), one with a
+  tag no album, artist or track has (Drone, so it is on no rung), and one file that couldn't be read. The stored
+  library.tags stamp takes the file tags' newest read, so it stays fresh.
 - With --checks: T7's invented bursts, loop, steady rhythm and windows (CHECK_LISTENS), on top of the above.
 
 Usage: python scripts/make_fixture.py [--checks] [out_path]   (default tests/fixtures/legacy.sqlite)
@@ -107,6 +116,9 @@ CREATE INDEX listens_rk ON listens(rating_key);
 CREATE TABLE listen_matches (match_key TEXT PRIMARY KEY, rating_key INTEGER);
 CREATE TABLE history_imports (
     id INTEGER PRIMARY KEY, source TEXT NOT NULL, at INTEGER NOT NULL, rows INTEGER, added INTEGER, note TEXT
+);
+CREATE TABLE file_tags (
+    rating_key INTEGER PRIMARY KEY, size INTEGER, mtime INTEGER, genres TEXT, read_at INTEGER NOT NULL, error TEXT
 );
 CREATE TABLE stats (
     name TEXT NOT NULL, params TEXT NOT NULL, value TEXT NOT NULL, version INTEGER NOT NULL, stamp TEXT,
@@ -197,7 +209,15 @@ TAGS_STORED = {"families": [
     {"tag": "Hip Hop", "key": "hip hop", "albums": 1, "tagged": 0, "missing": 1, "children": [
         {"tag": "Lo-Fi Hip Hop", "key": "lo-fi hip hop", "albums": 1}]},
     {"tag": "Punk", "key": "punk", "albums": 1, "tagged": 1, "missing": 0, "children": []}]}
-TAGS_STAMP = json.dumps([SYNC, SYNC, str(SYNC), 7, 1795000000.0, None, None])
+# T21: the analyzer's Discogs styles (features.genres) and the files' genres (file_tags), invented.
+STYLES = {101: {"Rock---Black Metal": 0.62, "Electronic---Ambient": 0.48, "Electronic---Dark Ambient": 0.3, "Rock---Punk": 0.2},
+          102: {"Rock---Black Metal": 0.7, "Electronic---Synth-pop": 0.9},
+          103: {"Rock---Doom Metal": 0.55, "Rock---Shoegaze": 0.25, "Electronic---Drone": 0.1}}
+FILE_TAGS_READ = SYNC + 1800
+# rating_key: (genres as the file has them, or None; error)
+FILE_TAGS = {101: (["Black Metal", "Ambient"], None), 102: (["Black Metal", "Atmospheric Black Metal"], None),
+             103: (["Doom Metal"], None), 104: (["Doom Metal", "Drone"], None), 105: (None, "unreadable")}
+TAGS_STAMP = json.dumps([SYNC, SYNC, str(SYNC), 7, 1795000000.0, FILE_TAGS_READ, None])
 
 
 def _t(s: str) -> int:
@@ -382,6 +402,11 @@ def build(out: Path, checks: bool = False) -> Path:
                          [(json.dumps(g), k) for k, g in TAGS["artists"].items()])
         conn.executemany("UPDATE tracks SET plex_genres = ? WHERE rating_key = ?",
                          [(json.dumps(g), k) for k, g in TAGS["tracks"].items()])
+        conn.executemany("UPDATE features SET genres = ? WHERE rating_key = ?",
+                         [(json.dumps(g), rk) for rk, g in STYLES.items()])
+        conn.executemany("INSERT INTO file_tags VALUES (?, NULL, NULL, ?, ?, ?)",
+                         [(rk, json.dumps(g) if g is not None else None, FILE_TAGS_READ, err)
+                          for rk, (g, err) in FILE_TAGS.items()])
         for table in ("mb_releases", "mb_artists"):
             conn.executemany(f"UPDATE {table} SET genres = ? WHERE mbid = ?",
                              [(json.dumps(g), m) for m, g in TAGS[table].items()])

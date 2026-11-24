@@ -439,6 +439,30 @@ def create_app(settings: Settings | None = None, server_transport=None) -> FastA
         """The artists whose Plex artist genres name a tag."""
         return read_tags(lambda c: tags.artists(c, tag, limit, offset))
 
+    # --- T21: tracks tagged one by one (read-only) ----------------------------------------------------------
+
+    @app.get("/api/tags/album/{key}")
+    def tags_album(key: int) -> dict:
+        """An album's live tracks with their tags (jimbo-dj's per-track rule), the tracks that differ from the
+        album, and the tags its tracks and files carry that speak for it."""
+        return read_tags(lambda c: tags.album(c, key))
+
+    @app.get("/api/tags/track/{key}")
+    def tags_track(key: int) -> dict:
+        """A live track's tags by source (its own and its file's, its album's and artist's Plex genres,
+        MusicBrainz votes, the analyzer's styles with their scores), each on its rung of the ladder, and its tags."""
+        return read_tags(lambda c: tags.track(c, key))
+
+    @app.get("/api/tags/tracks/check")
+    def tags_tracks_check() -> dict:
+        """Gate check 2: every live track's tags against jimbo-dj's _genre_tags, and its kept styles against
+        genres.Styles.sound_genres (both vendored, run here). Cached (key: the tag and styles data stamps)."""
+        def run(conn):
+            value, info = store.cached(settings.data_dir, "tags.tracks", tags.track_check_key(conn),
+                                       lambda: tags.track_check(conn))
+            return {**value, "cache": info}
+        return read_tags(run)
+
     @app.get("/api/modules")
     def modules() -> dict:
         """Each module, in nav order, with whether it is switched on (TRAQFREQ_MODULES)."""

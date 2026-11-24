@@ -27,7 +27,8 @@ Source: `src/jimbodj/tags.py`, `tag_rules.json`, `genres.py`, `filetags.py`, `ta
 Vendored unchanged at 1d8a7cb (T20), like T5's history functions:
 - `vendor/jimbodj_tags.py`: tags.py from `RULES_PATH` to `tag_detail`, plus `_STAMP` and `stamp`. Not copied: `_lib`, `get` (jimbo-dj's background cache).
 - `vendor/tag_rules.json`: byte for byte, beside the copy so `RULES_PATH` finds it (package data in `pyproject.toml`).
-- `vendor/genres.py`: the constants, `_FAMILIES`, `_PARENTS`, `family`, `_loads`, `_votes`, `_support`. `Styles` stays a stand-in (no styles) until T21 vendors it; until then the tags carry no "sound" source.
+- `vendor/genres.py`: the constants, `_FAMILIES`, `_PARENTS`, `family`, `_loads`, `_votes`, `_support`; T21: `Styles` (unchanged; `get` is a stand-in that builds it once per database and stamp: jimbo-dj's `cache.data_stamp` plus MusicBrainz's newest fetches; `version` stays 0).
+- T21: `vendor/jimbodj_history.py` gains `_genre_tags` (and `log`); `vendor/tags.py` is a stand-in `get` (traqfreq's Library per data stamp) for its `from . import tags`.
 - `vendor/filetags.py`: `by_album`, `stamp`, `status` only (they read `file_tags`). `vendor/tagwrite.py`: `stamp` only.
 
 ## The ladder (T20)

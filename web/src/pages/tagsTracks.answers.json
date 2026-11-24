@@ -1,0 +1,1234 @@
+{
+ "/api/tags/album/201": {
+  "album_key": 201,
+  "title": "Ringbahn",
+  "artist": "Kollektiv Nord",
+  "artist_key": 301,
+  "year": 2019,
+  "tags": [
+   {
+    "name": "Atmospheric Black Metal",
+    "status": "niche"
+   },
+   {
+    "name": "Black Metal",
+    "status": "ok"
+   },
+   {
+    "name": "Metal",
+    "status": "ok"
+   }
+  ],
+  "tracks": [
+   {
+    "rating_key": 101,
+    "title": "Westkreuz",
+    "artist": "Kollektiv Nord",
+    "album": "Ringbahn",
+    "album_key": 201,
+    "artist_key": 301,
+    "disc": 1,
+    "track_no": 1,
+    "live": true,
+    "tags": [
+     {
+      "key": "atmospheric black metal",
+      "name": "Atmospheric Black Metal",
+      "broad": "Metal",
+      "rung": 2,
+      "on_ladder": true,
+      "sources": [
+       "album"
+      ],
+      "album": true
+     },
+     {
+      "key": "black metal",
+      "name": "Black Metal",
+      "broad": "Metal",
+      "rung": 1,
+      "on_ladder": true,
+      "sources": [
+       "track",
+       "file",
+       "album",
+       "artist",
+       "sound"
+      ],
+      "album": true
+     },
+     {
+      "key": "metal",
+      "name": "Metal",
+      "broad": "Metal",
+      "rung": 0,
+      "on_ladder": true,
+      "sources": [
+       "album"
+      ],
+      "album": true
+     },
+     {
+      "key": "ambient",
+      "name": "Ambient",
+      "broad": "Electronic",
+      "rung": 1,
+      "on_ladder": true,
+      "sources": [
+       "track",
+       "file",
+       "sound"
+      ],
+      "album": false
+     }
+    ],
+    "differs": [
+     {
+      "key": "ambient",
+      "name": "Ambient",
+      "broad": "Electronic",
+      "rung": 1,
+      "on_ladder": true,
+      "sources": [
+       "track",
+       "file",
+       "sound"
+      ],
+      "album": false
+     }
+    ],
+    "styles": [
+     {
+      "raw": "Black Metal",
+      "key": "black metal",
+      "name": "Black Metal",
+      "junk": null,
+      "broad": "Metal",
+      "rung": 1,
+      "on_ladder": true,
+      "score": 0.62,
+      "discogs": "Rock---Black Metal",
+      "kept": true
+     },
+     {
+      "raw": "Ambient",
+      "key": "ambient",
+      "name": "Ambient",
+      "junk": null,
+      "broad": "Electronic",
+      "rung": 1,
+      "on_ladder": true,
+      "score": 0.48,
+      "discogs": "Electronic---Ambient",
+      "kept": true
+     },
+     {
+      "raw": "Dark Ambient",
+      "key": "dark ambient",
+      "name": "Dark Ambient",
+      "junk": null,
+      "broad": "Electronic",
+      "rung": null,
+      "on_ladder": false,
+      "score": 0.3,
+      "discogs": "Electronic---Dark Ambient",
+      "kept": true
+     }
+    ],
+    "check": {
+     "tags": true,
+     "styles": true,
+     "jimbodj_tags": [
+      "atmospheric black metal",
+      "black metal",
+      "metal",
+      "ambient"
+     ],
+     "jimbodj_styles": [
+      "Rock---Black Metal",
+      "Electronic---Ambient",
+      "Electronic---Dark Ambient"
+     ]
+    }
+   },
+   {
+    "rating_key": 102,
+    "title": "Ostkreuz",
+    "artist": "Kollektiv Nord",
+    "album": "Ringbahn",
+    "album_key": 201,
+    "artist_key": 301,
+    "disc": 1,
+    "track_no": 2,
+    "live": true,
+    "tags": [
+     {
+      "key": "atmospheric black metal",
+      "name": "Atmospheric Black Metal",
+      "broad": "Metal",
+      "rung": 2,
+      "on_ladder": true,
+      "sources": [
+       "file",
+       "album"
+      ],
+      "album": true
+     },
+     {
+      "key": "black metal",
+      "name": "Black Metal",
+      "broad": "Metal",
+      "rung": 1,
+      "on_ladder": true,
+      "sources": [
+       "track",
+       "file",
+       "album",
+       "artist",
+       "sound"
+      ],
+      "album": true
+     },
+     {
+      "key": "metal",
+      "name": "Metal",
+      "broad": "Metal",
+      "rung": 0,
+      "on_ladder": true,
+      "sources": [
+       "album"
+      ],
+      "album": true
+     }
+    ],
+    "differs": [],
+    "styles": [
+     {
+      "raw": "Black Metal",
+      "key": "black metal",
+      "name": "Black Metal",
+      "junk": null,
+      "broad": "Metal",
+      "rung": 1,
+      "on_ladder": true,
+      "score": 0.7,
+      "discogs": "Rock---Black Metal",
+      "kept": true
+     }
+    ],
+    "check": {
+     "tags": true,
+     "styles": true,
+     "jimbodj_tags": [
+      "atmospheric black metal",
+      "black metal",
+      "metal"
+     ],
+     "jimbodj_styles": [
+      "Rock---Black Metal"
+     ]
+    }
+   }
+  ],
+  "differ": 1,
+  "from_tracks": [
+   {
+    "key": "black metal",
+    "name": "Black Metal",
+    "rung": 1,
+    "on_ladder": true,
+    "broad": "Metal",
+    "tracks": 1.0,
+    "files": 1.0,
+    "speaks": true,
+    "album": true,
+    "status": "keep"
+   },
+   {
+    "key": "ambient",
+    "name": "Ambient",
+    "rung": 1,
+    "on_ladder": true,
+    "broad": "Electronic",
+    "tracks": 0.5,
+    "files": 0.5,
+    "speaks": true,
+    "album": false,
+    "status": "suggest"
+   },
+   {
+    "key": "atmospheric black metal",
+    "name": "Atmospheric Black Metal",
+    "rung": 2,
+    "on_ladder": true,
+    "broad": "Metal",
+    "tracks": 0,
+    "files": 0.5,
+    "speaks": true,
+    "album": true,
+    "status": "niche"
+   }
+  ],
+  "track_share": 0.5,
+  "check": {
+   "tags": 2,
+   "styles": 2,
+   "tracks": 2
+  },
+  "rules": {
+   "track": "the track's own Plex genres (tracks.plex_genres: what Plex read from the file, its first few values)",
+   "file": "every genre value in the track's file, as jimbo-dj read it (file_tags)",
+   "album": "the album's Plex genres (albums.genres)",
+   "artist": "the artist's Plex genres (artists.genres)",
+   "mb-release": "MusicBrainz genres of the album's release and release group, with votes (mb_releases)",
+   "mb-artist": "MusicBrainz genres of the artist, with votes (mb_artists)",
+   "sound": "the analyzer's Discogs styles with their scores (features.genres); kept: jimbo-dj's strict test (genres.Styles: the metadata names the style or its family, or the sound alone is at least 0.8 with no metadata against it; scores from 0.15)",
+   "tags": "jimbo-dj's per-track rule (history._genre_tags): the album's Plex genres, then the track's own, through the tag rules, junk left out, each once",
+   "differs": "tags the track carries that its album doesn't (its own Plex genres beyond the album's)",
+   "speaks": "a tag on at least 50% of the album's tracks (their Plex genres) or files speaks for the album (jimbo-dj's TRACK_SHARE, as its suggestions read it)",
+   "check": "for every live track: the tags built here from its sources equal jimbo-dj's _genre_tags (vendored, run here), and the styles shown as kept equal genres.Styles.sound_genres (vendored), same order"
+  }
+ },
+ "/api/tags/album/202": {
+  "album_key": 202,
+  "title": "Low Tide Radio",
+  "artist": "The Paper Lanterns",
+  "artist_key": 302,
+  "year": 2021,
+  "tags": [
+   {
+    "name": "Death-Doom Metal",
+    "status": "ok"
+   },
+   {
+    "name": "doom metal",
+    "status": "case",
+    "to": [
+     "Doom Metal"
+    ]
+   }
+  ],
+  "tracks": [
+   {
+    "rating_key": 104,
+    "title": "Static Gulls",
+    "artist": "The Paper Lanterns",
+    "album": "Low Tide Radio",
+    "album_key": 202,
+    "artist_key": 302,
+    "disc": 1,
+    "track_no": 2,
+    "live": true,
+    "tags": [
+     {
+      "key": "death-doom metal",
+      "name": "Death-Doom Metal",
+      "broad": "Metal",
+      "rung": 2,
+      "on_ladder": true,
+      "sources": [
+       "album",
+       "mb-release"
+      ],
+      "album": true
+     },
+     {
+      "key": "doom metal",
+      "name": "Doom Metal",
+      "broad": "Metal",
+      "rung": 1,
+      "on_ladder": true,
+      "sources": [
+       "track",
+       "file",
+       "album",
+       "mb-release"
+      ],
+      "album": true
+     }
+    ],
+    "differs": [],
+    "styles": [],
+    "check": {
+     "tags": true,
+     "styles": true,
+     "jimbodj_tags": [
+      "death-doom metal",
+      "doom metal"
+     ],
+     "jimbodj_styles": []
+    }
+   },
+   {
+    "rating_key": 103,
+    "title": "Harbour Lights",
+    "artist": "The Paper Lanterns",
+    "album": "Low Tide Radio",
+    "album_key": 202,
+    "artist_key": 302,
+    "disc": 2,
+    "track_no": 1,
+    "live": true,
+    "tags": [
+     {
+      "key": "death-doom metal",
+      "name": "Death-Doom Metal",
+      "broad": "Metal",
+      "rung": 2,
+      "on_ladder": true,
+      "sources": [
+       "album",
+       "mb-release"
+      ],
+      "album": true
+     },
+     {
+      "key": "doom metal",
+      "name": "Doom Metal",
+      "broad": "Metal",
+      "rung": 1,
+      "on_ladder": true,
+      "sources": [
+       "track",
+       "file",
+       "album",
+       "mb-release",
+       "sound"
+      ],
+      "album": true
+     }
+    ],
+    "differs": [],
+    "styles": [
+     {
+      "raw": "Doom Metal",
+      "key": "doom metal",
+      "name": "Doom Metal",
+      "junk": null,
+      "broad": "Metal",
+      "rung": 1,
+      "on_ladder": true,
+      "score": 0.55,
+      "discogs": "Rock---Doom Metal",
+      "kept": true
+     },
+     {
+      "raw": "Shoegaze",
+      "key": "shoegaze",
+      "name": "Shoegaze",
+      "junk": null,
+      "broad": "Rock",
+      "rung": null,
+      "on_ladder": false,
+      "score": 0.25,
+      "discogs": "Rock---Shoegaze",
+      "kept": true
+     }
+    ],
+    "check": {
+     "tags": true,
+     "styles": true,
+     "jimbodj_tags": [
+      "death-doom metal",
+      "doom metal"
+     ],
+     "jimbodj_styles": [
+      "Rock---Doom Metal",
+      "Rock---Shoegaze"
+     ]
+    }
+   }
+  ],
+  "differ": 0,
+  "from_tracks": [
+   {
+    "key": "doom metal",
+    "name": "Doom Metal",
+    "rung": 1,
+    "on_ladder": true,
+    "broad": "Metal",
+    "tracks": 1.0,
+    "files": 1.0,
+    "speaks": true,
+    "album": true,
+    "status": "keep"
+   },
+   {
+    "key": "drone",
+    "name": "Drone",
+    "rung": null,
+    "on_ladder": false,
+    "broad": null,
+    "tracks": 0,
+    "files": 0.5,
+    "speaks": true,
+    "album": false,
+    "status": "suggest"
+   }
+  ],
+  "track_share": 0.5,
+  "check": {
+   "tags": 2,
+   "styles": 2,
+   "tracks": 2
+  },
+  "rules": {
+   "track": "the track's own Plex genres (tracks.plex_genres: what Plex read from the file, its first few values)",
+   "file": "every genre value in the track's file, as jimbo-dj read it (file_tags)",
+   "album": "the album's Plex genres (albums.genres)",
+   "artist": "the artist's Plex genres (artists.genres)",
+   "mb-release": "MusicBrainz genres of the album's release and release group, with votes (mb_releases)",
+   "mb-artist": "MusicBrainz genres of the artist, with votes (mb_artists)",
+   "sound": "the analyzer's Discogs styles with their scores (features.genres); kept: jimbo-dj's strict test (genres.Styles: the metadata names the style or its family, or the sound alone is at least 0.8 with no metadata against it; scores from 0.15)",
+   "tags": "jimbo-dj's per-track rule (history._genre_tags): the album's Plex genres, then the track's own, through the tag rules, junk left out, each once",
+   "differs": "tags the track carries that its album doesn't (its own Plex genres beyond the album's)",
+   "speaks": "a tag on at least 50% of the album's tracks (their Plex genres) or files speaks for the album (jimbo-dj's TRACK_SHARE, as its suggestions read it)",
+   "check": "for every live track: the tags built here from its sources equal jimbo-dj's _genre_tags (vendored, run here), and the styles shown as kept equal genres.Styles.sound_genres (vendored), same order"
+  }
+ },
+ "/api/tags/track/101": {
+  "rating_key": 101,
+  "title": "Westkreuz",
+  "artist": "Kollektiv Nord",
+  "album": "Ringbahn",
+  "album_key": 201,
+  "artist_key": 301,
+  "disc": 1,
+  "track_no": 1,
+  "live": true,
+  "tags": [
+   {
+    "key": "atmospheric black metal",
+    "name": "Atmospheric Black Metal",
+    "broad": "Metal",
+    "rung": 2,
+    "on_ladder": true,
+    "sources": [
+     "album"
+    ],
+    "album": true
+   },
+   {
+    "key": "black metal",
+    "name": "Black Metal",
+    "broad": "Metal",
+    "rung": 1,
+    "on_ladder": true,
+    "sources": [
+     "track",
+     "file",
+     "album",
+     "artist",
+     "sound"
+    ],
+    "album": true
+   },
+   {
+    "key": "metal",
+    "name": "Metal",
+    "broad": "Metal",
+    "rung": 0,
+    "on_ladder": true,
+    "sources": [
+     "album"
+    ],
+    "album": true
+   },
+   {
+    "key": "ambient",
+    "name": "Ambient",
+    "broad": "Electronic",
+    "rung": 1,
+    "on_ladder": true,
+    "sources": [
+     "track",
+     "file",
+     "sound"
+    ],
+    "album": false
+   }
+  ],
+  "differs": [
+   {
+    "key": "ambient",
+    "name": "Ambient",
+    "broad": "Electronic",
+    "rung": 1,
+    "on_ladder": true,
+    "sources": [
+     "track",
+     "file",
+     "sound"
+    ],
+    "album": false
+   }
+  ],
+  "styles": [
+   {
+    "raw": "Black Metal",
+    "key": "black metal",
+    "name": "Black Metal",
+    "junk": null,
+    "broad": "Metal",
+    "rung": 1,
+    "on_ladder": true,
+    "score": 0.62,
+    "discogs": "Rock---Black Metal",
+    "kept": true
+   },
+   {
+    "raw": "Ambient",
+    "key": "ambient",
+    "name": "Ambient",
+    "junk": null,
+    "broad": "Electronic",
+    "rung": 1,
+    "on_ladder": true,
+    "score": 0.48,
+    "discogs": "Electronic---Ambient",
+    "kept": true
+   },
+   {
+    "raw": "Dark Ambient",
+    "key": "dark ambient",
+    "name": "Dark Ambient",
+    "junk": null,
+    "broad": "Electronic",
+    "rung": null,
+    "on_ladder": false,
+    "score": 0.3,
+    "discogs": "Electronic---Dark Ambient",
+    "kept": true
+   }
+  ],
+  "sources": {
+   "track": {
+    "tags": [
+     {
+      "raw": "Ambient",
+      "key": "ambient",
+      "name": "Ambient",
+      "junk": null,
+      "broad": "Electronic",
+      "rung": 1,
+      "on_ladder": true
+     },
+     {
+      "raw": "Black Metal",
+      "key": "black metal",
+      "name": "Black Metal",
+      "junk": null,
+      "broad": "Metal",
+      "rung": 1,
+      "on_ladder": true
+     }
+    ]
+   },
+   "file": {
+    "tags": [
+     {
+      "raw": "Black Metal",
+      "key": "black metal",
+      "name": "Black Metal",
+      "junk": null,
+      "broad": "Metal",
+      "rung": 1,
+      "on_ladder": true
+     },
+     {
+      "raw": "Ambient",
+      "key": "ambient",
+      "name": "Ambient",
+      "junk": null,
+      "broad": "Electronic",
+      "rung": 1,
+      "on_ladder": true
+     }
+    ],
+    "read": true,
+    "error": null
+   },
+   "album": {
+    "tags": [
+     {
+      "raw": "Atmospheric Black Metal",
+      "key": "atmospheric black metal",
+      "name": "Atmospheric Black Metal",
+      "junk": null,
+      "broad": "Metal",
+      "rung": 2,
+      "on_ladder": true
+     },
+     {
+      "raw": "Black Metal",
+      "key": "black metal",
+      "name": "Black Metal",
+      "junk": null,
+      "broad": "Metal",
+      "rung": 1,
+      "on_ladder": true
+     },
+     {
+      "raw": "Metal",
+      "key": "metal",
+      "name": "Metal",
+      "junk": null,
+      "broad": "Metal",
+      "rung": 0,
+      "on_ladder": true
+     }
+    ]
+   },
+   "artist": {
+    "tags": [
+     {
+      "raw": "Black Metal",
+      "key": "black metal",
+      "name": "Black Metal",
+      "junk": null,
+      "broad": "Metal",
+      "rung": 1,
+      "on_ladder": true
+     }
+    ]
+   },
+   "mb-release": {
+    "tags": [],
+    "found": false
+   },
+   "mb-artist": {
+    "tags": [],
+    "found": false
+   },
+   "sound": {
+    "tags": [
+     {
+      "raw": "Black Metal",
+      "key": "black metal",
+      "name": "Black Metal",
+      "junk": null,
+      "broad": "Metal",
+      "rung": 1,
+      "on_ladder": true,
+      "score": 0.62,
+      "discogs": "Rock---Black Metal",
+      "kept": true
+     },
+     {
+      "raw": "Ambient",
+      "key": "ambient",
+      "name": "Ambient",
+      "junk": null,
+      "broad": "Electronic",
+      "rung": 1,
+      "on_ladder": true,
+      "score": 0.48,
+      "discogs": "Electronic---Ambient",
+      "kept": true
+     },
+     {
+      "raw": "Dark Ambient",
+      "key": "dark ambient",
+      "name": "Dark Ambient",
+      "junk": null,
+      "broad": "Electronic",
+      "rung": null,
+      "on_ladder": false,
+      "score": 0.3,
+      "discogs": "Electronic---Dark Ambient",
+      "kept": true
+     },
+     {
+      "raw": "Punk",
+      "key": "punk",
+      "name": "Punk",
+      "junk": null,
+      "broad": "Punk",
+      "rung": 0,
+      "on_ladder": true,
+      "score": 0.2,
+      "discogs": "Rock---Punk",
+      "kept": false
+     }
+    ],
+    "analysed": true
+   }
+  },
+  "check": {
+   "tags": true,
+   "styles": true,
+   "jimbodj_tags": [
+    "atmospheric black metal",
+    "black metal",
+    "metal",
+    "ambient"
+   ],
+   "jimbodj_styles": [
+    "Rock---Black Metal",
+    "Electronic---Ambient",
+    "Electronic---Dark Ambient"
+   ]
+  },
+  "album_tags": [
+   {
+    "name": "Atmospheric Black Metal",
+    "status": "niche"
+   },
+   {
+    "name": "Black Metal",
+    "status": "ok"
+   },
+   {
+    "name": "Metal",
+    "status": "ok"
+   }
+  ],
+  "rules": {
+   "track": "the track's own Plex genres (tracks.plex_genres: what Plex read from the file, its first few values)",
+   "file": "every genre value in the track's file, as jimbo-dj read it (file_tags)",
+   "album": "the album's Plex genres (albums.genres)",
+   "artist": "the artist's Plex genres (artists.genres)",
+   "mb-release": "MusicBrainz genres of the album's release and release group, with votes (mb_releases)",
+   "mb-artist": "MusicBrainz genres of the artist, with votes (mb_artists)",
+   "sound": "the analyzer's Discogs styles with their scores (features.genres); kept: jimbo-dj's strict test (genres.Styles: the metadata names the style or its family, or the sound alone is at least 0.8 with no metadata against it; scores from 0.15)",
+   "tags": "jimbo-dj's per-track rule (history._genre_tags): the album's Plex genres, then the track's own, through the tag rules, junk left out, each once",
+   "differs": "tags the track carries that its album doesn't (its own Plex genres beyond the album's)",
+   "speaks": "a tag on at least 50% of the album's tracks (their Plex genres) or files speaks for the album (jimbo-dj's TRACK_SHARE, as its suggestions read it)",
+   "check": "for every live track: the tags built here from its sources equal jimbo-dj's _genre_tags (vendored, run here), and the styles shown as kept equal genres.Styles.sound_genres (vendored), same order"
+  }
+ },
+ "/api/tags/track/103": {
+  "rating_key": 103,
+  "title": "Harbour Lights",
+  "artist": "The Paper Lanterns",
+  "album": "Low Tide Radio",
+  "album_key": 202,
+  "artist_key": 302,
+  "disc": 2,
+  "track_no": 1,
+  "live": true,
+  "tags": [
+   {
+    "key": "death-doom metal",
+    "name": "Death-Doom Metal",
+    "broad": "Metal",
+    "rung": 2,
+    "on_ladder": true,
+    "sources": [
+     "album",
+     "mb-release"
+    ],
+    "album": true
+   },
+   {
+    "key": "doom metal",
+    "name": "Doom Metal",
+    "broad": "Metal",
+    "rung": 1,
+    "on_ladder": true,
+    "sources": [
+     "track",
+     "file",
+     "album",
+     "mb-release",
+     "sound"
+    ],
+    "album": true
+   }
+  ],
+  "differs": [],
+  "styles": [
+   {
+    "raw": "Doom Metal",
+    "key": "doom metal",
+    "name": "Doom Metal",
+    "junk": null,
+    "broad": "Metal",
+    "rung": 1,
+    "on_ladder": true,
+    "score": 0.55,
+    "discogs": "Rock---Doom Metal",
+    "kept": true
+   },
+   {
+    "raw": "Shoegaze",
+    "key": "shoegaze",
+    "name": "Shoegaze",
+    "junk": null,
+    "broad": "Rock",
+    "rung": null,
+    "on_ladder": false,
+    "score": 0.25,
+    "discogs": "Rock---Shoegaze",
+    "kept": true
+   }
+  ],
+  "sources": {
+   "track": {
+    "tags": [
+     {
+      "raw": "Doom Metal",
+      "key": "doom metal",
+      "name": "Doom Metal",
+      "junk": null,
+      "broad": "Metal",
+      "rung": 1,
+      "on_ladder": true
+     }
+    ]
+   },
+   "file": {
+    "tags": [
+     {
+      "raw": "Doom Metal",
+      "key": "doom metal",
+      "name": "Doom Metal",
+      "junk": null,
+      "broad": "Metal",
+      "rung": 1,
+      "on_ladder": true
+     }
+    ],
+    "read": true,
+    "error": null
+   },
+   "album": {
+    "tags": [
+     {
+      "raw": "Death-Doom Metal",
+      "key": "death-doom metal",
+      "name": "Death-Doom Metal",
+      "junk": null,
+      "broad": "Metal",
+      "rung": 2,
+      "on_ladder": true
+     },
+     {
+      "raw": "doom metal",
+      "key": "doom metal",
+      "name": "Doom Metal",
+      "junk": null,
+      "broad": "Metal",
+      "rung": 1,
+      "on_ladder": true
+     }
+    ]
+   },
+   "artist": {
+    "tags": [
+     {
+      "raw": "Death Metal",
+      "key": "death metal",
+      "name": "Death Metal",
+      "junk": null,
+      "broad": "Metal",
+      "rung": 1,
+      "on_ladder": true
+     },
+     {
+      "raw": "Post-Punk",
+      "key": "post-punk",
+      "name": "Post-Punk",
+      "junk": null,
+      "broad": "Rock",
+      "rung": 1,
+      "on_ladder": true
+     }
+    ]
+   },
+   "mb-release": {
+    "tags": [
+     {
+      "raw": "death-doom metal",
+      "key": "death-doom metal",
+      "name": "Death-Doom Metal",
+      "junk": null,
+      "broad": "Metal",
+      "rung": 2,
+      "on_ladder": true,
+      "score": 3
+     },
+     {
+      "raw": "doom metal",
+      "key": "doom metal",
+      "name": "Doom Metal",
+      "junk": null,
+      "broad": "Metal",
+      "rung": 1,
+      "on_ladder": true,
+      "score": 2
+     }
+    ],
+    "found": true
+   },
+   "mb-artist": {
+    "tags": [
+     {
+      "raw": "death metal",
+      "key": "death metal",
+      "name": "Death Metal",
+      "junk": null,
+      "broad": "Metal",
+      "rung": 1,
+      "on_ladder": true,
+      "score": 4
+     },
+     {
+      "raw": "post-punk",
+      "key": "post-punk",
+      "name": "Post-Punk",
+      "junk": null,
+      "broad": "Rock",
+      "rung": 1,
+      "on_ladder": true,
+      "score": 2
+     }
+    ],
+    "found": true
+   },
+   "sound": {
+    "tags": [
+     {
+      "raw": "Doom Metal",
+      "key": "doom metal",
+      "name": "Doom Metal",
+      "junk": null,
+      "broad": "Metal",
+      "rung": 1,
+      "on_ladder": true,
+      "score": 0.55,
+      "discogs": "Rock---Doom Metal",
+      "kept": true
+     },
+     {
+      "raw": "Shoegaze",
+      "key": "shoegaze",
+      "name": "Shoegaze",
+      "junk": null,
+      "broad": "Rock",
+      "rung": null,
+      "on_ladder": false,
+      "score": 0.25,
+      "discogs": "Rock---Shoegaze",
+      "kept": true
+     },
+     {
+      "raw": "Drone",
+      "key": "drone",
+      "name": "Drone",
+      "junk": null,
+      "broad": null,
+      "rung": null,
+      "on_ladder": false,
+      "score": 0.1,
+      "discogs": "Electronic---Drone",
+      "kept": false
+     }
+    ],
+    "analysed": true
+   }
+  },
+  "check": {
+   "tags": true,
+   "styles": true,
+   "jimbodj_tags": [
+    "death-doom metal",
+    "doom metal"
+   ],
+   "jimbodj_styles": [
+    "Rock---Doom Metal",
+    "Rock---Shoegaze"
+   ]
+  },
+  "album_tags": [
+   {
+    "name": "Death-Doom Metal",
+    "status": "ok"
+   },
+   {
+    "name": "doom metal",
+    "status": "case",
+    "to": [
+     "Doom Metal"
+    ]
+   }
+  ],
+  "rules": {
+   "track": "the track's own Plex genres (tracks.plex_genres: what Plex read from the file, its first few values)",
+   "file": "every genre value in the track's file, as jimbo-dj read it (file_tags)",
+   "album": "the album's Plex genres (albums.genres)",
+   "artist": "the artist's Plex genres (artists.genres)",
+   "mb-release": "MusicBrainz genres of the album's release and release group, with votes (mb_releases)",
+   "mb-artist": "MusicBrainz genres of the artist, with votes (mb_artists)",
+   "sound": "the analyzer's Discogs styles with their scores (features.genres); kept: jimbo-dj's strict test (genres.Styles: the metadata names the style or its family, or the sound alone is at least 0.8 with no metadata against it; scores from 0.15)",
+   "tags": "jimbo-dj's per-track rule (history._genre_tags): the album's Plex genres, then the track's own, through the tag rules, junk left out, each once",
+   "differs": "tags the track carries that its album doesn't (its own Plex genres beyond the album's)",
+   "speaks": "a tag on at least 50% of the album's tracks (their Plex genres) or files speaks for the album (jimbo-dj's TRACK_SHARE, as its suggestions read it)",
+   "check": "for every live track: the tags built here from its sources equal jimbo-dj's _genre_tags (vendored, run here), and the styles shown as kept equal genres.Styles.sound_genres (vendored), same order"
+  }
+ },
+ "/api/tags/track/105": {
+  "rating_key": 105,
+  "title": "Coil",
+  "artist": "Ada Vey",
+  "album": "Quiet Engines",
+  "album_key": 203,
+  "artist_key": 303,
+  "disc": 1,
+  "track_no": 1,
+  "live": true,
+  "tags": [
+   {
+    "key": "lo-fi hip hop",
+    "name": "Lo-Fi Hip Hop",
+    "broad": "Hip Hop",
+    "rung": 1,
+    "on_ladder": true,
+    "sources": [
+     "album"
+    ],
+    "album": true
+   },
+   {
+    "key": "soundtrack",
+    "name": "Soundtrack",
+    "broad": null,
+    "rung": null,
+    "on_ladder": true,
+    "sources": [
+     "album"
+    ],
+    "album": true
+   }
+  ],
+  "differs": [],
+  "styles": [],
+  "sources": {
+   "track": {
+    "tags": []
+   },
+   "file": {
+    "tags": [],
+    "read": false,
+    "error": "unreadable"
+   },
+   "album": {
+    "tags": [
+     {
+      "raw": "Lo-Fi Hip Hop",
+      "key": "lo-fi hip hop",
+      "name": "Lo-Fi Hip Hop",
+      "junk": null,
+      "broad": "Hip Hop",
+      "rung": 1,
+      "on_ladder": true
+     },
+     {
+      "raw": "Soundtrack",
+      "key": "soundtrack",
+      "name": "Soundtrack",
+      "junk": null,
+      "broad": null,
+      "rung": null,
+      "on_ladder": true
+     },
+     {
+      "raw": "2010s",
+      "key": "2010s",
+      "name": "2010s",
+      "junk": "decades",
+      "broad": null,
+      "rung": null,
+      "on_ladder": false
+     }
+    ]
+   },
+   "artist": {
+    "tags": [
+     {
+      "raw": "Hip-Hop",
+      "key": "hip hop",
+      "name": "Hip Hop",
+      "junk": null,
+      "broad": "Hip Hop",
+      "rung": 0,
+      "on_ladder": true
+     }
+    ]
+   },
+   "mb-release": {
+    "tags": [],
+    "found": false
+   },
+   "mb-artist": {
+    "tags": [],
+    "found": false
+   },
+   "sound": {
+    "tags": [],
+    "analysed": false
+   }
+  },
+  "check": {
+   "tags": true,
+   "styles": true,
+   "jimbodj_tags": [
+    "lo-fi hip hop",
+    "soundtrack"
+   ],
+   "jimbodj_styles": []
+  },
+  "album_tags": [
+   {
+    "name": "Lo-Fi Hip Hop",
+    "status": "niche"
+   },
+   {
+    "name": "Soundtrack",
+    "status": "niche"
+   },
+   {
+    "name": "2010s",
+    "status": "junk",
+    "rule": "decades"
+   }
+  ],
+  "rules": {
+   "track": "the track's own Plex genres (tracks.plex_genres: what Plex read from the file, its first few values)",
+   "file": "every genre value in the track's file, as jimbo-dj read it (file_tags)",
+   "album": "the album's Plex genres (albums.genres)",
+   "artist": "the artist's Plex genres (artists.genres)",
+   "mb-release": "MusicBrainz genres of the album's release and release group, with votes (mb_releases)",
+   "mb-artist": "MusicBrainz genres of the artist, with votes (mb_artists)",
+   "sound": "the analyzer's Discogs styles with their scores (features.genres); kept: jimbo-dj's strict test (genres.Styles: the metadata names the style or its family, or the sound alone is at least 0.8 with no metadata against it; scores from 0.15)",
+   "tags": "jimbo-dj's per-track rule (history._genre_tags): the album's Plex genres, then the track's own, through the tag rules, junk left out, each once",
+   "differs": "tags the track carries that its album doesn't (its own Plex genres beyond the album's)",
+   "speaks": "a tag on at least 50% of the album's tracks (their Plex genres) or files speaks for the album (jimbo-dj's TRACK_SHARE, as its suggestions read it)",
+   "check": "for every live track: the tags built here from its sources equal jimbo-dj's _genre_tags (vendored, run here), and the styles shown as kept equal genres.Styles.sound_genres (vendored), same order"
+  }
+ },
+ "/api/tags/tracks/check": {
+  "tags": {
+   "tracks": 5,
+   "with_tags": 5,
+   "ok": 5,
+   "differ": 0,
+   "items": [],
+   "unknown": [],
+   "matches": true,
+   "source": "jimbo-dj's history._genre_tags, vendored, run here"
+  },
+  "styles": {
+   "tracks": 5,
+   "analysed": 3,
+   "kept": 3,
+   "ok": 5,
+   "differ": 0,
+   "items": [],
+   "matches": true,
+   "source": "jimbo-dj's genres.Styles.sound_genres, vendored, run here"
+  },
+  "passed": true,
+  "rule": "for every live track: the tags built here from its sources equal jimbo-dj's _genre_tags (vendored, run here), and the styles shown as kept equal genres.Styles.sound_genres (vendored), same order"
+ }
+}
