@@ -44,7 +44,7 @@ def test_vendored_rules_unchanged():
     assert R.broad("atmospheric black metal") == "Metal" and R.broad("post-punk") == "Rock"
     assert R.broad("synth-pop") == "Electronic" and R.broad("soundtrack") is None
     assert jd_genres.family("pop punk") == "Punk & hardcore" and jd_genres.family("x", "Hip Hop") == "Hip hop"
-    assert jd_genres.version() == 0 and jd_genres.get(None).sound_genres == {}
+    assert jd_genres.version() == 0 and jd_genres.MATCH == 0.45 and jd_genres.GENRE_MIN == 0.15
 
 
 def test_heads():

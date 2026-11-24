@@ -1,4 +1,6 @@
-"""TAGS (P4), read-only: the ladder (T20), built on jimbo-dj's tag rules (vendor/jimbodj_tags.py).
+"""TAGS (P4), read-only: the ladder (T20) and tracks tagged one by one (T21), built on jimbo-dj's tag rules
+(vendor/jimbodj_tags.py), its per-track rule (vendor/jimbodj_history.py ``_genre_tags``) and its styles
+(vendor/genres.py ``Styles``).
 
 jimbo-dj sorts every canonical genre tag under one broad tag ("Black Metal" → Metal: ``Rules.broad``, from
 tag_rules.json and ``genres.family``) and lists those families flat (``Library.families``). The ladder keeps that
@@ -364,3 +366,275 @@ def artists(conn: sqlite3.Connection, tag: str, limit: int = 50, offset: int = 0
     return {"tag": {"key": k, "name": lad["nodes"][k]["name"], "root": lad["nodes"][k]["root"]},
             "rule": RULES["artists"], "total": len(rows), "limit": limit, "offset": offset, "items": items}
 
+
+
+# --- T21: tracks tagged one by one ----------------------------------------------------------------------------
+# A track's tags by source, each on its rung, and its tags by jimbo-dj's per-track rule (``history._genre_tags``:
+# the track's own Plex genres and its album's, through the rules, junk left out). An album lists its tracks so a
+# track that differs from its album shows, and the tags its tracks carry that speak for it (TRACK_SHARE, as
+# jimbo-dj's ``_recs`` reads them).
+
+TRACK_VERSION = 1  # bump when the per-track answers change shape (in the check's cache key)
+SOURCES = ("track", "file", "album", "artist", "mb-release", "mb-artist", "sound")
+TRACK_RULES = {
+    "track": "the track's own Plex genres (tracks.plex_genres: what Plex read from the file, its first few values)",
+    "file": "every genre value in the track's file, as jimbo-dj read it (file_tags)",
+    "album": "the album's Plex genres (albums.genres)",
+    "artist": "the artist's Plex genres (artists.genres)",
+    "mb-release": "MusicBrainz genres of the album's release and release group, with votes (mb_releases)",
+    "mb-artist": "MusicBrainz genres of the artist, with votes (mb_artists)",
+    "sound": "the analyzer's Discogs styles with their scores (features.genres); kept: jimbo-dj's strict test "
+             "(genres.Styles: the metadata names the style or its family, or the sound alone is at least 0.8 "
+             "with no metadata against it; scores from 0.15)",
+    "tags": "jimbo-dj's per-track rule (history._genre_tags): the album's Plex genres, then the track's own, "
+            "through the tag rules, junk left out, each once",
+    "differs": "tags the track carries that its album doesn't (its own Plex genres beyond the album's)",
+    "speaks": f"a tag on at least {round(jd.TRACK_SHARE * 100)}% of the album's tracks (their Plex genres) or "
+              "files speaks for the album (jimbo-dj's TRACK_SHARE, as its suggestions read it)",
+    "check": "for every live track: the tags built here from its sources equal jimbo-dj's _genre_tags (vendored, "
+             "run here), and the styles shown as kept equal genres.Styles.sound_genres (vendored), same order",
+}
+
+_per_track: dict[str, dict] = {}
+_per_track_lock = threading.Lock()
+
+
+def jimbodj_track_tags(conn: sqlite3.Connection) -> dict[int, list[str]]:
+    """jimbo-dj's ``history._genre_tags`` (vendored, unchanged), once per data stamp."""
+    from .vendor import jimbodj_history as jh
+    key = f"{legacy_id(conn)}|{cache_key(conn)}"
+    with _per_track_lock:
+        hit = _per_track.get(key)
+        if hit is None:
+            _per_track.clear()
+            hit = _per_track[key] = jh._genre_tags(conn)[0]
+        return hit
+
+
+def styles(conn: sqlite3.Connection):
+    """jimbo-dj's ``genres.Styles`` (vendored), once per stamp; None without the analyzer's tables."""
+    from .vendor import genres
+    if not {"features", "analysis"} <= legacy.table_names(conn):
+        return None
+    return genres.get(conn)
+
+
+def _l(v, default):
+    return jd._loads(v, default) if isinstance(v, (str, bytes)) or v is None else v
+
+
+def _tag(lad: dict, R, raw: str, **extra) -> list[dict]:
+    """One raw tag through the rules: each canonical tag it makes, with its rung on the ladder."""
+    out = []
+    for p in R.parse(raw):
+        n = lad["nodes"].get(p["key"]) if not p["junk"] else None
+        out.append({"raw": raw, "key": p["key"], "name": n["name"] if n else p["name"], "junk": p["junk"] or None,
+                    "broad": n["broad"] if n else (None if p["junk"] else R.broad(p["key"])),
+                    "rung": n["rung"] if n else None, "on_ladder": n is not None, **extra})
+    return out
+
+
+def _track_rows(conn: sqlite3.Connection, where: str, args: tuple) -> list[dict]:
+    return [dict(r) for r in conn.execute(
+        "SELECT t.rating_key, t.title, t.artist, t.album, t.album_key, t.artist_key, t.disc, t.track_no, t.removed_at, "
+        f"t.plex_genres FROM tracks t WHERE {where} ORDER BY t.disc IS NULL, t.disc, t.track_no IS NULL, t.track_no, "
+        "t.title", args)]
+
+
+class _Context:
+    """The rows every source of a track reads, for one album or the whole library."""
+
+    def __init__(self, conn: sqlite3.Connection, tracks: list[dict]):
+        tables = legacy.table_names(conn)
+        keys = [t["rating_key"] for t in tracks]
+        albums = {t["album_key"] for t in tracks}
+        artists = {t["artist_key"] for t in tracks}
+
+        def rows(sql: str, ids) -> list:
+            ids = list(ids)
+            out = []
+            for i in range(0, len(ids), 900):
+                part = ids[i:i + 900]
+                out += conn.execute(sql.format(",".join("?" * len(part))), part).fetchall()
+            return out
+
+        self.albums = {r[0]: (r[1], r[2]) for r in rows("SELECT album_key, genres, mbid FROM albums WHERE album_key IN ({})", albums)}
+        self.artists = {r[0]: (r[1], r[2]) for r in rows("SELECT artist_key, genres, mbid FROM artists WHERE artist_key IN ({})", artists)}
+        self.mb_rel = {r[0]: _l(r[1], {}) for r in conn.execute("SELECT mbid, genres FROM mb_releases WHERE status='ok'")}
+        self.mb_art = {r[0]: _l(r[1], {}) for r in conn.execute("SELECT mbid, genres FROM mb_artists WHERE status='ok'")}
+        self.files = ({r[0]: (r[1], r[2]) for r in rows("SELECT rating_key, genres, error FROM file_tags WHERE rating_key IN ({})", keys)}
+                      if "file_tags" in tables else None)
+        self.sound = ({r[0]: _l(r[1], {}) for r in rows("SELECT rating_key, genres FROM features WHERE rating_key IN ({}) "
+                                                        "AND genres IS NOT NULL", keys)}
+                      if "features" in tables else {})
+        st = styles(conn)
+        self.kept = st.sound_genres if st is not None else {}
+
+
+def _sources(t: dict, ctx: _Context, lad: dict, R) -> dict[str, dict]:
+    """Every source's genres for one track, each raw value through the rules and on its rung."""
+    alb_g, alb_mb = ctx.albums.get(t["album_key"], (None, None))
+    art_g, art_mb = ctx.artists.get(t["artist_key"], (None, None))
+
+    def plain(raws) -> list[dict]:
+        return [x for raw in raws for x in _tag(lad, R, raw)]
+
+    def votes(d: dict) -> list[dict]:
+        return [x for raw, v in sorted(d.items(), key=lambda kv: (-kv[1], kv[0])) for x in _tag(lad, R, raw, score=v)]
+
+    out = {"track": {"tags": plain(_l(t["plex_genres"], []))}}
+    if ctx.files is None:
+        out["file"] = {"tags": [], "read": False, "note": "no file_tags table (jimbo-dj's file tags job never ran)"}
+    else:
+        g, err = ctx.files.get(t["rating_key"], (None, None))
+        out["file"] = {"tags": plain(_l(g, [])), "read": t["rating_key"] in ctx.files and err is None, "error": err}
+    out["album"] = {"tags": plain(_l(alb_g, []))}
+    out["artist"] = {"tags": plain(_l(art_g, []))}
+    out["mb-release"] = {"tags": votes(ctx.mb_rel.get(alb_mb) or {}), "found": alb_mb in ctx.mb_rel}
+    out["mb-artist"] = {"tags": votes(ctx.mb_art.get(art_mb) or {}), "found": art_mb in ctx.mb_art}
+    raw = ctx.sound.get(t["rating_key"]) or {}
+    kept = set(ctx.kept.get(t["rating_key"], ()))
+    snd = []
+    for g, sc in sorted(raw.items(), key=lambda kv: -kv[1]):  # ties keep their order, as Styles does
+        style = g.partition("---")[2] or g
+        snd += _tag(lad, R, style, score=sc, discogs=g, kept=g in kept)
+    out["sound"] = {"tags": snd, "analysed": bool(raw)}
+    return out
+
+
+def _own_tags(src: dict[str, dict]) -> list[str]:
+    """The track's tags built here from its sources: the album's Plex genres, then its own, junk out, each once
+    (what jimbo-dj's _genre_tags gives, worked out separately so the check means something)."""
+    return list(dict.fromkeys(x["key"] for s in ("album", "track") for x in src[s]["tags"] if not x["junk"] and x["key"]))
+
+
+def _kept(src: dict[str, dict]) -> list[str]:
+    return [x["discogs"] for x in src["sound"]["tags"] if x.get("kept")]
+
+
+def _track(t: dict, ctx: _Context, lad: dict, lib: jd.Library, theirs: dict[int, list[str]]) -> dict:
+    R = lib.rules
+    src = _sources(t, ctx, lad, R)
+    mine = _own_tags(src)
+    album_keys = {x["key"] for x in src["album"]["tags"] if not x["junk"]}
+    by_source = defaultdict(list)
+    for s in SOURCES:
+        for x in src[s]["tags"]:
+            if not x["junk"] and (s != "sound" or x.get("kept")):
+                by_source[x["key"]].append(s)
+
+    def node(k: str) -> dict:
+        n = lad["nodes"].get(k)
+        e = lib.index.get(k)
+        return {"key": k, "name": n["name"] if n else (e["name"] if e else k), "broad": n["broad"] if n else R.broad(k),
+                "rung": n["rung"] if n else None, "on_ladder": n is not None,
+                "sources": list(dict.fromkeys(by_source.get(k, []))), "album": k in album_keys}
+
+    jim = theirs.get(t["rating_key"], [])
+    st_theirs = list(ctx.kept.get(t["rating_key"], ()))
+    return {
+        "rating_key": t["rating_key"], "title": t["title"], "artist": t["artist"], "album": t["album"],
+        "album_key": t["album_key"], "artist_key": t["artist_key"], "disc": t["disc"], "track_no": t["track_no"],
+        "live": t["removed_at"] is None,
+        "tags": [node(k) for k in mine],
+        "differs": [node(k) for k in mine if k not in album_keys],
+        "styles": [x for x in src["sound"]["tags"] if x.get("kept")],
+        "sources": src,
+        "check": {"tags": mine == jim, "styles": _kept(src) == st_theirs, "jimbodj_tags": jim, "jimbodj_styles": st_theirs},
+    }
+
+
+def _ready(conn: sqlite3.Connection) -> tuple[jd.Library, dict]:
+    lib = library(conn)
+    return lib, ladder(lib)
+
+
+def track(conn: sqlite3.Connection, key: int) -> dict:
+    """One track's tags by source, each on its rung, and its tags by jimbo-dj's per-track rule."""
+    lib, lad = _ready(conn)
+    rows = _track_rows(conn, "t.rating_key = ?", (int(key),))
+    if not rows:
+        raise NotFound(f"no track {key}")
+    if rows[0]["removed_at"] is not None:
+        raise NotFound(f"track {key} is removed (jimbo-dj's tags read live tracks only)")
+    ctx = _Context(conn, rows)
+    out = _track(rows[0], ctx, lad, lib, jimbodj_track_tags(conn))
+    return {**out, "album_tags": _album_tags(lib, rows[0]["album_key"]), "rules": TRACK_RULES}
+
+
+def _album_tags(lib: jd.Library, album_key) -> list[dict]:
+    a = lib.albums.get(album_key)
+    return list(a["tags"]) if a else []
+
+
+def album(conn: sqlite3.Connection, key: int) -> dict:
+    """An album's tracks with their tags, the ones that differ from the album marked, and the tags its tracks and
+    files carry that speak for it."""
+    lib, lad = _ready(conn)
+    a = lib.albums.get(int(key))
+    if a is None:
+        raise NotFound(f"no album {key}")
+    rows = _track_rows(conn, "t.album_key = ? AND t.removed_at IS NULL", (int(key),))
+    ctx = _Context(conn, rows)
+    theirs = jimbodj_track_tags(conn)
+    tracks = [_track(t, ctx, lad, lib, theirs) for t in rows]
+    for t in tracks:
+        del t["sources"]
+    speaks = []
+    for g in a["genres"]:
+        s = g["sources"]
+        share = max(s.get("plex-track", 0), s.get("file", 0))
+        if g["status"] == "junk" or share <= 0:
+            continue
+        n = lad["nodes"].get(g["key"])
+        speaks.append({"key": g["key"], "name": g["tag"], "rung": n["rung"] if n else None, "on_ladder": n is not None,
+                       "broad": n["broad"] if n else lib.rules.broad(g["key"]),
+                       "tracks": s.get("plex-track", 0), "files": s.get("file", 0),
+                       "speaks": share >= jd.TRACK_SHARE, "album": g["status"] in ("keep", "niche"), "status": g["status"]})
+    speaks.sort(key=lambda x: (not x["speaks"], -max(x["tracks"], x["files"]), x["name"]))
+    return {
+        "album_key": a["album_key"], "title": a["title"], "artist": a["artist"], "artist_key": a["artist_key"],
+        "year": a["year"], "tags": a["tags"], "tracks": tracks,
+        "differ": sum(1 for t in tracks if t["differs"]), "from_tracks": speaks, "track_share": jd.TRACK_SHARE,
+        "check": {"tags": sum(1 for t in tracks if t["check"]["tags"]), "styles": sum(1 for t in tracks if t["check"]["styles"]),
+                  "tracks": len(tracks)},
+        "rules": TRACK_RULES,
+    }
+
+
+def track_check_key(conn: sqlite3.Connection) -> str:
+    from .vendor import genres
+    st = genres.stamp(conn) if {"features", "analysis"} <= legacy.table_names(conn) else None
+    return f"t{TRACK_VERSION}|{cache_key(conn)}|" + json.dumps(st[1:] if st else None, separators=(",", ":"), default=str)
+
+
+def track_check(conn: sqlite3.Connection, limit: int = 50) -> dict:
+    """Gate check 2: for every live track, the tags built here from its sources against jimbo-dj's _genre_tags,
+    and the styles shown as kept against genres.Styles.sound_genres. Lists the first tracks that differ."""
+    lib, lad = _ready(conn)
+    rows = _track_rows(conn, "t.removed_at IS NULL", ())
+    ctx = _Context(conn, rows)
+    theirs = jimbodj_track_tags(conn)
+    tag_bad, style_bad, analysed, with_tags = [], [], 0, 0
+    for t in rows:
+        src = _sources(t, ctx, lad, lib.rules)
+        mine = _own_tags(src)
+        with_tags += bool(mine)
+        if mine != theirs.get(t["rating_key"], []):
+            tag_bad.append({"rating_key": t["rating_key"], "title": t["title"], "artist": t["artist"],
+                            "traqfreq": mine, "jimbodj": theirs.get(t["rating_key"], [])})
+        analysed += src["sound"]["analysed"]
+        if _kept(src) != list(ctx.kept.get(t["rating_key"], ())):
+            style_bad.append({"rating_key": t["rating_key"], "title": t["title"], "artist": t["artist"],
+                              "traqfreq": _kept(src), "jimbodj": list(ctx.kept.get(t["rating_key"], ()))})
+    extra = sorted(set(theirs) - {t["rating_key"] for t in rows})
+    n = len(rows)
+    tags_part = {"tracks": n, "with_tags": with_tags, "ok": n - len(tag_bad), "differ": len(tag_bad),
+                 "items": tag_bad[:limit], "unknown": extra[:limit], "matches": not tag_bad and not extra,
+                 "source": "jimbo-dj's history._genre_tags, vendored, run here"}
+    styles_part = {"tracks": n, "analysed": analysed, "kept": sum(1 for v in ctx.kept.values() if v),
+                   "ok": n - len(style_bad), "differ": len(style_bad), "items": style_bad[:limit],
+                   "matches": not style_bad and analysed == len(ctx.kept),
+                   "source": "jimbo-dj's genres.Styles.sound_genres, vendored, run here"}
+    return {"tags": tags_part, "styles": styles_part, "passed": tags_part["matches"] and styles_part["matches"],
+            "rule": TRACK_RULES["check"]}
