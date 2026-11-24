@@ -1,0 +1,1349 @@
+{
+ "/api/tags/map": {
+  "lines": [
+   {
+    "key": "metal",
+    "name": "Metal",
+    "albums": 1,
+    "under": 2,
+    "missing": 1,
+    "in_use": true,
+    "tags": 5,
+    "stations": [
+     {
+      "key": "black metal",
+      "name": "Black Metal",
+      "albums": 1,
+      "under": 1,
+      "rung": 1,
+      "in_use": true,
+      "also": [],
+      "movements": [],
+      "stations": [
+       {
+        "key": "atmospheric black metal",
+        "name": "Atmospheric Black Metal",
+        "albums": 1,
+        "under": 1,
+        "rung": 2,
+        "in_use": true,
+        "also": [],
+        "movements": [
+         "blackgaze"
+        ],
+        "stations": []
+       }
+      ]
+     },
+     {
+      "key": "doom metal",
+      "name": "Doom Metal",
+      "albums": 1,
+      "under": 1,
+      "rung": 1,
+      "in_use": true,
+      "also": [],
+      "movements": [
+       "doom-drone"
+      ],
+      "stations": [
+       {
+        "key": "death-doom metal",
+        "name": "Death-Doom Metal",
+        "albums": 1,
+        "under": 1,
+        "rung": 2,
+        "in_use": true,
+        "also": [
+         "Death Metal"
+        ],
+        "movements": [],
+        "stations": []
+       }
+      ]
+     },
+     {
+      "key": "death metal",
+      "name": "Death Metal",
+      "albums": 0,
+      "under": 1,
+      "rung": 1,
+      "in_use": true,
+      "also": [],
+      "movements": [],
+      "stations": [
+       {
+        "key": "death-doom metal",
+        "name": "Death-Doom Metal",
+        "albums": 1,
+        "under": 1,
+        "rung": 2,
+        "in_use": true,
+        "also": [
+         "Doom Metal"
+        ],
+        "movements": [],
+        "stations": []
+       }
+      ]
+     }
+    ],
+    "stops": 6,
+    "movements": []
+   },
+   {
+    "key": "hip hop",
+    "name": "Hip Hop",
+    "albums": 0,
+    "under": 1,
+    "missing": 1,
+    "in_use": true,
+    "tags": 1,
+    "stations": [
+     {
+      "key": "lo-fi hip hop",
+      "name": "Lo-Fi Hip Hop",
+      "albums": 1,
+      "under": 1,
+      "rung": 1,
+      "in_use": true,
+      "also": [],
+      "movements": [],
+      "stations": []
+     }
+    ],
+    "stops": 1,
+    "movements": []
+   },
+   {
+    "key": "punk",
+    "name": "Punk",
+    "albums": 1,
+    "under": 1,
+    "missing": 0,
+    "in_use": true,
+    "tags": 0,
+    "stations": [],
+    "stops": 0,
+    "movements": []
+   },
+   {
+    "key": "electronic",
+    "name": "Electronic",
+    "albums": 0,
+    "under": 0,
+    "missing": 0,
+    "in_use": false,
+    "tags": 1,
+    "stations": [
+     {
+      "key": "ambient",
+      "name": "Ambient",
+      "albums": 0,
+      "under": 0,
+      "rung": 1,
+      "in_use": true,
+      "also": [],
+      "movements": [],
+      "stations": []
+     }
+    ],
+    "stops": 1,
+    "movements": []
+   },
+   {
+    "key": "rock",
+    "name": "Rock",
+    "albums": 0,
+    "under": 0,
+    "missing": 0,
+    "in_use": false,
+    "tags": 1,
+    "stations": [
+     {
+      "key": "post-punk",
+      "name": "Post-Punk",
+      "albums": 0,
+      "under": 0,
+      "rung": 1,
+      "in_use": true,
+      "also": [],
+      "movements": [
+       "post-punk"
+      ],
+      "stations": []
+     }
+    ],
+    "stops": 1,
+    "movements": []
+   }
+  ],
+  "alone": [
+   {
+    "key": "soundtrack",
+    "name": "Soundtrack",
+    "albums": 1,
+    "under": 1,
+    "movements": []
+   }
+  ],
+  "movements": [
+   {
+    "id": "blackgaze",
+    "name": "Blackgaze",
+    "about": "Black metal played with the walls of guitar and the haze of shoegaze, from the late 2000s on.",
+    "tags": [
+     {
+      "key": "blackgaze",
+      "name": "Blackgaze",
+      "in_use": false,
+      "broad": "Metal",
+      "rung": null,
+      "albums": 0,
+      "artists": 0
+     },
+     {
+      "key": "atmospheric black metal",
+      "name": "Atmospheric Black Metal",
+      "in_use": true,
+      "broad": "Metal",
+      "rung": 2,
+      "albums": 1,
+      "artists": 0
+     },
+     {
+      "key": "post-black metal",
+      "name": "Post-Black Metal",
+      "in_use": false,
+      "broad": "Metal",
+      "rung": null,
+      "albums": 0,
+      "artists": 0
+     },
+     {
+      "key": "shoegaze",
+      "name": "Shoegaze",
+      "in_use": false,
+      "broad": "Rock",
+      "rung": null,
+      "albums": 0,
+      "artists": 0
+     },
+     {
+      "key": "post-rock",
+      "name": "Post-Rock",
+      "in_use": false,
+      "broad": "Rock",
+      "rung": null,
+      "albums": 0,
+      "artists": 0
+     },
+     {
+      "key": "dream pop",
+      "name": "Dream Pop",
+      "in_use": false,
+      "broad": "Pop",
+      "rung": null,
+      "albums": 0,
+      "artists": 0
+     }
+    ],
+    "broads": [
+     "Metal",
+     "Rock",
+     "Pop"
+    ],
+    "in_use": 1
+   },
+   {
+    "id": "post-punk",
+    "name": "Post-punk and after",
+    "about": "What came out of punk at the end of the 1970s: post-punk, gothic rock and new wave, and the synth and dark wave sounds that grew from them.",
+    "tags": [
+     {
+      "key": "post-punk",
+      "name": "Post-Punk",
+      "in_use": true,
+      "broad": "Rock",
+      "rung": 1,
+      "albums": 0,
+      "artists": 1
+     },
+     {
+      "key": "gothic rock",
+      "name": "Gothic Rock",
+      "in_use": false,
+      "broad": "Rock",
+      "rung": null,
+      "albums": 0,
+      "artists": 0
+     },
+     {
+      "key": "new wave",
+      "name": "New Wave",
+      "in_use": false,
+      "broad": "Rock",
+      "rung": null,
+      "albums": 0,
+      "artists": 0
+     },
+     {
+      "key": "coldwave",
+      "name": "Coldwave",
+      "in_use": false,
+      "broad": "Electronic",
+      "rung": null,
+      "albums": 0,
+      "artists": 0
+     },
+     {
+      "key": "darkwave",
+      "name": "Darkwave",
+      "in_use": false,
+      "broad": "Electronic",
+      "rung": null,
+      "albums": 0,
+      "artists": 0
+     },
+     {
+      "key": "synth-pop",
+      "name": "Synth-Pop",
+      "in_use": false,
+      "broad": "Electronic",
+      "rung": null,
+      "albums": 0,
+      "artists": 0
+     },
+     {
+      "key": "post-punk revival",
+      "name": "Post-Punk Revival",
+      "in_use": false,
+      "broad": "Rock",
+      "rung": null,
+      "albums": 0,
+      "artists": 0
+     }
+    ],
+    "broads": [
+     "Rock",
+     "Electronic"
+    ],
+    "in_use": 1
+   },
+   {
+    "id": "industrial",
+    "name": "Industrial",
+    "about": "Noise, machines and rhythm, from the industrial records of the late 1970s to the body music and the metal and rock bands that took them up.",
+    "tags": [
+     {
+      "key": "industrial",
+      "name": "Industrial",
+      "in_use": false,
+      "broad": "Electronic",
+      "rung": null,
+      "albums": 0,
+      "artists": 0
+     },
+     {
+      "key": "ebm",
+      "name": "EBM",
+      "in_use": false,
+      "broad": "Electronic",
+      "rung": null,
+      "albums": 0,
+      "artists": 0
+     },
+     {
+      "key": "electro-industrial",
+      "name": "Electro-Industrial",
+      "in_use": false,
+      "broad": "Electronic",
+      "rung": null,
+      "albums": 0,
+      "artists": 0
+     },
+     {
+      "key": "industrial rock",
+      "name": "Industrial Rock",
+      "in_use": false,
+      "broad": "Electronic",
+      "rung": null,
+      "albums": 0,
+      "artists": 0
+     },
+     {
+      "key": "industrial metal",
+      "name": "Industrial Metal",
+      "in_use": false,
+      "broad": "Metal",
+      "rung": null,
+      "albums": 0,
+      "artists": 0
+     },
+     {
+      "key": "noise",
+      "name": "Noise",
+      "in_use": false,
+      "broad": null,
+      "rung": null,
+      "albums": 0,
+      "artists": 0
+     }
+    ],
+    "broads": [
+     "Electronic",
+     "Metal"
+    ],
+    "in_use": 0
+   },
+   {
+    "id": "emo",
+    "name": "Emo and post-hardcore",
+    "about": "Hardcore punk turned inward, from the mid-1980s on: emo, post-hardcore and screamo, and the math rock and pop punk around them.",
+    "tags": [
+     {
+      "key": "emo",
+      "name": "Emo",
+      "in_use": false,
+      "broad": "Punk",
+      "rung": null,
+      "albums": 0,
+      "artists": 0
+     },
+     {
+      "key": "post-hardcore",
+      "name": "Post-Hardcore",
+      "in_use": false,
+      "broad": "Punk",
+      "rung": null,
+      "albums": 0,
+      "artists": 0
+     },
+     {
+      "key": "screamo",
+      "name": "Screamo",
+      "in_use": false,
+      "broad": "Punk",
+      "rung": null,
+      "albums": 0,
+      "artists": 0
+     },
+     {
+      "key": "midwest emo",
+      "name": "Midwest Emo",
+      "in_use": false,
+      "broad": "Punk",
+      "rung": null,
+      "albums": 0,
+      "artists": 0
+     },
+     {
+      "key": "math rock",
+      "name": "Math Rock",
+      "in_use": false,
+      "broad": "Rock",
+      "rung": null,
+      "albums": 0,
+      "artists": 0
+     },
+     {
+      "key": "pop punk",
+      "name": "Pop Punk",
+      "in_use": false,
+      "broad": "Punk",
+      "rung": null,
+      "albums": 0,
+      "artists": 0
+     }
+    ],
+    "broads": [
+     "Punk",
+     "Rock"
+    ],
+    "in_use": 0
+   },
+   {
+    "id": "doom-drone",
+    "name": "Doom and drone",
+    "about": "Slow, heavy and long: doom and sludge metal, stoner rock, and the drone and dark ambient records that stretch the sound out further.",
+    "tags": [
+     {
+      "key": "doom metal",
+      "name": "Doom Metal",
+      "in_use": true,
+      "broad": "Metal",
+      "rung": 1,
+      "albums": 1,
+      "artists": 0
+     },
+     {
+      "key": "sludge metal",
+      "name": "Sludge Metal",
+      "in_use": false,
+      "broad": "Metal",
+      "rung": null,
+      "albums": 0,
+      "artists": 0
+     },
+     {
+      "key": "drone metal",
+      "name": "Drone Metal",
+      "in_use": false,
+      "broad": "Metal",
+      "rung": null,
+      "albums": 0,
+      "artists": 0
+     },
+     {
+      "key": "stoner rock",
+      "name": "Stoner Rock",
+      "in_use": false,
+      "broad": "Rock",
+      "rung": null,
+      "albums": 0,
+      "artists": 0
+     },
+     {
+      "key": "drone",
+      "name": "Drone",
+      "in_use": false,
+      "broad": null,
+      "rung": null,
+      "albums": 0,
+      "artists": 0
+     },
+     {
+      "key": "dark ambient",
+      "name": "Dark Ambient",
+      "in_use": false,
+      "broad": "Electronic",
+      "rung": null,
+      "albums": 0,
+      "artists": 0
+     }
+    ],
+    "broads": [
+     "Metal",
+     "Rock",
+     "Electronic"
+    ],
+    "in_use": 1
+   }
+  ],
+  "summary": {
+   "lines": 5,
+   "tags": 12,
+   "alone": 1,
+   "shared": 1,
+   "deepest": 2,
+   "movements": 5
+  },
+  "rules": {
+   "ladders": "every path from the tag up to its broad tag, through its parents (the nearest heads in use under the same broad tag)",
+   "children": "the tags whose nearest head is this one",
+   "spellings": "each way Plex spells the tag (album, artist and track genres) and the tag rules that turned it into this tag (jimbo-dj's tag_rules.json)",
+   "tracks": "live tracks carrying the tag by jimbo-dj's per-track rule (history._genre_tags: the album's Plex genres, then the track's own, through the tag rules, junk left out)",
+   "plays": "HISTORY's counted plays (counted = 1) of those tracks, all time: jimbo-dj's Top genres rule (a play counts for every tag its library track carries; a play with no library track has no genre)",
+   "sound": "albums whose analyzer styles name the tag (a style counts for an album when at least 40% of its analysed tracks keep it: jimbo-dj's sound count)",
+   "profile": "what the tag's plays sounded like: the analysis of its tracks, each weighted by its plays (jimbo-dj's history.sound_of; at least 20 analysed plays)",
+   "line": "one line per broad tag: its tags as stations, each on its rung (a tag under two parents is a station on both branches)",
+   "movement": "a named set of tags across broad tags, from traqfreq's movements.json; it changes no ladder and no count"
+  }
+ },
+ "/api/tags/compare": {
+  "gate": "P4",
+  "version": 1,
+  "checks": [
+   {
+    "check": "ladder",
+    "passed": true,
+    "rule": "Every broad tag with albums under it has the same albums, albums carrying it, albums missing it and children (with their albums) as jimbo-dj's families: its rules run here and its stored library.tags (a stored row that differs passes only when it is stale); every ladder ends at jimbo-dj's broad tag.",
+    "page": "/tags",
+    "rules": {
+     "broad": 3,
+     "ok": 3,
+     "matches": true,
+     "differing": []
+    },
+    "ends": {
+     "tags": 8,
+     "ok": 8,
+     "matches": true,
+     "failing": []
+    },
+    "stored": {
+     "broad": 3,
+     "ok": 3,
+     "matches": true,
+     "fresh": true,
+     "built_at": 1793844090.0,
+     "differing": []
+    }
+   },
+   {
+    "check": "tracks",
+    "passed": true,
+    "rule": "Every live track's tags equal jimbo-dj's per-track rule (history._genre_tags), and the analyzer styles it keeps equal jimbo-dj's strict test (genres.Styles.sound_genres).",
+    "page": "/tags",
+    "tags": {
+     "tracks": 5,
+     "ok": 5,
+     "differ": 0,
+     "with_tags": 5,
+     "matches": true,
+     "differing": []
+    },
+    "styles": {
+     "tracks": 5,
+     "ok": 5,
+     "differ": 0,
+     "analysed": 3,
+     "kept": 3,
+     "matches": true,
+     "differing": []
+    }
+   },
+   {
+    "check": "audit",
+    "passed": true,
+    "rule": "Every tag's numbers (albums, artists, tracks, MusicBrainz, sound, issues), the album issue counts, the fixes and the suggestions equal jimbo-dj's stored library.tags (a stored row that differs passes only when it is stale).",
+    "page": "/tags/proposals",
+    "stored": true,
+    "fresh": true,
+    "built_at": 1793844090.0,
+    "tags": {
+     "tags": 13,
+     "ok": 13,
+     "differ": 0,
+     "matches": true,
+     "only_here": 0,
+     "only_stored": 0,
+     "differing": []
+    },
+    "issues": {
+     "kinds": 7,
+     "ok": 7,
+     "matches": true
+    },
+    "fixes": {
+     "items": 4,
+     "ok": 4,
+     "matches": true
+    },
+    "suggestions": {
+     "items": 4,
+     "ok": 4,
+     "matches": true
+    }
+   }
+  ],
+  "passed": true,
+  "endpoints": {
+   "ladder": "/api/tags/ladder",
+   "tracks": "/api/tags/tracks/check",
+   "audit": "/api/tags/proposals"
+  },
+  "rules": {
+   "ladder": "Every broad tag with albums under it has the same albums, albums carrying it, albums missing it and children (with their albums) as jimbo-dj's families: its rules run here and its stored library.tags (a stored row that differs passes only when it is stale); every ladder ends at jimbo-dj's broad tag.",
+   "tracks": "Every live track's tags equal jimbo-dj's per-track rule (history._genre_tags), and the analyzer styles it keeps equal jimbo-dj's strict test (genres.Styles.sound_genres).",
+   "audit": "Every tag's numbers (albums, artists, tracks, MusicBrainz, sound, issues), the album issue counts, the fixes and the suggestions equal jimbo-dj's stored library.tags (a stored row that differs passes only when it is stale).",
+   "passed": "Passed when all three checks pass."
+  },
+  "read_only": "Read-only: the gate reads traqfreq's own answers, built from jimbo-dj's database opened read-only. Nothing is written to jimbo-dj, Plex or the files."
+ },
+ "/api/tags/tag/death-doom%20metal": {
+  "key": "death-doom metal",
+  "name": "Death-Doom Metal",
+  "in_use": true,
+  "junk": null,
+  "broad": "Metal",
+  "root": false,
+  "rung": 2,
+  "broad_rule": {
+   "how": "family",
+   "family": "Metal",
+   "match": "doom",
+   "broad": "Metal"
+  },
+  "ladders": [
+   [
+    {
+     "key": "metal",
+     "name": "Metal",
+     "rung": 0
+    },
+    {
+     "key": "death metal",
+     "name": "Death Metal",
+     "rung": 1
+    },
+    {
+     "key": "death-doom metal",
+     "name": "Death-Doom Metal",
+     "rung": 2
+    }
+   ],
+   [
+    {
+     "key": "metal",
+     "name": "Metal",
+     "rung": 0
+    },
+    {
+     "key": "doom metal",
+     "name": "Doom Metal",
+     "rung": 1
+    },
+    {
+     "key": "death-doom metal",
+     "name": "Death-Doom Metal",
+     "rung": 2
+    }
+   ]
+  ],
+  "parents": [
+   {
+    "key": "death metal",
+    "name": "Death Metal",
+    "albums": 0,
+    "under": 1,
+    "rung": 1,
+    "children": 1,
+    "parents": 1
+   },
+   {
+    "key": "doom metal",
+    "name": "Doom Metal",
+    "albums": 1,
+    "under": 1,
+    "rung": 1,
+    "children": 1,
+    "parents": 1
+   }
+  ],
+  "children": [],
+  "below": 0,
+  "other_heads": [],
+  "spellings": [
+   {
+    "raw": "Death-Doom Metal",
+    "albums": 1,
+    "artists": 0,
+    "tracks": 0,
+    "same": true,
+    "split": false,
+    "rules": []
+   }
+  ],
+  "issues": [],
+  "numbers": {
+   "albums": 1,
+   "under": 1,
+   "missing": null,
+   "artists": 0,
+   "tracks": 2,
+   "plays": 2,
+   "sound": 0,
+   "musicbrainz": 1
+  },
+  "history": true,
+  "profile": null,
+  "movements": [],
+  "rules": {
+   "ladders": "every path from the tag up to its broad tag, through its parents (the nearest heads in use under the same broad tag)",
+   "children": "the tags whose nearest head is this one",
+   "spellings": "each way Plex spells the tag (album, artist and track genres) and the tag rules that turned it into this tag (jimbo-dj's tag_rules.json)",
+   "tracks": "live tracks carrying the tag by jimbo-dj's per-track rule (history._genre_tags: the album's Plex genres, then the track's own, through the tag rules, junk left out)",
+   "plays": "HISTORY's counted plays (counted = 1) of those tracks, all time: jimbo-dj's Top genres rule (a play counts for every tag its library track carries; a play with no library track has no genre)",
+   "sound": "albums whose analyzer styles name the tag (a style counts for an album when at least 40% of its analysed tracks keep it: jimbo-dj's sound count)",
+   "profile": "what the tag's plays sounded like: the analysis of its tracks, each weighted by its plays (jimbo-dj's history.sound_of; at least 20 analysed plays)",
+   "line": "one line per broad tag: its tags as stations, each on its rung (a tag under two parents is a station on both branches)",
+   "movement": "a named set of tags across broad tags, from traqfreq's movements.json; it changes no ladder and no count"
+  }
+ },
+ "/api/tags/tag/metal": {
+  "key": "metal",
+  "name": "Metal",
+  "in_use": true,
+  "junk": null,
+  "broad": "Metal",
+  "root": true,
+  "rung": 0,
+  "broad_rule": {
+   "how": "family",
+   "family": "Metal",
+   "match": "metal",
+   "broad": "Metal"
+  },
+  "ladders": [
+   [
+    {
+     "key": "metal",
+     "name": "Metal",
+     "rung": 0
+    }
+   ]
+  ],
+  "parents": [],
+  "children": [
+   {
+    "key": "black metal",
+    "name": "Black Metal",
+    "albums": 1,
+    "under": 1,
+    "rung": 1,
+    "children": 1,
+    "parents": 1
+   },
+   {
+    "key": "doom metal",
+    "name": "Doom Metal",
+    "albums": 1,
+    "under": 1,
+    "rung": 1,
+    "children": 1,
+    "parents": 1
+   },
+   {
+    "key": "death metal",
+    "name": "Death Metal",
+    "albums": 0,
+    "under": 1,
+    "rung": 1,
+    "children": 1,
+    "parents": 1
+   }
+  ],
+  "below": 5,
+  "other_heads": [],
+  "spellings": [
+   {
+    "raw": "Metal",
+    "albums": 1,
+    "artists": 0,
+    "tracks": 0,
+    "same": true,
+    "split": false,
+    "rules": []
+   }
+  ],
+  "issues": [],
+  "numbers": {
+   "albums": 1,
+   "under": 2,
+   "missing": 1,
+   "artists": 0,
+   "tracks": 2,
+   "plays": 2,
+   "sound": 0,
+   "musicbrainz": 0
+  },
+  "history": true,
+  "profile": null,
+  "movements": [],
+  "rules": {
+   "ladders": "every path from the tag up to its broad tag, through its parents (the nearest heads in use under the same broad tag)",
+   "children": "the tags whose nearest head is this one",
+   "spellings": "each way Plex spells the tag (album, artist and track genres) and the tag rules that turned it into this tag (jimbo-dj's tag_rules.json)",
+   "tracks": "live tracks carrying the tag by jimbo-dj's per-track rule (history._genre_tags: the album's Plex genres, then the track's own, through the tag rules, junk left out)",
+   "plays": "HISTORY's counted plays (counted = 1) of those tracks, all time: jimbo-dj's Top genres rule (a play counts for every tag its library track carries; a play with no library track has no genre)",
+   "sound": "albums whose analyzer styles name the tag (a style counts for an album when at least 40% of its analysed tracks keep it: jimbo-dj's sound count)",
+   "profile": "what the tag's plays sounded like: the analysis of its tracks, each weighted by its plays (jimbo-dj's history.sound_of; at least 20 analysed plays)",
+   "line": "one line per broad tag: its tags as stations, each on its rung (a tag under two parents is a station on both branches)",
+   "movement": "a named set of tags across broad tags, from traqfreq's movements.json; it changes no ladder and no count"
+  }
+ },
+ "/api/tags/tag/2010s": {
+  "key": "2010s",
+  "name": "2010s",
+  "in_use": true,
+  "junk": {
+   "id": "decades",
+   "label": "Decades aren't genres",
+   "why": "\"80s\" says when, not what. The year is already on the album."
+  },
+  "broad": null,
+  "root": false,
+  "rung": null,
+  "broad_rule": null,
+  "ladders": [],
+  "parents": [],
+  "children": [],
+  "below": 0,
+  "other_heads": [],
+  "spellings": [
+   {
+    "raw": "2010s",
+    "albums": 1,
+    "artists": 0,
+    "tracks": 0,
+    "same": true,
+    "split": false,
+    "rules": [
+     {
+      "id": "decades",
+      "label": "Decades aren't genres"
+     }
+    ]
+   }
+  ],
+  "issues": [
+   {
+    "kind": "junk",
+    "op": "remove",
+    "rule": "decades"
+   }
+  ],
+  "numbers": {
+   "albums": 1,
+   "under": 0,
+   "missing": null,
+   "artists": 0,
+   "tracks": 0,
+   "plays": 0,
+   "sound": 0,
+   "musicbrainz": 0
+  },
+  "history": true,
+  "profile": null,
+  "movements": [],
+  "rules": {
+   "ladders": "every path from the tag up to its broad tag, through its parents (the nearest heads in use under the same broad tag)",
+   "children": "the tags whose nearest head is this one",
+   "spellings": "each way Plex spells the tag (album, artist and track genres) and the tag rules that turned it into this tag (jimbo-dj's tag_rules.json)",
+   "tracks": "live tracks carrying the tag by jimbo-dj's per-track rule (history._genre_tags: the album's Plex genres, then the track's own, through the tag rules, junk left out)",
+   "plays": "HISTORY's counted plays (counted = 1) of those tracks, all time: jimbo-dj's Top genres rule (a play counts for every tag its library track carries; a play with no library track has no genre)",
+   "sound": "albums whose analyzer styles name the tag (a style counts for an album when at least 40% of its analysed tracks keep it: jimbo-dj's sound count)",
+   "profile": "what the tag's plays sounded like: the analysis of its tracks, each weighted by its plays (jimbo-dj's history.sound_of; at least 20 analysed plays)",
+   "line": "one line per broad tag: its tags as stations, each on its rung (a tag under two parents is a station on both branches)",
+   "movement": "a named set of tags across broad tags, from traqfreq's movements.json; it changes no ladder and no count"
+  }
+ },
+ "/api/tags/tag/doom%20metal": {
+  "key": "doom metal",
+  "name": "Doom Metal",
+  "in_use": true,
+  "junk": null,
+  "broad": "Metal",
+  "root": false,
+  "rung": 1,
+  "broad_rule": {
+   "how": "family",
+   "family": "Metal",
+   "match": "doom",
+   "broad": "Metal"
+  },
+  "ladders": [
+   [
+    {
+     "key": "metal",
+     "name": "Metal",
+     "rung": 0
+    },
+    {
+     "key": "doom metal",
+     "name": "Doom Metal",
+     "rung": 1
+    }
+   ]
+  ],
+  "parents": [
+   {
+    "key": "metal",
+    "name": "Metal",
+    "albums": 1,
+    "under": 2,
+    "rung": 0,
+    "children": 3,
+    "parents": 0
+   }
+  ],
+  "children": [
+   {
+    "key": "death-doom metal",
+    "name": "Death-Doom Metal",
+    "albums": 1,
+    "under": 1,
+    "rung": 2,
+    "children": 0,
+    "parents": 2
+   }
+  ],
+  "below": 1,
+  "other_heads": [],
+  "spellings": [
+   {
+    "raw": "Doom Metal",
+    "albums": 0,
+    "artists": 0,
+    "tracks": 2,
+    "same": true,
+    "split": false,
+    "rules": []
+   },
+   {
+    "raw": "doom metal",
+    "albums": 1,
+    "artists": 0,
+    "tracks": 0,
+    "same": false,
+    "split": false,
+    "rules": [
+     {
+      "id": "case",
+      "label": "Title Case, with the acronyms in capitals"
+     }
+    ]
+   }
+  ],
+  "issues": [
+   {
+    "kind": "spelling",
+    "op": "rename",
+    "from": [
+     "doom metal"
+    ],
+    "to": "Doom Metal"
+   }
+  ],
+  "numbers": {
+   "albums": 1,
+   "under": 1,
+   "missing": null,
+   "artists": 0,
+   "tracks": 2,
+   "plays": 2,
+   "sound": 1,
+   "musicbrainz": 1
+  },
+  "history": true,
+  "profile": null,
+  "movements": [
+   {
+    "id": "doom-drone",
+    "name": "Doom and drone",
+    "about": "Slow, heavy and long: doom and sludge metal, stoner rock, and the drone and dark ambient records that stretch the sound out further.",
+    "tags": [
+     {
+      "key": "doom metal",
+      "name": "Doom Metal",
+      "in_use": true,
+      "broad": "Metal",
+      "rung": 1,
+      "albums": 1,
+      "artists": 0
+     },
+     {
+      "key": "sludge metal",
+      "name": "Sludge Metal",
+      "in_use": false,
+      "broad": "Metal",
+      "rung": null,
+      "albums": 0,
+      "artists": 0
+     },
+     {
+      "key": "drone metal",
+      "name": "Drone Metal",
+      "in_use": false,
+      "broad": "Metal",
+      "rung": null,
+      "albums": 0,
+      "artists": 0
+     },
+     {
+      "key": "stoner rock",
+      "name": "Stoner Rock",
+      "in_use": false,
+      "broad": "Rock",
+      "rung": null,
+      "albums": 0,
+      "artists": 0
+     },
+     {
+      "key": "drone",
+      "name": "Drone",
+      "in_use": false,
+      "broad": null,
+      "rung": null,
+      "albums": 0,
+      "artists": 0
+     },
+     {
+      "key": "dark ambient",
+      "name": "Dark Ambient",
+      "in_use": false,
+      "broad": "Electronic",
+      "rung": null,
+      "albums": 0,
+      "artists": 0
+     }
+    ],
+    "broads": [
+     "Metal",
+     "Rock",
+     "Electronic"
+    ],
+    "in_use": 1
+   }
+  ],
+  "rules": {
+   "ladders": "every path from the tag up to its broad tag, through its parents (the nearest heads in use under the same broad tag)",
+   "children": "the tags whose nearest head is this one",
+   "spellings": "each way Plex spells the tag (album, artist and track genres) and the tag rules that turned it into this tag (jimbo-dj's tag_rules.json)",
+   "tracks": "live tracks carrying the tag by jimbo-dj's per-track rule (history._genre_tags: the album's Plex genres, then the track's own, through the tag rules, junk left out)",
+   "plays": "HISTORY's counted plays (counted = 1) of those tracks, all time: jimbo-dj's Top genres rule (a play counts for every tag its library track carries; a play with no library track has no genre)",
+   "sound": "albums whose analyzer styles name the tag (a style counts for an album when at least 40% of its analysed tracks keep it: jimbo-dj's sound count)",
+   "profile": "what the tag's plays sounded like: the analysis of its tracks, each weighted by its plays (jimbo-dj's history.sound_of; at least 20 analysed plays)",
+   "line": "one line per broad tag: its tags as stations, each on its rung (a tag under two parents is a station on both branches)",
+   "movement": "a named set of tags across broad tags, from traqfreq's movements.json; it changes no ladder and no count"
+  }
+ },
+ "/api/tags/tag/black%20metal": {
+  "key": "black metal",
+  "name": "Black Metal",
+  "in_use": true,
+  "junk": null,
+  "broad": "Metal",
+  "root": false,
+  "rung": 1,
+  "broad_rule": {
+   "how": "family",
+   "family": "Metal",
+   "match": "metal",
+   "broad": "Metal"
+  },
+  "ladders": [
+   [
+    {
+     "key": "metal",
+     "name": "Metal",
+     "rung": 0
+    },
+    {
+     "key": "black metal",
+     "name": "Black Metal",
+     "rung": 1
+    }
+   ]
+  ],
+  "parents": [
+   {
+    "key": "metal",
+    "name": "Metal",
+    "albums": 1,
+    "under": 2,
+    "rung": 0,
+    "children": 3,
+    "parents": 0
+   }
+  ],
+  "children": [
+   {
+    "key": "atmospheric black metal",
+    "name": "Atmospheric Black Metal",
+    "albums": 1,
+    "under": 1,
+    "rung": 2,
+    "children": 0,
+    "parents": 1
+   }
+  ],
+  "below": 1,
+  "other_heads": [],
+  "spellings": [
+   {
+    "raw": "Black Metal",
+    "albums": 1,
+    "artists": 1,
+    "tracks": 2,
+    "same": true,
+    "split": false,
+    "rules": []
+   }
+  ],
+  "issues": [],
+  "numbers": {
+   "albums": 1,
+   "under": 1,
+   "missing": null,
+   "artists": 1,
+   "tracks": 2,
+   "plays": 2,
+   "sound": 1,
+   "musicbrainz": 0
+  },
+  "history": true,
+  "profile": null,
+  "movements": [],
+  "rules": {
+   "ladders": "every path from the tag up to its broad tag, through its parents (the nearest heads in use under the same broad tag)",
+   "children": "the tags whose nearest head is this one",
+   "spellings": "each way Plex spells the tag (album, artist and track genres) and the tag rules that turned it into this tag (jimbo-dj's tag_rules.json)",
+   "tracks": "live tracks carrying the tag by jimbo-dj's per-track rule (history._genre_tags: the album's Plex genres, then the track's own, through the tag rules, junk left out)",
+   "plays": "HISTORY's counted plays (counted = 1) of those tracks, all time: jimbo-dj's Top genres rule (a play counts for every tag its library track carries; a play with no library track has no genre)",
+   "sound": "albums whose analyzer styles name the tag (a style counts for an album when at least 40% of its analysed tracks keep it: jimbo-dj's sound count)",
+   "profile": "what the tag's plays sounded like: the analysis of its tracks, each weighted by its plays (jimbo-dj's history.sound_of; at least 20 analysed plays)",
+   "line": "one line per broad tag: its tags as stations, each on its rung (a tag under two parents is a station on both branches)",
+   "movement": "a named set of tags across broad tags, from traqfreq's movements.json; it changes no ladder and no count"
+  }
+ },
+ "/api/tags/tag/soundtrack": {
+  "key": "soundtrack",
+  "name": "Soundtrack",
+  "in_use": true,
+  "junk": null,
+  "broad": null,
+  "root": false,
+  "rung": null,
+  "broad_rule": null,
+  "ladders": [],
+  "parents": [],
+  "children": [],
+  "below": 0,
+  "other_heads": [],
+  "spellings": [
+   {
+    "raw": "Soundtrack",
+    "albums": 1,
+    "artists": 0,
+    "tracks": 0,
+    "same": true,
+    "split": false,
+    "rules": []
+   }
+  ],
+  "issues": [
+   {
+    "kind": "niche",
+    "op": "remove"
+   }
+  ],
+  "numbers": {
+   "albums": 1,
+   "under": 1,
+   "missing": null,
+   "artists": 0,
+   "tracks": 1,
+   "plays": 1,
+   "sound": 0,
+   "musicbrainz": 0
+  },
+  "history": true,
+  "profile": null,
+  "movements": [],
+  "rules": {
+   "ladders": "every path from the tag up to its broad tag, through its parents (the nearest heads in use under the same broad tag)",
+   "children": "the tags whose nearest head is this one",
+   "spellings": "each way Plex spells the tag (album, artist and track genres) and the tag rules that turned it into this tag (jimbo-dj's tag_rules.json)",
+   "tracks": "live tracks carrying the tag by jimbo-dj's per-track rule (history._genre_tags: the album's Plex genres, then the track's own, through the tag rules, junk left out)",
+   "plays": "HISTORY's counted plays (counted = 1) of those tracks, all time: jimbo-dj's Top genres rule (a play counts for every tag its library track carries; a play with no library track has no genre)",
+   "sound": "albums whose analyzer styles name the tag (a style counts for an album when at least 40% of its analysed tracks keep it: jimbo-dj's sound count)",
+   "profile": "what the tag's plays sounded like: the analysis of its tracks, each weighted by its plays (jimbo-dj's history.sound_of; at least 20 analysed plays)",
+   "line": "one line per broad tag: its tags as stations, each on its rung (a tag under two parents is a station on both branches)",
+   "movement": "a named set of tags across broad tags, from traqfreq's movements.json; it changes no ladder and no count"
+  }
+ },
+ "/api/tags/tracks?tag=doom%20metal&sort=plays": {
+  "tag": {
+   "key": "doom metal",
+   "name": "Doom Metal",
+   "root": false
+  },
+  "sort": "plays",
+  "rule": "live tracks carrying the tag by jimbo-dj's per-track rule (history._genre_tags: the album's Plex genres, then the track's own, through the tag rules, junk left out)",
+  "plays_rule": "HISTORY's counted plays (counted = 1) of those tracks, all time: jimbo-dj's Top genres rule (a play counts for every tag its library track carries; a play with no library track has no genre)",
+  "total": 2,
+  "plays": 2,
+  "limit": 50,
+  "offset": 0,
+  "items": [
+   {
+    "rating_key": 104,
+    "title": "Static Gulls",
+    "artist": "The Paper Lanterns",
+    "album": "Low Tide Radio",
+    "album_key": 202,
+    "disc": 1,
+    "track_no": 2,
+    "plays": 1
+   },
+   {
+    "rating_key": 103,
+    "title": "Harbour Lights",
+    "artist": "The Paper Lanterns",
+    "album": "Low Tide Radio",
+    "album_key": 202,
+    "disc": 2,
+    "track_no": 1,
+    "plays": 1
+   }
+  ]
+ },
+ "/api/tags/tracks?tag=doom%20metal&sort=album": {
+  "tag": {
+   "key": "doom metal",
+   "name": "Doom Metal",
+   "root": false
+  },
+  "sort": "album",
+  "rule": "live tracks carrying the tag by jimbo-dj's per-track rule (history._genre_tags: the album's Plex genres, then the track's own, through the tag rules, junk left out)",
+  "plays_rule": "HISTORY's counted plays (counted = 1) of those tracks, all time: jimbo-dj's Top genres rule (a play counts for every tag its library track carries; a play with no library track has no genre)",
+  "total": 2,
+  "plays": 2,
+  "limit": 50,
+  "offset": 0,
+  "items": [
+   {
+    "rating_key": 104,
+    "title": "Static Gulls",
+    "artist": "The Paper Lanterns",
+    "album": "Low Tide Radio",
+    "album_key": 202,
+    "disc": 1,
+    "track_no": 2,
+    "plays": 1
+   },
+   {
+    "rating_key": 103,
+    "title": "Harbour Lights",
+    "artist": "The Paper Lanterns",
+    "album": "Low Tide Radio",
+    "album_key": 202,
+    "disc": 2,
+    "track_no": 1,
+    "plays": 1
+   }
+  ]
+ },
+ "/api/tags/albums?tag=black%20metal&set=sound": {
+  "tag": {
+   "key": "black metal",
+   "name": "Black Metal",
+   "root": false
+  },
+  "set": "sound",
+  "rule": "albums whose analyzer styles name the tag (a style counts for an album when at least 40% of its analysed tracks keep it: jimbo-dj's sound count)",
+  "total": 1,
+  "limit": 50,
+  "offset": 0,
+  "items": [
+   {
+    "album_key": 201,
+    "title": "Ringbahn",
+    "artist": "Kollektiv Nord",
+    "artist_key": 301,
+    "year": 2019,
+    "tags": [
+     "Atmospheric Black Metal",
+     "Black Metal",
+     "Metal"
+    ],
+    "carries": true,
+    "via": [
+     "Atmospheric Black Metal"
+    ]
+   }
+  ]
+ }
+}

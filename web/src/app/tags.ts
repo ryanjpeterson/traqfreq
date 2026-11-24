@@ -26,8 +26,8 @@ export type Ladder = {
   rules: Record<string, string>; check: LadderCheck; seconds: number;
 };
 
-export type TagSet = 'carries' | 'under' | 'missing';
-export const TAG_SETS: TagSet[] = ['carries', 'under', 'missing'];
+export type TagSet = 'carries' | 'under' | 'missing' | 'sound';
+export const TAG_SETS: TagSet[] = ['carries', 'under', 'missing', 'sound'];
 
 export type TagAlbum = { album_key: number; title: string | null; artist: string | null; artist_key: number | null;
   year: number | null; tags: string[]; carries: boolean; via: string[] };
@@ -183,4 +183,76 @@ export const proposalsApi = (group: string, value: string | undefined, offset: n
 /** Where jimbo-dj's Fix in Plex is: the same host as this page, jimbo-dj's port. */
 export function fixInPlexHref(f: Inbox['fix_in_plex'], loc: { protocol: string; hostname: string } = window.location): string {
   return `${loc.protocol}//${loc.hostname}:${f.port}${f.path}`;
+}
+
+// --- T23: a page per tag, the genre map, movements and the P4 gate ------------------------------------------
+
+export type TagBrief = { key: string; name: string; albums: number; under: number; rung: number | null; children: number;
+  parents: number };
+export type Spelling = { raw: string; albums: number; artists: number; tracks: number; same: boolean; split: boolean;
+  rules: { id: string; label: string }[] };
+export type MovementTag = { key: string; name: string; in_use: boolean; broad: string | null; rung: number | null;
+  albums: number; artists: number };
+export type Movement = { id: string; name: string; about: string; tags: MovementTag[]; broads: string[]; in_use: number };
+export type SoundProfile = Record<string, number>;
+export type TagPageData = {
+  key: string; name: string; in_use: boolean;
+  junk: { id: string; label: string; why: string | null } | null;
+  broad: string | null; root: boolean; rung: number | null;
+  broad_rule: null | { how: 'override' | 'family'; pattern?: string; family?: string; match: string | null; broad: string };
+  ladders: { key: string; name: string; rung: number | null }[][];
+  parents: TagBrief[]; children: TagBrief[]; below: number; other_heads: string[];
+  spellings: Spelling[]; issues: { kind: string; op: string }[];
+  numbers: { albums: number; under: number; missing: number | null; artists: number; tracks: number;
+    plays: number | null; sound: number; musicbrainz: number };
+  history: boolean; profile: SoundProfile | null; movements: Movement[]; rules: Record<string, string>;
+};
+export type TagTrackItem = { rating_key: number; title: string | null; artist: string | null; album: string | null;
+  album_key: number | null; disc: number | null; track_no: number | null; plays: number };
+export type TagTracksPage = { tag: { key: string; name: string; root: boolean }; sort: 'plays' | 'album'; rule: string;
+  plays_rule: string; total: number; plays: number; limit: number; offset: number; items: TagTrackItem[] };
+
+export type Station = { key: string; name: string; albums: number; under: number; rung: number | null; in_use: boolean;
+  also: string[]; movements: string[]; stations: Station[] };
+export type MapLine = { key: string; name: string; albums: number; under: number; missing: number | null; in_use: boolean;
+  tags: number; stops: number; stations: Station[]; movements: string[] };
+export type GenreMapData = {
+  lines: MapLine[]; alone: { key: string; name: string; albums: number; under: number; movements: string[] }[];
+  movements: Movement[];
+  summary: { lines: number; tags: number; alone: number; shared: number; deepest: number; movements: number };
+  rules: Record<string, string>;
+};
+
+type GateIds<T> = { differing: T[] };
+export type GateLadder = { check: 'ladder'; passed: boolean; rule: string; page: string;
+  rules: { broad: number; ok: number; matches: boolean } & GateIds<string>;
+  ends: { tags: number; ok: number; matches: boolean; failing: string[] };
+  stored: null | ({ broad: number; ok: number; matches: boolean; fresh: boolean; built_at: number | null } & GateIds<string>) };
+export type GateTracks = { check: 'tracks'; passed: boolean; rule: string; page: string;
+  tags: { tracks: number; ok: number; differ: number; with_tags: number; matches: boolean } & GateIds<number>;
+  styles: { tracks: number; ok: number; differ: number; analysed: number; kept: number; matches: boolean } & GateIds<number> };
+type Part = { items: number; ok: number; matches: boolean };
+export type GateAudit = { check: 'audit'; passed: boolean; rule: string; page: string; stored: boolean; fresh: boolean | null;
+  built_at?: number;
+  tags?: { tags: number; ok: number; differ: number; matches: boolean; only_here: number; only_stored: number;
+    differing: { key: string; name: string; fields: Record<string, [unknown, unknown]> }[] };
+  issues?: { kinds: number; ok: number; matches: boolean }; fixes?: Part; suggestions?: Part };
+export type TagsGate = { gate: 'P4'; checks: [GateLadder, GateTracks, GateAudit]; passed: boolean;
+  rules: Record<string, string>; read_only: string };
+
+export const TAGS_TAG = '/tags/tag/';
+export const TAGS_MAP = '/tags/map';
+export const TAGS_TRACKS = '/tags/tracks';
+export const MAP_API = '/api/tags/map';
+export const TAGS_GATE_API = '/api/tags/compare';
+export const tagHref = (key: string) => `${TAGS_TAG}${encodeURIComponent(key)}`;
+export const tagApi = (key: string) => `/api/tags/tag/${encodeURIComponent(key)}`;
+export const tagTracksHref = (tag: string, sort: 'plays' | 'album' = 'plays', offset?: number) =>
+  `${TAGS_TRACKS}?${q({ tag, sort: sort === 'plays' ? undefined : sort, offset: offset || undefined })}`;
+export const tagTracksApi = (tag: string, sort: string, offset: number) =>
+  `/api/tags/tracks?${q({ tag, sort, offset: offset || undefined })}`;
+
+/** Every station on a line, depth first (a shared tag once per branch). */
+export function stationsOf(st: Station[]): Station[] {
+  return st.flatMap((s) => [s, ...stationsOf(s.stations)]);
 }

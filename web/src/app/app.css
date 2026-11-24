@@ -178,3 +178,32 @@ main > .kit-text.is-body { max-width: 64ch; margin-bottom: 24px; }
 .rows li.tags-rung { align-items: flex-start; }
 .tags-line { display: grid; gap: 4px; min-width: 0; flex: 1; overflow-wrap: anywhere; }
 .tags-below { margin-top: 4px; padding-left: 16px; border-left: 2px solid var(--mod-t); }
+
+/* ---------- TAGS (T23): the genre map (lines like the map home), a tag's ladders ---------- */
+.tags-line strong > .kit-button { padding: 0; font-weight: 700; }
+.gm-drawing .map-track { justify-content: flex-start; gap: 6px; padding: 0 6px; }
+.map-stop.is-interchange { border-style: double; border-width: 5px; }
+.gm-line, .gm-branch { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.gm-line { position: relative; padding-left: 28px; }
+.gm-line::before {
+  content: ""; position: absolute; left: 8px; top: 4px; bottom: 4px; width: 6px;
+  background: var(--line); outline: var(--line-outline);
+}
+.gm-station { position: relative; display: grid; gap: 4px; min-width: 0; }
+.gm-stop {
+  position: absolute; left: -26px; top: 6px; width: 14px; height: 14px;
+  background: var(--paper); border: 3px solid var(--ink); border-radius: var(--radius);
+}
+.gm-station.is-interchange > .gm-stop { border-style: double; border-width: 5px; }
+.gm-label { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 8px; min-width: 0; overflow-wrap: anywhere; }
+.gm-label > .kit-button { padding-left: 0; }
+.gm-label .sub { flex-basis: 100%; font-size: 14px; color: var(--ink2); }
+.gm-branch { padding-left: 16px; border-left: 2px solid var(--line); }
+.gm-branch .gm-stop { left: -42px; width: 10px; height: 10px; top: 8px; border-width: 2px; }
+.gm-ladder { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 0; }
+.gm-ladder > li, .rows .gm-ladder > li { display: inline-flex; align-items: center; min-height: 0; padding: 0; border-bottom: 0; gap: 0; }
+.gm-ladder > li + li::before {
+  content: ""; display: inline-block; width: 16px; height: 6px; margin: 0 6px;
+  background: var(--line); outline: var(--line-outline);
+}
+.gm-ladder .kit-button { padding: 0; }

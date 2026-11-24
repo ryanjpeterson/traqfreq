@@ -9,7 +9,7 @@ export const MODULE_PATH: Record<ModuleId, string> = {
 export type Route =
   | { page: 'map' }
   | { page: 'search' }
-  | { page: 'module'; module: ModuleId; sub?: HistorySub | LibrarySub | SetupSub | TagsSub; key?: number }
+  | { page: 'module'; module: ModuleId; sub?: HistorySub | LibrarySub | SetupSub | TagsSub; key?: number; tag?: string }
   | { page: 'notFound' };
 
 /** HISTORY's rows page: the listens behind a number (query string = the filters). */
@@ -50,10 +50,11 @@ const SETUP_SUBS: Record<string, SetupSub> = {
 };
 
 /** T20: TAGS' rows pages: the albums and artists behind a tag's numbers, the tags behind a summary number. */
-export type TagsSub = 'albums' | 'artists' | 'list' | 'album' | 'track' | 'proposals' | 'proposalAlbums';
-/** T22: the proposals inbox and the albums behind its numbers. */
+export type TagsSub = 'albums' | 'artists' | 'list' | 'album' | 'track' | 'proposals' | 'proposalAlbums'
+  | 'tag' | 'map' | 'tracks';
+/** T22: the proposals inbox and the albums behind its numbers. T23: the genre map and the tracks behind a tag. */
 const TAGS_SUBS: Record<string, TagsSub> = { '/tags/albums': 'albums', '/tags/artists': 'artists', '/tags/list': 'list',
-  '/tags/proposals': 'proposals', '/tags/proposals/albums': 'proposalAlbums' };
+  '/tags/proposals': 'proposals', '/tags/proposals/albums': 'proposalAlbums', '/tags/map': 'map', '/tags/tracks': 'tracks' };
 
 export function parseRoute(pathname: string): Route {
   const path = pathname.replace(/[?#].*$/, '').replace(/\/+$/, '') || '/';
@@ -68,6 +69,15 @@ export function parseRoute(pathname: string): Route {
   /** T21: an album tagged track by track, a track's tags by source. */
   const tagged = /^\/tags\/(album|track)\/(\d+)$/.exec(path);
   if (tagged) return { page: 'module', module: 'T', sub: tagged[1] as TagsSub, key: Number(tagged[2]) };
+  /** T23: a page per tag, /tags/tag/<key> (the key URL-encoded). */
+  const tagPage = /^\/tags\/tag\/(.+)$/.exec(path);
+  if (tagPage) {
+    try {
+      return { page: 'module', module: 'T', sub: 'tag', tag: decodeURIComponent(tagPage[1]) };
+    } catch {
+      return { page: 'notFound' };
+    }
+  }
   const module = MODULE_IDS.find((m) => MODULE_PATH[m] === path);
   return module ? { page: 'module', module } : { page: 'notFound' };
 }
