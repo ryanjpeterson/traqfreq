@@ -53,6 +53,11 @@ every counting rule has a case that tells it apart from a raw row count:
   files' genres of the live tracks, one with a tag Plex didn't keep (Ostkreuz's Atmospheric Black Metal), one with a
   tag no album, artist or track has (Drone, so it is on no rung), and one file that couldn't be read. The stored
   library.tags stamp takes the file tags' newest read, so it stays fresh.
+- T22, the proposals inbox and gate check 3 (P4; no row changes, so no count above changes): jimbo-dj's stored
+  library.tags gains the rest of what check 3 compares (TAGS_STORED: every tag's numbers and issues, the album
+  issue counts, the fixes and the suggestions), worked out by hand. The rows above already hold one proposal of
+  each kind: a junk tag, a casing fix, two missing broad tags, niche tags, suggestions, and one ladder proposal of
+  traqfreq's (Low Tide Radio carries Death-Doom Metal and Doom Metal but not Death Metal, its other parent).
 - With --checks: T7's invented bursts, loop, steady rhythm and windows (CHECK_LISTENS), on top of the above.
 
 Usage: python scripts/make_fixture.py [--checks] [out_path]   (default tests/fixtures/legacy.sqlite)
@@ -209,6 +214,49 @@ TAGS_STORED = {"families": [
     {"tag": "Hip Hop", "key": "hip hop", "albums": 1, "tagged": 0, "missing": 1, "children": [
         {"tag": "Lo-Fi Hip Hop", "key": "lo-fi hip hop", "albums": 1}]},
     {"tag": "Punk", "key": "punk", "albums": 1, "tagged": 1, "missing": 0, "children": []}]}
+# T22: the rest of the stored row gate check 3 compares (tags.Library.overview's tags, summary.issues, fixes and
+# suggestions), trimmed to the compared fields, by hand with tags.py's rules on the rows here:
+# - Tags (albums, artists, tracks = live tracks' Plex genres, MusicBrainz = release and artist rows naming it,
+#   sound = albums whose analysed tracks have the style on at least 0.4 of them, issues). "doom metal" is a
+#   spelling of Doom Metal, "Hip-Hop" of Hip Hop; 2010s is junk (decades); Atmospheric Black Metal, Lo-Fi Hip Hop
+#   and Soundtrack are on one album each and unknown to MusicBrainz: niche.
+# - Album issues: Quiet Engines (junk 2010s, niche Lo-Fi Hip Hop and Soundtrack, broad Hip Hop), Low Tide Radio
+#   (case "doom metal", broad Metal), Ringbahn (niche Atmospheric Black Metal); Gone Album is clean.
+# - Fixes (biggest first, then by tag): remove 2010s, add Hip Hop, add Metal, rename "doom metal" to Doom Metal.
+# - Suggestions: Ambient for Ringbahn (half its tracks and files, and its sound), Death Metal, Post-Punk (the
+#   artist's MusicBrainz votes) and Drone (half Low Tide Radio's files) for Low Tide Radio.
+_NICHE = [{"kind": "niche", "op": "remove"}]
+TAGS_STORED.update({
+    "summary": {"albums": 4, "artists": 4, "clean": 1,
+                "issues": {"junk": 1, "split": 0, "spelling": 0, "case": 1, "broad": 2, "niche": 2, "untagged": 0}},
+    "tags": [
+        {"key": "black metal", "name": "Black Metal", "albums": 1, "artists": 1, "tracks": 2, "musicbrainz": 0, "sound": 1, "issues": []},
+        {"key": "doom metal", "name": "Doom Metal", "albums": 1, "artists": 0, "tracks": 2, "musicbrainz": 1, "sound": 1,
+         "issues": [{"kind": "spelling", "op": "rename", "from": ["doom metal"], "to": "Doom Metal"}]},
+        {"key": "2010s", "name": "2010s", "albums": 1, "artists": 0, "tracks": 0, "musicbrainz": 0, "sound": 0,
+         "issues": [{"kind": "junk", "op": "remove", "rule": "decades"}]},
+        {"key": "atmospheric black metal", "name": "Atmospheric Black Metal", "albums": 1, "artists": 0, "tracks": 0, "musicbrainz": 0, "sound": 0, "issues": _NICHE},
+        {"key": "death metal", "name": "Death Metal", "albums": 0, "artists": 1, "tracks": 0, "musicbrainz": 1, "sound": 0, "issues": []},
+        {"key": "death-doom metal", "name": "Death-Doom Metal", "albums": 1, "artists": 0, "tracks": 0, "musicbrainz": 1, "sound": 0, "issues": []},
+        {"key": "hip hop", "name": "Hip Hop", "albums": 0, "artists": 1, "tracks": 0, "musicbrainz": 0, "sound": 0,
+         "issues": [{"kind": "spelling", "op": "rename", "from": ["Hip-Hop"], "to": "Hip Hop"}]},
+        {"key": "lo-fi hip hop", "name": "Lo-Fi Hip Hop", "albums": 1, "artists": 0, "tracks": 0, "musicbrainz": 0, "sound": 0, "issues": _NICHE},
+        {"key": "metal", "name": "Metal", "albums": 1, "artists": 0, "tracks": 0, "musicbrainz": 0, "sound": 0, "issues": []},
+        {"key": "post-punk", "name": "Post-Punk", "albums": 0, "artists": 1, "tracks": 0, "musicbrainz": 1, "sound": 0, "issues": []},
+        {"key": "punk", "name": "Punk", "albums": 1, "artists": 0, "tracks": 0, "musicbrainz": 0, "sound": 0, "issues": []},
+        {"key": "soundtrack", "name": "Soundtrack", "albums": 1, "artists": 0, "tracks": 0, "musicbrainz": 0, "sound": 0, "issues": _NICHE},
+        {"key": "ambient", "name": "Ambient", "albums": 0, "artists": 0, "tracks": 1, "musicbrainz": 0, "sound": 1, "issues": []}],
+    "fixes": [
+        {"op": "remove", "kind": "junk", "tag": "2010s", "to": [], "albums": 1},
+        {"op": "add", "kind": "broad", "tag": "Hip Hop", "to": [], "albums": 1},
+        {"op": "add", "kind": "broad", "tag": "Metal", "to": [], "albums": 1},
+        {"op": "rename", "kind": "case", "tag": "doom metal", "to": ["Doom Metal"], "albums": 1}],
+    "suggestions": [
+        {"tag": "Ambient", "albums": 1, "key": "ambient", "in_use": True},
+        {"tag": "Death Metal", "albums": 1, "key": "death metal", "in_use": True},
+        {"tag": "Post-Punk", "albums": 1, "key": "post-punk", "in_use": True},
+        {"tag": "Drone", "albums": 1, "key": "drone", "in_use": False}],
+})
 # T21: the analyzer's Discogs styles (features.genres) and the files' genres (file_tags), invented.
 STYLES = {101: {"Rock---Black Metal": 0.62, "Electronic---Ambient": 0.48, "Electronic---Dark Ambient": 0.3, "Rock---Punk": 0.2},
           102: {"Rock---Black Metal": 0.7, "Electronic---Synth-pop": 0.9},
