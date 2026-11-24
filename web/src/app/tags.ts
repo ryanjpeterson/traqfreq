@@ -75,3 +75,48 @@ export function shown(l: Ladder, show: TagShow): TagNode[] {
   return [...pick].sort((a, b) => (rootOrder.get(a.broad) ?? 1e9) - (rootOrder.get(b.broad) ?? 1e9)
     || (a.rung ?? 99) - (b.rung ?? 99) || a.name.localeCompare(b.name));
 }
+
+// --- T21: tracks tagged one by one -------------------------------------------------------------------------
+
+/** One raw value from a source through the rules: each canonical tag it makes, on its rung (null: not on the ladder). */
+export type SourceTag = { raw: string; key: string; name: string; junk: string | null; broad: string | null;
+  rung: number | null; on_ladder: boolean; score?: number; discogs?: string; kept?: boolean };
+export type TrackSource = 'track' | 'file' | 'album' | 'artist' | 'mb-release' | 'mb-artist' | 'sound';
+export const TRACK_SOURCES: TrackSource[] = ['track', 'file', 'album', 'artist', 'mb-release', 'mb-artist', 'sound'];
+export type SourceBlock = { tags: SourceTag[]; read?: boolean; error?: string | null; note?: string; found?: boolean; analysed?: boolean };
+
+/** A tag the track carries by jimbo-dj's per-track rule, with the sources that name it. */
+export type TrackTag = { key: string; name: string; broad: string | null; rung: number | null; on_ladder: boolean;
+  sources: TrackSource[]; album: boolean };
+export type TrackCheckOne = { tags: boolean; styles: boolean; jimbodj_tags: string[]; jimbodj_styles: string[] };
+
+export type TagTrackRow = {
+  rating_key: number; title: string | null; artist: string | null; album: string | null; album_key: number | null;
+  artist_key: number | null; disc: number | null; track_no: number | null; live: boolean;
+  tags: TrackTag[]; differs: TrackTag[]; styles: SourceTag[]; check: TrackCheckOne;
+};
+export type TagTrack = TagTrackRow & { sources: Record<TrackSource, SourceBlock>;
+  album_tags: { name: string; status: string }[]; rules: Record<string, string> };
+
+export type FromTracks = { key: string; name: string; rung: number | null; on_ladder: boolean; broad: string | null;
+  tracks: number; files: number; speaks: boolean; album: boolean; status: string };
+export type TagAlbumPage = {
+  album_key: number; title: string | null; artist: string | null; artist_key: number | null; year: number | null;
+  tags: { name: string; status: string }[]; tracks: TagTrackRow[]; differ: number; from_tracks: FromTracks[];
+  track_share: number; check: { tags: number; styles: number; tracks: number }; rules: Record<string, string>;
+};
+
+type Differ = { rating_key: number; title: string | null; artist: string | null; traqfreq: string[]; jimbodj: string[] };
+export type TracksCheck = {
+  tags: { tracks: number; with_tags: number; ok: number; differ: number; items: Differ[]; unknown: number[]; matches: boolean; source: string };
+  styles: { tracks: number; analysed: number; kept: number; ok: number; differ: number; items: Differ[]; matches: boolean; source: string };
+  passed: boolean; rule: string;
+};
+
+export const TAGS_ALBUM = '/tags/album/';
+export const TAGS_TRACK = '/tags/track/';
+export const TRACKS_CHECK_API = '/api/tags/tracks/check';
+export const tagAlbumHref = (key: number, differs = false) => `${TAGS_ALBUM}${key}${differs ? '?show=differs' : ''}`;
+export const tagTrackHref = (key: number) => `${TAGS_TRACK}${key}`;
+export const tagAlbumApi = (key: number) => `/api/tags/album/${key}`;
+export const tagTrackApi = (key: number) => `/api/tags/track/${key}`;

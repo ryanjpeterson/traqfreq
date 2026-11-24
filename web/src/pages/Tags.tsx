@@ -4,6 +4,7 @@ import { t, tf, type StringKey } from '../copy/t';
 import { useGet } from '../app/api';
 import { albumHref, artistHref } from '../app/entities';
 import { count, fmt } from '../app/history';
+import { TracksCheckCard } from './TagsTracks';
 import {
   LADDER_API, TAGS_PATH, TAG_SETS, TAG_SHOWS, albumsApi, albumsHref, artistsApi, artistsHref, listHref, params, shown,
   type CheckRow, type Ladder, type TagAlbums, type TagArtists, type TagNode, type TagSet, type TagShow,
@@ -195,6 +196,7 @@ function LadderBody({ l, navigate }: { l: Ladder } & Nav) {
         <Text variant="note">{tf('tags.sum.note', { albums: count(s.albums, 'album'), artists: count(s.artists, 'artist'), junk: count(s.junk, 'tag') })}</Text>
       </Card>
       <LadderCheckCard l={l} navigate={navigate} />
+      <TracksCheckCard navigate={navigate} />
       <section aria-labelledby="tags-ladder" className="stack">
         <Text variant="heading" id="tags-ladder">{t('tags.ladder')}</Text>
         <Text variant="note">{`${t('tags.rule.parent')}: ${l.rules.parent}.`}</Text>

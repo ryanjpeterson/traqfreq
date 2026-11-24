@@ -50,7 +50,7 @@ const SETUP_SUBS: Record<string, SetupSub> = {
 };
 
 /** T20: TAGS' rows pages: the albums and artists behind a tag's numbers, the tags behind a summary number. */
-export type TagsSub = 'albums' | 'artists' | 'list';
+export type TagsSub = 'albums' | 'artists' | 'list' | 'album' | 'track';
 const TAGS_SUBS: Record<string, TagsSub> = { '/tags/albums': 'albums', '/tags/artists': 'artists', '/tags/list': 'list' };
 
 export function parseRoute(pathname: string): Route {
@@ -63,6 +63,9 @@ export function parseRoute(pathname: string): Route {
   if (HISTORY_SUBS[path]) return { page: 'module', module: 'H', sub: HISTORY_SUBS[path] };
   if (SETUP_SUBS[path]) return { page: 'module', module: 'S', sub: SETUP_SUBS[path] };
   if (TAGS_SUBS[path]) return { page: 'module', module: 'T', sub: TAGS_SUBS[path] };
+  /** T21: an album tagged track by track, a track's tags by source. */
+  const tagged = /^\/tags\/(album|track)\/(\d+)$/.exec(path);
+  if (tagged) return { page: 'module', module: 'T', sub: tagged[1] as TagsSub, key: Number(tagged[2]) };
   const module = MODULE_IDS.find((m) => MODULE_PATH[m] === path);
   return module ? { page: 'module', module } : { page: 'notFound' };
 }
