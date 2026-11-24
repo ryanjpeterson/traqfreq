@@ -143,3 +143,36 @@ export function matchesTitle(query: string): string {
     p.get('rating_key') && tf('servers.rows.copy', { k: p.get('rating_key')! }),
   ].filter(Boolean).join(' · ');
 }
+
+/** T19: the P3 gate (/api/servers/compare): one to one, reasons that add up, a spot check by ID. */
+export type GateOneToOne = {
+  pair: PairId; server: ServerId | null; passed: boolean; missing?: string; copies?: number; items?: number;
+  visible?: number; visible_matched?: number; matched?: number; hidden_paths?: number;
+  failures?: Record<string, number>; visible_unmatched?: Record<string, number>;
+};
+export type GateSide = {
+  total: number; matched: number; unmatched: number; reasons: Record<string, number>; reasons_sum: number;
+  adds_up: boolean; passed: boolean;
+};
+export type GateReasons = { pair: PairId; passed: boolean; missing?: string; left?: ServerId; right?: ServerId;
+  sides?: { left: GateSide; right: GateSide } };
+export type SpotAnswer = {
+  status: 'ok' | 'differs' | 'error' | 'unmatched'; id?: string; tier?: string; reason?: string | null;
+  message?: string | null; problems?: string[]; diff_ms?: number | null; file_ok?: boolean | null;
+};
+export type SpotRow = {
+  kind: 'copy' | 'item' | 'pair'; why: string[]; passed: boolean; rating_key?: number; title?: string | null;
+  artist?: string | null; server?: ServerId; pair?: PairId; id?: string; reason?: string;
+  servers: Partial<Record<ServerId, SpotAnswer>>;
+};
+export type ServersGate = {
+  passed: boolean; copies: number; notes: string[]; snapshots: Snapshot[]; rules: Record<string, string>; read_only: string;
+  checks: [
+    { check: 'one_to_one'; passed: boolean; rule: string; pairs: GateOneToOne[] },
+    { check: 'reasons'; passed: boolean; rule: string; pairs: GateReasons[] },
+    { check: 'spot'; passed: boolean; rule: string; seed: number; sample: number; cases: number; random: number;
+      asked: Record<string, number>; status: Record<string, number>; problems: Record<string, number>; failed: number;
+      rows: SpotRow[] },
+  ];
+};
+export const GATE_API = '/api/servers/compare';

@@ -74,6 +74,10 @@ class Servers:
                 return httpx.Response(200, json=JF["virtual_folders"])
             if path == "/Users":
                 return httpx.Response(200, json=JF["users"])
+            if path == "/Items" and q.get("Ids"):  # T19: one item by ID, as Jellyfin (an unknown ID: no items)
+                found = [{k: v for k, v in it.items() if k != "UserData"} for it in self.jellyfin_items()
+                         if it["Id"] in q["Ids"].split(",")]
+                return httpx.Response(200, json={"Items": found, "TotalRecordCount": len(found), "StartIndex": 0})
             if path == "/Items":  # as Jellyfin: no user, no UserData
                 page = [{k: v for k, v in it.items() if k != "UserData"} for it in JF_ITEMS[start:start + limit]]
                 return httpx.Response(200, json={"Items": page, "TotalRecordCount": len(JF_ITEMS), "StartIndex": start})
@@ -96,6 +100,12 @@ class Servers:
             if path == "/rest/getAlbumList2":
                 o, n = int(q.get("offset", 0)), int(q.get("size", 10))
                 return httpx.Response(200, json=_nd("albumList2", album=ND_ALBUMS[o:o + n]))
+            if path == "/rest/getSong":  # T19: one song by ID, as Navidrome (an unknown ID: Subsonic error 70)
+                found = [x for x in self.songs() if x["id"] == q.get("id")]
+                if not found:
+                    return httpx.Response(200, json={"subsonic-response": {
+                        "status": "failed", "error": {"code": 70, "message": "Song not found"}}})
+                return httpx.Response(200, json=_nd("song", **found[0]))
             if path == "/rest/search3":  # as Navidrome: an empty query lists every song, sliced by offset
                 o, n = int(q.get("songOffset", 0)), int(q.get("songCount", 20))
                 return httpx.Response(200, json=_nd("searchResult3", song=self.songs()[o:o + n]))
@@ -106,6 +116,9 @@ class Servers:
 
     def songs(self) -> list[dict]:
         return ND_SONGS
+
+    def jellyfin_items(self) -> list[dict]:
+        return JF_ITEMS
 
 
 READERS = {"jellyfin": reading.read_jellyfin, "navidrome": reading.read_navidrome}

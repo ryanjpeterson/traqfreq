@@ -9,7 +9,7 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
-from . import __version__, counted, entities, history, identity, legacy, library, library_gate, matching, periods, reading, servers, store
+from . import __version__, counted, entities, history, identity, legacy, library, library_gate, matching, periods, reading, servers, servers_gate, store
 from .settings import CORE, MODULES, Settings
 
 
@@ -358,6 +358,16 @@ def create_app(settings: Settings | None = None, server_transport=None) -> FastA
         "On servers", T15). Nothing is sent to any server."""
         return read_identity(lambda c: matching.report(c, settings.data_dir, settings.plex_roots, server or None,
                                                        tier or None, reason or None, limit, offset, rating_key))
+
+    # --- T19: the P3 gate --------------------------------------------------------------------------------
+
+    @app.get("/api/servers/compare")
+    def servers_compare(seed: int | None = None) -> dict:
+        """The P3 gate: (1) one to one per server, (2) every unmatched copy and item has a reason and they add up,
+        (3) a spot check of every case plus 20 copies at random (``seed``; default today's date), each asked of
+        Jellyfin and Navidrome by ID now (GET only): file and duration within 2 s of Plex's. Not cached: the
+        spot check asks the servers each time. Writes nothing anywhere."""
+        return read_identity(lambda c: servers_gate.compare(c, settings, seed, app.state.server_transport))
 
     # --- T16: SERVERS, reading servers (GET only) ---------------------------------------------------------
 
