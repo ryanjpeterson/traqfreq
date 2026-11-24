@@ -3,6 +3,8 @@
 All notable changes to this project are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions are CalVer (`YYYY.MM.N`).
 
 ## [Unreleased]
+### Fixed
+- T21: gate check 2 listed a Discogs style with a slash ("Cut-up/DJ") twice, once per tag the rules split it into, so 49 live tracks seemed to differ from jimbo-dj's strict test. Each style is now listed once.
 ### Added
 - T21: jimbo-dj's `genres.Styles` vendored unchanged (1d8a7cb), built once per database and stamp, and `history._genre_tags` (jimbo-dj's per-track tag rule). The tags' "sound" source and the P2 gate's `sound.genres` bars now come from the real styles (still not compared in P2: the gate passes as before).
 - T21: a track's tags by source (`GET /api/tags/track/{key}`, `/tags/track/<key>`): its own Plex genres, its file's genres (`file_tags`), its album's and artist's Plex genres, MusicBrainz release and artist votes, the analyzer's Discogs styles with their scores, kept or not by the strict test; each tag on its rung of the ladder; its tags by jimbo-dj's per-track rule with the sources that name each.

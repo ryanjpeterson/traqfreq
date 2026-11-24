@@ -302,6 +302,11 @@ PR #19 merged to `main` (1732c15) and deployed. Checked from the laptop over Tai
 - Tests: pytest 206 (`tests/test_tags_tracks.py`, 12), Vitest 185 (`web/src/pages/tagsTracks.test.tsx`, 15, answers generated from the fixture's API in `tagsTracks.answers.json`), the web build, brand checks and 13 self-tests. Checked in the browser on the fixture (scratch data dir): the album page desktop dark, the track page 375 px light (no side-scroll), the /tags card and LIBRARY's link.
 - **Not run on live data yet**: after the deploy, `GET http://macmini:4492/api/tags/tracks/check` (gate check 2 on ~53k tracks; Styles takes jimbo-dj 1–3 s to build) and an album page or two; the gate run itself is T23.
 
+## T21 deployed and checked: 2026-11-24
+PR #20 merged to `main` (874770a) and deployed. `GET http://macmini:4492/api/tags/tracks/check` (gate check 2), built in 8.3 s:
+- **Tags: passed.** 53,274 of 53,274 live tracks have jimbo-dj's per-track tags (`_genre_tags`); 52,606 have at least one.
+- **Styles: not passed, a traqfreq bug.** 53,197 tracks have the analyzer's styles, 42,474 keep at least one; 53,225 match, 49 differ. Every difference was a Discogs style with a slash (`Hip Hop---Cut-up/DJ`, `Hip Hop---RnB/Swing`) listed twice on traqfreq's side: the tag rules split it into two tags, and the check took the style once per tag. jimbo-dj's list was right. Fixed in `claude/t21-styles-once` (`tags._kept` lists each style once; test `test_style_split_in_two_counts_once`). Run the check again after that deploy: it should pass 53,274 of 53,274 on both.
+
 ## Next: T22
 The proposals inbox (spec T22): every album's proposed change from jimbo-dj's audit (`Library.albums`: issues with their fix, suggestions with their sources and votes), before and after as Fix in Plex's preview shows it (`tagwrite.proposal`, vendored unchanged), grouped like jimbo-dj's `fixes()` and `suggestions()`; traqfreq's own ladder proposals (a tag without its parents), labelled; nothing applied; gate check 3 against the stored row. Before it: deploy T21 and run check 2 on live data. The "Drill and Bass" → Hip Hop quirk (T20 live) is a candidate proposal.
 **Planned for P5/P6 (Ryan, 2026-11-24):** every playlist and mix has three separate switches, Plex, Jellyfin and Navidrome (in docs/specs/README.md under P5 and P6). Navidrome also has NaviBeat connected to it.
