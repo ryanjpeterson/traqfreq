@@ -2,6 +2,13 @@
 
 ## Log
 
+### 2026-11-24 — The proposals inbox shows jimbo-dj's proposals as jimbo-dj makes them, and labels traqfreq's own
+
+- **Decision:** the inbox lists jimbo-dj's audit (issues with their fixes, suggestions, `proposed`) and Fix in Plex's preview through jimbo-dj's own code, vendored unchanged (`tagwrite.proposal`, `plan`, `Library.fixes`, `suggestions`), and adds traqfreq's own proposals beside them, labelled: a tag's missing ladder parents (below the broad tag, which is jimbo-dj's fix), and rule questions (a broad tag that rests on a word before the tag's last one). Nothing is applied, kept or sent; the inbox links to Fix in Plex in jimbo-dj.
+- **Why:** P4 only reads, and the gate is agreement with jimbo-dj: showing its proposals through its own code keeps "before and after" exactly what Fix in Plex would do. traqfreq's ladder adds rungs jimbo-dj doesn't know, so their proposals are new, and must not pass as jimbo-dj's.
+- **Alternatives:** accept buttons that queue changes for P6 (a store nobody reads yet, and a write path in a read-only phase); flag every tag whose name holds another broad tag's name (44 live, mostly jimbo-dj's deliberate choices like Punk Rock → Punk).
+- **Consequences:** rule questions are narrow on purpose (live candidate: "Drill and Bass"); a ladder proposal can repeat one of jimbo-dj's suggestions (Death Metal on the fixture's Low Tide Radio), shown under both, labelled.
+
 ### 2026-11-24 — A track's tags are built from its sources, then checked against jimbo-dj's rule
 
 - **Decision:** vendor jimbo-dj's `history._genre_tags` and `genres.Styles` unchanged, but build each track's tags in traqfreq from its own per-source breakdown (the album's Plex genres, then the track's, through the rules), and compare that with the vendored rule for every live track (gate check 2). The styles shown as kept are `Styles.sound_genres`, checked track by track.
