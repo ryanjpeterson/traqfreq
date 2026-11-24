@@ -263,17 +263,18 @@ Jellyfin and Navidrome readers need, in the deploy's `.env` (never in the repo):
 - The gate card on SETUP ("One song, three servers", `web/src/pages/ServersGate.tsx`): Card, Status, Text, Button only; each check with its pairs and "Show the rows"; the spot check's sample opens with each server's answer. Copy `p3gate.*`. Checked in dark and light desktop and 375 px light (no side-scroll), no console errors.
 - Tests: pytest 182 (`tests/test_servers_gate.py`, 10: the fixture fails only on hidden paths, reasons add up, passes with Navidrome's real paths, the spot check catches a duration 12 s off, a file that differs and a song not found, an unreachable server asked once, one-to-one mutations, a seeded sample, no snapshots, the script's output and exit codes, the script is read-only), Vitest 160 (`serversGate.test.tsx`, 5, on answers generated from the fixture), the web build, brand checks and 13 self-tests.
 
-## P3 gate: not passed 2026-11-24, only because Navidrome hides its paths
-Deployed `claude/t19-gate` (c054195) with the `deploy traqfreq` snippet. Pressed Refresh Jellyfin and Refresh Navidrome on the deployed app (`POST /api/servers/{server}/refresh`), then `python3 scripts/p3_gate.py --url http://macmini:4492` (seed 20261124): **NOT PASSED** (exit 1).
-- Snapshots: Jellyfin 53,274 items, 0 hidden paths; Navidrome 52,985 songs, **52,985 hidden paths**; Plex 53,274 live copies. **Report Real Path is still off** for the `traqfreq` player.
-- **1. One to one: not passed.** Plex ↔ Jellyfin passed: 53,274 of 53,274 copies matched, 0 hidden, no failures. Plex ↔ Navidrome not passed: no copy has a file Navidrome shows (0 of 0), 52,712 matched by MusicBrainz ID and tags, 52,985 hidden paths, no other failure. Jellyfin ↔ Navidrome passed: 52,723 matched, no item twice.
-- **2. Reasons add up: passed** on every pair and side. Plex ↔ Navidrome: Plex 562 unmatched = ambiguous 254 + hidden_path 308; Navidrome 273 = ambiguous 254 + hidden_path 19. Jellyfin ↔ Navidrome: Jellyfin 551 = 253 + 298; Navidrome 262 = 253 + 9. Plex ↔ Jellyfin: 0 unmatched.
-- **3. Spot check: not passed.** 30 in the sample (10 cases, 20 random); asked Jellyfin 28, Navidrome 26; 31 answers ok, 23 differ, 2 unmatched (reason holds). **Every one that differs is Navidrome's `hidden_path`**; every Jellyfin answer has the same file, and no duration anywhere is more than 2 s off.
-- The gate was not loosened: with no real path there is no file to check on Navidrome's side, so checks 1 and 3 can't pass there. The same result came from the laptop the day before (seed 19), so it isn't the sample.
+## P3 gate: passed 2026-11-24
+Run on the deployed app (`claude/t19-gate`, c054195) with `scripts/p3_gate.py --url http://macmini:4492` (seed 20261124): **PASSED** (exit 0).
+- **First run: not passed, only because Navidrome hid its paths** (Report Real Path off): 52,985 songs, all hidden; Plex ↔ Navidrome 52,712 by MusicBrainz ID and tags, 562 Plex copies unmatched (ambiguous 254, hidden_path 308); the spot check's 23 failures were all Navidrome's hidden path. Reasons added up, Plex ↔ Jellyfin was one to one, no duration was off. The gate was not loosened.
+- **Turning on Report Real Path:** Navidrome keeps it per player, one row per user + client + user agent. traqfreq's row is client `traqfreq`, user agent `python-httpx/0.28.1` (shown as "traqfreq [python-httpx]"), user `ryanpeterson`. Ticking it there and saving was not enough: **Navidrome only gave real paths after its container was restarted.** Then paths are absolute (`/music/Artist/Album/03 Title.flac`); without it they're made up (`Artist/Album/01-03 - Title.flac`). A test row "traqfreq [traqfreq-probe]" was left from the check and can be deleted.
+- **Second run, after Refresh Navidrome** (53,274 songs, 0 hidden, 1 folder `/music`; Navidrome's rescan after the restart added 318 and removed 29; 116 pages, 120 requests, 6.0 s):
+  1. **One to one: passed.** Plex ↔ Jellyfin 53,274 of 53,274, Plex ↔ Navidrome 53,274 of 53,274, no failures; Jellyfin ↔ Navidrome 53,274 matched, no item twice.
+  2. **Reasons add up: passed**, 0 unmatched on every pair and side.
+  3. **Spot check: passed.** 22 in the sample (2 cases: a file pair on both servers and a Jellyfin ↔ Navidrome pair through Plex; 20 random); asked Jellyfin 22, Navidrome 22; 44 answers ok, same file, durations within 2 s, 0 problems.
+- `TRAQFREQ_NAVIDROME_ROOTS` isn't needed: the shared folder is `/music`.
 
-## Next: rerun the P3 gate with Report Real Path on, then T20
-1. Ryan: Navidrome → Players → `traqfreq` → Report Real Path on. Then Refresh Navidrome on SETUP → SERVERS and run `python3 scripts/p3_gate.py --url http://macmini:4492`. Expected: the file tier takes over (as on Jellyfin), most of the 254 ambiguous go. If the real paths share too deep a folder, set `TRAQFREQ_NAVIDROME_ROOTS`. Record the run here and mark P3 passed in the deck.
-2. Then P4 TAGS read-only (T20–T23). Also worth a look on Navidrome's side: its scan error "stat /music: bad file descriptor".
+## Next: T20
+P4 TAGS read-only (T20–T23); its spec is still to write. Also worth a look on Navidrome's side: its scan error "stat /music: bad file descriptor" (from T18; not seen since the restart).
 
 ## Open questions
 1. ~~**Forgejo mirror**~~ *Done 2026-11-22:* Forgejo is live as a pull mirror of GitHub (`http://macmini:4470/ryanjpeterson/traqfreq`, syncs every 10 minutes, default branch `main`).

@@ -18,7 +18,7 @@
       { "name": "Tailscale", "kind": "self-hosted", "direction": "read", "required": true, "what": "the only way in" }
     ],
     "standards": ["jimbo-deploy", "jimbo-explain"],
-    "now": ["P3 SERVERS: the gate \"One song, three servers\" (T19) is built and ran live 2026-11-24: not passed, only because Navidrome hides its paths; rerun with Report Real Path on", "Plex ↔ Jellyfin one to one (53,274 of 53,274 by file); Plex ↔ Navidrome 52,712 by MusicBrainz ID and tags; reasons add up on every pair"]
+    "now": ["P4 TAGS read-only next (T20–T23)", "P3 SERVERS gate passed 2026-11-24: Plex, Jellyfin and Navidrome one to one over 53,274 copies, 0 unmatched, spot check 44 of 44"]
   },
   "files": {}
 }

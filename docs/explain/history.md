@@ -9,7 +9,7 @@
 | 2026-11-22 | P1 HISTORY: read API counted with jimbo-dj's vendored code (T5), overview (T6), counted once (T7), Years, Wrapped, Top and the gate (T8); gate passed, 862 of 862 numbers |
 | 2026-11-22 | P2 LIBRARY: numbers and rows (T9), the page (T10), albums, artists and tracks (T11), plays from every source |
 | 2026-11-23 | P2 gate built (T12) and passed on live data, 60 of 60 fields; P3 spec and track identity on the Plex side (T13); `.env.example`; jimbo-explain docs; matching on snapshots (T14); the SERVERS page and On servers (T15); the GET-only server client and refresh (T16); Jellyfin's reader (T17), checked live and from the deployed container; Navidrome's reader (T18), read live |
-| 2026-11-24 | P3 gate built (T19) and run on the deployed app: not passed, only because Navidrome hides its paths (Report Real Path off) |
+| 2026-11-24 | P3 gate built (T19) and passed on the deployed app once Navidrome reported real paths: every pair one to one over 53,274 copies |
 
 ## Milestones
 
@@ -19,6 +19,7 @@
 - 2026-11-23, PR #10 (341088e): P3 begins: one song across servers.
 - 2026-11-23, PR #14 (bf15089): traqfreq can read servers: the GET-only client and snapshot refresh (T16).
 - 2026-11-23, PR #16 (c76f665): Jellyfin read live, 53,133 of 53,133 Plex copies matched by file (T17).
+- 2026-11-24, PR #18: P3 gate passed, one song on Plex, Jellyfin and Navidrome (53,274 of 53,274 on each pair).
 
 ## Pivots and renames
 
