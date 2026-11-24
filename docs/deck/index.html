@@ -116,7 +116,7 @@ addEventListener('resize', fit); fit();
 <div class="frame"><section id="status">
 <div class="bar"></div>
 <p class="barlabel">Status</p>
-<div class="barcode"><p>19 / 28</p></div>
+<div class="barcode"><p>20 / 28</p></div>
 <h2 class="head">Where the build stands</h2>
 <table class="tbl">
 <tr class="hd"><th style="width:8%">Phase</th><th style="width:30%">What</th><th style="width:12%">Sessions</th><th style="width:10%">Done</th><th style="width:14%">Status</th><th style="width:26%">Gate</th></tr>
@@ -124,7 +124,7 @@ addEventListener('resize', fit); fit();
 <tr><td>P1</td><td>HISTORY, read-only</td><td>4</td><td>4</td><td>Done</td><td>Counts match jimbo-dj</td></tr>
 <tr><td>P2</td><td>LIBRARY, read-only</td><td>4</td><td>4</td><td>Done</td><td>Counts match jimbo-dj</td></tr>
 <tr><td>P3</td><td>SERVERS: identity, Jellyfin, Navidrome</td><td>7</td><td>7</td><td>Done</td><td>One song, three servers</td></tr>
-<tr class="now"><td>P4</td><td>TAGS, read-only</td><td>4</td><td>0</td><td>Not started</td><td>Ladder and per-track tags right</td></tr>
+<tr class="now"><td>P4</td><td>TAGS, read-only</td><td>4</td><td>1</td><td>In progress</td><td>Ladder and per-track tags right</td></tr>
 <tr><td>P5</td><td>PLAYLISTS: Junction preview</td><td>5</td><td>0</td><td>Not started</td><td>Same tracks as jimbo-dj</td></tr>
 <tr><td>P6</td><td>Cut-overs, one writer at a time</td><td>~15</td><td>0</td><td>Not started</td><td>Each switched off in jimbo-dj</td></tr>
 <tr><td>P7</td><td>DISCOVER, MIXES, FETCH, language loop</td><td>~30</td><td>0</td><td>Not started</td><td>Per module</td></tr>
@@ -255,12 +255,12 @@ addEventListener('resize', fit); fit();
 <div class="frame"><section id="p4">
 <div class="bar"></div>
 <p class="barlabel">Phase P4 · TAGS</p>
-<div class="barcode"><p>TO DO</p></div>
+<div class="barcode"><p>1 / 4</p></div>
 <div class="row"><div class="badge T"><p>P4</p></div><h2 class="head">TAGS, read-only</h2></div>
 <div class="cols2">
 <table class="tbl">
 <tr class="hd"><th style="width:14%">Session</th><th style="width:70%">Work</th><th style="width:16%">Status</th></tr>
-<tr><td>T20</td><td>The ladder: broad to specific, any depth, shared parents (Metal, Black metal, Atmospheric black metal)</td><td>To do</td></tr>
+<tr><td>T20</td><td>The ladder: broad to specific, any depth, shared parents (Metal, Black metal, Atmospheric black metal). Spec written; rungs inside jimbo-dj’s broad tags, checked against its families</td><td>Done</td></tr>
 <tr><td>T21</td><td>Album pages tagged track by track: an ambient intro on a black metal album</td><td>To do</td></tr>
 <tr><td>T22</td><td>Proposals inbox: sources suggest, your map decides (shown, not yet written)</td><td>To do</td></tr>
 <tr><td>T23</td><td>Genre pages and the genre map; movements defined</td><td>To do</td></tr>
@@ -356,13 +356,13 @@ addEventListener('resize', fit); fit();
 <h2 class="head">What happened, newest first</h2>
 <table class="tbl">
 <tr class="hd"><th style="width:16%">Date</th><th style="width:16%">Session</th><th style="width:68%">What</th></tr>
-<tr class="now"><td>Next</td><td>Next: T20</td><td>P4 TAGS, read-only: the spec, then the ladder from broad to specific</td></tr>
+<tr class="now"><td>Next</td><td>Next: T21</td><td>Albums tagged track by track: the analyzer’s styles vendored, each track’s tags by source</td></tr>
+<tr><td>2026-11-24</td><td>T20</td><td>PR #19 on branch claude/t20-tags-ladder: P4 spec; jimbo-dj’s tag rules vendored; the ladder (any depth, shared parents, never across a broad tag) and the TAGS page, checked against jimbo-dj’s families; 194 API and 170 web tests. Not yet on live data</td></tr>
 <tr><td>2026-11-24</td><td>P3 gate</td><td>Passed on the deployed app once Navidrome reported real paths (Report Real Path on, Navidrome restarted): every pair one to one over 53,274 copies, none unmatched; spot check 44 of 44 answers agree on file and length</td></tr>
 <tr><td>2026-11-24</td><td>T19, P3 gate</td><td>PR #18 on branch claude/t19-gate: the gate (/api/servers/compare, p3_gate.py, the card on SETUP). First run deployed: not passed, only because Navidrome hid all 52,985 paths; 182 API and 160 web tests</td></tr>
 <tr><td>2026-11-23</td><td>T18</td><td>PR #17 on branch claude/t18-navidrome: Navidrome’s reader, GET only over Subsonic (ping, music folders, scan status, every album and song); a read a scan tore is not stored; name and version on SERVERS. Live on Navidrome 0.64: 52,985 songs, paths hidden (Report Real Path off), 52,712 of 53,133 Plex copies matched by MusicBrainz ID and tags; Refresh Jellyfin works from the deployed container; 172 API and 155 web tests</td></tr>
 <tr><td>2026-11-23</td><td>T17</td><td>PR #16 on branch claude/t17-jellyfin: Jellyfin’s reader, GET only (System/Info, music folders, every audio item page by page, one named user’s play counts); server name, version and user on SERVERS. Live on Jellyfin 12.1: 53,133 items, all 53,133 Plex copies matched by file; fixed its auth header and reads torn by a running scan; 161 API and 155 web tests</td></tr>
-<tr><td>2026-11-23</td><td>T15, T16</td><td>PRs #13 and #14: SERVERS page on SETUP and “On servers” on the track page; the GET-only client and snapshot refresh, each logged with its counts; 152 API and 154 web tests</td></tr>
-<tr><td>2026-11-23</td><td>T13, T14</td><td>PRs #10 and #12: P3 spec (one song, three servers); track identity, the Plex side; snapshots in one item shape; matching by file, MusicBrainz ID, tags, one to one, one reason for every miss; 136 API and 139 web tests</td></tr>
+<tr><td>2026-11-23</td><td>T13–T16</td><td>PRs #10, #12, #13 and #14: P3 spec; track identity; snapshots and matching by file, MusicBrainz ID, tags, one to one, one reason for every miss; SERVERS page and “On servers”; the GET-only client and refresh; 152 API and 154 web tests</td></tr>
 <tr><td>2026-11-23</td><td>P2 gate</td><td>Passed: PRs #8 and #9 deployed; both stored LIBRARY rows, 60 of 60 fields (library.stats 23, library.charts 37), equal jimbo-dj’s</td></tr>
 <tr><td>2026-11-23</td><td>T12</td><td>PR #9 on branch claude/t12-library-gate: P2 gate script, /api/library/compare and the compare page; jimbo-dj’s library.stats and charts (files, time, place, keys, sound) vendored; gate card on LIBRARY and SETUP; fixture passes with one explained difference; 114 API and 137 web tests</td></tr>
 <tr><td>2026-11-22</td><td>T11</td><td>PR #7 on branch claude/t11-entities: album and artist lists, album, artist and track pages and their listens, counted with jimbo-dj’s own page code (vendored); no album art (it comes from Plex); merged. PR #8: LIBRARY play history from every source (Plex, Last.fm, Spotify, Apple Music) beside jimbo-dj’s Plex-only numbers</td></tr>

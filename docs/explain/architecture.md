@@ -8,7 +8,7 @@
                                                               └→ Jellyfin, Navidrome (GET only, on refresh; readers T17, T18)
 
 - `src/traqfreq/app.py`: the FastAPI app and every route; serves `web/dist`.
-- `legacy.py` (the read-only connection), `history.py`, `counted.py`, `periods.py` (HISTORY), `library.py`, `entities.py`, `library_gate.py` (LIBRARY), `identity.py`, `servers.py`, `snapshots.py`, `matching.py`, `reading.py` (the GET-only server client and refresh), `servers_gate.py` (the P3 gate) (SERVERS), `store.py` (cache, server snapshots and the refresh log), `vendor/` (jimbo-dj's code).
+- `legacy.py` (the read-only connection), `history.py`, `counted.py`, `periods.py` (HISTORY), `library.py`, `entities.py`, `library_gate.py` (LIBRARY), `identity.py`, `servers.py`, `snapshots.py`, `matching.py`, `reading.py` (the GET-only server client and refresh), `servers_gate.py` (the P3 gate) (SERVERS), `tags.py` (TAGS: the ladder), `store.py` (cache, server snapshots and the refresh log), `vendor/` (jimbo-dj's code).
 - `web/src/pages` (pages, importing only from `web/src/components/kit`), `web/src/app` (nav, routes, API calls), `web/src/copy/strings.json` (all copy).
 
 ## Data flow

@@ -9,7 +9,7 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
-from . import __version__, counted, entities, history, identity, legacy, library, library_gate, matching, periods, reading, servers, servers_gate, store
+from . import __version__, counted, entities, history, identity, legacy, library, library_gate, matching, periods, reading, servers, servers_gate, store, tags
 from .settings import CORE, MODULES, Settings
 
 
@@ -402,6 +402,42 @@ def create_app(settings: Settings | None = None, server_transport=None) -> FastA
         """A server's refresh log, newest first: when, done or failed, its counts or the server's message."""
         known_server(server)
         return reading.state(settings, server, limit)
+
+    # --- T20: TAGS, the ladder (read-only) -----------------------------------------------------------------
+
+    def read_tags(fn):
+        def run(conn):
+            try:
+                return fn(conn)
+            except tags.NoTags as e:
+                raise HTTPException(404, f"jimbo-dj's database has no tag tables ({e})")
+            except tags.NotFound as e:
+                raise HTTPException(404, str(e))
+            except ValueError as e:
+                raise HTTPException(400, str(e))
+        return read_legacy(run)
+
+    @app.get("/api/tags/ladder")
+    def tags_ladder() -> dict:
+        """Every genre tag in use on its rungs, broad to specific (jimbo-dj's tag rules, vendored), with the
+        numbers behind each and the agreement with jimbo-dj's families (run here and as it stored them). Read
+        from the stats cache (key: jimbo-dj's tag data stamp)."""
+        def run(conn):
+            value, info = store.cached(settings.data_dir, "tags.ladder", tags.cache_key(conn),
+                                       lambda: tags.overview(conn))
+            return {**value, "cache": info}
+        return read_tags(run)
+
+    @app.get("/api/tags/albums")
+    def tags_albums(tag: str, set: str = "carries", limit: int = 50, offset: int = 0) -> dict:  # noqa: A002
+        """The albums behind a tag's number: carrying it, under it (it or a tag below it), or missing it (a
+        broad tag)."""
+        return read_tags(lambda c: tags.albums(c, tag, set, limit, offset))
+
+    @app.get("/api/tags/artists")
+    def tags_artists(tag: str, limit: int = 50, offset: int = 0) -> dict:
+        """The artists whose Plex artist genres name a tag."""
+        return read_tags(lambda c: tags.artists(c, tag, limit, offset))
 
     @app.get("/api/modules")
     def modules() -> dict:

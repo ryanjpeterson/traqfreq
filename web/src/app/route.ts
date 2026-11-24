@@ -9,7 +9,7 @@ export const MODULE_PATH: Record<ModuleId, string> = {
 export type Route =
   | { page: 'map' }
   | { page: 'search' }
-  | { page: 'module'; module: ModuleId; sub?: HistorySub | LibrarySub | SetupSub; key?: number }
+  | { page: 'module'; module: ModuleId; sub?: HistorySub | LibrarySub | SetupSub | TagsSub; key?: number }
   | { page: 'notFound' };
 
 /** HISTORY's rows page: the listens behind a number (query string = the filters). */
@@ -49,6 +49,10 @@ const SETUP_SUBS: Record<string, SetupSub> = {
   '/setup/servers': 'servers', '/setup/servers/copies': 'serverCopies', '/setup/servers/matches': 'serverMatches',
 };
 
+/** T20: TAGS' rows pages: the albums and artists behind a tag's numbers, the tags behind a summary number. */
+export type TagsSub = 'albums' | 'artists' | 'list';
+const TAGS_SUBS: Record<string, TagsSub> = { '/tags/albums': 'albums', '/tags/artists': 'artists', '/tags/list': 'list' };
+
 export function parseRoute(pathname: string): Route {
   const path = pathname.replace(/[?#].*$/, '').replace(/\/+$/, '') || '/';
   if (path === '/') return { page: 'map' };
@@ -58,6 +62,7 @@ export function parseRoute(pathname: string): Route {
   if (entity) return { page: 'module', module: 'L', sub: entity[1] as LibrarySub, key: Number(entity[2]) };
   if (HISTORY_SUBS[path]) return { page: 'module', module: 'H', sub: HISTORY_SUBS[path] };
   if (SETUP_SUBS[path]) return { page: 'module', module: 'S', sub: SETUP_SUBS[path] };
+  if (TAGS_SUBS[path]) return { page: 'module', module: 'T', sub: TAGS_SUBS[path] };
   const module = MODULE_IDS.find((m) => MODULE_PATH[m] === path);
   return module ? { page: 'module', module } : { page: 'notFound' };
 }

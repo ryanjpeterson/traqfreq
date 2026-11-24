@@ -173,3 +173,8 @@ main > .kit-text.is-body { max-width: 64ch; margin-bottom: 24px; }
 /* ---------- SETUP → SERVERS (T15): bars in SETUP's ink; IDs and paths wrap ---------- */
 .srv-bar > span { background: var(--mod-s); }
 .servers .rows .sub, .lib-paths .sub { overflow-wrap: anywhere; }
+
+/* ---------- TAGS (T20): the ladder, each rung's tags indented under its parent ---------- */
+.rows li.tags-rung { align-items: flex-start; }
+.tags-line { display: grid; gap: 4px; min-width: 0; flex: 1; overflow-wrap: anywhere; }
+.tags-below { margin-top: 4px; padding-left: 16px; border-left: 2px solid var(--mod-t); }
