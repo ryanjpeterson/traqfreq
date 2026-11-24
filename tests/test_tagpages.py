@@ -268,3 +268,15 @@ def test_never_writes(legacy_db, client):
     for path in ("/api/tags/map", "/api/tags/tag/metal", "/api/tags/tracks?tag=metal", "/api/tags/compare"):
         assert client.get(path).status_code == 200
     assert legacy_db.read_bytes() == before
+
+
+def test_ladder_and_sound_kept_with_the_library(legacy_db):
+    """A tag page reads the ladder and the albums by sound once per Library (one per data stamp), not per request."""
+    conn = _conn(legacy_db)
+    lib = tags.library(conn)
+    assert tags.ladder(lib) is tags.ladder(lib) and tags._ready(conn)[1] is tags.ladder(lib)
+    idx = tagpages.sound_index(conn, lib)
+    assert tagpages.sound_index(conn, lib) is idx
+    # jimbo-dj counts sound only for tags in use; the index also holds styles nobody carries (Shoegaze here).
+    assert {k: len(v) for k, v in idx.items() if k in lib.index} == {r["key"]: r["sound"] for r in lib.tag_rows() if r["sound"]}
+    assert "shoegaze" in idx and "shoegaze" not in lib.index

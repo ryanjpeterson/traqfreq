@@ -127,7 +127,15 @@ def heads(key: str) -> set[str]:
 
 
 def ladder(lib: jd.Library) -> dict:
-    """Every tag in use on its rungs: nodes by key, roots, the tags that stand alone, and the summary."""
+    """Every tag in use on its rungs: nodes by key, roots, the tags that stand alone, and the summary. Worked out
+    once per Library (one per data stamp) and kept with it; callers only read it."""
+    hit = getattr(lib, "_traqfreq_ladder", None)
+    if hit is None:
+        hit = lib._traqfreq_ladder = _ladder(lib)
+    return hit
+
+
+def _ladder(lib: jd.Library) -> dict:
     R = lib.rules
     idx = lib.index
     live = {k: e for k, e in idx.items() if not e["junk"]}
