@@ -40,7 +40,7 @@ Spec: [t13-servers.md](t13-servers.md).
 - **T16** Reading servers: the GET-only client, snapshot refresh, plays on other servers shown beside, never added. *Done* (client, refresh and its log, the button on SERVERS; the readers are T17 and T18).
 - **T17** Jellyfin. *Done* (the reader: System/Info, folders, paged `/Items`, one user's play counts; name and version on SERVERS; live: 53,133 of 53,133 Plex copies by file, also from the deployed container).
 - **T18** Navidrome. *Done* (the reader: ping, folders, scan status, albums, `search3`; torn reads refused; name and version on SERVERS; `TRAQFREQ_NAVIDROME_ROOTS`; live: 52,985 songs, paths hidden (Report Real Path off), 52,712 of 53,133 Plex copies by MBID and tags: HANDOFF).
-- **T19** Gate "One song, three servers": `scripts/p3_gate.py`, `GET /api/servers/compare`, run on live data.
+- **T19** Gate "One song, three servers": `scripts/p3_gate.py`, `GET /api/servers/compare`, run on live data. *Done* (the three checks, the gate card on SETUP). **P3 gate not passed 2026-11-24**, only because Navidrome hides its paths (Report Real Path off): reasons add up, Plex ↔ Jellyfin one to one, no duration off (HANDOFF). Rerun with Report Real Path on.
 ## P4 TAGS read-only: T20–T23
 ## P5 PLAYLISTS Junction preview: T24–T28
 ## P6 Cut-overs (~15)

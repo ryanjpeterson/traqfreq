@@ -18,7 +18,7 @@
       { "name": "Tailscale", "kind": "self-hosted", "direction": "read", "required": true, "what": "the only way in" }
     ],
     "standards": ["jimbo-deploy", "jimbo-explain"],
-    "now": ["P3 SERVERS: T19, the gate \"One song, three servers\" (scripts/p3_gate.py, run on live data)", "Navidrome read live (T18): 52,985 songs, paths hidden (Report Real Path off), 52,712 of 53,133 Plex copies by MusicBrainz ID and tags; Jellyfin 53,133 of 53,133 by file, also from the deployed container"]
+    "now": ["P3 SERVERS: the gate \"One song, three servers\" (T19) is built and ran live 2026-11-24: not passed, only because Navidrome hides its paths; rerun with Report Real Path on", "Plex ↔ Jellyfin one to one (53,274 of 53,274 by file); Plex ↔ Navidrome 52,712 by MusicBrainz ID and tags; reasons add up on every pair"]
   },
   "files": {}
 }

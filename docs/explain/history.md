@@ -9,6 +9,7 @@
 | 2026-11-22 | P1 HISTORY: read API counted with jimbo-dj's vendored code (T5), overview (T6), counted once (T7), Years, Wrapped, Top and the gate (T8); gate passed, 862 of 862 numbers |
 | 2026-11-22 | P2 LIBRARY: numbers and rows (T9), the page (T10), albums, artists and tracks (T11), plays from every source |
 | 2026-11-23 | P2 gate built (T12) and passed on live data, 60 of 60 fields; P3 spec and track identity on the Plex side (T13); `.env.example`; jimbo-explain docs; matching on snapshots (T14); the SERVERS page and On servers (T15); the GET-only server client and refresh (T16); Jellyfin's reader (T17), checked live and from the deployed container; Navidrome's reader (T18), read live |
+| 2026-11-24 | P3 gate built (T19) and run on the deployed app: not passed, only because Navidrome hides its paths (Report Real Path off) |
 
 ## Milestones
 
@@ -27,4 +28,4 @@
 
 ## By the numbers
 
-First commit 2026-11-22 (84579ad), latest on `main` 2026-11-23 (c76f665, T17 merged). 76 commits, 31 on the main line, 16 pull requests. CHANGELOG versions 2026.11.0 and 2026.11.1; no tags. Built by Ryan with Claude Code sessions T1–T18.
+First commit 2026-11-22 (84579ad), latest on `main` 2026-11-23 (c76f665, T17 merged). 76 commits, 31 on the main line, 16 pull requests. CHANGELOG versions 2026.11.0 and 2026.11.1; no tags. Built by Ryan with Claude Code sessions T1–T19.

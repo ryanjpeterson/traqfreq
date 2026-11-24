@@ -4,7 +4,7 @@ The phases and sessions are planned in [docs/specs/README.md](../specs/README.md
 
 ## Now
 
-- **P3 SERVERS, T19: the gate "One song, three servers".** `scripts/p3_gate.py` and `GET /api/servers/compare`, run on live data. Before it: deploy T18, press Refresh Navidrome from the container, and turn on Report Real Path for traqfreq's Navidrome player (T18 read 52,985 songs, all with hidden paths). Spec: `docs/specs/t13-servers.md`.
+- **P3 SERVERS: rerun the gate "One song, three servers" with Report Real Path on.** T19 built it (`scripts/p3_gate.py`, `GET /api/servers/compare`, the card on SETUP); on 2026-11-24 it did not pass, only because Navidrome hides all 52,985 paths. Turn on Report Real Path for traqfreq's Navidrome player, Refresh Navidrome, run the gate. Spec: `docs/specs/t13-servers.md`.
 
 ## Next
 

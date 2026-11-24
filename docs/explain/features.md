@@ -2,7 +2,7 @@
 
 ## Summary
 
-Read-only views of jimbo-dj's data in the Berlin · Gelb look, each number with its rule and its rows, and a gate page per module comparing traqfreq with what jimbo-dj stored. 28 features in 4 areas.
+Read-only views of jimbo-dj's data in the Berlin · Gelb look, each number with its rule and its rows, and a gate page per module comparing traqfreq with what jimbo-dj stored. 29 features in 4 areas.
 
 ## Features
 
@@ -52,6 +52,7 @@ Read-only views of jimbo-dj's data in the Berlin · Gelb look, each number with 
 | Matches | Each Plex copy matched to one Jellyfin item and one Navidrome song (file, MusicBrainz ID, tags; one to one), Jellyfin to Navidrome, every miss with its reason; one copy's rows by `rating_key` | `GET /api/servers/matches`, `src/traqfreq/matching.py` | new |
 | Snapshot refresh | Read a set-up server whole with GET requests only (timeouts, paging, no retries, the server's own error shown, secrets never shown), store its snapshot in traqfreq's database, one at a time, each refresh logged with its counts; Jellyfin's reader (T17: System/Info, folders, paged `/Items`, one user's play counts), Navidrome's (T18: ping, folders, scan status, albums, `search3`; a read a scan tore is not stored; `TRAQFREQ_NAVIDROME_ROOTS`) | `POST /api/servers/{server}/refresh`, `GET /api/servers/{server}/refreshes`, `src/traqfreq/reading.py`, `refreshes` table | new |
 | SERVERS page | The three servers with status and snapshot age, Plex's identity counts, each pair's matches by tier and by reason (lists with bars and a summary), a song's three IDs; a refresh per server with the last refresh and its log; every count opens its rows | `/setup/servers`, `/setup/servers/copies`, `/setup/servers/matches`, `web/src/pages/Servers.tsx` | new |
+| P3 gate | One to one per server, reasons that add up, a spot check asking each server by ID (file, duration within 2 s); `scripts/p3_gate.py`; the gate card on SETUP | `GET /api/servers/compare`, `src/traqfreq/servers_gate.py`, `web/src/pages/ServersGate.tsx` | new |
 | On servers | On a track's page: its Jellyfin item and Navidrome song with the tier, and each server's own play count, labelled and never added | `/library/track/<key>` | new |
 
 ### Throughout
