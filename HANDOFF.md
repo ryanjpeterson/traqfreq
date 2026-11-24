@@ -326,9 +326,43 @@ PR #23 merged to `main` (230e9fe) and deployed. Checked from the laptop over Tai
 - **Check 3: not passed, kept strict (Ryan, 2026-11-24).** Issue counts 7 of 7, top fixes 15 of 15 and top suggestions 12 of 12 match; tags 677 of 691. The 14 that differ (Rock, Punk Rock, Post-Hardcore, Progressive Rock, Alternative Rock, Punk, Hard Rock, Classic Rock, Shoegaze, Pop, Grunge, Acoustic Rock, Power Pop, Post-Grunge) differ only in `musicbrainz`, traqfreq's count always higher (Rock 2,898 vs 2,883, Grunge 57 vs 50). jimbo-dj's stored row says it is fresh.
 - **Cause, in jimbo-dj (read with `git show 1d8a7cb`):** `statcache.build` takes the stamp from the data now, then builds the value with `tags.get(con)`, which is a `cache.Background`: when the data has changed it starts a rebuild in the background and returns the Library it already has (`min_interval` 30 s, `max_age` 3600). So `library.tags` can carry a new stamp with numbers from a Library built before the latest MusicBrainz fetches. traqfreq builds from the database as it is, with jimbo-dj's own rules, so its counts are the current ones. Not a traqfreq bug, and not loosened: check 3 stays strict and should pass once jimbo-dj rebuilds the row after its Library has caught up (the next stamp change, e.g. a sync or a MusicBrainz fetch). Run `/api/tags/proposals` again before the T23 gate; if it still differs, look at the stored row's `built_at` against MusicBrainz's newest `fetched_at`.
 
-## Next: T23
-Genre pages, the genre map, movements and the P4 gate (spec T23): `scripts/p4_gate.py --url` running checks 1 (`/api/tags/ladder` `check`), 2 (`/api/tags/tracks/check`) and 3 (`/api/tags/proposals` `check`), `GET /api/tags/compare`, the gate card on SETUP and TAGS. Before it: deploy T22 and read check 3 on live data.
-**Planned for P5/P6 (Ryan, 2026-11-24):** every playlist and mix has three separate switches, Plex, Jellyfin and Navidrome (in docs/specs/README.md under P5 and P6). Navidrome also has NaviBeat connected to it.
+## T23 done (2026-11-24, `claude/t23-genre-gate`, from `main` 3fec278; laptop over SMB like T3–T22; PR #25)
+- **Vendored unchanged at 1d8a7cb:** `history.SOUND_COLS` and `sound_of` into `vendor/jimbodj_history.py`. `test_vendored_unchanged` (test_tags_tracks.py) checks it against jimbo-dj's git.
+- `src/traqfreq/tagpages.py`:
+  - `tag`: every ladder up to the broad tag (all paths through the parents), children, the broad-tag rule (override pattern, or the `genres.family` family and match), each spelling with the rule ids `Rules.parse` fired, the tag-row issues, and numbers. Albums, under, missing and artists are as before. Tracks are the live tracks whose `_genre_tags` carry the tag. Plays are HISTORY's counted plays of those tracks, by `COALESCE(listens.rating_key, listen_matches.rating_key)`: jimbo-dj's Top genres rule, all time; the test recomputes `_top`'s way for every tag. Sound is the albums whose analyzer styles name the tag at `SOUND_SHARE` (equal to jimbo-dj's `sound` for every tag). `profile` is `sound_of` over the tracks weighted by plays (None under 20 analysed plays).
+  - `tag_tracks` (sort plays or album), `genre_map` (lines = roots; stations recursive, a shared tag on each branch with `also`), and `movements`.
+  - Plays per track are kept in memory per `history.cache_key`.
+- **Movements:** `src/traqfreq/movements.json` (package data; `version` in the map's cache key) has Blackgaze, post-punk and after, industrial, emo and post-hardcore, and doom and drone. Each tag goes through jimbo-dj's rules (junk out, one key once). Every movement crosses at least two broad tags (tested), and no ladder or count changes (tested).
+- `src/traqfreq/tags_gate.py` (pure, no traqfreq imports) turns the three answers into the gate. `scripts/p4_gate.py --url` (GET only, `--json`; 0/1/2) GETs `/api/tags/ladder`, `/api/tags/tracks/check` and `/api/tags/proposals` and imports `tags_gate` from `src/`, so it runs against a traqfreq from before T23.
+- API:
+  - `GET /api/tags/tag/{key:path}` and `GET /api/tags/tracks?tag=&sort=&limit=&offset=` (404 unknown, 400 bad sort).
+  - `GET /api/tags/map` (cached `tags.map`, key `g1|` + movements stamp + ladder key).
+  - `GET /api/tags/compare` (built from the three cached answers).
+  - `set=sound` on `/api/tags/albums`.
+- **Rule questions:** now only for tags an album or an artist carries. Live, this drops 10 of the 15 (track-only tags like "Funk Add To Lidarr Batch 10", "Classical Box Set") and keeps Drill and Bass, Ambient Drone, Chamber Music, Glitch Hop and Indie Dance. `PROPOSALS_VERSION` 2.
+- Pages (`web/src/pages/TagsGenre.tsx`):
+  - `/tags/tag/<key>`: where it sits, its numbers, its sound, its spellings and rules, its movements; a zero is shown without a link.
+  - `/tags/map`: summary, the drawing (aria-hidden, a visually hidden summary, stops with an interchange mark for movement tags), line cards with stations on a CSS line, movements, tags with no line.
+  - `/tags/tracks`: StationRows, each opening LIBRARY's track, plus links to the first tracks' listens.
+  - The gate card "Ladders and per-track tags right" on `/tags` and on SETUP when T is on.
+  - Ladder names, `/tags/list` rows and the albums rows page link to the tag's page; `/tags` has a card to the map.
+  - Copy `tags.map.*`, `tags.page.*`, `tags.mov.*`, `tags.tracksPage.*`, `tags.profile.*`, `p4gate.*`.
+- Tests: pytest 233 (`tests/test_tagpages.py`, 16), Vitest 209 (`web/src/pages/tagsGenre.test.tsx`, 14, answers generated from the fixture's API in `tagsGenre.answers.json`), the web build, brand checks and 13 self-tests. No earlier count changed (no fixture rows changed).
+- Checked in the browser on the fixture (scratch data dir): the map in desktop dark, a tag page in desktop dark and 375 px light, the map at 375 px light (no side-scroll), the gate card on `/tags` and SETUP. No console errors.
+
+## P4 gate: not passed yet (2026-11-24)
+Run with `scripts/p4_gate.py --url http://macmini:4492` on the deployed app. That is `main` at 3fec278 (T22), not this branch: deploying is Ryan's. The script reads the three checks' own endpoints, so it runs on what's live. Result: **NOT PASSED** (exit 1).
+1. **Ladders: passed.** 15 of 15 broad tags match jimbo-dj's rules run here. 15 of 15 match its stored `library.tags`, which is fresh. 403 of 403 ladders end at the broad tag.
+2. **Per-track tags: passed.** Tags: 53,440 of 53,440 live tracks (52,772 with a tag). Styles: 53,440 of 53,440 (53,156 analysed, 42,433 keeping a style).
+3. **The audit: not passed** (kept strict, Ryan's call). Issue kinds 7 of 7, fixes 15 of 15 and suggestions 12 of 12 match, but tags only 686 of 691, and the stored row says it is fresh.
+   - 13:20 (before jimbo-dj's sync): the same 14 tags as at T22 differed in MusicBrainz only, with traqfreq higher.
+   - 13:40 and 13:45, after two syncs (53,481 → 53,440 live tracks; `last_sync` 1795544511, row rebuilt at 1795544538): 5 tags differ, and now jimbo-dj's stored numbers are higher. Alternative Rock sound 931 here vs 934 stored; Punk sound 810 vs 813; **Pop Punk tracks 1,774 vs 1,815** (41 more, exactly the 41 tracks the sync removed) and sound 177 vs 180; Melodic Hardcore sound 236 vs 237; Grunge sound 39 vs 41.
+   - Same cause as at T22: jimbo-dj's `statcache` stamps the row with the data's new stamp, then fills it from `tags.get`, a background cache that still holds the Library built before the change. Here that Library still had the removed tracks.
+   - To pass: run the gate again once jimbo-dj's stored row is built from a caught-up Library. Its background cache rebuilds within `min_interval`/`max_age`, but the row is only rewritten at the next stamp change, such as a sync or a MusicBrainz fetch with no further change. Or fix `statcache` in jimbo-dj, which this work never changes.
+- After PR #25 is deployed, also check `/tags/map` and a tag page on live data, and confirm `GET /api/tags/compare` gives the same as the script.
+
+## Next: T24 (P5 PLAYLISTS)
+P4 is built, and its gate waits only on check 3 (above). P5 is the Junction preview (T24–T28; spec to write in T24). **Planned for P5/P6 (Ryan, 2026-11-24):** every playlist and mix has three separate switches, Plex, Jellyfin and Navidrome (in docs/specs/README.md under P5 and P6). Navidrome also has NaviBeat connected to it.
 Also worth a look on Navidrome's side: its scan error "stat /music: bad file descriptor" (from T18; not seen since the restart).
 
 ## Open questions

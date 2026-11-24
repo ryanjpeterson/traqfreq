@@ -22,6 +22,7 @@ import { Setup } from './pages/Setup';
 import { TagAlbumRows, TagArtistRows, TagList, Tags } from './pages/Tags';
 import { TagAlbum, TagTrack } from './pages/TagsTracks';
 import { ProposalAlbums, Proposals } from './pages/TagsProposals';
+import { GenreMap, TagPage, TagTrackRows } from './pages/TagsGenre';
 import { ServerCopies, ServerMatches, SetupServers } from './pages/Servers';
 import './app/app.css';
 
@@ -68,7 +69,7 @@ export function Shell() {
         {r.page === 'module' && r.module === 'S' && <SetupPage sub={r.sub} modules={modules} query={path.replace(/^[^?]*/, '')} navigate={navigate} />}
         {r.page === 'module' && r.module === 'H' && !waiting && <HistoryPage sub={r.sub} query={path.replace(/^[^?]*/, '')} navigate={navigate} />}
         {r.page === 'module' && r.module === 'L' && <LibraryPage sub={r.sub} entityKey={r.key} query={path.replace(/^[^?]*/, '')} navigate={navigate} />}
-        {r.page === 'module' && r.module === 'T' && !waiting && <TagsPage sub={r.sub} entityKey={r.key} query={path.replace(/^[^?]*/, '')} navigate={navigate} />}
+        {r.page === 'module' && r.module === 'T' && !waiting && <TagsPage sub={r.sub} entityKey={r.key} tag={r.tag} query={path.replace(/^[^?]*/, '')} navigate={navigate} />}
         {r.page === 'module' && !['S', 'H', 'L', 'T'].includes(r.module) && !waiting && <ModulePage module={r.module as 'D' | 'M' | 'F'} navigate={navigate} />}
         {r.page === 'notFound' && <NotFound navigate={navigate} />}
       </main>
@@ -87,7 +88,10 @@ function SetupPage({ sub, modules, query, navigate }: { sub?: string; modules: M
 
 /** TAGS' pages (T20): the ladder, the albums and artists behind a tag's numbers, the tags behind a summary number;
  *  T21: an album tagged track by track, a track's tags by source; T22: the proposals inbox and its albums. */
-function TagsPage({ sub, entityKey, query, navigate }: { sub?: string; entityKey?: number; query: string; navigate: (href: string) => void }) {
+function TagsPage({ sub, entityKey, tag, query, navigate }: { sub?: string; entityKey?: number; tag?: string; query: string; navigate: (href: string) => void }) {
+  if (sub === 'tag' && tag != null) return <TagPage tagKey={tag} navigate={navigate} />;
+  if (sub === 'map') return <GenreMap navigate={navigate} />;
+  if (sub === 'tracks') return <TagTrackRows query={query} navigate={navigate} />;
   if (sub === 'album' && entityKey != null) return <TagAlbum entityKey={entityKey} query={query} navigate={navigate} />;
   if (sub === 'track' && entityKey != null) return <TagTrack entityKey={entityKey} navigate={navigate} />;
   if (sub === 'albums') return <TagAlbumRows query={query} navigate={navigate} />;

@@ -4,11 +4,11 @@ The phases and sessions are planned in [docs/specs/README.md](../specs/README.md
 
 ## Now
 
-- **P4 TAGS read-only, T20–T23** ([spec](../specs/t20-tags.md)). T20 done: the ladder on jimbo-dj's vendored tag rules, checked against its families (live: 15 of 15 broad tags, 403 of 403 ladders). T21 done: albums tagged track by track, each track's tags by source, the analyzer's styles vendored, gate check 2. T22 done: the proposals inbox (jimbo-dj's audit before and after Fix in Plex's preview, traqfreq's ladder proposals and rule questions; shown, not written) and gate check 3. Next: T23 genre pages, the genre map and the gate.
+- **P4 TAGS read-only, T20–T23** ([spec](../specs/t20-tags.md)). T20 done: the ladder on jimbo-dj's vendored tag rules, checked against its families (live: 15 of 15 broad tags, 403 of 403 ladders). T21 done: albums tagged track by track, each track's tags by source, the analyzer's styles vendored, gate check 2. T22 done: the proposals inbox (jimbo-dj's audit before and after Fix in Plex's preview, traqfreq's ladder proposals and rule questions; shown, not written) and gate check 3. T23 done: a page per tag, the genre map, movements and the gate (`scripts/p4_gate.py`). On live data checks 1 and 2 pass; check 3 does not yet pass, because jimbo-dj's stored audit lags its own data. It is kept strict, so P4 closes when it passes.
 
 ## Next
 
-1. **P4 TAGS** read-only (4 sessions), **P5 PLAYLISTS** Junction preview (5 sessions). After P5, traqfreq shows everything jimbo-dj shows, read-only.
+1. **P5 PLAYLISTS** Junction preview (5 sessions). After P5, traqfreq shows everything jimbo-dj shows, read-only.
 
 ## Later
 

@@ -2,7 +2,7 @@
 
 ## Snapshot
 
-Healthy and moving fast: P0–P3 done and gated on live data in three days. Used daily by one listener beside jimbo-dj. Upkeep is low (no jobs, cache only). Matching works on invented snapshots (T14), SETUP shows it (T15), the GET-only client and refresh are in place (T16), Jellyfin is read live (T17: 53,133 of 53,133 Plex copies matched by file, also from the deployed container) and so is Navidrome (T18: 52,712 of 53,133 by MusicBrainz ID and tags, since its paths are hidden); the P3 gate (T19) passed on live data on 2026-11-24 once Navidrome reported real paths: every pair one to one over 53,274 copies, 0 unmatched. The most useful next thing is P4 TAGS (T20).
+Healthy and moving fast: P0–P3 done and gated on live data in three days. Used daily by one listener beside jimbo-dj. Upkeep is low (no jobs, cache only). Matching works on invented snapshots (T14), SETUP shows it (T15), the GET-only client and refresh are in place (T16), Jellyfin is read live (T17: 53,133 of 53,133 Plex copies matched by file, also from the deployed container) and so is Navidrome (T18: 52,712 of 53,133 by MusicBrainz ID and tags, since its paths are hidden); the P3 gate (T19) passed on live data on 2026-11-24 once Navidrome reported real paths: every pair one to one over 53,274 copies, 0 unmatched. P4 TAGS (T20–T23) is built. Checks 1 and 2 of its gate pass on live data. Check 3 does not pass, because jimbo-dj's stored `library.tags` is built from a background Library older than its stamp. That is jimbo-dj's side, and the check stays strict. The most useful next thing is P5 PLAYLISTS (T24).
 
 ## Risks
 
@@ -28,6 +28,8 @@ Healthy and moving fast: P0–P3 done and gated on live data in three days. Used
 - After each session: update HANDOFF, CHANGELOG and the progress deck "traqfreq: build phases", then copy the deck into `docs/deck` and rebuild its page (`node scripts/build-deck.mjs`).
 
 ## Open questions
+
+- P4 check 3: when will jimbo-dj's stored `library.tags` catch up with its own data? Live on 2026-11-24, 5 to 14 tags differed in MusicBrainz, track or sound counts, every time the row's stamp was fresh.
 
 - Navidrome: will Report Real Path be turned on for the `traqfreq` player? Without it no Navidrome song matches by file (52,985 hidden paths on 2026-11-23). Its last scan also reports 'stat /music: bad file descriptor'.
 - Audience and status are inferred (self, active); confirm if anything differs.

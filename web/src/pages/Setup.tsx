@@ -8,10 +8,12 @@ import { CompareCard } from './HistoryCompare';
 import { LibraryCompareCard } from './LibraryCompare';
 import { ServersCard } from './Servers';
 import { ServersGateCard } from './ServersGate';
+import { TagsGateCard } from './TagsGenre';
 
 /** SETUP, read-only: what traqfreq can read from jimbo-dj's database, and which modules are on. */
 export function Setup({ modules, navigate }: { modules: ModuleSwitch[]; navigate: (href: string) => void }) {
   const historyOn = modules.find((m) => m.id === 'H')?.on ?? false;
+  const tagsOn = modules.find((m) => m.id === 'T')?.on ?? false;
   const summary = useGet<Summary>('/api/legacy/summary');
   const activity = useGet<Activity>('/api/legacy/activity');
   return (
@@ -56,6 +58,7 @@ export function Setup({ modules, navigate }: { modules: ModuleSwitch[]; navigate
           <SetupLibraryCompare navigate={navigate} />
           <ServersCard navigate={navigate} />
           <ServersGateCard navigate={navigate} />
+          {tagsOn && <TagsGateCard navigate={navigate} />}
           {historyOn && <SetupCompare navigate={navigate} />}
 
           <Card label={t('setup.scan')}>

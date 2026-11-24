@@ -5,8 +5,9 @@ import { useGet } from '../app/api';
 import { albumHref, artistHref } from '../app/entities';
 import { count, fmt } from '../app/history';
 import { TracksCheckCard } from './TagsTracks';
+import { TagsGateCard } from './TagsGenre';
 import {
-  LADDER_API, TAGS_PATH, TAGS_PROPOSALS, TAG_SETS, TAG_SHOWS, albumsApi, albumsHref, artistsApi, artistsHref, listHref, params, shown,
+  LADDER_API, TAGS_MAP, TAGS_PATH, TAGS_PROPOSALS, TAG_SETS, tagHref, TAG_SHOWS, albumsApi, albumsHref, artistsApi, artistsHref, listHref, params, shown,
   type CheckRow, type Ladder, type TagAlbums, type TagArtists, type TagNode, type TagSet, type TagShow,
 } from '../app/tags';
 
@@ -72,7 +73,7 @@ function Rung({ l, k, from, navigate }: { l: Ladder; k: string; from?: string } 
   return (
     <li className="tags-rung">
       <span className="tags-line">
-        <strong>{n.name}</strong>
+        <strong><Num href={tagHref(n.key)} label={n.name} navigate={navigate} /></strong>
         <span className="sub">{tagWhy(l, n)}{also.length > 0 && ` · ${tf('tags.why.also', { p: names(l, also) })}`}</span>
         <Numbers n={n} navigate={navigate} />
         {n.children.length > 0 && (
@@ -195,6 +196,13 @@ function LadderBody({ l, navigate }: { l: Ladder } & Nav) {
         </ul>
         <Text variant="note">{tf('tags.sum.note', { albums: count(s.albums, 'album'), artists: count(s.artists, 'artist'), junk: count(s.junk, 'tag') })}</Text>
       </Card>
+      <TagsGateCard navigate={navigate} />
+      <Card label={t('tags.map.card.label')}>
+        <div className="stack">
+          <Text>{t('tags.map.card.body')}</Text>
+          <div><Num href={TAGS_MAP} label={t('tags.map.open')} navigate={navigate} /></div>
+        </div>
+      </Card>
       <LadderCheckCard l={l} navigate={navigate} />
       <TracksCheckCard navigate={navigate} />
       <Card label={t('tags.prop.card.label')}>
@@ -247,7 +255,7 @@ export function TagList({ query, navigate }: { query: string } & Nav) {
                 {rows.map((n, i) => (
                   <StationRow key={n.key} position={i + 1} module="T" title={n.name}
                     artist={[n.broad ?? t('tags.noBroad'), count(n.under, 'album')].join(' · ')}
-                    why={tagWhy(load.data, n)} href={albumsHref(n.key, n.below > 0 ? 'under' : 'carries')} onNavigate={navigate} />
+                    why={tagWhy(load.data, n)} href={tagHref(n.key)} onNavigate={navigate} />
                 ))}
               </ol>
             </>
@@ -288,6 +296,7 @@ export function TagAlbumRows({ query, navigate }: { query: string } & Nav) {
           return (
             <>
               <Text variant="heading">{tf(`tags.albums.${set}` as StringKey, { tag: d.tag.name })}</Text>
+              <div><Num href={tagHref(d.tag.key)} label={t('tags.page.open')} of={d.tag.name} navigate={navigate} /></div>
               <nav className="hist-choices" aria-label={t('tags.albums.sets')}>
                 {TAG_SETS.filter((s) => s !== 'missing' || d.tag.root).map((s) => (
                   <NavItem key={s} label={t(`tags.set.${s}` as StringKey)} href={albumsHref(d.tag.key, s)} current={s === set} onNavigate={navigate} />

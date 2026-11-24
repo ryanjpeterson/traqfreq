@@ -1,7 +1,7 @@
 {
   "version": "0.1.0",
   "docs": "docs/explain",
-  "synced": { "commit": "e5a0dea", "date": "2026-11-24" },
+  "synced": { "commit": "3e22f74", "date": "2026-11-24" },
   "facts": {
     "name": "traqfreq",
     "tagline": "jimbo-dj's successor, built beside it: listening history, library, servers and tags, every number showing its rows",
@@ -18,7 +18,7 @@
       { "name": "Tailscale", "kind": "self-hosted", "direction": "read", "required": true, "what": "the only way in" }
     ],
     "standards": ["jimbo-deploy", "jimbo-explain"],
-    "now": ["P4 TAGS read-only (T20–T23): T20 the ladder, T21 albums tagged track by track and T22 the proposals inbox done, T23 genre pages, the map and the gate next", "P3 SERVERS gate passed 2026-11-24: Plex, Jellyfin and Navidrome one to one over 53,274 copies, 0 unmatched, spot check 44 of 44"]
+    "now": ["P4 TAGS read-only (T20–T23) built: the ladder, albums tagged track by track, the proposals inbox, a page per tag, the genre map and movements. The gate (scripts/p4_gate.py) passes checks 1 and 2 on live data. Check 3 waits on jimbo-dj's stored audit, which lags its own data, and is kept strict", "Next: P5 PLAYLISTS, the Junction preview (T24–T28)"]
   },
   "files": {}
 }
