@@ -154,6 +154,19 @@ def test_track_check_sees_a_difference(legacy_db, tmp_path, monkeypatch):
     assert d["tags"]["items"][0]["rating_key"] == 102 and d["tags"]["items"][0]["jimbodj"] == ["black metal"]
 
 
+def test_style_split_in_two_counts_once(legacy_db, tmp_path):
+    """Live, 2026-11-24: a Discogs style with a slash ("Hip Hop---Cut-up/DJ") is two tags by the rules, but one style;
+    the check listed it twice and 49 tracks differed. Here Harbour Lights keeps "Rock---Doom Metal/Sludge" (Metal)."""
+    styles = {"Rock---Doom Metal": 0.55, "Rock---Doom Metal/Sludge": 0.4}
+    db = _edit(legacy_db, tmp_path, ("UPDATE features SET genres = ? WHERE rating_key = 103", (json.dumps(styles),)))
+    c = _conn(db)
+    t = tags.track(c, 103)
+    assert [x["discogs"] for x in t["styles"]].count("Rock---Doom Metal/Sludge") == 2  # two tags on the page
+    assert t["check"]["styles"] and t["check"]["jimbodj_styles"] == ["Rock---Doom Metal", "Rock---Doom Metal/Sludge"]
+    d = tags.track_check(c)
+    assert d["passed"] and d["styles"]["differ"] == 0
+
+
 def test_no_file_tags_table(legacy_db, tmp_path):
     db = _edit(legacy_db, tmp_path, ("DROP TABLE file_tags", ()))
     d = tags.track(_conn(db), 101)

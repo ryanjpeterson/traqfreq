@@ -509,7 +509,8 @@ def _own_tags(src: dict[str, dict]) -> list[str]:
 
 
 def _kept(src: dict[str, dict]) -> list[str]:
-    return [x["discogs"] for x in src["sound"]["tags"] if x.get("kept")]
+    """The Discogs styles kept, each once: the rules split a style like "Cut-up/DJ" into two tags, one style still."""
+    return list(dict.fromkeys(x["discogs"] for x in src["sound"]["tags"] if x.get("kept")))
 
 
 def _track(t: dict, ctx: _Context, lad: dict, lib: jd.Library, theirs: dict[int, list[str]]) -> dict:
