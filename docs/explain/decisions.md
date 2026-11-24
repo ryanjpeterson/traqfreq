@@ -2,6 +2,20 @@
 
 ## Log
 
+### 2026-11-24 — Movements live in a data file and change nothing
+
+- **Decision:** a movement is a named set of tags across broad tags, kept in `src/traqfreq/movements.json` in traqfreq's repo (five to start). Each tag runs through jimbo-dj's rules. Movements are shown on the genre map and on each tag's page, and they change no ladder and no count: every tag keeps its own broad tag and its own numbers.
+- **Why:** jimbo-dj's hierarchy is one broad tag per tag, and the P4 gate is agreement with it. A scene that crosses broad tags (Blackgaze: black metal and shoegaze) can only sit beside the ladder, not in it.
+- **Alternatives:** movements as extra parents on the ladder (this would break check 1); movements in traqfreq's database, edited from a page (a write path in a read-only phase).
+- **Consequences:** a change to the file needs a commit and a version bump. A movement's tags not in use are shown as such.
+
+### 2026-11-24 — The P4 gate script reads the three checks' own endpoints
+
+- **Decision:** `scripts/p4_gate.py` GETs `/api/tags/ladder`, `/api/tags/tracks/check` and `/api/tags/proposals` and judges them with `tags_gate.py`, which imports nothing else of traqfreq. `GET /api/tags/compare` runs the same code on the same answers for the gate card.
+- **Why:** each check already has an endpoint and a page. Reading those endpoints means the gate runs against a traqfreq from before T23, and the gate can't disagree with the pages.
+- **Alternatives:** one compare endpoint only, as in P3 (it can't run before the deploy).
+- **Consequences:** check 3 stays strict (Ryan, 2026-11-24): a fresh stored row that differs fails, even when jimbo-dj's own background cache is the cause.
+
 ### 2026-11-24 — The proposals inbox shows jimbo-dj's proposals as jimbo-dj makes them, and labels traqfreq's own
 
 - **Decision:** the inbox lists jimbo-dj's audit (issues with their fixes, suggestions, `proposed`) and Fix in Plex's preview through jimbo-dj's own code, vendored unchanged (`tagwrite.proposal`, `plan`, `Library.fixes`, `suggestions`), and adds traqfreq's own proposals beside them, labelled: a tag's missing ladder parents (below the broad tag, which is jimbo-dj's fix), and rule questions (a broad tag that rests on a word before the tag's last one). Nothing is applied, kept or sent; the inbox links to Fix in Plex in jimbo-dj.

@@ -45,8 +45,8 @@ Spec: [t13-servers.md](t13-servers.md).
 Spec: [t20-tags.md](t20-tags.md).
 - **T20** The ladder: broad to specific, any depth, shared parents, on jimbo-dj's vendored tag rules; the ladder's agreement with jimbo-dj's families; the TAGS page. *Done.*
 - **T21** Albums tagged track by track (per-track tags by source, the analyzer's styles vendored). *Done* (the album and track pages on TAGS, linked from LIBRARY; gate check 2 in `GET /api/tags/tracks/check`).
-- **T22** Proposals inbox: jimbo-dj's audit and suggestions, shown, not written.
-- **T23** Genre pages, the genre map, movements; gate script `scripts/p4_gate.py`, run on live data.
+- **T22** Proposals inbox: jimbo-dj's audit and suggestions, shown, not written. *Done.*
+- **T23** Genre pages, the genre map, movements; gate script `scripts/p4_gate.py`, run on live data. *Done* (a page per tag, the map, `movements.json`, `GET /api/tags/compare`, the gate card on TAGS and SETUP). **P4 gate not passed yet** (2026-11-24): checks 1 and 2 pass, and check 3 waits on jimbo-dj's stored `library.tags`, which lags its own data. Kept strict (HANDOFF).
 ## P5 PLAYLISTS Junction preview: T24–T28
 **Ryan's requirement (2026-11-24), for every playlist and mix:** three separate switches, *Plex*, *Jellyfin* and *Navidrome*, each deciding whether that playlist is on that server; any mix of them, none implied by another. Navidrome also has NaviBeat connected to it (to look at when the Navidrome push is built: what it reads from Navidrome's playlists). P5 shows the switches read-only (where each playlist would go); P6 makes them push.
 ## P6 Cut-overs (~15)

@@ -20,6 +20,7 @@
 - 2026-11-23, PR #14 (bf15089): traqfreq can read servers: the GET-only client and snapshot refresh (T16).
 - 2026-11-23, PR #16 (c76f665): Jellyfin read live, 53,133 of 53,133 Plex copies matched by file (T17).
 - 2026-11-24, PR #18: P3 gate passed, one song on Plex, Jellyfin and Navidrome (53,274 of 53,274 on each pair).
+- 2026-11-24, PR #25: P4 TAGS built (T20–T23: the ladder, tracks by source, the proposals inbox, tag pages, the genre map and movements). Its gate: checks 1 and 2 pass live, and check 3 waits on jimbo-dj's stored audit.
 
 ## Pivots and renames
 
