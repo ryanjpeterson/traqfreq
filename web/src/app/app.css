@@ -207,3 +207,18 @@ main > .kit-text.is-body { max-width: 64ch; margin-bottom: 24px; }
   background: var(--line); outline: var(--line-outline);
 }
 .gm-ladder .kit-button { padding: 0; }
+
+/* T24: PLAYLISTS (P5). The three switches wrap under the name on narrow screens; a line's conditions nest by indent. */
+.pl-list li { align-items: flex-start; }
+.pl-name { min-width: 0; overflow-wrap: anywhere; }
+.pl-switches { display: flex; flex-wrap: wrap; gap: 4px 12px; justify-content: flex-end; }
+.pl-switch { white-space: nowrap; font-size: 14px; }
+.pl-tree { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.pl-tree .pl-tree .pl-tree { padding-left: 16px; border-left: 2px solid var(--rule); }
+.pl-row { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; min-width: 0; }
+.pl-row .kit-chip { max-width: 100%; overflow-wrap: anywhere; }
+.pl-group { display: flex; flex-direction: column; gap: 6px; }
+.pl-tracks { display: flex; flex-direction: column; }
+@media (max-width: 599px) {
+  .pl-switches { justify-content: flex-start; }
+}
