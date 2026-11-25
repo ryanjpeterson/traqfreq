@@ -10,7 +10,7 @@ from datetime import datetime
 from urllib.parse import urlencode
 from zoneinfo import ZoneInfo
 
-from . import __version__, counted, entities, history, identity, legacy, library, library_gate, matching, periods, playlists, proposals, reading, servers, servers_gate, store, tagpages, tags, tags_gate
+from . import __version__, counted, entities, history, identity, junction, legacy, library, library_gate, matching, periods, playlists, proposals, reading, servers, servers_gate, store, tagpages, tags, tags_gate
 from .settings import CORE, MODULES, Settings
 
 
@@ -551,8 +551,9 @@ def create_app(settings: Settings | None = None, server_transport=None) -> FastA
     @app.get("/api/playlists")
     def playlists_list() -> dict:
         """Every playlist jimbo-dj saved (saved_playlists), by kind, each with its three switches (Plex is
-        jimbo-dj's in_plex; Jellyfin and Navidrome are off until P6). Read-only: nothing is pushed anywhere."""
-        return read_playlists(playlists.listing)
+        jimbo-dj's in_plex; Jellyfin and Navidrome are off until P6), each with how many of the stored tracks have a
+        copy on that server (P3's matches, T25). Read-only: nothing is pushed anywhere."""
+        return read_playlists(lambda c: playlists.listing(c, settings.data_dir, settings.plex_roots))
 
     @app.get("/api/playlists/lines")
     def playlists_lines(request: Request) -> dict:
@@ -570,12 +571,46 @@ def create_app(settings: Settings | None = None, server_transport=None) -> FastA
     def playlists_one(ref: str, limit: int = 50, offset: int = 0) -> dict:
         """One saved playlist (slug or id): its switches, the tracks jimbo-dj stored (play order) and, when it has
         a tree, its lines with their counts."""
-        return read_playlists(lambda c: playlists.playlist(c, ref, limit, offset, settings.tz))
+        return read_playlists(lambda c: playlists.playlist(c, ref, limit, offset, settings.tz, settings.data_dir,
+                                                           settings.plex_roots))
+
+    @app.get("/api/playlists/{ref}/copies")
+    def playlists_one_copies(ref: str, server: str, missing: bool | None = None, limit: int = 50,
+                             offset: int = 0) -> dict:
+        """The stored tracks behind a switch's copies (T25): each with whether that server has a copy and, if not,
+        why (removed, no snapshot, or P3's reason). ``missing=true``: only those without one."""
+        return read_playlists(lambda c: playlists.copy_rows(c, ref, server, missing, limit, offset, settings.data_dir,
+                                                            settings.plex_roots))
 
     @app.get("/api/playlists/{ref}/rows")
-    def playlists_one_rows(ref: str, line: str, path: str = "", limit: int = 50, offset: int = 0) -> dict:
-        """The tracks behind one of a saved playlist's counts: a line, or one condition in it (``path``)."""
-        return read_playlists(lambda c: playlists.playlist_rows(c, ref, line, path, limit, offset, settings.tz))
+    def playlists_one_rows(ref: str, line: str = "", path: str = "", which: str = "count", limit: int = 50,
+                           offset: int = 0) -> dict:
+        """The tracks behind one of a saved playlist's numbers: a line's matches or one condition's (``path``), or
+        (``which``, T25) what the line got, its pool (available), what Never in mixes left out, or every pick."""
+        def run(c):
+            if which == "count":
+                return playlists.playlist_rows(c, ref, line, path, limit, offset, settings.tz)
+            tree = playlists.tree_of(playlists._get(c, ref))
+            if not tree:
+                raise playlists.NotFound("this playlist has no lines")
+            return junction.rows(c, tree, line, which, path, limit, offset, settings.tz)
+        return read_playlists(run)
+
+    # --- T25: the Junction, any tree in jimbo-dj's URL form ------------------------------------------------
+
+    @app.get("/api/junction")
+    def junction_preview(request: Request) -> dict:
+        """What a tree (``b=…&n=…&per=…&shuffle=…``) picks now, with jimbo-dj's rules.build: per line its count,
+        share, got and available, the union's total, and every picked track with the line that took it (pick
+        order until T27's flow). Nothing is saved or pushed."""
+        return read_playlists(lambda c: junction.build_from_query(c, tree_query(request), settings.tz))
+
+    @app.get("/api/junction/rows")
+    def junction_rows(request: Request, line: str = "", which: str = "count", path: str = "", limit: int = 50,
+                      offset: int = 0) -> dict:
+        """The tracks behind one of the Junction's numbers (``which``: count, got, available, banned, picked)."""
+        return read_playlists(lambda c: junction.rows(c, playlists.rules.from_query(tree_query(request)), line, which,
+                                                      path, limit, offset, settings.tz))
 
     @app.get("/api/modules")
     def modules() -> dict:

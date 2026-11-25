@@ -370,7 +370,111 @@ def branch_sets(con: sqlite3.Connection, tree: dict, index=None) -> list[set[int
     return [evaluate(b["match"], lambda f, v: leaf_keys(con, f, v, index), lambda: lib) & lib for b in tree["branches"]]
 
 
-# --- traqfreq: not copied yet -----------------------------------------------------------------------------
-# Picking (pick, rank, _jitter, build) and facet_counts: T25. Every line above is jimbo-dj's, unchanged, except the
-# import comment.
-VENDORED_FROM = "jimbo-dj 1d8a7cb src/jimbodj/rules.py (Shape, Words, URL form, Matching)"
+# --- Picking ----------------------------------------------------------------------------------------
+
+def pick(pools: list[list[int]], shares: list[int], n: int, per_artist: int, meta: dict[int, dict]) -> tuple[list[tuple[int, int]], list[int]]:
+    """Branches take turns toward their shares, each from its pool (best first). A track two branches share
+    goes to the first that takes it; a song (artist and title) goes in once; at most per_artist each. A branch
+    that runs short leaves the rest to the others, the ones furthest under their share first.
+    Returns [(branch, key)] in pick order and how many each branch got."""
+    from .similar import _norm_title
+    got, cursor = [0] * len(pools), [0] * len(pools)
+    picked: list[tuple[int, int]] = []
+    used, titles, per = set(), set(), Counter()
+
+    def take(i: int) -> bool:
+        pool = pools[i]
+        while cursor[i] < len(pool):
+            k = pool[cursor[i]]
+            cursor[i] += 1
+            m = meta[k]
+            t = ((m.get("artist") or "").lower(), _norm_title(m.get("title")))
+            if k in used or t in titles or per[m.get("artist_key")] >= per_artist:
+                continue
+            used.add(k)
+            titles.add(t)
+            per[m.get("artist_key")] += 1
+            picked.append((i, k))
+            got[i] += 1
+            return True
+        return False
+
+    active = True
+    while active:
+        active = False
+        for i in range(len(pools)):
+            if got[i] < shares[i] and take(i):
+                active = True
+    short = n - len(picked)
+    while short > 0:
+        progressed = False
+        for i in sorted(range(len(pools)), key=lambda i: got[i] / max(shares[i], 1e-9)):
+            if short and take(i):
+                short -= 1
+                progressed = True
+        if not progressed:
+            break
+    return picked, got
+
+
+def rank(con: sqlite3.Connection, keys: set[int], limit: int) -> list[int]:
+    """The keys, most played first (every source's plays, as Library sorts)."""
+    from . import browse
+    if not keys:
+        return []
+    return [r[0] for r in browse._with_plays(con).execute(
+        "SELECT t.rating_key FROM tracks t WHERE t.removed_at IS NULL AND t.rating_key IN (SELECT value FROM json_each(?)) "
+        f"ORDER BY {browse.SORTS['plays']} LIMIT ?", (json.dumps(sorted(keys)), limit))]
+
+
+def _jitter(pool: list[int], rng: random.Random) -> list[int]:
+    scored = [(1 - i / max(len(pool), 1) + 0.5 * rng.random(), k) for i, k in enumerate(pool)]
+    return [k for _, k in sorted(scored, reverse=True)]
+
+
+def build(con: sqlite3.Connection, index, tree: dict, exclude=None, rest=None, sets: list[set[int]] | None = None) -> dict:
+    """The playlist a tree makes now. rest(track) → True leaves a track out when its branch can spare it
+    (Keep fresh: played in the last week). Returns the tracks in flow order, each with its branch, and per
+    branch how many it matches (count), its share, how many it got and how many it could choose from."""
+    from . import make
+    t0 = time.time()
+    n = tree["n"]
+    sets = sets if sets is not None else branch_sets(con, tree, index)
+    limit = max(6 * n, 400)
+    ranked = [rank(con, s, limit) for s in sets]
+    details = make.details(con, index, list(dict.fromkeys(k for pool in ranked for k in pool)), exclude)
+    rng = random.Random(f"{tree['shuffle']}:" + json.dumps(tree["branches"], sort_keys=True))
+    shares = [b["share"] for b in tree["branches"]]
+    pools = []
+    for pool, share in zip(ranked, shares):
+        pool = [k for k in pool if k in details]
+        if rest:
+            fresh = [k for k in pool if not rest(details[k])]
+            pool = fresh if len(fresh) >= share else pool
+        pools.append(_jitter(pool, rng) if tree["shuffle"] else pool)
+    picked, got = pick(pools, shares, n, tree["per_artist"], details)
+    tracks = []
+    for i, k in picked:
+        t = dict(details[k])
+        t["branch"] = tree["branches"][i]["id"]
+        tracks.append(t)
+    ordered = flow.order(tracks)
+    prev = None
+    for c in ordered:
+        c["transition"] = flow.describe(prev, c)
+        prev = c
+    return {
+        "branches": [{"id": b["id"], "count": len(s), "share": shares[i], "got": got[i], "available": len(pools[i])}
+                     for i, (b, s) in enumerate(zip(tree["branches"], sets))],
+        "total": len(set().union(*sets)),
+        "tracks": ordered,
+        "minutes": round(sum((t.get("duration_ms") or 0) for t in ordered) / 60000),
+        "seconds": round(time.time() - t0, 2),
+    }
+
+
+# --- traqfreq: not copied --------------------------------------------------------------------------------
+# facet_counts (narrowing a branch) is not copied: P5 has no narrow panel. Every line above is jimbo-dj's,
+# unchanged, except the import comment. rank, pick and build call browse, similar, make and flow by jimbo-dj's
+# names: vendor/browse.py, vendor/similar.py, vendor/make.py (copies) and vendor/flow.py (stand-in until T27).
+VENDORED_FROM = "jimbo-dj 1d8a7cb src/jimbodj/rules.py (Shape, Words, URL form, Matching, Picking)"

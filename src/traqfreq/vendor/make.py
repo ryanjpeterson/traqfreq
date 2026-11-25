@@ -5,7 +5,7 @@ from __future__ import annotations
 
 import re
 
-VENDORED_FROM = "jimbo-dj 1d8a7cb src/jimbodj/make.py (HISTORY … MONTHS, Unmakeable, kind_of, silo, clean, spec_of)"
+VENDORED_FROM = "jimbo-dj 1d8a7cb src/jimbodj/make.py (HISTORY … MONTHS, Unmakeable, kind_of, silo, clean, spec_of, details)"
 
 # --- src/jimbodj/make.py ---------------------------------------------------------------------------------
 HISTORY = ("alltime", "period", "on", "week", "phase", "listening")
@@ -95,3 +95,21 @@ def spec_of(row: dict) -> dict | None:
     except ValueError:
         return None
     return None
+
+
+# --- src/jimbodj/make.py: details (rules.build calls it) -------------------------------------------------
+def details(con, index, keys: list[int], exclude=None) -> dict[int, dict]:
+    """The keys as track dicts for flow.order (full detail for analysed ones), without what's never in mixes."""
+    from .similar import _public
+    basics = {r["rating_key"]: dict(r) for r in con.execute(
+        "SELECT rating_key, title, artist, artist_key, album, album_key, year, duration_ms, track_artist FROM tracks "
+        "WHERE removed_at IS NULL AND rating_key IN (SELECT value FROM json_each(?))", (str(list(keys)),))} if keys else {}
+    out = {}
+    for k in keys:
+        m = index.meta.get(k)
+        if m is None and k not in basics:
+            continue
+        if m is not None and exclude and exclude(m):
+            continue
+        out[k] = _public(m) if m is not None else {**basics[k], "bpm": None, "camelot": None, "moods": [], "genres": []}
+    return out

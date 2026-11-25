@@ -1,5 +1,7 @@
-"""The two functions of jimbo-dj's history.py the ``listened`` condition needs (``facets.members`` imports
-``history``): ``_range`` and ``listened_keys``, copied unchanged at 1d8a7cb. ``listen_tz`` is T8's stand-in
+"""The functions of jimbo-dj's history.py the branch builder needs, under jimbo-dj's module name: ``_range`` and
+``listened_keys`` (the ``listened`` condition), copied unchanged at 1d8a7cb; ``match_key``, ``norm_artist`` and
+``plays_of`` (Never in mixes and most played first, T25), the copies already in vendor/jimbodj_history.py and
+vendor/jimbodj_library.py; and ``track_stats``, a stand-in (below). ``listen_tz`` is T8's stand-in
 (vendor/jimbodj_history.py: the zone set by ``in_zone``); ``ensure_schema`` is a stand-in that does nothing,
 because the legacy database is read-only and jimbo-dj made the tables."""
 from __future__ import annotations
@@ -8,7 +10,12 @@ import datetime as dt
 import re
 import sqlite3
 
+import contextlib
+import contextvars
+
 from .jimbodj_history import listen_tz  # noqa: F401 - stand-in (T8)
+from .jimbodj_history import match_key, norm_artist  # noqa: F401 - copies (T5), bans.Bans calls them
+from .jimbodj_library import plays_of  # noqa: F401 - copy (T9), browse._with_plays calls it
 
 VENDORED_FROM = "jimbo-dj 1d8a7cb src/jimbodj/history.py (_range, listened_keys)"
 
@@ -41,3 +48,21 @@ def listened_keys(con: sqlite3.Connection, period: str) -> set[int]:
 # --- traqfreq's stand-ins, not vendored -------------------------------------------------------------------
 def ensure_schema(con) -> None:  # noqa: ARG001 - jimbo-dj creates its tables; traqfreq only reads
     return None
+
+
+# T25: browse._with_plays calls history.track_stats(con), jimbo-dj's _track_stats behind its background cache.
+# traqfreq builds it once per data version (library.track_plays, in the right zone) and hands it in with ``using``.
+_HIST: contextvars.ContextVar = contextvars.ContextVar("track_stats")
+
+
+def track_stats(con) -> dict:  # noqa: ARG001 - built by library.track_plays, handed in with using()
+    return _HIST.get()
+
+
+@contextlib.contextmanager
+def using(hist: dict):
+    token = _HIST.set(hist)
+    try:
+        yield
+    finally:
+        _HIST.reset(token)
