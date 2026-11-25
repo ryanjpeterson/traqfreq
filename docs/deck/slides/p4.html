@@ -12,7 +12,7 @@
 <tr><td>T23</td><td>A page per tag (ladders, spellings and rules, albums, tracks, plays, sound); the genre map, one line per broad tag; five movements across the lines; p4_gate.py and the gate card</td><td>Done</td></tr>
 </table>
 <div class="stack" style="gap:28px">
-<div class="card T"><p class="k">GATE</p><p class="txt">Ladders and per-track tags agree with jimbo-dj’s tag rules on the real library.</p><p class="small">Not passed yet, 2026-11-24: ladders and per-track tags pass (53,440 of 53,440 tracks). The audit waits on jimbo-dj’s stored row, which lags its own data. Kept strict.</p></div>
+<div class="card T"><p class="k">GATE</p><p class="txt">Ladders and per-track tags agree with jimbo-dj’s tag rules on the real library.</p><p class="small">Passed 2026-11-24 on the deployed app: ladders 15 of 15, per-track tags 53,789 of 53,789 tracks, the audit 691 of 691 tags, once jimbo-dj’s stored row caught up. Never loosened.</p></div>
 <div class="card"><p class="k">STAYS IN JIMBO-DJ</p><p class="txt">Fix in Plex and file genre writes, with their undo.</p></div>
 <div class="card"><p class="k">REUSES</p><p class="txt">tags.py, tag_rules.json, genres.family() and Styles, history._genre_tags.</p></div>
 </div>
