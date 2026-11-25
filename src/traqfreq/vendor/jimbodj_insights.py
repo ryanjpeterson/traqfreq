@@ -6,7 +6,7 @@ added, last played hour and weekday), place (``artist_places``, ``album_labels``
 with the constants they use. From live.py: ``distributions`` (the sound: BPM, Camelot, loudness, moods,
 averages). statcache builds ``library.charts`` as ``{**insights._all_views(con), "sound": live.distributions(con)}``.
 
-Not copied: ``genre_view`` and ``track_family`` (styles and genre families are TAGS, P4) and the Discogs genres
+T24 adds ``track_family`` (the branch builder's ``family`` condition). Not copied: ``genre_view`` (TAGS, P4) and the Discogs genres
 inside ``distributions`` (jimbo-dj's genres module). Stand-ins at the bottom (marked, not vendored) give the
 copies the names they call in jimbo-dj: ``schedule.tz()`` returns the zone traqfreq hands in with ``in_tz``
 (jimbo-dj's is its TZ, else America/Denver), ``genre_view`` says it isn't compared, and ``vendor/genres.py``
@@ -25,7 +25,7 @@ from zoneinfo import ZoneInfo
 
 from .jimbodj_library import ANALYZER_VERSION
 
-VENDORED_FROM = "jimbo-dj 1d8a7cb src/jimbodj/insights.py, live.py"
+VENDORED_FROM = "jimbo-dj 1d8a7cb src/jimbodj/insights.py, live.py (T24: + track_family)"
 
 # --- src/jimbodj/insights.py -----------------------------------------------------------------------------
 LOSSLESS = {"flac", "alac", "pcm", "wav", "aiff", "ape", "wavpack", "wv", "dsd", "dsf", "tta"}
@@ -315,6 +315,18 @@ def distributions(con: sqlite3.Connection, version: int = ANALYZER_VERSION) -> d
         "averages": {**{c: (round(avgs[i], 3) if avgs[i] is not None else None) for i, c in enumerate(_FEATURE_AVGS)},
                      "bpm": round(avgs[-2], 1) if avgs[-2] else None, "lufs": round(avgs[-1], 1) if avgs[-1] else None},
     }
+
+
+# T24: insights.py track_family (the branch builder's family condition), unchanged.
+from . import genres  # noqa: E402 - vendor/genres.py (family, MATCH)
+
+
+def track_family(st, sc: dict) -> str | None:
+    """A track's genre family: the family of its strongest style, if that style is a match."""
+    if not sc:
+        return None
+    best = max(sc.items(), key=lambda kv: kv[1])
+    return genres.family(best[0], st.parent.get(best[0])) if best[1] >= genres.MATCH else None
 
 
 # --- traqfreq's stand-ins, not vendored -------------------------------------------------------------------

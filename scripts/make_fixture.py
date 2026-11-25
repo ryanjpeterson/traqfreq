@@ -129,6 +129,30 @@ CREATE TABLE stats (
     name TEXT NOT NULL, params TEXT NOT NULL, value TEXT NOT NULL, version INTEGER NOT NULL, stamp TEXT,
     built_at REAL NOT NULL, seconds REAL, PRIMARY KEY (name, params)
 ) WITHOUT ROWID;
+CREATE TABLE saved_playlists (
+    id INTEGER PRIMARY KEY, kind TEXT NOT NULL, title TEXT NOT NULL UNIQUE, summary TEXT, keys TEXT NOT NULL, source TEXT,
+    created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL, in_plex INTEGER NOT NULL DEFAULT 0, plex_key INTEGER,
+    pushed_at INTEGER, plex_error TEXT, stale INTEGER NOT NULL DEFAULT 0, stale_in_plex INTEGER
+);
+CREATE TABLE mixes (
+    id INTEGER PRIMARY KEY, kind TEXT NOT NULL, period TEXT NOT NULL, created_at INTEGER NOT NULL,
+    title TEXT NOT NULL, tracks TEXT NOT NULL, summary TEXT, pushed_at INTEGER, push_result TEXT
+);
+CREATE TABLE cluster_runs (
+    id INTEGER PRIMARY KEY, created_at INTEGER NOT NULL, tracks INTEGER, clusters INTEGER, noise INTEGER, params TEXT, seconds REAL
+);
+CREATE TABLE clusters (
+    run_id INTEGER NOT NULL, id INTEGER NOT NULL, name TEXT NOT NULL, size INTEGER NOT NULL, stats TEXT, art TEXT,
+    PRIMARY KEY (run_id, id)
+);
+CREATE TABLE cluster_members (
+    run_id INTEGER NOT NULL, cluster_id INTEGER NOT NULL, rating_key INTEGER NOT NULL, prob REAL,
+    PRIMARY KEY (run_id, rating_key)
+) WITHOUT ROWID;
+CREATE TABLE bans (
+    id INTEGER PRIMARY KEY, kind TEXT NOT NULL, ref TEXT NOT NULL, label TEXT NOT NULL, created_at INTEGER NOT NULL,
+    UNIQUE (kind, ref)
+);
 """
 
 SYNC = 1793844000  # 2026-11-05T02:00:00Z, the last Plex sync
@@ -328,8 +352,51 @@ CHECK_LISTENS = _check_listens()
 MATCHES = [("kollektivnord|westkreuz", 101), ("kollektivnord|ostkreuz", 102), ("paperlanterns|harbourlights", 103),
            ("paperlanterns|staticgulls", 104), ("adavey|coil", 105), ("nobodyknown|ghostsong", None)]
 
+# T24: jimbo-dj's saved playlists (store.py saved_playlists), its mixes, its current cluster run and Never in mixes,
+# in their shapes at 1d8a7cb. Invented: one row per kind, one stale, three trees (AND, OR, NOT, a nested group, in:
+# scopes), an old Explore filter and a genre blend. Nothing earlier counts these tables, so T5-T23's numbers stay.
+_NIGHT = {"n": 20, "per_artist": 3, "shuffle": 0, "branches": [
+    {"id": "a", "label": "Ringbahn, not sad", "share": 8,
+     "match": {"all": [{"f": "decade", "v": "2010s"}], "not": [{"f": "mood", "v": "sad"}]}},
+    {"id": "b", "share": 6, "match": {"all": [{"any": [{"f": "artist", "v": "Ada Vey"}, {"f": "listened", "v": "2025"}]}]}},
+    {"id": "c", "share": 6, "match": {"all": [{"f": "mood", "v": "happy"},
+                                              {"any": [{"f": "bpm", "v": "100-110"}, {"f": "key", "v": "8A"}]}]}}]}
+_INSIDE = {"n": 20, "per_artist": 3, "shuffle": 2, "branches": [
+    {"id": "a", "share": 10, "match": {"all": [{"f": "in", "v": "saved:from-the-2020s"}],
+                                       "not": [{"f": "in", "v": "cluster:quiet-engines"}]}},
+    {"id": "b", "share": 10, "match": {"all": [{"f": "in", "v": "mix:daily"}]}}]}
+# id, kind, title, keys, source, in_plex, plex_key, pushed_at, plex_error, stale, stale_in_plex, updated_at
+SAVED = [
+    (1, "explore", "\U0001F9ED Night lines", [101, 103, 102, 105],
+     {"make": {"type": "rules", "rules": _NIGHT}, "from": "/library/tracks?b=decade:2010s,!mood:sad~8~Ringbahn%2C not sad"},
+     1, 9001, SYNC + 200, None, 0, None, SYNC + 200),
+    (2, "blend", "\U0001F3A7 Blend: Black Metal / Doom Metal", [101, 103, 102],
+     {"parts": [{"style": "black metal", "weight": 60}, {"style": "doom metal", "weight": 40}], "n": 20, "per_artist": 3,
+      "shuffle": 0}, 0, None, None, None, 0, None, SYNC + 210),
+    (3, "explore", "\U0001F9ED From the 2020s", [103, 104, 105],
+     {"make": {"type": "filter", "filters": {"decade": "2020s"}}, "from": "/library/tracks?decade=2020s"},
+     0, None, None, None, 0, None, SYNC + 220),
+    (4, "mix", "\U0001F3A7 Daily mix", [101, 103, 104], {"mix": "daily", "period": "2026-11-05"},
+     1, 9002, SYNC + 230, None, 0, None, SYNC + 230),
+    (5, "cluster", "\U0001FAA9 Quiet Engines", [105, 103], {"cluster_id": 1}, 0, None, None, None, 0, None, SYNC + 240),
+    (6, "cluster", "\U0001FAA9 Gone Grey", [106], {"cluster_id": 7}, 0, None, OLD_SYNC, None, 1, 1, OLD_SYNC + 60),
+    (7, "like", "\U0001F501 More like Westkreuz", [101, 102], {"seed": {"type": "track", "key": 101}},
+     1, None, None, "Plex didn't answer", 0, None, SYNC + 250),
+    (8, "history", "\U0001F3A7 Top songs of 2026", [103, 105, 101], {"make": {"type": "period", "period": "2026"}, "from": "/history/wrapped/2026"},
+     0, None, None, None, 0, None, SYNC + 260),
+    (9, "setlist", "\U0001F3A4 Kollektiv Nord live", [102, 101], {"setlist": "fixture-1"}, 0, None, None, None, 0, None, SYNC + 270),
+    (10, "explore", "\U0001F9ED Inside the lines", [104, 101, 103], {"make": {"type": "rules", "rules": _INSIDE}},
+     0, None, None, None, 0, None, SYNC + 280),
+]
+MIXES = [(1, "daily", "2026-11-05", SYNC + 230, "Daily mix", [[101, "favourite"], [103, "new"], [104, "overlooked"]],
+          "3 tracks", SYNC + 230)]
+CLUSTER_RUN = (1, SYNC - 3600, 5, 2, 0, "{}", 12.5)
+CLUSTERS = [(1, 1, "Quiet Engines", 2), (1, 2, "Harbour Haze", 1)]
+CLUSTER_MEMBERS = [(1, 1, 103, 0.9), (1, 1, 105, 0.8), (1, 2, 104, 0.7)]
+BANS = [(1, "artist", "formerband", "Former Band", SYNC + 300)]
+
 META = [("last_sync", str(SYNC)), ("history_version", "1793847900.5"), ("match_version", "3"),
-        ("server", json.dumps(SERVER))]
+        ("server", json.dumps(SERVER)), ("cluster_run", "1")]
 # Shape of jimbo-dj's history_imports (history.py); times are Unix seconds.
 IMPORTS = [
     (1, "lastfm", 1793840400, 120, 4, None),
@@ -478,6 +545,18 @@ def build(out: Path, checks: bool = False) -> Path:
             "INSERT INTO stats VALUES ('history.wrapped', ?, ?, 2, ?, ?, 0.1)",
             [(params, json.dumps(value), stamp, SYNC + 120) for params, value, stamp in WRAPPED_STATS],
         )
+        conn.executemany(
+            "INSERT INTO saved_playlists (id, kind, title, summary, keys, source, created_at, updated_at, in_plex, plex_key,"
+            " pushed_at, plex_error, stale, stale_in_plex) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            [(i, kind, title, f"{len(keys)} tracks. Made by jimbo-dj.", json.dumps(keys), json.dumps(src), SYNC - 86400,
+              updated, plex, pk, pushed, err, stale, stale_plex)
+             for i, kind, title, keys, src, plex, pk, pushed, err, stale, stale_plex, updated in SAVED])
+        conn.executemany("INSERT INTO mixes VALUES (?, ?, ?, ?, ?, ?, ?, ?, NULL)",
+                         [(i, k, p, at, t, json.dumps(tr), sm, pushed) for i, k, p, at, t, tr, sm, pushed in MIXES])
+        conn.execute("INSERT INTO cluster_runs VALUES (?, ?, ?, ?, ?, ?, ?)", CLUSTER_RUN)
+        conn.executemany("INSERT INTO clusters (run_id, id, name, size) VALUES (?, ?, ?, ?)", CLUSTERS)
+        conn.executemany("INSERT INTO cluster_members VALUES (?, ?, ?, ?)", CLUSTER_MEMBERS)
+        conn.executemany("INSERT INTO bans VALUES (?, ?, ?, ?, ?)", BANS)
     conn.close()
     return out
 

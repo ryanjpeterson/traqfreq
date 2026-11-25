@@ -1,16 +1,17 @@
 """jimbo-dj's chart filters (facets.py ``members``): the tracks behind one bar of a Files, Time or Place chart,
 counted with the same rule the chart uses. Copied unchanged at 1d8a7cb.
 
-traqfreq uses the file, time, place and label facets only; the style, family and listened branches need
-jimbo-dj's genres and history modules (TAGS, P4; never called here: ``library.tracks`` refuses them first).
-``insights`` is vendor/jimbodj_insights.py, ``schedule`` its stand-in, ``genres`` the stand-in in vendor/genres.py.
+LIBRARY uses the file, time, place and label facets (``library.tracks`` refuses the rest). The branch builder
+(vendor/rules.py, T24) uses them all: ``genres`` is vendor/genres.py (``Styles``), ``history`` vendor/history.py
+(``listened_keys``), ``insights`` vendor/jimbodj_insights.py (with ``track_family``), ``schedule`` its stand-in.
+``scope`` is in vendor/facets.py.
 """
 from __future__ import annotations
 
 import json
 import sqlite3
 
-from . import genres  # noqa: F401 - stand-in (style and family facets, never called)
+from . import genres  # vendor/genres.py (style and family facets)
 from . import jimbodj_insights as insights
 from .jimbodj_insights import schedule
 
