@@ -50,7 +50,7 @@ Spec: [t20-tags.md](t20-tags.md).
 ## P5 PLAYLISTS Junction preview: T24–T28
 Spec: [t24-playlists.md](t24-playlists.md). Gate: the same lines give the same tracks as jimbo-dj's builder (`POST /api/rules/preview`, which writes nothing) for ten trees, and the same list of saved playlists.
 - **T24** Lines: every saved playlist with its three switches (read-only), the lines of the ones with a tree (AND, OR, NOT, nested groups), each line's and each condition's count as jimbo-dj counts it, the rows behind each (vendored `rules.py` Shape, Words, URL form, Matching). *Done.*
-- **T25** The Junction and its levers: picking (shares, cap per artist, priority, shuffle, Never in mixes), the drawing, `/library/junction?b=…`; each switch with how many tracks have a copy on its server.
+- **T25** The Junction and its levers: picking (shares, cap per artist, priority, shuffle, Never in mixes), the drawing, `/library/junction?b=…`; each switch with how many tracks have a copy on its server. *Done* (picking vendored, `junction.py`, the Junction page, copies per switch, gate check 1 and check 2's set in `playlists_gate.py`, on the fixture).
 - **T26** Movements, rooted to roaming (preview only, not in the gate).
 - **T27** Flow order and why this track (B3).
 - **T28** The Ask box; the gate script `scripts/p5_gate.py`, `GET /api/playlists/compare`, the gate card, a live run.

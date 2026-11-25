@@ -18,7 +18,7 @@
       { "name": "Tailscale", "kind": "self-hosted", "direction": "read", "required": true, "what": "the only way in" }
     ],
     "standards": ["jimbo-deploy", "jimbo-explain"],
-    "now": ["P4 TAGS passed its gate on live data (2026-11-24)", "P5 PLAYLISTS, the Junction preview (T24–T28): T24 done (saved playlists with three server switches, their lines counted with jimbo-dj's rules); next T25, picking and the Junction drawing"]
+    "now": ["P4 TAGS passed its gate on live data (2026-11-24)", "P5 PLAYLISTS, the Junction preview (T24–T28): T24 and T25 done (saved playlists with three server switches and their copies on each server, lines counted and picked with jimbo-dj's rules, the Junction at /library/junction); next T26, movements"]
   },
   "files": {}
 }

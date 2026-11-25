@@ -49,6 +49,7 @@ Vendored unchanged at 1d8a7cb, as earlier phases did (`VENDORED_FROM`; stand-ins
 
 ### T25: the Junction and its levers
 `rules.build`'s picking (shares, the cap per artist, line priority = order, shuffle, Never in mixes), vendored. Each switch gains how many of the playlist's tracks have a copy on its server. The Junction drawing (lines meeting in one, L6 list view and summary) with read-only LineLevers for share and cap. `/library/junction?b=…` previews any tree. Gate check 1 and the set of tracks of check 2, on the fixture.
+*Done 2026-11-25* (HANDOFF). Read at 1d8a7cb: `make.details` drops a banned track only when jimbo-dj's vectors index knows it (analysed at the current version), so a banned track the analyzer hasn't read can still be picked. traqfreq does the same, and the test says so.
 
 ### T26: movements, rooted to roaming
 A line can follow a T23 movement or a ladder, with a read-only slider from rooted (the tag alone) to roaming (its movement and neighbours on the map). It is new in traqfreq, a preview only, and not part of the gate.
