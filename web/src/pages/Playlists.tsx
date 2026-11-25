@@ -1,16 +1,19 @@
-import { Band, Button, Card, ConditionChip, Status, StationRow, Text } from '../components/kit';
+import type { CSSProperties } from 'react';
+import { Band, Button, Card, ConditionChip, LineBullet, LineLever, Status, StationRow, Text } from '../components/kit';
 import { t, tf, type StringKey } from '../copy/t';
 import { useGet } from '../app/api';
 import { trackHref } from '../app/entities';
 import { formatUtc } from '../app/time';
 import {
-  PLAYLISTS_PATH, count, kindName, playlistApi, playlistHref, rowsApi, rowsHref, serverName,
-  type Condition, type Group, type Line, type LineRows, type Lines, type Node, type PlaylistList, type PlaylistPage,
-  type PlaylistRow, type Switch, type TrackRow,
+  PLAYLISTS_PATH, copiesApi, copiesHref, count, junctionApi, junctionHref, kindName, playlistApi,
+  playlistHref, rowsApi, serverName, sourceRowsHref, treeQuery,
+  type Condition, type Copies, type CopyRows, type Group, type Line, type LineRows, type Lines, type Node,
+  type PlaylistList, type PlaylistPage, type PlaylistRow, type Source, type Switch, type TrackRow, type Which,
 } from '../app/playlists';
 
 /** T24: PLAYLISTS (P5), the Junction preview: jimbo-dj's saved playlists, their three switches and their lines,
- *  read-only. Every count opens its rows (W3). */
+ *  read-only. Every count opens its rows (W3). T25: what the lines pick now (the Junction: its drawing, list view and
+ *  read-only levers), any tree at /library/junction?b=…, and how many tracks have a copy on each switch's server. */
 
 type Nav = { navigate: (href: string) => void };
 type Operator = 'AND' | 'OR' | 'NOT';
@@ -46,21 +49,50 @@ function switchState(s: Switch): { state: 'ready' | 'needs' | 'off'; label: stri
   return s.on ? { state: 'ready', label: t('playlists.switch.on') } : { state: 'off', label: t('playlists.switch.off') };
 }
 
-/** The three switches in one line (the list): each server with its state in words (C6). */
-function SwitchLine({ switches }: { switches: Switch[] }) {
+/** A switch's copies in words: "3 of 4 tracks", or that the server has no snapshot yet. */
+function copiesText(c: Copies): string {
+  return c.snapshot ? tf('playlists.copies.of', { n: c.count, of: count(c.of, 'track') }) : t('playlists.copies.noSnapshot');
+}
+
+/** The three switches in one line (the list): each server with its state in words (C6) and its copies (T25). */
+function SwitchLine({ switches, slug, navigate }: { switches: Switch[]; slug: string } & Nav) {
   return (
     <span className="pl-switches">
       {switches.map((s) => (
         <span key={s.server} className="pl-switch">
           <Status state={switchState(s).state} label={tf('playlists.switch.summary', { name: serverName(s.server), state: switchState(s).label })} />
+          {s.copies && s.copies.snapshot && (
+            <Num href={copiesHref(slug, s.server)} label={copiesText(s.copies)}
+              of={tf('playlists.copies.on', { name: serverName(s.server) })} navigate={navigate} />
+          )}
         </span>
       ))}
     </span>
   );
 }
 
+const reasonName = (r: string) => t(`playlists.reason.${r}` as StringKey) ?? r;
+
+/** One switch's copies on the playlist's page: how many have a copy (their rows) and which don't, and why. */
+function CopiesLine({ s, slug, navigate }: { s: Switch; slug: string } & Nav) {
+  const c = s.copies;
+  if (!c) return null;
+  if (!c.snapshot) return <span className="sub">{t('playlists.copies.noSnapshotWhy')}</span>;
+  const why = Object.entries(c.reasons).map(([r, n]) => `${reasonName(r)} ${n}`).join(', ');
+  return (
+    <span className="pl-copies">
+      <Num href={copiesHref(slug, s.server)} label={tf('playlists.copies.have', { n: c.count, of: count(c.of, 'track') })}
+        of={tf('playlists.copies.on', { name: serverName(s.server) })} navigate={navigate} />
+      {c.missing > 0 && (
+        <Num href={copiesHref(slug, s.server, true)} label={tf('playlists.copies.missing', { n: count(c.missing, 'track'), why })}
+          of={tf('playlists.copies.on', { name: serverName(s.server) })} navigate={navigate} />
+      )}
+    </span>
+  );
+}
+
 /** The three switches with where each comes from (a playlist's page). */
-function SwitchCard({ switches }: { switches: Switch[] }) {
+function SwitchCard({ switches, slug, navigate }: { switches: Switch[]; slug: string } & Nav) {
   return (
     <Card label={t('playlists.switches')}>
       <div className="stack">
@@ -72,13 +104,17 @@ function SwitchCard({ switches }: { switches: Switch[] }) {
                 : t('playlists.switch.notPushed'), s.error].filter(Boolean).join(' · ');
             return (
               <li key={s.server}>
-                <span><strong>{serverName(s.server)}</strong><span className="sub">{sub}</span></span>
+                <span>
+                  <strong>{serverName(s.server)}</strong><span className="sub">{sub}</span>
+                  <CopiesLine s={s} slug={slug} navigate={navigate} />
+                </span>
                 <Status state={st.state} label={st.label} />
               </li>
             );
           })}
         </ul>
         <Text variant="note">{t('playlists.switchesNote')}</Text>
+        {switches.some((s) => s.copies) && <Text variant="note">{t('playlists.copies.note')}</Text>}
       </div>
     </Card>
   );
@@ -141,7 +177,7 @@ function ListRow({ r, navigate }: { r: PlaylistRow } & Nav) {
         <Num href={playlistHref(r.slug)} label={r.name} navigate={navigate} />
         <span className="sub">{sub}</span>
       </span>
-      <SwitchLine switches={r.switches} />
+      <SwitchLine switches={r.switches} slug={r.slug} navigate={navigate} />
     </li>
   );
 }
@@ -187,29 +223,31 @@ function PlaylistBody({ p, navigate }: { p: PlaylistPage } & Nav) {
       <Text variant="note">{[kindName(r.kind), `${t('playlists.from')}: ${madeBy(r.made_by)}`, r.stale && t('playlists.staleNote')].filter(Boolean).join(' · ')}</Text>
       {r.summary && <Text>{r.summary}</Text>}
       <div className="hist-grid">
-        <SwitchCard switches={r.switches} />
+        <SwitchCard switches={r.switches} slug={r.slug} navigate={navigate} />
       </div>
       {p.lines_error && <Card><Status state="needs" label={tf('playlists.linesError', { e: p.lines_error })} /></Card>}
-      {p.lines && <LinesView l={p.lines} slug={r.slug} navigate={navigate} />}
+      {p.lines && <div><Button variant="secondary" href={junctionHref(p.lines.query)} onClick={() => navigate(junctionHref(p.lines!.query))}>{t('junction.open')}</Button></div>}
+      {p.lines && <JunctionView l={p.lines} src={{ ref: r.slug }} navigate={navigate} />}
+      {p.lines && <LinesView l={p.lines} src={{ ref: r.slug }} navigate={navigate} />}
       <Stored p={p} navigate={navigate} />
     </>
   );
 }
 
-function LinesView({ l, slug, navigate }: { l: Lines; slug: string } & Nav) {
+function LinesView({ l, src, navigate }: { l: Lines; src: Source } & Nav) {
   return (
     <section aria-labelledby="pl-lines" className="stack">
       <Text variant="label" id="pl-lines">{t('playlists.lines')}</Text>
       <Text>{tf('playlists.linesSummary', { lines: count(l.lines.length, 'line'), n: l.n, total: count(l.total, 'track'), library: count(l.library, 'track') })}</Text>
       <Text variant="note">{`${t('playlists.rule')}: ${l.rules.count}. ${t('playlists.linesNote')}`}</Text>
       <div className="hist-grid">
-        {l.lines.map((x) => <LineCard key={x.id} x={x} n={l.n} slug={slug} navigate={navigate} />)}
+        {l.lines.map((x) => <LineCard key={x.id} x={x} n={l.n} src={src} navigate={navigate} />)}
       </div>
     </section>
   );
 }
 
-function LineCard({ x, n, slug, navigate }: { x: Line; n: number; slug: string } & Nav) {
+function LineCard({ x, n, src, navigate }: { x: Line; n: number; src: Source } & Nav) {
   return (
     <Card label={x.label ? `${tf('playlists.line', { id: x.id })} · ${x.label}` : tf('playlists.line', { id: x.id })}>
       <div className="stack">
@@ -217,12 +255,12 @@ function LineCard({ x, n, slug, navigate }: { x: Line; n: number; slug: string }
         <ul className="rows">
           <li>
             <span><strong>{t('playlists.lineMatches')}</strong><span className="sub">{tf('playlists.lineShare', { n: x.share, of: n })}</span></span>
-            {x.count > 0 ? <Num href={rowsHref(slug, x.id)} label={count(x.count, 'track')} of={x.words} navigate={navigate} />
+            {x.count > 0 ? <Num href={sourceRowsHref(src, x.id)} label={count(x.count, 'track')} of={x.words} navigate={navigate} />
               : <span className="hist-num">{count(0, 'track')}</span>}
           </li>
         </ul>
         <Text variant="label">{t('playlists.conditions')}</Text>
-        <Tree node={x.match} slug={slug} line={x.id} navigate={navigate} />
+        <Tree node={x.match} src={src} line={x.id} navigate={navigate} />
       </div>
     </Card>
   );
@@ -235,12 +273,12 @@ const OPS: { part: 'all' | 'any' | 'not'; op: Operator; label: StringKey }[] = [
 
 /** A line's conditions: each group's AND, OR and NOT parts, each condition a chip with its count (nesting shown by
  *  indent; a screen reader hears each part's operator in words). */
-function Tree({ node, slug, line, navigate }: { node: Node; slug: string; line: string } & Nav) {
-  if (node.type === 'condition') return <ul className="pl-tree"><Leaf c={node} op="AND" slug={slug} line={line} navigate={navigate} /></ul>;
-  return <GroupView g={node} slug={slug} line={line} navigate={navigate} />;
+function Tree({ node, src, line, navigate }: { node: Node; src: Source; line: string } & Nav) {
+  if (node.type === 'condition') return <ul className="pl-tree"><Leaf c={node} op="AND" src={src} line={line} navigate={navigate} /></ul>;
+  return <GroupView g={node} src={src} line={line} navigate={navigate} />;
 }
 
-function GroupView({ g, slug, line, navigate }: { g: Group; slug: string; line: string } & Nav) {
+function GroupView({ g, src, line, navigate }: { g: Group; src: Source; line: string } & Nav) {
   return (
     <ul className="pl-tree">
       {OPS.filter((o) => g[o.part]?.length).map((o) => (
@@ -248,14 +286,14 @@ function GroupView({ g, slug, line, navigate }: { g: Group; slug: string; line: 
           <span className="visually-hidden">{t(o.label)}</span>
           <ul className="pl-tree">
             {g[o.part]!.map((x) => x.type === 'condition'
-              ? <Leaf key={x.path} c={x} op={o.op} slug={slug} line={line} navigate={navigate} />
+              ? <Leaf key={x.path} c={x} op={o.op} src={src} line={line} navigate={navigate} />
               : (
                 <li key={x.path} className="pl-group">
                   <span className="pl-row">
                     <ConditionChip op={o.op}>{`${t('playlists.group')}: ${x.words}`}</ConditionChip>
-                    <CountLink n={x.count} slug={slug} line={line} path={x.path} of={x.words} navigate={navigate} />
+                    <CountLink n={x.count} src={src} line={line} path={x.path} of={x.words} navigate={navigate} />
                   </span>
-                  <GroupView g={x} slug={slug} line={line} navigate={navigate} />
+                  <GroupView g={x} src={src} line={line} navigate={navigate} />
                 </li>
               ))}
           </ul>
@@ -265,18 +303,18 @@ function GroupView({ g, slug, line, navigate }: { g: Group; slug: string; line: 
   );
 }
 
-function Leaf({ c, op, slug, line, navigate }: { c: Condition; op: Operator; slug: string; line: string } & Nav) {
+function Leaf({ c, op, src, line, navigate }: { c: Condition; op: Operator; src: Source; line: string } & Nav) {
   return (
     <li className="pl-row">
       <ConditionChip op={op}>{c.text}</ConditionChip>
-      <CountLink n={c.count} slug={slug} line={line} path={c.path} of={c.text} navigate={navigate} />
+      <CountLink n={c.count} src={src} line={line} path={c.path} of={c.text} navigate={navigate} />
     </li>
   );
 }
 
-function CountLink({ n, slug, line, path, of, navigate }: { n: number; slug: string; line: string; path: string; of: string } & Nav) {
+function CountLink({ n, src, line, path, of, navigate }: { n: number; src: Source; line: string; path: string; of: string } & Nav) {
   if (n === 0) return <span className="hist-num">{count(0, 'track')}</span>;
-  return <Num href={rowsHref(slug, line, path)} label={count(n, 'track')} of={of} navigate={navigate} />;
+  return <Num href={sourceRowsHref(src, line, 'count', path)} label={count(n, 'track')} of={of} navigate={navigate} />;
 }
 
 function Stored({ p, navigate }: { p: PlaylistPage } & Nav) {
@@ -302,24 +340,200 @@ function TrackList({ rows, why, navigate }: { rows: TrackRow[]; why: (i: number)
   );
 }
 
+// --- the Junction (T25) -------------------------------------------------------------------------------------
+
+/** jimbo-dj's cap on tracks by one artist (rules.clean: 1 to 20); the cap's lever shows it out of that. */
+const MAX_PER_ARTIST = 20;
+
+const lineName = (x: Line) => (x.label ? `${tf('playlists.line', { id: x.id })} · ${x.label}` : tf('playlists.line', { id: x.id }));
+
+/** What the lines pick now: the summary, the drawing (lines meeting in one) with its list view and a summary for
+ *  screen readers (L6), read-only levers for each share and the cap, and the picked tracks with their line (B3). */
+function JunctionView({ l, src, navigate }: { l: Lines; src: Source } & Nav) {
+  const p = l.picked;
+  if (!p) return null;
+  const href = (line: string, which: Which) => sourceRowsHref(src, line, which);
+  const nums: { k: string; label: string; text: string; which: Which; n: number }[] = [
+    { k: 'picked', label: t('junction.picked'), text: tf('junction.pickedOf', { n: count(p.count, 'track'), of: l.n }), which: 'picked', n: p.count },
+    { k: 'minutes', label: t('junction.minutes'), text: count(p.minutes, 'minute'), which: 'picked', n: p.count },
+    { k: 'total', label: t('junction.total'), text: count(l.total, 'track'), which: 'total', n: l.total },
+  ];
+  const bans = l.bans ?? { songs: 0, artists: 0, styles: 0 };
+  return (
+    <section aria-labelledby="jn-head" className="stack junction">
+      <Text variant="heading" id="jn-head">{t('junction.title')}</Text>
+      {l.summary && <Text>{l.summary}</Text>}
+      <ul className="rows" aria-label={t('junction.numbers')}>
+        {nums.map((h) => (
+          <li key={h.k}>
+            <span><strong>{h.label}</strong><span className="sub">{`${t('playlists.rule')}: ${l.rules[h.k] ?? ''}`}</span></span>
+            {h.n > 0 ? <Num href={href('', h.which)} label={h.text} navigate={navigate} /> : <span className="hist-num">{h.text}</span>}
+          </li>
+        ))}
+        <li>
+          <span><strong>{t('junction.bans')}</strong><span className="sub">{`${t('playlists.rule')}: ${l.rules.banned ?? ''}`}</span></span>
+          <span className="hist-num">{tf('junction.bansCount', { songs: count(bans.songs, 'song'), artists: count(bans.artists, 'artist'), styles: count(bans.styles, 'style') })}</span>
+        </li>
+      </ul>
+
+      <section className="map" aria-labelledby="jn-drawing">
+        <Text variant="label" id="jn-drawing">{t('junction.drawing')}</Text>
+        <p className="visually-hidden">
+          {tf('junction.summary', {
+            lines: count(l.lines.length, 'line'), n: count(p.count, 'track'), of: l.n,
+            each: l.lines.map((x) => tf('junction.summaryLine', { line: lineName(x), got: count(x.got ?? 0, 'track'), share: x.share })).join('; '),
+          })}
+        </p>
+        <div className="jn-drawing" aria-hidden="true">
+          <div className="jn-lines line-l">
+            {l.lines.map((x, i) => (
+              <div key={x.id} className={`jn-line line-l${x.got ? '' : ' is-off'}`} style={{ '--i': i } as CSSProperties}>
+                <span className="jn-name">{x.label ?? tf('playlists.line', { id: x.id })}</span>
+                <span className="jn-track"><span style={{ width: `${Math.round(100 * (x.got ?? 0) / Math.max(l.n, 1))}%` }} /></span>
+              </div>
+            ))}
+          </div>
+          <div className="jn-meet line-l">
+            <LineBullet module="L" size={36} decorative />
+            <span className="jn-name">{tf('junction.meet', { n: count(p.count, 'track') })}</span>
+          </div>
+        </div>
+        <Text variant="note">{t('junction.drawingNote')}</Text>
+      </section>
+
+      <section className="stack" aria-labelledby="jn-list">
+        <Text variant="label" id="jn-list">{t('junction.list')}</Text>
+        <ul className="lines jn-levers">
+          {l.lines.map((x) => (
+            <li key={x.id} className="stack">
+              <LineLever module="L" title={lineName(x)} detail={x.words} share={(100 * x.share) / Math.max(l.n, 1)} count={x.share} />
+              <ul className="rows" aria-label={tf('junction.lineNumbers', { line: lineName(x) })}>
+                {([['count', 'junction.matches'], ['got', 'junction.got'], ['available', 'junction.available'], ['banned', 'junction.banned']] as const).map(([w, label]) => {
+                  const n = (w === 'count' ? x.count : x[w]) ?? 0;
+                  return (
+                    <li key={w}>
+                      <span><strong>{t(label)}</strong><span className="sub">{l.rules[w] ?? ''}</span></span>
+                      {n > 0 ? <Num href={href(x.id, w)} label={count(n, 'track')} of={`${t(label)}, ${lineName(x)}`} navigate={navigate} />
+                        : <span className="hist-num">{count(0, 'track')}</span>}
+                    </li>
+                  );
+                })}
+              </ul>
+            </li>
+          ))}
+          <li className="stack">
+            <LineLever module="L" title={t('junction.cap')} detail={tf('junction.capDetail', { n: l.per_artist, max: MAX_PER_ARTIST })}
+              share={(100 * l.per_artist) / MAX_PER_ARTIST} count={l.per_artist} />
+            <Text variant="note">{l.shuffle ? tf('junction.shuffleOn', { n: l.shuffle }) : t('junction.shuffleOff')}</Text>
+          </li>
+        </ul>
+        <Text variant="note">{t('junction.leversNote')}</Text>
+      </section>
+
+      <section className="stack" aria-labelledby="jn-picked">
+        <Text variant="label" id="jn-picked">{`${t('junction.pickedTracks')} · ${count(p.count, 'track')}`}</Text>
+        <Text variant="note">{p.order === 'pick' ? t('junction.pickOrder') : t('junction.flowOrder')}</Text>
+        <TrackList rows={p.tracks}
+          why={(i) => tf('junction.why', { line: p.tracks[i].line_name ? `${tf('playlists.line', { id: p.tracks[i].line })} (${p.tracks[i].line_name})` : tf('playlists.line', { id: p.tracks[i].line }) })}
+          navigate={navigate} />
+      </section>
+      {l.read_only && <Text variant="note">{l.read_only}</Text>}
+    </section>
+  );
+}
+
+/** Any tree in jimbo-dj's URL form: /library/junction?b=…&n=…&per=…&shuffle=…. */
+export function Junction({ query, navigate }: { query: string } & Nav) {
+  const tree = treeQuery(query);
+  return (
+    <>
+      <Band module="L">{t('junction.sub')}</Band>
+      <div className="page stack history playlists">
+        <Back href={PLAYLISTS_PATH} label={t('playlists.back')} navigate={navigate} />
+        <Text variant="title">{t('junction.pageTitle')}</Text>
+        <Text>{t('junction.intro')}</Text>
+        {tree.includes('b=') ? <JunctionLoad tree={tree} navigate={navigate} /> : <Card><Text>{t('junction.empty')}</Text></Card>}
+      </div>
+    </>
+  );
+}
+
+function JunctionLoad({ tree, navigate }: { tree: string } & Nav) {
+  const load = useGet<Lines>(junctionApi(tree));
+  if (load.state === 'loading') return <Text>{t('junction.loading')}</Text>;
+  if (load.state === 'failed') return <Failed why={load.status === 400 ? 'junction.unreadable' : undefined} />;
+  return (
+    <>
+      <Text variant="note">{`${t('junction.name')}: ${load.data.name}`}</Text>
+      <JunctionView l={load.data} src={{ tree }} navigate={navigate} />
+      <LinesView l={load.data} src={{ tree }} navigate={navigate} />
+    </>
+  );
+}
+
 // --- the rows behind a count --------------------------------------------------------------------------------
+
+const ROW_TITLES: Record<Which, StringKey> = {
+  count: 'playlists.rows.title', got: 'junction.rows.got', available: 'junction.rows.available', banned: 'junction.rows.banned',
+  picked: 'junction.rows.picked', total: 'junction.rows.total',
+};
 
 export function PlaylistRows({ query, navigate }: { query: string } & Nav) {
   const load = useGet<LineRows>(rowsApi(query));
-  const ref = new URLSearchParams(query).get('ref') ?? '';
+  const q = new URLSearchParams(query);
+  const ref = q.get('ref');
+  const which = (q.get('which') ?? 'count') as Which;
+  const back = ref !== null ? playlistHref(ref) : junctionHref(query);
+  return (
+    <>
+      <Band module="L">{t('playlists.rows.sub')}</Band>
+      <div className="page stack history playlists">
+        <Back href={back} label={ref !== null ? t('playlists.rows.back') : t('junction.back')} navigate={navigate} />
+        <Text variant="title">{t(ROW_TITLES[which] ?? 'playlists.rows.title')}</Text>
+        {load.state === 'loading' && <Text>{t('rows.loading')}</Text>}
+        {load.state === 'failed' && <Failed why={load.status === 404 ? 'playlists.notFound' : undefined} />}
+        {load.state === 'ok' && (
+          <>
+            <Text>{[load.data.line && tf('playlists.line', { id: load.data.line }), load.data.words, count(load.data.count, 'track')].filter(Boolean).join(' · ')}</Text>
+            <Text variant="note">{which === 'count' ? t('playlists.rows.note') : `${t('playlists.rule')}: ${load.data.rule}.`}</Text>
+            <TrackList rows={load.data.rows}
+              why={(i) => {
+                const line = load.data.rows[i].line;
+                if (line) return tf('junction.why', { line: tf('playlists.line', { id: line }) });
+                return load.data.words ? tf('playlists.rows.why', { words: load.data.words }) : load.data.rule;
+              }}
+              navigate={navigate} />
+          </>
+        )}
+      </div>
+    </>
+  );
+}
+
+/** The stored tracks behind a switch's copies: each with whether that server has a copy and, if not, why. */
+export function PlaylistCopies({ query, navigate }: { query: string } & Nav) {
+  const load = useGet<CopyRows>(copiesApi(query));
+  const q = new URLSearchParams(query);
+  const ref = q.get('ref') ?? '';
   return (
     <>
       <Band module="L">{t('playlists.rows.sub')}</Band>
       <div className="page stack history playlists">
         <Back href={playlistHref(ref)} label={t('playlists.rows.back')} navigate={navigate} />
-        <Text variant="title">{t('playlists.rows.title')}</Text>
+        <Text variant="title">{t(q.get('missing') === 'true' ? 'playlists.copies.titleMissing' : 'playlists.copies.title')}</Text>
         {load.state === 'loading' && <Text>{t('rows.loading')}</Text>}
         {load.state === 'failed' && <Failed why={load.status === 404 ? 'playlists.notFound' : undefined} />}
         {load.state === 'ok' && (
           <>
-            <Text>{`${load.data.words} · ${count(load.data.count, 'track')}`}</Text>
-            <Text variant="note">{t('playlists.rows.note')}</Text>
-            <TrackList rows={load.data.rows} why={() => tf('playlists.rows.why', { words: load.data.words })} navigate={navigate} />
+            <Text>{`${serverName(load.data.server)} · ${count(load.data.count, 'track')}`}</Text>
+            <Text variant="note">{`${t('playlists.rule')}: ${load.data.rule}.`}</Text>
+            <TrackList rows={load.data.rows}
+              why={(i) => {
+                const r = load.data.rows[i];
+                return r.copy ? tf('playlists.copies.yes', { name: serverName(load.data.server) })
+                  : tf('playlists.copies.no', { name: serverName(load.data.server), why: r.reason ? (load.data.reasons[r.reason] ?? r.reason) : '' });
+              }}
+              navigate={navigate} />
           </>
         )}
       </div>

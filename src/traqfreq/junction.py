@@ -18,7 +18,7 @@ from . import legacy, library, playlists
 from .vendor import bans, flow, make, rules, vectors
 from .vendor import history as vh
 
-WHICH = ("count", "got", "available", "banned", "picked")
+WHICH = ("count", "got", "available", "banned", "picked", "total")
 TRACK_FIELDS = ("rating_key", "title", "artist", "album", "year", "duration_ms")
 RULES = {
     "count": "the live tracks a line's conditions match (rules.branch_sets)",
@@ -58,7 +58,7 @@ class _Run:
 
 
 def _track(t: dict) -> dict:
-    return {k: t.get(k) for k in TRACK_FIELDS} | {"line": t.get("branch")}
+    return {k: t.get(k) for k in TRACK_FIELDS} | {"line": t.get("branch"), "live": True}  # rank keeps live tracks only
 
 
 def _pick(conn: sqlite3.Connection, tree: dict, default_tz: str | None):
@@ -114,7 +114,8 @@ def _pool(conn: sqlite3.Connection, tree: dict, i: int, keys: set[int], ban) -> 
 def rows(conn: sqlite3.Connection, tree: dict, line: str = "", which: str = "count", path: str = "",
          limit: int = 50, offset: int = 0, default_tz: str | None = None) -> dict:
     """The tracks behind one number: a line's ``count`` (or one condition's, ``path``), what it ``got``, its pool
-    (``available``), what Never in mixes left out (``banned``), or every track ``picked`` (no line)."""
+    (``available``), what Never in mixes left out (``banned``), every track ``picked`` or every track any line
+    matches (``total``; neither needs a line)."""
     if which not in WHICH:
         raise ValueError(f"which must be one of {', '.join(WHICH)}")
     tree = rules.clean(tree)
@@ -122,9 +123,14 @@ def rows(conn: sqlite3.Connection, tree: dict, line: str = "", which: str = "cou
         return playlists.line_rows(conn, tree, line, path, limit, offset, default_tz) | {"which": "count"}
     limit, offset = max(1, min(limit, 200)), max(0, offset)
     ids = [b["id"] for b in tree["branches"]]
-    if which != "picked" and line not in ids:
+    if which not in ("picked", "total") and line not in ids:
         raise playlists.NotFound(f"no line {line!r}")
-    if which in ("got", "picked"):
+    if which == "total":
+        with playlists._In(conn, default_tz):
+            keys = set().union(*rules.branch_sets(conn, tree))
+        total, page = playlists._rows(conn, keys, limit, offset)
+        rule = RULES["total"] + ", in album order"
+    elif which in ("got", "picked"):
         r, *_ = _pick(conn, tree, default_tz)
         keys = [t["rating_key"] for t in r["tracks"] if which == "picked" or t["branch"] == line]
         total, page = playlists._rows(conn, keys, limit, offset, order=keys)

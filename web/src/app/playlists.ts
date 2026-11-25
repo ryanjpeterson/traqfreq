@@ -7,24 +7,72 @@ export const PLAYLIST_ROWS_PATH = '/library/playlists/rows';
 export const playlistHref = (ref: string | number) => `${PLAYLISTS_PATH}/${encodeURIComponent(String(ref))}`;
 export const playlistApi = (ref: string, limit = 50) => `/api/playlists/${encodeURIComponent(ref)}?limit=${limit}`;
 
-/** The rows behind a line's or a condition's count. */
-export function rowsHref(ref: string, line: string, path = ''): string {
+/** T25: the Junction, any tree in jimbo-dj's URL form (b=…&n=…&per=…&shuffle=…). */
+export const JUNCTION_PATH = '/library/junction';
+export const JUNCTION_ROWS_PATH = '/library/junction/rows';
+export const COPIES_PATH = '/library/playlists/copies';
+const TREE_PARAMS = ['b', 'n', 'per', 'shuffle'];
+/** Only the tree's own params, in order (jimbo-dj's URL form), from any query string. */
+export function treeQuery(query: string): string {
+  const q = new URLSearchParams(query);
+  const out = new URLSearchParams();
+  for (const [k, v] of q) if (TREE_PARAMS.includes(k)) out.append(k, v);
+  return out.toString();
+}
+export const junctionHref = (tree: string) => `${JUNCTION_PATH}?${treeQuery(tree)}`;
+export const junctionApi = (query: string) => `/api/junction?${treeQuery(query)}`;
+
+/** Which number's rows: a line's matches (count), what it got, its pool, what Never in mixes left out, every pick,
+ *  every match. */
+export type Which = 'count' | 'got' | 'available' | 'banned' | 'picked' | 'total';
+/** Where a number's rows live: a saved playlist (its slug) or a tree in the URL form. */
+export type Source = { ref: string } | { tree: string };
+
+/** The rows behind a line's or a condition's count (T24), or another number (T25: which). */
+export function rowsHref(ref: string, line: string, path = '', which: Which = 'count'): string {
   const q = new URLSearchParams({ ref, line });
   if (path) q.set('path', path);
+  if (which !== 'count') q.set('which', which);
   return `${PLAYLIST_ROWS_PATH}?${q.toString()}`;
+}
+export function sourceRowsHref(src: Source, line: string, which: Which = 'count', path = ''): string {
+  if ('ref' in src) return rowsHref(src.ref, line, path, which);
+  const q = new URLSearchParams(treeQuery(src.tree));
+  if (line) q.set('line', line);
+  if (path) q.set('path', path);
+  if (which !== 'count') q.set('which', which);
+  return `${JUNCTION_ROWS_PATH}?${q.toString()}`;
 }
 export function rowsApi(query: string): string {
   const q = new URLSearchParams(query);
-  const ref = q.get('ref') ?? '';
   const out = new URLSearchParams({ line: q.get('line') ?? '', limit: '200' });
   if (q.get('path')) out.set('path', q.get('path') ?? '');
-  return `/api/playlists/${encodeURIComponent(ref)}/rows?${out.toString()}`;
+  if (q.get('which')) out.set('which', q.get('which') ?? '');
+  if (!q.has('ref')) return `/api/junction/rows?${treeQuery(query)}&${out.toString()}`;
+  return `/api/playlists/${encodeURIComponent(q.get('ref') ?? '')}/rows?${out.toString()}`;
+}
+
+/** The stored tracks behind a switch's copies (missing: only those without a copy). */
+export function copiesHref(ref: string, server: Server, missing?: boolean): string {
+  const q = new URLSearchParams({ ref, server });
+  if (missing !== undefined) q.set('missing', String(missing));
+  return `${COPIES_PATH}?${q.toString()}`;
+}
+export function copiesApi(query: string): string {
+  const q = new URLSearchParams(query);
+  const out = new URLSearchParams({ server: q.get('server') ?? '', limit: '200' });
+  if (q.get('missing')) out.set('missing', q.get('missing') ?? '');
+  return `/api/playlists/${encodeURIComponent(q.get('ref') ?? '')}/copies?${out.toString()}`;
 }
 
 export type Server = 'plex' | 'jellyfin' | 'navidrome';
+export type Copies = {
+  count: number; of: number; missing: number; reasons: Record<string, number>; snapshot: boolean; rule: string;
+  rows: string; missing_rows: string;
+};
 export type Switch = {
   server: Server; on: boolean; set_by: string | null; rule: string; from?: string;
-  pushed_at?: number | null; plex_key?: number | null; error?: string | null;
+  pushed_at?: number | null; plex_key?: number | null; error?: string | null; copies?: Copies;
 };
 export type PlaylistRow = {
   id: number; slug: string; kind: string; kind_name: string; title: string; name: string; summary: string | null;
@@ -40,10 +88,17 @@ export type Group = {
   type: 'group'; words: string; path: string; count: number; all?: Node[]; any?: Node[]; not?: Node[];
 };
 export type Node = Condition | Group;
-export type Line = { id: string; label: string | null; share: number; words: string; count: number; match: Group | Condition };
+export type Line = {
+  id: string; label: string | null; share: number; words: string; count: number; match: Group | Condition;
+  got?: number; available?: number; banned?: number;
+};
+export type Picked = TrackRow & { line: string; line_name: string | null };
 export type Lines = {
   n: number; per_artist: number; shuffle: number; name: string; query: string; lines: Line[]; total: number;
   library: number; rules: Record<string, string>;
+  summary?: string; read_only?: string;
+  picked?: { count: number; minutes: number; order: 'pick' | 'flow'; seconds: number; tracks: Picked[] };
+  bans?: { songs: number; artists: number; styles: number };
 };
 export type TrackRow = {
   rating_key: number; title: string; artist: string; album: string; year: number | null; duration_ms: number | null; live: boolean;
@@ -53,9 +108,16 @@ export type PlaylistPage = {
   stored: { count: number; live: number; rows: TrackRow[]; limit: number; offset: number; rule: string };
   tree: unknown; lines: Lines | null; lines_error: string | null;
 };
-export type LineRows = { line: string; path: string; words: string; count: number; rows: TrackRow[]; rule: string };
+export type LineRows = {
+  line: string | null; path: string; words?: string; which?: Which; count: number; rule: string;
+  rows: (TrackRow & { line?: string | null })[];
+};
+export type CopyRow = TrackRow & { copy: boolean; reason: string | null };
+export type CopyRows = {
+  server: Server; missing: boolean | null; count: number; rows: CopyRow[]; rule: string; reasons: Record<string, string>;
+};
 
-type Unit = 'playlist' | 'line' | 'track';
+type Unit = 'playlist' | 'line' | 'track' | 'minute' | 'song' | 'artist' | 'style';
 export function count(n: number, unit: Unit): string {
   return `${fmt(n)} ${t(`unit.${unit}.${n === 1 ? 'one' : 'other'}` as StringKey)}`;
 }

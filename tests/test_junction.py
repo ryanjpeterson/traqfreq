@@ -178,6 +178,7 @@ def test_rows_behind_every_number(client):
     assert [x["rating_key"] for x in pool["rows"]] == [102, 105]  # most played first, then album order
     picked = client.get(f"/api/junction/rows?{q}&which=picked").json()
     assert [(x["rating_key"], x["line"]) for x in picked["rows"]] == [(t["rating_key"], t["branch"]) for t in NIGHT["tracks"]]
+    assert client.get(f"/api/junction/rows?{q}&which=total").json()["count"] == r["total"] == 4
     assert client.get(f"/api/junction/rows?{q}&line=a&which=nope").status_code == 400
     assert client.get(f"/api/junction/rows?{q}&line=zz&which=got").status_code == 404
     assert client.get("/api/junction?b=nope:x").status_code == 400
