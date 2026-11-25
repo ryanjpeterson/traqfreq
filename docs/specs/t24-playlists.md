@@ -27,7 +27,7 @@ Source: `store.py`, `rules.py`, `make.py`, `facets.py`, `browse.py`, `flow.py`, 
 
 ## Three switches per playlist and mix (Ryan, 2026-11-24)
 Every playlist and mix gets three separate switches: Plex, Jellyfin and Navidrome. Each one decides whether that playlist is on that server, and none implies another.
-- **P5 shows them, read-only.** Plex is jimbo-dj's `in_plex`, with `pushed_at` and `plex_error`. Jellyfin and Navidrome are shown as off, "Set in P6", because jimbo-dj has nowhere to keep them. Each switch says where the playlist would go: the server's name from SERVERS and how many of its tracks have a copy there (P3's matches, so a missing copy is named, not dropped).
+- **P5 shows them, read-only.** Plex is jimbo-dj's `in_plex`, with `pushed_at` and `plex_error`. Jellyfin and Navidrome are shown as off, "Set in P6", because jimbo-dj has nowhere to keep them (T24). From T25 each switch also says where the playlist would go: how many of its tracks have a copy on that server (P3's matches, so a missing copy is named, not dropped).
 - **P6 makes them push.** traqfreq keeps the three switches in its own database, pushes each playlist and mix to the servers that are on and takes it off a server whose switch goes off. Each push is previewed, logged and undoable (B2). The Plex switch moves over from jimbo-dj at that cut-over, and jimbo-dj stops pushing.
 - **NaviBeat** is connected to Navidrome. Before the Navidrome push is built (P6), look at what NaviBeat reads from Navidrome's playlists, so a playlist traqfreq writes there doesn't surprise it.
 
@@ -48,7 +48,7 @@ Vendored unchanged at 1d8a7cb, as earlier phases did (`VENDORED_FROM`; stand-ins
 - Tests: the fixture gains invented saved playlists (one per kind, one stale, three with trees using AND, OR, NOT and a nested group), clusters, bans and a mix. Each count is recomputed the plain way in the test.
 
 ### T25: the Junction and its levers
-`rules.build`'s picking (shares, the cap per artist, line priority = order, shuffle, Never in mixes), vendored. The Junction drawing (lines meeting in one, L6 list view and summary) with read-only LineLevers for share and cap. `/library/junction?b=…` previews any tree. Gate check 1 and the set of tracks of check 2, on the fixture.
+`rules.build`'s picking (shares, the cap per artist, line priority = order, shuffle, Never in mixes), vendored. Each switch gains how many of the playlist's tracks have a copy on its server. The Junction drawing (lines meeting in one, L6 list view and summary) with read-only LineLevers for share and cap. `/library/junction?b=…` previews any tree. Gate check 1 and the set of tracks of check 2, on the fixture.
 
 ### T26: movements, rooted to roaming
 A line can follow a T23 movement or a ladder, with a read-only slider from rooted (the tag alone) to roaming (its movement and neighbours on the map). It is new in traqfreq, a preview only, and not part of the gate.

@@ -374,8 +374,74 @@ PR #25 merged to `main` (70786bb) and deployed. Checked from the laptop over Tai
 - **Slow and uneven:** the same requests ranged widely. The tag page took 1.1 to 13 s, `set=sound` 1.2 to 4.9 s, and even the cached `/api/tags/ladder` 0.55 to 4.3 s. Some of that is the Mac mini being busy (jimbo-dj ran history imports at 18:22 UTC). Some is traqfreq: every tag page and `set=sound` request rebuilt the ladder and the albums-by-sound table.
 - **Fixed in `claude/t23-tag-speed`:** the ladder (`tags.ladder`) and the albums-by-sound index (`tagpages.sound_index`, tag key → albums) are now worked out once per Library, which is one per data stamp, and kept with it. The answers don't change, so no cache version moves. Test `test_ladder_and_sound_kept_with_the_library`. Time the tag page again after that deploy.
 
-## Next: T24 (P5 PLAYLISTS)
-P4 is built, and its gate waits only on check 3 (above). P5 is the Junction preview (T24–T28; spec to write in T24). **Planned for P5/P6 (Ryan, 2026-11-24):** every playlist and mix has three separate switches, Plex, Jellyfin and Navidrome (in docs/specs/README.md under P5 and P6). Navidrome also has NaviBeat connected to it.
+## P4 gate: passed 2026-11-24
+Checked from the laptop over Tailscale on the deployed app (`main` 90a8d26, with T23's speed fix), GET only:
+- `GET /api/tags/compare`: `"gate": "P4", "passed": true`, all three checks passed.
+- `GET /api/tags/proposals`: check 3 `passed: true, fresh: true, matches: true`. jimbo-dj's stored `library.tags` had caught up with its own data, as expected above. Nothing was loosened.
+- `python3 scripts/p4_gate.py --url http://macmini:4492`: **PASSED** (exit 0):
+  1. **Ladders: passed.** jimbo-dj's rules run here: 15 of 15 broad tags match. Ladders end at the broad tag: 403 of 403. jimbo-dj's stored `library.tags` (fresh): 15 of 15 broad tags match.
+  2. **Per-track tags: passed.** Tags: 53,789 of 53,789 live tracks match (53,121 with a tag). Styles: 53,789 of 53,789 match (53,138 analysed, 42,421 keeping a style).
+  3. **The audit: passed.** The stored `library.tags` is fresh. Tags 691 of 691 match (0 only here, 0 only stored); album issue kinds 7 of 7; fixes 15 of 15; suggestions 12 of 12.
+
+## T24 done (2026-11-24, `claude/t24-playlists`, from `main` 90a8d26; laptop over SMB like T3–T23)
+- **The P5 spec** (`docs/specs/t24-playlists.md`), read at jimbo-dj 1d8a7cb with `git show` only:
+  - How jimbo-dj stores playlists: `saved_playlists`, 77 rows live.
+  - How it builds them: `rules.py` trees, `make.spec_of`, picking, `flow`.
+  - Ryan's three switches: shown read-only in P5, pushed in P6. NaviBeat is to look at before the Navidrome push.
+  - T25–T28, and what is not in P5.
+  - The gate "Same tracks as jimbo-dj" covers ten trees: every saved playlist that has one (8 live: 4 rules, 1 Explore filter, 3 genre blends), then fixed trees until there are ten. Each is compared with jimbo-dj's `POST /api/rules/preview`, which writes nothing (only `scripts/p5_gate.py` will call it, T28). The list of saved playlists is compared with `GET /api/saved`.
+- **"Junction" isn't a word in jimbo-dj.** It is traqfreq's name for jimbo-dj's branch builder (Library → Tracks), so it lives under LIBRARY: `/library/playlists`, `/library/playlists/<slug>`, `/library/playlists/rows`.
+- **Vendored unchanged at 1d8a7cb, under jimbo-dj's module names** so the copies' imports work as written:
+  - `vendor/rules.py`: Shape, Words, URL form and Matching. Picking is for T25. One import line carries a comment.
+  - `vendor/browse.py`: `SOUND`, `_where`.
+  - `vendor/history.py`: `_range`, `listened_keys`.
+  - `vendor/store.py`, the read side: `_row`, `unique_slugs`, `slugs`, `resolve`, `get`, `by_title`, `listing`.
+  - `vendor/make.py`: `clean`, `spec_of`, `kind_of`.
+  - `vendor/clusters.py`: `current_run_id`, `slugs`, `resolve`.
+  - `vendor/playlists.py`: the emoji and `base_name`.
+  - `insights.track_family`, added to `vendor/jimbodj_insights.py`.
+- **Stand-ins, marked as such:**
+  - `vendor/facets.py`: jimbo-dj's `scope` over the read-only copies, plus `members`.
+  - `vendor/cache.py`: `data_stamp`, with the database file in front, because tests open many fixtures.
+  - `vendor/mixes.py`: `latest` keeps the newest mix's live analysed tracks. jimbo-dj's keeps what its vectors index knows; check this in T27.
+  - `vendor/songs.py`, `vendor/analyzer_version.py`: jimbo-dj's names for copies already here.
+  - `vendor/flow.py`: empty until T27.
+  - `ensure_schema` everywhere does nothing: the legacy DB is read-only.
+- `src/traqfreq/playlists.py`:
+  - Every saved playlist with its three switches. Plex is `in_plex` (with `pushed_at`, `plex_key` and `plex_error`). Jellyfin and Navidrome are off, "set from P6".
+  - The lines of a playlist that has a tree. Each line, group and condition carries its count of live tracks, the same sums as `rules.evaluate` (tested equal to `rules.branch_sets` for every fixture tree). The union has its total.
+  - The rows behind each count, in album order. A tree in jimbo-dj's URL form reads the same way.
+- **API, GET only:**
+  - `/api/playlists`
+  - `/api/playlists/{slug or id}` (`limit`, `offset`)
+  - `/api/playlists/{ref}/rows?line=&path=`, where `path` is `all.0`, `all.1.any.0` and so on
+  - `/api/playlists/lines?b=…&n=…`
+  - `/api/playlists/lines/rows?b=…&line=&path=`
+  - A missing table answers 404. A tree that can't be read answers 400.
+- **Pages** (`web/src/pages/Playlists.tsx`; kit only):
+  - The list, by kind, with each playlist's three switches as Status words.
+  - A playlist: the switch card, its lines as cards with ConditionChips (AND, OR and NOT; nested groups indented; each operator also in words for screen readers), and each count opening its rows.
+  - The stored tracks in jimbo-dj's play order as StationRows. Their "why" says which line brought each one in comes with T25's picking (B3).
+  - The rows page.
+  - A Playlists card on LIBRARY.
+  - Copy `playlists.*`, `unit.playlist.*`, `unit.line.*`.
+- **Fixture** (invented):
+  - `saved_playlists`: 10 rows, one per kind, one stale, three trees using AND, OR, NOT, a nested group and the `in:` saved, cluster and mix scopes, an Explore filter and a genre blend.
+  - `mixes` (one daily mix), a cluster run, `bans` (one artist).
+  - Meta `cluster_run`.
+  - Nothing earlier counts these tables, and no earlier test changed.
+- Tests: pytest 246 (`tests/test_playlists.py`, 12, including `test_vendored_unchanged` against jimbo-dj's git when it is beside the repo). Vitest 216 (`web/src/pages/playlists.test.tsx`, 7, answers generated from the fixture's API in `playlists.answers.json`). The web build, brand checks and 13 self-tests pass.
+- **Checked in the browser** on the fixture (port 4499, scratch copy): the list in dark desktop and 375 px light, a playlist's lines in dark desktop, `inside-the-lines` at 375 px light (no side-scroll), the rows page, and the LIBRARY card. No console errors.
+- **After deploy, check on live data:** `/api/playlists` (77 rows; 8 with lines), the lines of Metal Mix, Blimp, Blurps and Early (genre, mood, family, style and listened conditions), and how long `leaf_keys` takes for `genre` and `style` on 53k tracks (it builds `Styles` once per stamp).
+
+## Next: T25 (P5 PLAYLISTS)
+The Junction and its levers ([spec](docs/specs/t24-playlists.md)):
+- Vendor `rules.build`'s picking (`pick`, `rank`, `_jitter`, `build`), with `make.details`, `similar._norm_title` and `bans.get`.
+- The drawing (lines meeting in one, with its list view and summary), with read-only LineLevers for share and cap.
+- `/library/junction?b=…`.
+- Each switch with how many tracks have a copy on its server.
+- Gate check 1 and the set of tracks of check 2, on the fixture.
+**Planned for P5/P6 (Ryan, 2026-11-24):** every playlist and mix has three separate switches, Plex, Jellyfin and Navidrome. Navidrome also has NaviBeat connected to it.
 Also worth a look on Navidrome's side: its scan error "stat /music: bad file descriptor" (from T18; not seen since the restart).
 
 ## Open questions
