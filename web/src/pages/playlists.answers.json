@@ -1,0 +1,1151 @@
+{
+ "/api/playlists": {
+  "count": 10,
+  "with_lines": 4,
+  "stale": 1,
+  "on": {
+   "plex": 3,
+   "jellyfin": 0,
+   "navidrome": 0
+  },
+  "rules": {
+   "count": "every row of saved_playlists (jimbo-dj's store.listing)",
+   "with_lines": "make.spec_of reads a tree: a rules spec, an Explore filter, a genre blend",
+   "stale": "saved_playlists.stale = 1 (a cluster no longer in the current run, an old mix kind)",
+   "on": "switches that are on, per server"
+  },
+  "kinds": [
+   {
+    "kind": "explore",
+    "name": "Explore",
+    "count": 3,
+    "rows": [
+     {
+      "id": 1,
+      "slug": "night-lines",
+      "kind": "explore",
+      "kind_name": "Explore",
+      "title": "🧭 Night lines",
+      "name": "Night lines",
+      "summary": "4 tracks. Made by jimbo-dj.",
+      "tracks": 4,
+      "created_at": 1793757600,
+      "updated_at": 1793844200,
+      "stale": false,
+      "stale_in_plex": null,
+      "made_by": "rules",
+      "from": "/library/tracks?b=decade:2010s,!mood:sad~8~Ringbahn%2C not sad",
+      "lines": 3,
+      "switches": [
+       {
+        "server": "plex",
+        "on": true,
+        "set_by": "jimbo-dj",
+        "pushed_at": 1793844200,
+        "plex_key": 9001,
+        "error": null,
+        "rule": "saved_playlists.in_plex"
+       },
+       {
+        "server": "jellyfin",
+        "on": false,
+        "set_by": null,
+        "from": "P6",
+        "rule": "jimbo-dj has no Jellyfin playlists; traqfreq keeps this switch from P6"
+       },
+       {
+        "server": "navidrome",
+        "on": false,
+        "set_by": null,
+        "from": "P6",
+        "rule": "jimbo-dj has no Navidrome playlists; traqfreq keeps this switch from P6"
+       }
+      ]
+     },
+     {
+      "id": 10,
+      "slug": "inside-the-lines",
+      "kind": "explore",
+      "kind_name": "Explore",
+      "title": "🧭 Inside the lines",
+      "name": "Inside the lines",
+      "summary": "3 tracks. Made by jimbo-dj.",
+      "tracks": 3,
+      "created_at": 1793757600,
+      "updated_at": 1793844280,
+      "stale": false,
+      "stale_in_plex": null,
+      "made_by": "rules",
+      "from": null,
+      "lines": 2,
+      "switches": [
+       {
+        "server": "plex",
+        "on": false,
+        "set_by": "jimbo-dj",
+        "pushed_at": null,
+        "plex_key": null,
+        "error": null,
+        "rule": "saved_playlists.in_plex"
+       },
+       {
+        "server": "jellyfin",
+        "on": false,
+        "set_by": null,
+        "from": "P6",
+        "rule": "jimbo-dj has no Jellyfin playlists; traqfreq keeps this switch from P6"
+       },
+       {
+        "server": "navidrome",
+        "on": false,
+        "set_by": null,
+        "from": "P6",
+        "rule": "jimbo-dj has no Navidrome playlists; traqfreq keeps this switch from P6"
+       }
+      ]
+     },
+     {
+      "id": 3,
+      "slug": "from-the-2020s",
+      "kind": "explore",
+      "kind_name": "Explore",
+      "title": "🧭 From the 2020s",
+      "name": "From the 2020s",
+      "summary": "3 tracks. Made by jimbo-dj.",
+      "tracks": 3,
+      "created_at": 1793757600,
+      "updated_at": 1793844220,
+      "stale": false,
+      "stale_in_plex": null,
+      "made_by": "rules",
+      "from": "/library/tracks?decade=2020s",
+      "lines": 1,
+      "switches": [
+       {
+        "server": "plex",
+        "on": false,
+        "set_by": "jimbo-dj",
+        "pushed_at": null,
+        "plex_key": null,
+        "error": null,
+        "rule": "saved_playlists.in_plex"
+       },
+       {
+        "server": "jellyfin",
+        "on": false,
+        "set_by": null,
+        "from": "P6",
+        "rule": "jimbo-dj has no Jellyfin playlists; traqfreq keeps this switch from P6"
+       },
+       {
+        "server": "navidrome",
+        "on": false,
+        "set_by": null,
+        "from": "P6",
+        "rule": "jimbo-dj has no Navidrome playlists; traqfreq keeps this switch from P6"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "kind": "blend",
+    "name": "Genre blend",
+    "count": 1,
+    "rows": [
+     {
+      "id": 2,
+      "slug": "blend-black-metal-doom-metal",
+      "kind": "blend",
+      "kind_name": "Genre blend",
+      "title": "🎧 Blend: Black Metal / Doom Metal",
+      "name": "Blend: Black Metal / Doom Metal",
+      "summary": "3 tracks. Made by jimbo-dj.",
+      "tracks": 3,
+      "created_at": 1793757600,
+      "updated_at": 1793844210,
+      "stale": false,
+      "stale_in_plex": null,
+      "made_by": "rules",
+      "from": null,
+      "lines": 2,
+      "switches": [
+       {
+        "server": "plex",
+        "on": false,
+        "set_by": "jimbo-dj",
+        "pushed_at": null,
+        "plex_key": null,
+        "error": null,
+        "rule": "saved_playlists.in_plex"
+       },
+       {
+        "server": "jellyfin",
+        "on": false,
+        "set_by": null,
+        "from": "P6",
+        "rule": "jimbo-dj has no Jellyfin playlists; traqfreq keeps this switch from P6"
+       },
+       {
+        "server": "navidrome",
+        "on": false,
+        "set_by": null,
+        "from": "P6",
+        "rule": "jimbo-dj has no Navidrome playlists; traqfreq keeps this switch from P6"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "kind": "mix",
+    "name": "Mix",
+    "count": 1,
+    "rows": [
+     {
+      "id": 4,
+      "slug": "daily-mix",
+      "kind": "mix",
+      "kind_name": "Mix",
+      "title": "🎧 Daily mix",
+      "name": "Daily mix",
+      "summary": "3 tracks. Made by jimbo-dj.",
+      "tracks": 3,
+      "created_at": 1793757600,
+      "updated_at": 1793844230,
+      "stale": false,
+      "stale_in_plex": null,
+      "made_by": "mix",
+      "from": null,
+      "lines": 0,
+      "switches": [
+       {
+        "server": "plex",
+        "on": true,
+        "set_by": "jimbo-dj",
+        "pushed_at": 1793844230,
+        "plex_key": 9002,
+        "error": null,
+        "rule": "saved_playlists.in_plex"
+       },
+       {
+        "server": "jellyfin",
+        "on": false,
+        "set_by": null,
+        "from": "P6",
+        "rule": "jimbo-dj has no Jellyfin playlists; traqfreq keeps this switch from P6"
+       },
+       {
+        "server": "navidrome",
+        "on": false,
+        "set_by": null,
+        "from": "P6",
+        "rule": "jimbo-dj has no Navidrome playlists; traqfreq keeps this switch from P6"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "kind": "cluster",
+    "name": "Cluster",
+    "count": 2,
+    "rows": [
+     {
+      "id": 5,
+      "slug": "quiet-engines",
+      "kind": "cluster",
+      "kind_name": "Cluster",
+      "title": "🪩 Quiet Engines",
+      "name": "Quiet Engines",
+      "summary": "2 tracks. Made by jimbo-dj.",
+      "tracks": 2,
+      "created_at": 1793757600,
+      "updated_at": 1793844240,
+      "stale": false,
+      "stale_in_plex": null,
+      "made_by": "cluster",
+      "from": null,
+      "lines": 0,
+      "switches": [
+       {
+        "server": "plex",
+        "on": false,
+        "set_by": "jimbo-dj",
+        "pushed_at": null,
+        "plex_key": null,
+        "error": null,
+        "rule": "saved_playlists.in_plex"
+       },
+       {
+        "server": "jellyfin",
+        "on": false,
+        "set_by": null,
+        "from": "P6",
+        "rule": "jimbo-dj has no Jellyfin playlists; traqfreq keeps this switch from P6"
+       },
+       {
+        "server": "navidrome",
+        "on": false,
+        "set_by": null,
+        "from": "P6",
+        "rule": "jimbo-dj has no Navidrome playlists; traqfreq keeps this switch from P6"
+       }
+      ]
+     },
+     {
+      "id": 6,
+      "slug": "gone-grey",
+      "kind": "cluster",
+      "kind_name": "Cluster",
+      "title": "🪩 Gone Grey",
+      "name": "Gone Grey",
+      "summary": "1 tracks. Made by jimbo-dj.",
+      "tracks": 1,
+      "created_at": 1793757600,
+      "updated_at": 1793239260,
+      "stale": true,
+      "stale_in_plex": 1,
+      "made_by": "cluster",
+      "from": null,
+      "lines": 0,
+      "switches": [
+       {
+        "server": "plex",
+        "on": false,
+        "set_by": "jimbo-dj",
+        "pushed_at": 1793239200,
+        "plex_key": null,
+        "error": null,
+        "rule": "saved_playlists.in_plex"
+       },
+       {
+        "server": "jellyfin",
+        "on": false,
+        "set_by": null,
+        "from": "P6",
+        "rule": "jimbo-dj has no Jellyfin playlists; traqfreq keeps this switch from P6"
+       },
+       {
+        "server": "navidrome",
+        "on": false,
+        "set_by": null,
+        "from": "P6",
+        "rule": "jimbo-dj has no Navidrome playlists; traqfreq keeps this switch from P6"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "kind": "like",
+    "name": "More like this",
+    "count": 1,
+    "rows": [
+     {
+      "id": 7,
+      "slug": "more-like-westkreuz",
+      "kind": "like",
+      "kind_name": "More like this",
+      "title": "🔁 More like Westkreuz",
+      "name": "More like Westkreuz",
+      "summary": "2 tracks. Made by jimbo-dj.",
+      "tracks": 2,
+      "created_at": 1793757600,
+      "updated_at": 1793844250,
+      "stale": false,
+      "stale_in_plex": null,
+      "made_by": "radio",
+      "from": null,
+      "lines": 0,
+      "switches": [
+       {
+        "server": "plex",
+        "on": true,
+        "set_by": "jimbo-dj",
+        "pushed_at": null,
+        "plex_key": null,
+        "error": "Plex didn't answer",
+        "rule": "saved_playlists.in_plex"
+       },
+       {
+        "server": "jellyfin",
+        "on": false,
+        "set_by": null,
+        "from": "P6",
+        "rule": "jimbo-dj has no Jellyfin playlists; traqfreq keeps this switch from P6"
+       },
+       {
+        "server": "navidrome",
+        "on": false,
+        "set_by": null,
+        "from": "P6",
+        "rule": "jimbo-dj has no Navidrome playlists; traqfreq keeps this switch from P6"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "kind": "history",
+    "name": "From your history",
+    "count": 1,
+    "rows": [
+     {
+      "id": 8,
+      "slug": "top-songs-of-2026",
+      "kind": "history",
+      "kind_name": "From your history",
+      "title": "🎧 Top songs of 2026",
+      "name": "Top songs of 2026",
+      "summary": "3 tracks. Made by jimbo-dj.",
+      "tracks": 3,
+      "created_at": 1793757600,
+      "updated_at": 1793844260,
+      "stale": false,
+      "stale_in_plex": null,
+      "made_by": "period",
+      "from": "/history/wrapped/2026",
+      "lines": 0,
+      "switches": [
+       {
+        "server": "plex",
+        "on": false,
+        "set_by": "jimbo-dj",
+        "pushed_at": null,
+        "plex_key": null,
+        "error": null,
+        "rule": "saved_playlists.in_plex"
+       },
+       {
+        "server": "jellyfin",
+        "on": false,
+        "set_by": null,
+        "from": "P6",
+        "rule": "jimbo-dj has no Jellyfin playlists; traqfreq keeps this switch from P6"
+       },
+       {
+        "server": "navidrome",
+        "on": false,
+        "set_by": null,
+        "from": "P6",
+        "rule": "jimbo-dj has no Navidrome playlists; traqfreq keeps this switch from P6"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "kind": "setlist",
+    "name": "Setlist",
+    "count": 1,
+    "rows": [
+     {
+      "id": 9,
+      "slug": "kollektiv-nord-live",
+      "kind": "setlist",
+      "kind_name": "Setlist",
+      "title": "🎤 Kollektiv Nord live",
+      "name": "Kollektiv Nord live",
+      "summary": "2 tracks. Made by jimbo-dj.",
+      "tracks": 2,
+      "created_at": 1793757600,
+      "updated_at": 1793844270,
+      "stale": false,
+      "stale_in_plex": null,
+      "made_by": null,
+      "from": null,
+      "lines": 0,
+      "switches": [
+       {
+        "server": "plex",
+        "on": false,
+        "set_by": "jimbo-dj",
+        "pushed_at": null,
+        "plex_key": null,
+        "error": null,
+        "rule": "saved_playlists.in_plex"
+       },
+       {
+        "server": "jellyfin",
+        "on": false,
+        "set_by": null,
+        "from": "P6",
+        "rule": "jimbo-dj has no Jellyfin playlists; traqfreq keeps this switch from P6"
+       },
+       {
+        "server": "navidrome",
+        "on": false,
+        "set_by": null,
+        "from": "P6",
+        "rule": "jimbo-dj has no Navidrome playlists; traqfreq keeps this switch from P6"
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "/api/playlists/night-lines?limit=50": {
+  "playlist": {
+   "id": 1,
+   "slug": "night-lines",
+   "kind": "explore",
+   "kind_name": "Explore",
+   "title": "🧭 Night lines",
+   "name": "Night lines",
+   "summary": "4 tracks. Made by jimbo-dj.",
+   "tracks": 4,
+   "created_at": 1793757600,
+   "updated_at": 1793844200,
+   "stale": false,
+   "stale_in_plex": null,
+   "made_by": "rules",
+   "from": "/library/tracks?b=decade:2010s,!mood:sad~8~Ringbahn%2C not sad",
+   "lines": 3,
+   "switches": [
+    {
+     "server": "plex",
+     "on": true,
+     "set_by": "jimbo-dj",
+     "pushed_at": 1793844200,
+     "plex_key": 9001,
+     "error": null,
+     "rule": "saved_playlists.in_plex"
+    },
+    {
+     "server": "jellyfin",
+     "on": false,
+     "set_by": null,
+     "from": "P6",
+     "rule": "jimbo-dj has no Jellyfin playlists; traqfreq keeps this switch from P6"
+    },
+    {
+     "server": "navidrome",
+     "on": false,
+     "set_by": null,
+     "from": "P6",
+     "rule": "jimbo-dj has no Navidrome playlists; traqfreq keeps this switch from P6"
+    }
+   ]
+  },
+  "stored": {
+   "count": 4,
+   "live": 4,
+   "rows": [
+    {
+     "rating_key": 101,
+     "title": "Westkreuz",
+     "artist": "Kollektiv Nord",
+     "album": "Ringbahn",
+     "year": 2019,
+     "duration_ms": 312000,
+     "live": true
+    },
+    {
+     "rating_key": 103,
+     "title": "Harbour Lights",
+     "artist": "The Paper Lanterns",
+     "album": "Low Tide Radio",
+     "year": 2021,
+     "duration_ms": 221000,
+     "live": true
+    },
+    {
+     "rating_key": 102,
+     "title": "Ostkreuz",
+     "artist": "Kollektiv Nord",
+     "album": "Ringbahn",
+     "year": 2019,
+     "duration_ms": 298000,
+     "live": true
+    },
+    {
+     "rating_key": 105,
+     "title": "Coil",
+     "artist": "Ada Vey",
+     "album": "Quiet Engines",
+     "year": 2023,
+     "duration_ms": 402000,
+     "live": true
+    }
+   ],
+   "limit": 50,
+   "offset": 0,
+   "rule": "saved_playlists.keys, the tracks jimbo-dj stored, in play order"
+  },
+  "tree": {
+   "n": 20,
+   "per_artist": 3,
+   "shuffle": 0,
+   "branches": [
+    {
+     "id": "a",
+     "share": 8,
+     "match": {
+      "all": [
+       {
+        "f": "decade",
+        "v": "2010s"
+       }
+      ],
+      "not": [
+       {
+        "f": "mood",
+        "v": "sad"
+       }
+      ]
+     },
+     "label": "Ringbahn, not sad"
+    },
+    {
+     "id": "b",
+     "share": 6,
+     "match": {
+      "all": [
+       {
+        "any": [
+         {
+          "f": "artist",
+          "v": "Ada Vey"
+         },
+         {
+          "f": "listened",
+          "v": "2025"
+         }
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "id": "c",
+     "share": 6,
+     "match": {
+      "all": [
+       {
+        "f": "mood",
+        "v": "happy"
+       },
+       {
+        "any": [
+         {
+          "f": "bpm",
+          "v": "100-110"
+         },
+         {
+          "f": "key",
+          "v": "8A"
+         }
+        ]
+       }
+      ]
+     }
+    }
+   ]
+  },
+  "lines": {
+   "n": 20,
+   "per_artist": 3,
+   "shuffle": 0,
+   "name": "Ringbahn, not sad + (Ada Vey or played in 2025) + happy · (100-110 BPM or 8A)",
+   "query": "b=decade:2010s,!mood:sad~8~Ringbahn%252C+not+sad&b=(artist:Ada+Vey|listened:2025)~6&b=mood:happy,(bpm:100-110|key:8A)~6&n=20",
+   "lines": [
+    {
+     "id": "a",
+     "label": "Ringbahn, not sad",
+     "share": 8,
+     "words": "2010s · not sad",
+     "count": 1,
+     "match": {
+      "type": "group",
+      "words": "(2010s · not sad)",
+      "path": "",
+      "all": [
+       {
+        "type": "condition",
+        "f": "decade",
+        "v": "2010s",
+        "text": "2010s",
+        "count": 2,
+        "path": "all.0"
+       }
+      ],
+      "not": [
+       {
+        "type": "condition",
+        "f": "mood",
+        "v": "sad",
+        "text": "sad",
+        "count": 1,
+        "path": "not.0"
+       }
+      ],
+      "count": 1
+     }
+    },
+    {
+     "id": "b",
+     "label": null,
+     "share": 6,
+     "words": "(Ada Vey or played in 2025)",
+     "count": 2,
+     "match": {
+      "type": "group",
+      "words": "(Ada Vey or played in 2025)",
+      "path": "",
+      "all": [
+       {
+        "type": "group",
+        "words": "(Ada Vey or played in 2025)",
+        "path": "all.0",
+        "any": [
+         {
+          "type": "condition",
+          "f": "artist",
+          "v": "Ada Vey",
+          "text": "Ada Vey",
+          "count": 1,
+          "path": "all.0.any.0"
+         },
+         {
+          "type": "condition",
+          "f": "listened",
+          "v": "2025",
+          "text": "played in 2025",
+          "count": 1,
+          "path": "all.0.any.1"
+         }
+        ],
+        "count": 2
+       }
+      ],
+      "count": 2
+     }
+    },
+    {
+     "id": "c",
+     "label": null,
+     "share": 6,
+     "words": "happy · (100-110 BPM or 8A)",
+     "count": 2,
+     "match": {
+      "type": "group",
+      "words": "(happy · (100-110 BPM or 8A))",
+      "path": "",
+      "all": [
+       {
+        "type": "condition",
+        "f": "mood",
+        "v": "happy",
+        "text": "happy",
+        "count": 2,
+        "path": "all.0"
+       },
+       {
+        "type": "group",
+        "words": "(100-110 BPM or 8A)",
+        "path": "all.1",
+        "any": [
+         {
+          "type": "condition",
+          "f": "bpm",
+          "v": "100-110",
+          "text": "100-110 BPM",
+          "count": 1,
+          "path": "all.1.any.0"
+         },
+         {
+          "type": "condition",
+          "f": "key",
+          "v": "8A",
+          "text": "8A",
+          "count": 1,
+          "path": "all.1.any.1"
+         }
+        ],
+        "count": 2
+       }
+      ],
+      "count": 2
+     }
+    }
+   ],
+   "total": 4,
+   "library": 5,
+   "rules": {
+    "count": "the live tracks a line's conditions match (jimbo-dj's rules.branch_sets)",
+    "total": "the live tracks any line matches, each once",
+    "share": "the line's whole number of the playlist's n tracks (rules.quotas)"
+   }
+  },
+  "lines_error": null
+ },
+ "/api/playlists/inside-the-lines?limit=50": {
+  "playlist": {
+   "id": 10,
+   "slug": "inside-the-lines",
+   "kind": "explore",
+   "kind_name": "Explore",
+   "title": "🧭 Inside the lines",
+   "name": "Inside the lines",
+   "summary": "3 tracks. Made by jimbo-dj.",
+   "tracks": 3,
+   "created_at": 1793757600,
+   "updated_at": 1793844280,
+   "stale": false,
+   "stale_in_plex": null,
+   "made_by": "rules",
+   "from": null,
+   "lines": 2,
+   "switches": [
+    {
+     "server": "plex",
+     "on": false,
+     "set_by": "jimbo-dj",
+     "pushed_at": null,
+     "plex_key": null,
+     "error": null,
+     "rule": "saved_playlists.in_plex"
+    },
+    {
+     "server": "jellyfin",
+     "on": false,
+     "set_by": null,
+     "from": "P6",
+     "rule": "jimbo-dj has no Jellyfin playlists; traqfreq keeps this switch from P6"
+    },
+    {
+     "server": "navidrome",
+     "on": false,
+     "set_by": null,
+     "from": "P6",
+     "rule": "jimbo-dj has no Navidrome playlists; traqfreq keeps this switch from P6"
+    }
+   ]
+  },
+  "stored": {
+   "count": 3,
+   "live": 3,
+   "rows": [
+    {
+     "rating_key": 104,
+     "title": "Static Gulls",
+     "artist": "The Paper Lanterns",
+     "album": "Low Tide Radio",
+     "year": 2021,
+     "duration_ms": 245000,
+     "live": true
+    },
+    {
+     "rating_key": 101,
+     "title": "Westkreuz",
+     "artist": "Kollektiv Nord",
+     "album": "Ringbahn",
+     "year": 2019,
+     "duration_ms": 312000,
+     "live": true
+    },
+    {
+     "rating_key": 103,
+     "title": "Harbour Lights",
+     "artist": "The Paper Lanterns",
+     "album": "Low Tide Radio",
+     "year": 2021,
+     "duration_ms": 221000,
+     "live": true
+    }
+   ],
+   "limit": 50,
+   "offset": 0,
+   "rule": "saved_playlists.keys, the tracks jimbo-dj stored, in play order"
+  },
+  "tree": {
+   "n": 20,
+   "per_artist": 3,
+   "shuffle": 2,
+   "branches": [
+    {
+     "id": "a",
+     "share": 10,
+     "match": {
+      "all": [
+       {
+        "f": "in",
+        "v": "saved:from-the-2020s"
+       }
+      ],
+      "not": [
+       {
+        "f": "in",
+        "v": "cluster:quiet-engines"
+       }
+      ]
+     }
+    },
+    {
+     "id": "b",
+     "share": 10,
+     "match": {
+      "all": [
+       {
+        "f": "in",
+        "v": "mix:daily"
+       }
+      ]
+     }
+    }
+   ]
+  },
+  "lines": {
+   "n": 20,
+   "per_artist": 3,
+   "shuffle": 2,
+   "name": "in saved:from-the-2020s · not in cluster:quiet-engines + in mix:daily",
+   "query": "b=in:saved:from-the-2020s,!in:cluster:quiet-engines~10&b=in:mix:daily~10&n=20&shuffle=2",
+   "lines": [
+    {
+     "id": "a",
+     "label": null,
+     "share": 10,
+     "words": "in saved:from-the-2020s · not in cluster:quiet-engines",
+     "count": 1,
+     "match": {
+      "type": "group",
+      "words": "(in saved:from-the-2020s · not in cluster:quiet-engines)",
+      "path": "",
+      "all": [
+       {
+        "type": "condition",
+        "f": "in",
+        "v": "saved:from-the-2020s",
+        "text": "in saved:from-the-2020s",
+        "count": 3,
+        "path": "all.0"
+       }
+      ],
+      "not": [
+       {
+        "type": "condition",
+        "f": "in",
+        "v": "cluster:quiet-engines",
+        "text": "in cluster:quiet-engines",
+        "count": 2,
+        "path": "not.0"
+       }
+      ],
+      "count": 1
+     }
+    },
+    {
+     "id": "b",
+     "label": null,
+     "share": 10,
+     "words": "in mix:daily",
+     "count": 2,
+     "match": {
+      "type": "group",
+      "words": "in mix:daily",
+      "path": "",
+      "all": [
+       {
+        "type": "condition",
+        "f": "in",
+        "v": "mix:daily",
+        "text": "in mix:daily",
+        "count": 2,
+        "path": "all.0"
+       }
+      ],
+      "count": 2
+     }
+    }
+   ],
+   "total": 3,
+   "library": 5,
+   "rules": {
+    "count": "the live tracks a line's conditions match (jimbo-dj's rules.branch_sets)",
+    "total": "the live tracks any line matches, each once",
+    "share": "the line's whole number of the playlist's n tracks (rules.quotas)"
+   }
+  },
+  "lines_error": null
+ },
+ "/api/playlists/gone-grey?limit=50": {
+  "playlist": {
+   "id": 6,
+   "slug": "gone-grey",
+   "kind": "cluster",
+   "kind_name": "Cluster",
+   "title": "🪩 Gone Grey",
+   "name": "Gone Grey",
+   "summary": "1 tracks. Made by jimbo-dj.",
+   "tracks": 1,
+   "created_at": 1793757600,
+   "updated_at": 1793239260,
+   "stale": true,
+   "stale_in_plex": 1,
+   "made_by": "cluster",
+   "from": null,
+   "lines": 0,
+   "switches": [
+    {
+     "server": "plex",
+     "on": false,
+     "set_by": "jimbo-dj",
+     "pushed_at": 1793239200,
+     "plex_key": null,
+     "error": null,
+     "rule": "saved_playlists.in_plex"
+    },
+    {
+     "server": "jellyfin",
+     "on": false,
+     "set_by": null,
+     "from": "P6",
+     "rule": "jimbo-dj has no Jellyfin playlists; traqfreq keeps this switch from P6"
+    },
+    {
+     "server": "navidrome",
+     "on": false,
+     "set_by": null,
+     "from": "P6",
+     "rule": "jimbo-dj has no Navidrome playlists; traqfreq keeps this switch from P6"
+    }
+   ]
+  },
+  "stored": {
+   "count": 1,
+   "live": 0,
+   "rows": [
+    {
+     "rating_key": 106,
+     "title": "Old Signal",
+     "artist": "Former Band",
+     "album": "Gone Album",
+     "year": 2011,
+     "duration_ms": 199000,
+     "live": false
+    }
+   ],
+   "limit": 50,
+   "offset": 0,
+   "rule": "saved_playlists.keys, the tracks jimbo-dj stored, in play order"
+  },
+  "tree": null,
+  "lines": null,
+  "lines_error": null
+ },
+ "/api/playlists/daily-mix?limit=50": {
+  "playlist": {
+   "id": 4,
+   "slug": "daily-mix",
+   "kind": "mix",
+   "kind_name": "Mix",
+   "title": "🎧 Daily mix",
+   "name": "Daily mix",
+   "summary": "3 tracks. Made by jimbo-dj.",
+   "tracks": 3,
+   "created_at": 1793757600,
+   "updated_at": 1793844230,
+   "stale": false,
+   "stale_in_plex": null,
+   "made_by": "mix",
+   "from": null,
+   "lines": 0,
+   "switches": [
+    {
+     "server": "plex",
+     "on": true,
+     "set_by": "jimbo-dj",
+     "pushed_at": 1793844230,
+     "plex_key": 9002,
+     "error": null,
+     "rule": "saved_playlists.in_plex"
+    },
+    {
+     "server": "jellyfin",
+     "on": false,
+     "set_by": null,
+     "from": "P6",
+     "rule": "jimbo-dj has no Jellyfin playlists; traqfreq keeps this switch from P6"
+    },
+    {
+     "server": "navidrome",
+     "on": false,
+     "set_by": null,
+     "from": "P6",
+     "rule": "jimbo-dj has no Navidrome playlists; traqfreq keeps this switch from P6"
+    }
+   ]
+  },
+  "stored": {
+   "count": 3,
+   "live": 3,
+   "rows": [
+    {
+     "rating_key": 101,
+     "title": "Westkreuz",
+     "artist": "Kollektiv Nord",
+     "album": "Ringbahn",
+     "year": 2019,
+     "duration_ms": 312000,
+     "live": true
+    },
+    {
+     "rating_key": 103,
+     "title": "Harbour Lights",
+     "artist": "The Paper Lanterns",
+     "album": "Low Tide Radio",
+     "year": 2021,
+     "duration_ms": 221000,
+     "live": true
+    },
+    {
+     "rating_key": 104,
+     "title": "Static Gulls",
+     "artist": "The Paper Lanterns",
+     "album": "Low Tide Radio",
+     "year": 2021,
+     "duration_ms": 245000,
+     "live": true
+    }
+   ],
+   "limit": 50,
+   "offset": 0,
+   "rule": "saved_playlists.keys, the tracks jimbo-dj stored, in play order"
+  },
+  "tree": null,
+  "lines": null,
+  "lines_error": null
+ },
+ "/api/playlists/night-lines/rows?line=b&limit=200&path=all.0": {
+  "line": "b",
+  "path": "all.0",
+  "words": "Ada Vey or played in 2025",
+  "count": 2,
+  "rows": [
+   {
+    "rating_key": 102,
+    "title": "Ostkreuz",
+    "artist": "Kollektiv Nord",
+    "album": "Ringbahn",
+    "year": 2019,
+    "duration_ms": 298000,
+    "live": true
+   },
+   {
+    "rating_key": 105,
+    "title": "Coil",
+    "artist": "Ada Vey",
+    "album": "Quiet Engines",
+    "year": 2023,
+    "duration_ms": 402000,
+    "live": true
+   }
+  ],
+  "limit": 200,
+  "offset": 0,
+  "rule": "live tracks the conditions match, in album order"
+ }
+}

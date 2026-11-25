@@ -3,6 +3,13 @@
 All notable changes to this project are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions are CalVer (`YYYY.MM.N`).
 
 ## [Unreleased]
+### Added
+- P4 gate passed on the deployed app (2026-11-24): `scripts/p4_gate.py` exit 0, all three checks, once jimbo-dj's stored `library.tags` had caught up.
+- T24: the P5 spec (`docs/specs/t24-playlists.md`): how jimbo-dj stores and builds playlists, Ryan's three switches per playlist and mix (read-only in P5, pushing in P6; NaviBeat to look at), T24–T28, and the gate "Same tracks as jimbo-dj".
+- T24: PLAYLISTS under LIBRARY. Every playlist jimbo-dj saved is at `/library/playlists` (`GET /api/playlists`), by kind, with its Plex, Jellyfin and Navidrome switches, read-only. Plex is jimbo-dj's `in_plex`; Jellyfin and Navidrome are set from P6.
+- T24: a playlist's lines (`/library/playlists/<slug>`, `GET /api/playlists/{ref}`). Each line's conditions are shown as AND, OR and NOT chips, with nested groups. Each line, group and condition has its count of live tracks, counted with jimbo-dj's rules, and the rows behind it (`/library/playlists/rows`, `GET /api/playlists/{ref}/rows`). The tracks jimbo-dj stored are listed in play order. Any tree in jimbo-dj's URL form reads the same way (`GET /api/playlists/lines?b=…`). A Playlists card is on LIBRARY.
+- T24: jimbo-dj's branch builder vendored unchanged at 1d8a7cb (`vendor/rules.py`: Shape, Words, URL form, Matching), with the read-only parts of store.py, make.py, clusters.py, playlists.py, browse.py and history.py. The stand-ins are marked.
+- T24: fixture: invented saved playlists (one per kind, one stale, three trees, an Explore filter, a genre blend), a daily mix, a cluster run and a ban. No earlier count changes.
 ### Fixed
 - T23: a tag's page and the albums by sound rebuilt the ladder and the analyzer-styles-per-album table on every request (1–13 s live). Both are now kept with the Library, once per data stamp; the answers are unchanged.
 ### Added

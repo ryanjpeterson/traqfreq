@@ -116,7 +116,7 @@ addEventListener('resize', fit); fit();
 <div class="frame"><section id="status">
 <div class="bar"></div>
 <p class="barlabel">Status</p>
-<div class="barcode"><p>23 / 28</p></div>
+<div class="barcode"><p>24 / 28</p></div>
 <h2 class="head">Where the build stands</h2>
 <table class="tbl">
 <tr class="hd"><th style="width:8%">Phase</th><th style="width:30%">What</th><th style="width:12%">Sessions</th><th style="width:10%">Done</th><th style="width:14%">Status</th><th style="width:26%">Gate</th></tr>
@@ -124,8 +124,8 @@ addEventListener('resize', fit); fit();
 <tr><td>P1</td><td>HISTORY, read-only</td><td>4</td><td>4</td><td>Done</td><td>Counts match jimbo-dj</td></tr>
 <tr><td>P2</td><td>LIBRARY, read-only</td><td>4</td><td>4</td><td>Done</td><td>Counts match jimbo-dj</td></tr>
 <tr><td>P3</td><td>SERVERS: identity, Jellyfin, Navidrome</td><td>7</td><td>7</td><td>Done</td><td>One song, three servers</td></tr>
-<tr class="now"><td>P4</td><td>TAGS, read-only</td><td>4</td><td>4</td><td>Built; gate open</td><td>Ladder and per-track tags right</td></tr>
-<tr><td>P5</td><td>PLAYLISTS: Junction preview</td><td>5</td><td>0</td><td>Not started</td><td>Same tracks as jimbo-dj</td></tr>
+<tr><td>P4</td><td>TAGS, read-only</td><td>4</td><td>4</td><td>Done</td><td>Ladder and per-track tags right</td></tr>
+<tr class="now"><td>P5</td><td>PLAYLISTS: Junction preview</td><td>5</td><td>1</td><td>In progress</td><td>Same tracks as jimbo-dj</td></tr>
 <tr><td>P6</td><td>Cut-overs, one writer at a time</td><td>~15</td><td>0</td><td>Not started</td><td>Each switched off in jimbo-dj</td></tr>
 <tr><td>P7</td><td>DISCOVER, MIXES, FETCH, language loop</td><td>~30</td><td>0</td><td>Not started</td><td>Per module</td></tr>
 <tr><td>P8</td><td>Retire jimbo-dj; skins</td><td>~5</td><td>0</td><td>Not started</td><td>jimbo-dj off for a week</td></tr>
@@ -266,7 +266,7 @@ addEventListener('resize', fit); fit();
 <tr><td>T23</td><td>A page per tag (ladders, spellings and rules, albums, tracks, plays, sound); the genre map, one line per broad tag; five movements across the lines; p4_gate.py and the gate card</td><td>Done</td></tr>
 </table>
 <div class="stack" style="gap:28px">
-<div class="card T"><p class="k">GATE</p><p class="txt">Ladders and per-track tags agree with jimbo-dj’s tag rules on the real library.</p><p class="small">Not passed yet, 2026-11-24: ladders and per-track tags pass (53,440 of 53,440 tracks). The audit waits on jimbo-dj’s stored row, which lags its own data. Kept strict.</p></div>
+<div class="card T"><p class="k">GATE</p><p class="txt">Ladders and per-track tags agree with jimbo-dj’s tag rules on the real library.</p><p class="small">Passed 2026-11-24 on the deployed app: ladders 15 of 15, per-track tags 53,789 of 53,789 tracks, the audit 691 of 691 tags, once jimbo-dj’s stored row caught up. Never loosened.</p></div>
 <div class="card"><p class="k">STAYS IN JIMBO-DJ</p><p class="txt">Fix in Plex and file genre writes, with their undo.</p></div>
 <div class="card"><p class="k">REUSES</p><p class="txt">tags.py, tag_rules.json, genres.family() and Styles, history._genre_tags.</p></div>
 </div>
@@ -278,21 +278,21 @@ addEventListener('resize', fit); fit();
 <div class="frame"><section id="p5">
 <div class="bar"></div>
 <p class="barlabel">Phase P5 · PLAYLISTS</p>
-<div class="barcode"><p>TO DO</p></div>
+<div class="barcode"><p>1 / 5</p></div>
 <div class="row"><div class="badge L"><p>P5</p></div><h2 class="head">The Junction, as a preview</h2></div>
 <div class="cols2">
 <table class="tbl">
 <tr class="hd"><th style="width:14%">Session</th><th style="width:70%">Work</th><th style="width:16%">Status</th></tr>
-<tr><td>T24</td><td>Lines: AND, OR, NOT and true/false conditions over jimbo-dj’s rule engine</td><td>To do</td></tr>
-<tr><td>T25</td><td>The Junction drawing and its levers: share, cap, priority</td><td>To do</td></tr>
+<tr><td>T24</td><td>Spec written. Every saved playlist with its Plex, Jellyfin and Navidrome switches, read-only; each line’s AND, OR and NOT conditions counted with jimbo-dj’s rules, each count opening its tracks</td><td>Done</td></tr>
+<tr><td>T25</td><td>Picking, the Junction drawing and its levers: share, cap, priority; each switch with its copies on that server</td><td>To do</td></tr>
 <tr><td>T26</td><td>Movements with the rooted-to-roaming slider</td><td>To do</td></tr>
 <tr><td>T27</td><td>Flow order and “why this track” on every row</td><td>To do</td></tr>
-<tr><td>T28</td><td>The Ask box: CLAP always, Ollama lines when it’s on</td><td>To do</td></tr>
+<tr><td>T28</td><td>The Ask box (CLAP always, Ollama lines when it’s on); p5_gate.py and the gate card</td><td>To do</td></tr>
 </table>
 <div class="stack" style="gap:28px">
-<div class="card L"><p class="k">GATE</p><p class="txt">The same lines give the same tracks as jimbo-dj’s builder for ten saved playlists.</p></div>
-<div class="card"><p class="k">STAYS IN JIMBO-DJ</p><p class="txt">Saving, pushing to Plex, Keep fresh, daily and weekly picks.</p></div>
-<div class="card"><p class="k">REUSES</p><p class="txt">rules.py, flow.py, prompt.py.</p></div>
+<div class="card L"><p class="k">GATE</p><p class="txt">The same lines give the same tracks as jimbo-dj’s builder for ten playlists.</p><p class="small">Asked of jimbo-dj’s own preview, which saves nothing: every saved playlist with lines (8 live), then fixed ones.</p></div>
+<div class="card"><p class="k">STAYS IN JIMBO-DJ</p><p class="txt">Saving, pushing to Plex, Keep fresh, mixes and clusters. The three switches are shown, not set, until P6.</p></div>
+<div class="card"><p class="k">REUSES</p><p class="txt">rules.py, make.py, store.py, flow.py, prompt.py.</p></div>
 </div>
 </div>
 <div class="foot"><p class="label">traqfreq · build phases</p><p class="pg"></p></div>
@@ -356,20 +356,17 @@ addEventListener('resize', fit); fit();
 <h2 class="head">What happened, newest first</h2>
 <table class="tbl">
 <tr class="hd"><th style="width:16%">Date</th><th style="width:16%">Session</th><th style="width:68%">What</th></tr>
-<tr class="now"><td>Next</td><td>Next: T24</td><td>P5 PLAYLISTS spec and lines over jimbo-dj’s rule engine; run the P4 gate again once jimbo-dj’s stored audit catches up</td></tr>
-<tr><td>2026-11-24</td><td>T23, P4 gate</td><td>PR #25 on branch claude/t23-genre-gate: a page per tag, the genre map, movements, p4_gate.py and the gate card; 233 API and 209 web tests. Gate run live: ladders passed, per-track tags passed (53,440 tracks), audit not passed (5 tags differ from jimbo-dj’s stored row, which lags its own data); kept strict</td></tr>
-<tr><td>2026-11-24</td><td>T22</td><td>PR #23 on branch claude/t22-proposals: the proposals inbox (jimbo-dj’s audit grouped by kind, fix and suggestion, before and after Fix in Plex’s preview; traqfreq’s ladder proposals and rule questions; nothing applied) and gate check 3; 217 API and 195 web tests. T21 live: check 2 passed, 53,481 of 53,481 tracks</td></tr>
-<tr><td>2026-11-24</td><td>T21</td><td>PR #20 on branch claude/t21-track-tags: jimbo-dj’s styles and per-track rule vendored; a track’s tags by source on their rungs, an album track by track (the tracks that differ marked), gate check 2 for every track; 206 API and 185 web tests. T20 on live data: 555 tags, 15 of 15 broad tags agree with jimbo-dj</td></tr>
-<tr><td>2026-11-24</td><td>T20</td><td>PR #19 on branch claude/t20-tags-ladder: P4 spec; jimbo-dj’s tag rules vendored; the ladder (any depth, shared parents, never across a broad tag) and the TAGS page, checked against jimbo-dj’s families; 194 API and 170 web tests. Not yet on live data</td></tr>
-<tr><td>2026-11-24</td><td>P3 gate</td><td>Passed on the deployed app once Navidrome reported real paths (Report Real Path on, Navidrome restarted): every pair one to one over 53,274 copies, none unmatched; spot check 44 of 44 answers agree on file and length</td></tr>
-<tr><td>2026-11-24</td><td>T19, P3 gate</td><td>PR #18 on branch claude/t19-gate: the gate (/api/servers/compare, p3_gate.py, the card on SETUP). First run deployed: not passed, only because Navidrome hid all 52,985 paths; 182 API and 160 web tests</td></tr>
-<tr><td>2026-11-23</td><td>T18</td><td>PR #17 on branch claude/t18-navidrome: Navidrome’s reader, GET only over Subsonic (ping, music folders, scan status, every album and song); a read a scan tore is not stored; name and version on SERVERS. Live on Navidrome 0.64: 52,985 songs, paths hidden (Report Real Path off), 52,712 of 53,133 Plex copies matched by MusicBrainz ID and tags; Refresh Jellyfin works from the deployed container; 172 API and 155 web tests</td></tr>
-<tr><td>2026-11-23</td><td>T17</td><td>PR #16 on branch claude/t17-jellyfin: Jellyfin’s reader, GET only (System/Info, music folders, every audio item page by page, one named user’s play counts); server name, version and user on SERVERS. Live on Jellyfin 12.1: 53,133 items, all 53,133 Plex copies matched by file; fixed its auth header and reads torn by a running scan; 161 API and 155 web tests</td></tr>
+<tr class="now"><td>Next</td><td>Next: T25</td><td>Picking and the Junction drawing: shares, cap per artist, priority, shuffle and Never in mixes, vendored; read-only levers; each switch with its copies on that server</td></tr>
+<tr><td>2026-11-24</td><td>T24</td><td>PR #27 on branch claude/t24-playlists: P5 spec; every saved playlist with its Plex, Jellyfin and Navidrome switches (read-only); a playlist’s lines with AND, OR and NOT conditions counted with jimbo-dj’s vendored rules, each opening its tracks; 246 API and 216 web tests</td></tr>
+<tr><td>2026-11-24</td><td>P4 gate</td><td>Passed on the deployed app once jimbo-dj’s stored audit caught up: ladders 15 of 15, per-track tags 53,789 of 53,789 tracks, the audit 691 of 691 tags; never loosened</td></tr>
+<tr><td>2026-11-24</td><td>T23</td><td>PR #25 on branch claude/t23-genre-gate: a page per tag, the genre map, movements, p4_gate.py and the gate card; 233 API and 209 web tests. PR #26: the ladder kept once per data stamp, so tag pages are fast</td></tr>
+<tr><td>2026-11-24</td><td>T22</td><td>PR #23 on branch claude/t22-proposals: the proposals inbox (jimbo-dj’s audit grouped by kind, fix and suggestion, before and after Fix in Plex’s preview; traqfreq’s ladder proposals and rule questions; nothing applied) and gate check 3; 217 API and 195 web tests</td></tr>
+<tr><td>2026-11-24</td><td>T20, T21</td><td>PRs #19 and #20: P4 spec; jimbo-dj’s tag rules, styles and per-track rule vendored; the ladder and the TAGS page; a track’s tags by source, an album track by track, gate check 2. Live: 15 of 15 broad tags, 53,481 of 53,481 tracks</td></tr>
+<tr><td>2026-11-24</td><td>T19, P3 gate</td><td>PR #18: the gate (/api/servers/compare, p3_gate.py, the card on SETUP). Passed once Navidrome reported real paths: every pair one to one over 53,274 copies, none unmatched; spot check 44 of 44 answers agree</td></tr>
+<tr><td>2026-11-23</td><td>T17, T18</td><td>PRs #16 and #17: Jellyfin’s and Navidrome’s readers, GET only; server names and versions on SERVERS; torn reads refused. Live: Jellyfin 53,133 of 53,133 Plex copies by file; Navidrome 52,985 songs</td></tr>
 <tr><td>2026-11-23</td><td>T13–T16</td><td>PRs #10, #12, #13 and #14: P3 spec; track identity; snapshots and matching by file, MusicBrainz ID, tags, one to one, one reason for every miss; SERVERS page and “On servers”; the GET-only client and refresh; 152 API and 154 web tests</td></tr>
-<tr><td>2026-11-23</td><td>P2 gate</td><td>Passed: PRs #8 and #9 deployed; both stored LIBRARY rows, 60 of 60 fields (library.stats 23, library.charts 37), equal jimbo-dj’s</td></tr>
-<tr><td>2026-11-23</td><td>T12</td><td>PR #9 on branch claude/t12-library-gate: P2 gate script, /api/library/compare and the compare page; jimbo-dj’s library.stats and charts (files, time, place, keys, sound) vendored; gate card on LIBRARY and SETUP; fixture passes with one explained difference; 114 API and 137 web tests</td></tr>
-<tr><td>2026-11-22</td><td>T11</td><td>PR #7 on branch claude/t11-entities: album and artist lists, album, artist and track pages and their listens, counted with jimbo-dj’s own page code (vendored); no album art (it comes from Plex); merged. PR #8: LIBRARY play history from every source (Plex, Last.fm, Spotify, Apple Music) beside jimbo-dj’s Plex-only numbers</td></tr>
-<tr><td>2026-11-22</td><td>T9, T10</td><td>Library stats and tracks API counted with jimbo-dj’s own library.stats (vendored), plays as the larger of Plex and history; LIBRARY page (counts, files, Plex plays, both analyses, paths) with every number opening its rows; T9 live: 48 of 48 fields equal jimbo-dj’s</td></tr>
+<tr><td>2026-11-23</td><td>T12, P2 gate</td><td>PR #9: P2 gate script, /api/library/compare and the compare page; gate card on LIBRARY and SETUP. Passed: both stored LIBRARY rows, 60 of 60 fields, equal jimbo-dj’s</td></tr>
+<tr><td>2026-11-22</td><td>T9–T11</td><td>Library stats and tracks counted with jimbo-dj’s own code (vendored); LIBRARY page with every number opening its rows; album, artist and track pages; play history from every source beside Plex’s</td></tr>
 <tr><td>2026-11-22</td><td>T5–T8, P1 gate</td><td>The history API counted as jimbo-dj does (52,779 tracks, 167,180 plays, each play once), its functions vendored; HISTORY page, Counted once, Years, Wrapped, On this day and Top; P1 gate passed: all 41 stored HISTORY rows, 862 of 862 numbers, equal jimbo-dj’s</td></tr>
 <tr><td>2026-11-15–22</td><td>Planning, T1–T4, P0 gate</td><td>Pitch deck, ten directions, Berlin · Gelb beside jimbo-dj; repo scaffold and web shell; the eleven kit components; nav, map home, read-only SETUP and compose on :4492; GitHub public with a Forgejo pull mirror; P0 gate passed: runs on the Mac mini from main, reads jimbo-dj read-only</td></tr>
 </table>

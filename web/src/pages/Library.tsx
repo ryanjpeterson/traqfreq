@@ -7,6 +7,7 @@ import { count, fmt1, pct, tracksHref, valueLabel, type LibraryGate, type Librar
 import { artistHref, listHref } from '../app/entities';
 import { EmptyState } from './ModulePage';
 import { LibraryCompareCard } from './LibraryCompare';
+import { PlaylistsCard } from './Playlists';
 
 type Nav = { navigate: (href: string) => void };
 
@@ -92,6 +93,7 @@ function LibraryBody({ s, navigate }: { s: LibraryStats } & Nav) {
 
       <div className="hist-grid">
         <LibraryCompareCard load={gate} navigate={navigate} />
+        <PlaylistsCard navigate={navigate} />
       </div>
 
       <section aria-labelledby="l-files">

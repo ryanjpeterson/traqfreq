@@ -13,6 +13,7 @@ import { HistoryYears } from './pages/HistoryYears';
 import { Library } from './pages/Library';
 import { LibraryRows } from './pages/LibraryRows';
 import { LibraryCompare } from './pages/LibraryCompare';
+import { Playlist, PlaylistRows, Playlists } from './pages/Playlists';
 import { LibraryAlbum, LibraryArtist, LibraryList, LibraryPlays, LibraryTrack } from './pages/LibraryEntities';
 import { MapHome } from './pages/MapHome';
 import { ModulePage } from './pages/ModulePage';
@@ -68,7 +69,7 @@ export function Shell() {
         {r.page === 'search' && <Search navigate={navigate} />}
         {r.page === 'module' && r.module === 'S' && <SetupPage sub={r.sub} modules={modules} query={path.replace(/^[^?]*/, '')} navigate={navigate} />}
         {r.page === 'module' && r.module === 'H' && !waiting && <HistoryPage sub={r.sub} query={path.replace(/^[^?]*/, '')} navigate={navigate} />}
-        {r.page === 'module' && r.module === 'L' && <LibraryPage sub={r.sub} entityKey={r.key} query={path.replace(/^[^?]*/, '')} navigate={navigate} />}
+        {r.page === 'module' && r.module === 'L' && <LibraryPage sub={r.sub} entityKey={r.key} playlistRef={r.ref} query={path.replace(/^[^?]*/, '')} navigate={navigate} />}
         {r.page === 'module' && r.module === 'T' && !waiting && <TagsPage sub={r.sub} entityKey={r.key} tag={r.tag} query={path.replace(/^[^?]*/, '')} navigate={navigate} />}
         {r.page === 'module' && !['S', 'H', 'L', 'T'].includes(r.module) && !waiting && <ModulePage module={r.module as 'D' | 'M' | 'F'} navigate={navigate} />}
         {r.page === 'notFound' && <NotFound navigate={navigate} />}
@@ -114,8 +115,11 @@ function HistoryPage({ sub, query, navigate }: { sub?: string; query: string; na
 }
 
 /** LIBRARY's pages: the overview, the rows behind a number, the album and artist lists, an album, an artist, a
- *  track, and the listens behind their history numbers (T11), and the P2 comparison (T12). */
-function LibraryPage({ sub, entityKey, query, navigate }: { sub?: string; entityKey?: number; query: string; navigate: (href: string) => void }) {
+ *  track, and the listens behind their history numbers (T11), the P2 comparison (T12) and PLAYLISTS (T24). */
+function LibraryPage({ sub, entityKey, playlistRef, query, navigate }: { sub?: string; entityKey?: number; playlistRef?: string; query: string; navigate: (href: string) => void }) {
+  if (sub === 'playlists') return <Playlists navigate={navigate} />;
+  if (sub === 'playlist' && playlistRef) return <Playlist key={playlistRef} slug={playlistRef} navigate={navigate} />;
+  if (sub === 'playlistRows') return <PlaylistRows query={query} navigate={navigate} />;
   if (sub === 'tracks') return <LibraryRows query={query} navigate={navigate} />;
   if (sub === 'albums' || sub === 'artists') return <LibraryList kind={sub} query={query} navigate={navigate} />;
   if (sub === 'plays') return <LibraryPlays query={query} navigate={navigate} />;

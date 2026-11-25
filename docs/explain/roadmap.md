@@ -4,21 +4,24 @@ The phases and sessions are planned in [docs/specs/README.md](../specs/README.md
 
 ## Now
 
-- **P4 TAGS read-only, T20–T23** ([spec](../specs/t20-tags.md)). T20 done: the ladder on jimbo-dj's vendored tag rules, checked against its families (live: 15 of 15 broad tags, 403 of 403 ladders). T21 done: albums tagged track by track, each track's tags by source, the analyzer's styles vendored, gate check 2. T22 done: the proposals inbox (jimbo-dj's audit before and after Fix in Plex's preview, traqfreq's ladder proposals and rule questions; shown, not written) and gate check 3. T23 done: a page per tag, the genre map, movements and the gate (`scripts/p4_gate.py`). On live data checks 1 and 2 pass; check 3 does not yet pass, because jimbo-dj's stored audit lags its own data. It is kept strict, so P4 closes when it passes.
+- **P5 PLAYLISTS, the Junction preview, T24–T28** ([spec](../specs/t24-playlists.md)).
+  - T24 done: every saved playlist with its Plex, Jellyfin and Navidrome switches (read-only), and the lines of the ones with a tree. Each line's AND, OR and NOT conditions are counted with jimbo-dj's vendored rules, each count opening its rows.
+  - Next, T25: picking and the Junction drawing. Then T26 movements, T27 flow order and why, T28 the Ask box and the gate ("Same tracks as jimbo-dj").
+  - After P5, traqfreq shows everything jimbo-dj shows, read-only.
 
 ## Next
 
-1. **P5 PLAYLISTS** Junction preview (5 sessions). After P5, traqfreq shows everything jimbo-dj shows, read-only.
+1. **P6 cut-overs**: one writer at a time, starting where Ryan chooses. The playlists cut-over pushes each playlist and mix to the servers its switches name.
 
 ## Later
 
-- **P6 cut-overs** (~15 sessions): imports, scans, analyzer, playlists, Fix in Plex, jobs, backups move from jimbo-dj one at a time, each switched off there.
+- **P6 cut-overs** (~15 sessions): imports, scans, analyzer, playlists, Fix in Plex, jobs and backups move from jimbo-dj one at a time, each switched off there.
 - **P7 new modules** (~30): DISCOVER, MIXES, FETCH, the language loop.
 - **P8** retire jimbo-dj; the other nine design directions ship as skins.
 
 ## Ideas
 
-- Every playlist and mix gets three separate switches, Plex, Jellyfin and Navidrome, for which servers it goes to (Ryan, 2026-11-24): shown in P5, pushed in P6. Navidrome also has NaviBeat connected to it.
+- Before the Navidrome push (P6), look at what NaviBeat reads from Navidrome's playlists.
 - Import Jellyfin and Navidrome plays as listens, under HISTORY's priority rules (needs a rule for overlaps first).
 - A separate rule for Last.fm batch scrobbles before any burst check changes a count (T7 found the burst rule would hold about a fifth of plays).
 

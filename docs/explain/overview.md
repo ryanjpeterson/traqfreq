@@ -28,4 +28,4 @@ jimbo-dj grew from a Plex playlist editor into the home of the whole listening h
 
 ## Status
 
-Active since 2026-11-22. P0 (shell), P1 (HISTORY), P2 (LIBRARY) and P3 (SERVERS: one song on Plex, Jellyfin and Navidrome) are done and passed their gates on live data; P4 (TAGS, read-only) is under way: the ladder (T20), albums tagged track by track (T21), the proposals inbox (T22), and the tag pages, genre map and gate (T23) are built. Its gate waits on check 3: jimbo-dj's stored audit lags its own data. Done would be P8: jimbo-dj off for a week with traqfreq doing everything it did.
+Active since 2026-11-22. P0 (shell), P1 (HISTORY), P2 (LIBRARY), P3 (SERVERS: one song on Plex, Jellyfin and Navidrome) and P4 (TAGS, read-only) are done and passed their gates on live data. P5 (PLAYLISTS, the Junction preview) is under way: T24 shows jimbo-dj's saved playlists, each with its three server switches, and the lines of each tree counted with jimbo-dj's rules. Done would be P8: jimbo-dj off for a week with traqfreq doing everything it did.

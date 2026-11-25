@@ -2,7 +2,7 @@
 
 ## Summary
 
-Read-only views of jimbo-dj's data in the Berlin · Gelb look, each number with its rule and its rows, and a gate page per module comparing traqfreq with what jimbo-dj stored. 32 features in 5 areas.
+Read-only views of jimbo-dj's data in the Berlin · Gelb look, each number with its rule and its rows, and a gate page per module comparing traqfreq with what jimbo-dj stored. 35 features in 6 areas.
 
 ## Features
 
@@ -71,6 +71,14 @@ Read-only views of jimbo-dj's data in the Berlin · Gelb look, each number with 
 | Movements | Named sets of tags across broad tags (Blackgaze with Shoegaze, post-punk, industrial, emo, doom and drone), read from `movements.json`; shown on the map and each tag's page; they change no ladder and no count | `src/traqfreq/movements.json` | new |
 | P4 gate | Checks 1–3 (ladders, per-track tags, the audit) in one answer; `scripts/p4_gate.py`; the gate card on TAGS and SETUP | `GET /api/tags/compare`, `src/traqfreq/tags_gate.py`, `web/src/pages/TagsGenre.tsx` | new |
 | Track by track, same as jimbo-dj | Gate check 2: every live track's tags against jimbo-dj's `_genre_tags` and its kept styles against `genres.Styles` (both vendored, run here), the tracks that differ with both answers | `/tags`, `GET /api/tags/tracks/check` | new |
+
+### PLAYLISTS (under LIBRARY; P5, read-only)
+
+| Feature | What it does | Where | Status |
+|-|-|-|-|
+| Saved playlists | Every playlist jimbo-dj saved, by kind, with how many have lines, are on in Plex and are stale | `/library/playlists`, `GET /api/playlists`, `src/traqfreq/playlists.py` | new |
+| Three switches | Each playlist's Plex, Jellyfin and Navidrome switches, read-only: Plex is jimbo-dj's (with its last push and error), Jellyfin and Navidrome are set from P6 | `/library/playlists/<slug>` | new |
+| Lines | A tree's lines with their AND, OR and NOT conditions (nested groups too), each line's, group's and condition's count of live tracks by jimbo-dj's vendored rules, each opening its rows; any tree in jimbo-dj's URL form | `/library/playlists/<slug>`, `/library/playlists/rows`, `GET /api/playlists/{ref}`, `GET /api/playlists/lines` | new |
 
 ### Throughout
 

@@ -2,6 +2,12 @@
 
 ## Log
 
+### 2026-11-24 — Playlists live under LIBRARY, and the P5 gate asks jimbo-dj's preview
+
+- **Decision:** the Junction (jimbo-dj's branch builder, Library → Tracks) and the saved playlists are pages under LIBRARY, not a module of their own. The P5 gate compares traqfreq's tracks with jimbo-dj's `POST /api/rules/preview` for the same tree. That endpoint builds a playlist and saves nothing. Only `scripts/p5_gate.py` calls it.
+- **Why:** in jimbo-dj the builder is part of Library, and its conditions are Library's chart bars. A playlist's tracks depend on plays that change every day, so jimbo-dj's stored tracks can't be the answer; its own builder, asked now, can.
+- **Consequences:** the three switches (Plex, Jellyfin, Navidrome) are read-only until P6. Jellyfin and Navidrome show as off because jimbo-dj has nowhere to keep them.
+
 ### 2026-11-24 — Movements live in a data file and change nothing
 
 - **Decision:** a movement is a named set of tags across broad tags, kept in `src/traqfreq/movements.json` in traqfreq's repo (five to start). Each tag runs through jimbo-dj's rules. Movements are shown on the genre map and on each tag's page, and they change no ladder and no count: every tag keeps its own broad tag and its own numbers.

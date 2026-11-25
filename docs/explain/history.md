@@ -21,6 +21,8 @@
 - 2026-11-23, PR #16 (c76f665): Jellyfin read live, 53,133 of 53,133 Plex copies matched by file (T17).
 - 2026-11-24, PR #18: P3 gate passed, one song on Plex, Jellyfin and Navidrome (53,274 of 53,274 on each pair).
 - 2026-11-24, PR #25: P4 TAGS built (T20–T23: the ladder, tracks by source, the proposals inbox, tag pages, the genre map and movements). Its gate: checks 1 and 2 pass live, and check 3 waits on jimbo-dj's stored audit.
+- 2026-11-24: P4 gate passed on the deployed app, all three checks, once jimbo-dj's stored audit caught up.
+- 2026-11-24, T24: P5 begins, PLAYLISTS. The Junction preview's spec, the saved playlists with three switches each, and their lines counted with jimbo-dj's rules.
 
 ## Pivots and renames
 

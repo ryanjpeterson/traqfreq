@@ -46,8 +46,14 @@ Spec: [t20-tags.md](t20-tags.md).
 - **T20** The ladder: broad to specific, any depth, shared parents, on jimbo-dj's vendored tag rules; the ladder's agreement with jimbo-dj's families; the TAGS page. *Done.*
 - **T21** Albums tagged track by track (per-track tags by source, the analyzer's styles vendored). *Done* (the album and track pages on TAGS, linked from LIBRARY; gate check 2 in `GET /api/tags/tracks/check`).
 - **T22** Proposals inbox: jimbo-dj's audit and suggestions, shown, not written. *Done.*
-- **T23** Genre pages, the genre map, movements; gate script `scripts/p4_gate.py`, run on live data. *Done* (a page per tag, the map, `movements.json`, `GET /api/tags/compare`, the gate card on TAGS and SETUP). **P4 gate not passed yet** (2026-11-24): checks 1 and 2 pass, and check 3 waits on jimbo-dj's stored `library.tags`, which lags its own data. Kept strict (HANDOFF).
+- **T23** Genre pages, the genre map, movements; gate script `scripts/p4_gate.py`, run on live data. *Done* (a page per tag, the map, `movements.json`, `GET /api/tags/compare`, the gate card on TAGS and SETUP). **P4 gate passed 2026-11-24** on the deployed app, all three checks, once jimbo-dj's stored `library.tags` had caught up with its own data (checked strictly, never loosened; HANDOFF).
 ## P5 PLAYLISTS Junction preview: T24–T28
+Spec: [t24-playlists.md](t24-playlists.md). Gate: the same lines give the same tracks as jimbo-dj's builder (`POST /api/rules/preview`, which writes nothing) for ten trees, and the same list of saved playlists.
+- **T24** Lines: every saved playlist with its three switches (read-only), the lines of the ones with a tree (AND, OR, NOT, nested groups), each line's and each condition's count as jimbo-dj counts it, the rows behind each (vendored `rules.py` Shape, Words, URL form, Matching). *Done.*
+- **T25** The Junction and its levers: picking (shares, cap per artist, priority, shuffle, Never in mixes), the drawing, `/library/junction?b=…`; each switch with how many tracks have a copy on its server.
+- **T26** Movements, rooted to roaming (preview only, not in the gate).
+- **T27** Flow order and why this track (B3).
+- **T28** The Ask box; the gate script `scripts/p5_gate.py`, `GET /api/playlists/compare`, the gate card, a live run.
 **Ryan's requirement (2026-11-24), for every playlist and mix:** three separate switches, *Plex*, *Jellyfin* and *Navidrome*, each deciding whether that playlist is on that server; any mix of them, none implied by another. Navidrome also has NaviBeat connected to it (to look at when the Navidrome push is built: what it reads from Navidrome's playlists). P5 shows the switches read-only (where each playlist would go); P6 makes them push.
 ## P6 Cut-overs (~15)
 Imports, scans, analyzer, playlists, Fix in Plex, jobs, backups. Each is switched off in jimbo-dj as traqfreq takes the write. The playlists cut-over pushes each playlist and mix to the servers its switches name (Plex, Jellyfin, Navidrome, each on its own; see P5), and takes it off a server when its switch goes off.

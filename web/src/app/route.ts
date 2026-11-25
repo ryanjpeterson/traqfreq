@@ -9,7 +9,7 @@ export const MODULE_PATH: Record<ModuleId, string> = {
 export type Route =
   | { page: 'map' }
   | { page: 'search' }
-  | { page: 'module'; module: ModuleId; sub?: HistorySub | LibrarySub | SetupSub | TagsSub; key?: number; tag?: string }
+  | { page: 'module'; module: ModuleId; sub?: HistorySub | LibrarySub | SetupSub | TagsSub; key?: number; tag?: string; ref?: string }
   | { page: 'notFound' };
 
 /** HISTORY's rows page: the listens behind a number (query string = the filters). */
@@ -37,10 +37,12 @@ export const LIBRARY_ARTISTS = '/library/artists';
 export const LIBRARY_PLAYS = '/library/plays';
 /** T12: the P2 gate's comparison with jimbo-dj's stored library numbers. */
 export const LIBRARY_COMPARE = '/library/compare';
-export type LibrarySub = 'tracks' | 'albums' | 'artists' | 'plays' | 'album' | 'artist' | 'track' | 'compare';
+/** T24: PLAYLISTS (P5): the saved playlists, one playlist (/library/playlists/<slug>), the rows behind its counts. */
+export type LibrarySub = 'tracks' | 'albums' | 'artists' | 'plays' | 'album' | 'artist' | 'track' | 'compare'
+  | 'playlists' | 'playlist' | 'playlistRows';
 const LIBRARY_SUBS: Record<string, LibrarySub> = {
   [LIBRARY_TRACKS]: 'tracks', [LIBRARY_ALBUMS]: 'albums', [LIBRARY_ARTISTS]: 'artists', [LIBRARY_PLAYS]: 'plays',
-  [LIBRARY_COMPARE]: 'compare',
+  [LIBRARY_COMPARE]: 'compare', '/library/playlists': 'playlists', '/library/playlists/rows': 'playlistRows',
 };
 
 /** T15: SETUP → SERVERS and the rows behind its counts (identity copies; match rows). SERVERS is not a module. */
@@ -63,6 +65,14 @@ export function parseRoute(pathname: string): Route {
   if (LIBRARY_SUBS[path]) return { page: 'module', module: 'L', sub: LIBRARY_SUBS[path] };
   const entity = /^\/library\/(album|artist|track)\/(\d+)$/.exec(path);
   if (entity) return { page: 'module', module: 'L', sub: entity[1] as LibrarySub, key: Number(entity[2]) };
+  const pl = /^\/library\/playlists\/([^/]+)$/.exec(path);
+  if (pl) {
+    try {
+      return { page: 'module', module: 'L', sub: 'playlist', ref: decodeURIComponent(pl[1]) };
+    } catch {
+      return { page: 'notFound' };
+    }
+  }
   if (HISTORY_SUBS[path]) return { page: 'module', module: 'H', sub: HISTORY_SUBS[path] };
   if (SETUP_SUBS[path]) return { page: 'module', module: 'S', sub: SETUP_SUBS[path] };
   if (TAGS_SUBS[path]) return { page: 'module', module: 'T', sub: TAGS_SUBS[path] };
