@@ -77,8 +77,9 @@ Read-only views of jimbo-dj's data in the Berlin · Gelb look, each number with 
 | Feature | What it does | Where | Status |
 |-|-|-|-|
 | Saved playlists | Every playlist jimbo-dj saved, by kind, with how many have lines, are on in Plex and are stale | `/library/playlists`, `GET /api/playlists`, `src/traqfreq/playlists.py` | new |
-| Three switches | Each playlist's Plex, Jellyfin and Navidrome switches, read-only: Plex is jimbo-dj's (with its last push and error), Jellyfin and Navidrome are set from P6 | `/library/playlists/<slug>` | new |
+| Three switches | Each playlist's Plex, Jellyfin and Navidrome switches, read-only: Plex is jimbo-dj's (with its last push and error), Jellyfin and Navidrome are set from P6. Each says how many stored tracks have a copy on that server (P3's matches), naming the missing ones and why | `/library/playlists/<slug>`, `/library/playlists/copies`, `GET /api/playlists/{ref}/copies` | new |
 | Lines | A tree's lines with their AND, OR and NOT conditions (nested groups too), each line's, group's and condition's count of live tracks by jimbo-dj's vendored rules, each opening its rows; any tree in jimbo-dj's URL form | `/library/playlists/<slug>`, `/library/playlists/rows`, `GET /api/playlists/{ref}`, `GET /api/playlists/lines` | new |
+| The Junction | What a tree picks now, by jimbo-dj's vendored picking (shares, cap per artist, line order, shuffle, Never in mixes): each line's count, share, got, available and banned, the total, every picked track with its line; the drawing with its list view and read-only levers; any tree in jimbo-dj's URL form | `/library/junction?b=…`, `GET /api/junction`, `GET /api/junction/rows`, `src/traqfreq/junction.py` | new |
 
 ### Throughout
 

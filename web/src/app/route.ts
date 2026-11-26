@@ -37,12 +37,14 @@ export const LIBRARY_ARTISTS = '/library/artists';
 export const LIBRARY_PLAYS = '/library/plays';
 /** T12: the P2 gate's comparison with jimbo-dj's stored library numbers. */
 export const LIBRARY_COMPARE = '/library/compare';
-/** T24: PLAYLISTS (P5): the saved playlists, one playlist (/library/playlists/<slug>), the rows behind its counts. */
+/** T24: PLAYLISTS (P5): the saved playlists, one playlist (/library/playlists/<slug>), the rows behind its counts.
+ *  T25: the Junction (any tree, /library/junction?b=…), the rows behind its numbers, the copies behind a switch. */
 export type LibrarySub = 'tracks' | 'albums' | 'artists' | 'plays' | 'album' | 'artist' | 'track' | 'compare'
-  | 'playlists' | 'playlist' | 'playlistRows';
+  | 'playlists' | 'playlist' | 'playlistRows' | 'playlistCopies' | 'junction' | 'junctionRows';
 const LIBRARY_SUBS: Record<string, LibrarySub> = {
   [LIBRARY_TRACKS]: 'tracks', [LIBRARY_ALBUMS]: 'albums', [LIBRARY_ARTISTS]: 'artists', [LIBRARY_PLAYS]: 'plays',
   [LIBRARY_COMPARE]: 'compare', '/library/playlists': 'playlists', '/library/playlists/rows': 'playlistRows',
+  '/library/playlists/copies': 'playlistCopies', '/library/junction': 'junction', '/library/junction/rows': 'junctionRows',
 };
 
 /** T15: SETUP → SERVERS and the rows behind its counts (identity copies; match rows). SERVERS is not a module. */

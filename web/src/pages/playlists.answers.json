@@ -44,21 +44,53 @@
         "pushed_at": 1793844200,
         "plex_key": 9001,
         "error": null,
-        "rule": "saved_playlists.in_plex"
+        "rule": "saved_playlists.in_plex",
+        "copies": {
+         "count": 4,
+         "of": 4,
+         "missing": 0,
+         "reasons": {},
+         "snapshot": true,
+         "rule": "a live Plex copy: the stored rating key is in jimbo-dj's tracks and not removed",
+         "rows": "server=plex",
+         "missing_rows": "server=plex&missing=true"
+        }
        },
        {
         "server": "jellyfin",
         "on": false,
         "set_by": null,
         "from": "P6",
-        "rule": "jimbo-dj has no Jellyfin playlists; traqfreq keeps this switch from P6"
+        "rule": "jimbo-dj has no Jellyfin playlists; traqfreq keeps this switch from P6",
+        "copies": {
+         "count": 4,
+         "of": 4,
+         "missing": 0,
+         "reasons": {},
+         "snapshot": true,
+         "rule": "the Plex copy is matched to an item in the stored Jellyfin snapshot (P3's matches)",
+         "rows": "server=jellyfin",
+         "missing_rows": "server=jellyfin&missing=true"
+        }
        },
        {
         "server": "navidrome",
         "on": false,
         "set_by": null,
         "from": "P6",
-        "rule": "jimbo-dj has no Navidrome playlists; traqfreq keeps this switch from P6"
+        "rule": "jimbo-dj has no Navidrome playlists; traqfreq keeps this switch from P6",
+        "copies": {
+         "count": 3,
+         "of": 4,
+         "missing": 1,
+         "reasons": {
+          "hidden_path": 1
+         },
+         "snapshot": true,
+         "rule": "the Plex copy is matched to an item in the stored Navidrome snapshot (P3's matches)",
+         "rows": "server=navidrome",
+         "missing_rows": "server=navidrome&missing=true"
+        }
        }
       ]
      },
@@ -86,21 +118,51 @@
         "pushed_at": null,
         "plex_key": null,
         "error": null,
-        "rule": "saved_playlists.in_plex"
+        "rule": "saved_playlists.in_plex",
+        "copies": {
+         "count": 3,
+         "of": 3,
+         "missing": 0,
+         "reasons": {},
+         "snapshot": true,
+         "rule": "a live Plex copy: the stored rating key is in jimbo-dj's tracks and not removed",
+         "rows": "server=plex",
+         "missing_rows": "server=plex&missing=true"
+        }
        },
        {
         "server": "jellyfin",
         "on": false,
         "set_by": null,
         "from": "P6",
-        "rule": "jimbo-dj has no Jellyfin playlists; traqfreq keeps this switch from P6"
+        "rule": "jimbo-dj has no Jellyfin playlists; traqfreq keeps this switch from P6",
+        "copies": {
+         "count": 3,
+         "of": 3,
+         "missing": 0,
+         "reasons": {},
+         "snapshot": true,
+         "rule": "the Plex copy is matched to an item in the stored Jellyfin snapshot (P3's matches)",
+         "rows": "server=jellyfin",
+         "missing_rows": "server=jellyfin&missing=true"
+        }
        },
        {
         "server": "navidrome",
         "on": false,
         "set_by": null,
         "from": "P6",
-        "rule": "jimbo-dj has no Navidrome playlists; traqfreq keeps this switch from P6"
+        "rule": "jimbo-dj has no Navidrome playlists; traqfreq keeps this switch from P6",
+        "copies": {
+         "count": 3,
+         "of": 3,
+         "missing": 0,
+         "reasons": {},
+         "snapshot": true,
+         "rule": "the Plex copy is matched to an item in the stored Navidrome snapshot (P3's matches)",
+         "rows": "server=navidrome",
+         "missing_rows": "server=navidrome&missing=true"
+        }
        }
       ]
      },
@@ -128,21 +190,53 @@
         "pushed_at": null,
         "plex_key": null,
         "error": null,
-        "rule": "saved_playlists.in_plex"
+        "rule": "saved_playlists.in_plex",
+        "copies": {
+         "count": 3,
+         "of": 3,
+         "missing": 0,
+         "reasons": {},
+         "snapshot": true,
+         "rule": "a live Plex copy: the stored rating key is in jimbo-dj's tracks and not removed",
+         "rows": "server=plex",
+         "missing_rows": "server=plex&missing=true"
+        }
        },
        {
         "server": "jellyfin",
         "on": false,
         "set_by": null,
         "from": "P6",
-        "rule": "jimbo-dj has no Jellyfin playlists; traqfreq keeps this switch from P6"
+        "rule": "jimbo-dj has no Jellyfin playlists; traqfreq keeps this switch from P6",
+        "copies": {
+         "count": 3,
+         "of": 3,
+         "missing": 0,
+         "reasons": {},
+         "snapshot": true,
+         "rule": "the Plex copy is matched to an item in the stored Jellyfin snapshot (P3's matches)",
+         "rows": "server=jellyfin",
+         "missing_rows": "server=jellyfin&missing=true"
+        }
        },
        {
         "server": "navidrome",
         "on": false,
         "set_by": null,
         "from": "P6",
-        "rule": "jimbo-dj has no Navidrome playlists; traqfreq keeps this switch from P6"
+        "rule": "jimbo-dj has no Navidrome playlists; traqfreq keeps this switch from P6",
+        "copies": {
+         "count": 2,
+         "of": 3,
+         "missing": 1,
+         "reasons": {
+          "hidden_path": 1
+         },
+         "snapshot": true,
+         "rule": "the Plex copy is matched to an item in the stored Navidrome snapshot (P3's matches)",
+         "rows": "server=navidrome",
+         "missing_rows": "server=navidrome&missing=true"
+        }
        }
       ]
      }
@@ -177,21 +271,51 @@
         "pushed_at": null,
         "plex_key": null,
         "error": null,
-        "rule": "saved_playlists.in_plex"
+        "rule": "saved_playlists.in_plex",
+        "copies": {
+         "count": 3,
+         "of": 3,
+         "missing": 0,
+         "reasons": {},
+         "snapshot": true,
+         "rule": "a live Plex copy: the stored rating key is in jimbo-dj's tracks and not removed",
+         "rows": "server=plex",
+         "missing_rows": "server=plex&missing=true"
+        }
        },
        {
         "server": "jellyfin",
         "on": false,
         "set_by": null,
         "from": "P6",
-        "rule": "jimbo-dj has no Jellyfin playlists; traqfreq keeps this switch from P6"
+        "rule": "jimbo-dj has no Jellyfin playlists; traqfreq keeps this switch from P6",
+        "copies": {
+         "count": 3,
+         "of": 3,
+         "missing": 0,
+         "reasons": {},
+         "snapshot": true,
+         "rule": "the Plex copy is matched to an item in the stored Jellyfin snapshot (P3's matches)",
+         "rows": "server=jellyfin",
+         "missing_rows": "server=jellyfin&missing=true"
+        }
        },
        {
         "server": "navidrome",
         "on": false,
         "set_by": null,
         "from": "P6",
-        "rule": "jimbo-dj has no Navidrome playlists; traqfreq keeps this switch from P6"
+        "rule": "jimbo-dj has no Navidrome playlists; traqfreq keeps this switch from P6",
+        "copies": {
+         "count": 3,
+         "of": 3,
+         "missing": 0,
+         "reasons": {},
+         "snapshot": true,
+         "rule": "the Plex copy is matched to an item in the stored Navidrome snapshot (P3's matches)",
+         "rows": "server=navidrome",
+         "missing_rows": "server=navidrome&missing=true"
+        }
        }
       ]
      }
@@ -226,21 +350,51 @@
         "pushed_at": 1793844230,
         "plex_key": 9002,
         "error": null,
-        "rule": "saved_playlists.in_plex"
+        "rule": "saved_playlists.in_plex",
+        "copies": {
+         "count": 3,
+         "of": 3,
+         "missing": 0,
+         "reasons": {},
+         "snapshot": true,
+         "rule": "a live Plex copy: the stored rating key is in jimbo-dj's tracks and not removed",
+         "rows": "server=plex",
+         "missing_rows": "server=plex&missing=true"
+        }
        },
        {
         "server": "jellyfin",
         "on": false,
         "set_by": null,
         "from": "P6",
-        "rule": "jimbo-dj has no Jellyfin playlists; traqfreq keeps this switch from P6"
+        "rule": "jimbo-dj has no Jellyfin playlists; traqfreq keeps this switch from P6",
+        "copies": {
+         "count": 3,
+         "of": 3,
+         "missing": 0,
+         "reasons": {},
+         "snapshot": true,
+         "rule": "the Plex copy is matched to an item in the stored Jellyfin snapshot (P3's matches)",
+         "rows": "server=jellyfin",
+         "missing_rows": "server=jellyfin&missing=true"
+        }
        },
        {
         "server": "navidrome",
         "on": false,
         "set_by": null,
         "from": "P6",
-        "rule": "jimbo-dj has no Navidrome playlists; traqfreq keeps this switch from P6"
+        "rule": "jimbo-dj has no Navidrome playlists; traqfreq keeps this switch from P6",
+        "copies": {
+         "count": 3,
+         "of": 3,
+         "missing": 0,
+         "reasons": {},
+         "snapshot": true,
+         "rule": "the Plex copy is matched to an item in the stored Navidrome snapshot (P3's matches)",
+         "rows": "server=navidrome",
+         "missing_rows": "server=navidrome&missing=true"
+        }
        }
       ]
      }
@@ -275,21 +429,53 @@
         "pushed_at": null,
         "plex_key": null,
         "error": null,
-        "rule": "saved_playlists.in_plex"
+        "rule": "saved_playlists.in_plex",
+        "copies": {
+         "count": 2,
+         "of": 2,
+         "missing": 0,
+         "reasons": {},
+         "snapshot": true,
+         "rule": "a live Plex copy: the stored rating key is in jimbo-dj's tracks and not removed",
+         "rows": "server=plex",
+         "missing_rows": "server=plex&missing=true"
+        }
        },
        {
         "server": "jellyfin",
         "on": false,
         "set_by": null,
         "from": "P6",
-        "rule": "jimbo-dj has no Jellyfin playlists; traqfreq keeps this switch from P6"
+        "rule": "jimbo-dj has no Jellyfin playlists; traqfreq keeps this switch from P6",
+        "copies": {
+         "count": 2,
+         "of": 2,
+         "missing": 0,
+         "reasons": {},
+         "snapshot": true,
+         "rule": "the Plex copy is matched to an item in the stored Jellyfin snapshot (P3's matches)",
+         "rows": "server=jellyfin",
+         "missing_rows": "server=jellyfin&missing=true"
+        }
        },
        {
         "server": "navidrome",
         "on": false,
         "set_by": null,
         "from": "P6",
-        "rule": "jimbo-dj has no Navidrome playlists; traqfreq keeps this switch from P6"
+        "rule": "jimbo-dj has no Navidrome playlists; traqfreq keeps this switch from P6",
+        "copies": {
+         "count": 1,
+         "of": 2,
+         "missing": 1,
+         "reasons": {
+          "hidden_path": 1
+         },
+         "snapshot": true,
+         "rule": "the Plex copy is matched to an item in the stored Navidrome snapshot (P3's matches)",
+         "rows": "server=navidrome",
+         "missing_rows": "server=navidrome&missing=true"
+        }
        }
       ]
      },
@@ -317,21 +503,57 @@
         "pushed_at": 1793239200,
         "plex_key": null,
         "error": null,
-        "rule": "saved_playlists.in_plex"
+        "rule": "saved_playlists.in_plex",
+        "copies": {
+         "count": 0,
+         "of": 1,
+         "missing": 1,
+         "reasons": {
+          "removed": 1
+         },
+         "snapshot": true,
+         "rule": "a live Plex copy: the stored rating key is in jimbo-dj's tracks and not removed",
+         "rows": "server=plex",
+         "missing_rows": "server=plex&missing=true"
+        }
        },
        {
         "server": "jellyfin",
         "on": false,
         "set_by": null,
         "from": "P6",
-        "rule": "jimbo-dj has no Jellyfin playlists; traqfreq keeps this switch from P6"
+        "rule": "jimbo-dj has no Jellyfin playlists; traqfreq keeps this switch from P6",
+        "copies": {
+         "count": 0,
+         "of": 1,
+         "missing": 1,
+         "reasons": {
+          "removed": 1
+         },
+         "snapshot": true,
+         "rule": "the Plex copy is matched to an item in the stored Jellyfin snapshot (P3's matches)",
+         "rows": "server=jellyfin",
+         "missing_rows": "server=jellyfin&missing=true"
+        }
        },
        {
         "server": "navidrome",
         "on": false,
         "set_by": null,
         "from": "P6",
-        "rule": "jimbo-dj has no Navidrome playlists; traqfreq keeps this switch from P6"
+        "rule": "jimbo-dj has no Navidrome playlists; traqfreq keeps this switch from P6",
+        "copies": {
+         "count": 0,
+         "of": 1,
+         "missing": 1,
+         "reasons": {
+          "removed": 1
+         },
+         "snapshot": true,
+         "rule": "the Plex copy is matched to an item in the stored Navidrome snapshot (P3's matches)",
+         "rows": "server=navidrome",
+         "missing_rows": "server=navidrome&missing=true"
+        }
        }
       ]
      }
@@ -366,21 +588,51 @@
         "pushed_at": null,
         "plex_key": null,
         "error": "Plex didn't answer",
-        "rule": "saved_playlists.in_plex"
+        "rule": "saved_playlists.in_plex",
+        "copies": {
+         "count": 2,
+         "of": 2,
+         "missing": 0,
+         "reasons": {},
+         "snapshot": true,
+         "rule": "a live Plex copy: the stored rating key is in jimbo-dj's tracks and not removed",
+         "rows": "server=plex",
+         "missing_rows": "server=plex&missing=true"
+        }
        },
        {
         "server": "jellyfin",
         "on": false,
         "set_by": null,
         "from": "P6",
-        "rule": "jimbo-dj has no Jellyfin playlists; traqfreq keeps this switch from P6"
+        "rule": "jimbo-dj has no Jellyfin playlists; traqfreq keeps this switch from P6",
+        "copies": {
+         "count": 2,
+         "of": 2,
+         "missing": 0,
+         "reasons": {},
+         "snapshot": true,
+         "rule": "the Plex copy is matched to an item in the stored Jellyfin snapshot (P3's matches)",
+         "rows": "server=jellyfin",
+         "missing_rows": "server=jellyfin&missing=true"
+        }
        },
        {
         "server": "navidrome",
         "on": false,
         "set_by": null,
         "from": "P6",
-        "rule": "jimbo-dj has no Navidrome playlists; traqfreq keeps this switch from P6"
+        "rule": "jimbo-dj has no Navidrome playlists; traqfreq keeps this switch from P6",
+        "copies": {
+         "count": 2,
+         "of": 2,
+         "missing": 0,
+         "reasons": {},
+         "snapshot": true,
+         "rule": "the Plex copy is matched to an item in the stored Navidrome snapshot (P3's matches)",
+         "rows": "server=navidrome",
+         "missing_rows": "server=navidrome&missing=true"
+        }
        }
       ]
      }
@@ -415,21 +667,53 @@
         "pushed_at": null,
         "plex_key": null,
         "error": null,
-        "rule": "saved_playlists.in_plex"
+        "rule": "saved_playlists.in_plex",
+        "copies": {
+         "count": 3,
+         "of": 3,
+         "missing": 0,
+         "reasons": {},
+         "snapshot": true,
+         "rule": "a live Plex copy: the stored rating key is in jimbo-dj's tracks and not removed",
+         "rows": "server=plex",
+         "missing_rows": "server=plex&missing=true"
+        }
        },
        {
         "server": "jellyfin",
         "on": false,
         "set_by": null,
         "from": "P6",
-        "rule": "jimbo-dj has no Jellyfin playlists; traqfreq keeps this switch from P6"
+        "rule": "jimbo-dj has no Jellyfin playlists; traqfreq keeps this switch from P6",
+        "copies": {
+         "count": 3,
+         "of": 3,
+         "missing": 0,
+         "reasons": {},
+         "snapshot": true,
+         "rule": "the Plex copy is matched to an item in the stored Jellyfin snapshot (P3's matches)",
+         "rows": "server=jellyfin",
+         "missing_rows": "server=jellyfin&missing=true"
+        }
        },
        {
         "server": "navidrome",
         "on": false,
         "set_by": null,
         "from": "P6",
-        "rule": "jimbo-dj has no Navidrome playlists; traqfreq keeps this switch from P6"
+        "rule": "jimbo-dj has no Navidrome playlists; traqfreq keeps this switch from P6",
+        "copies": {
+         "count": 2,
+         "of": 3,
+         "missing": 1,
+         "reasons": {
+          "hidden_path": 1
+         },
+         "snapshot": true,
+         "rule": "the Plex copy is matched to an item in the stored Navidrome snapshot (P3's matches)",
+         "rows": "server=navidrome",
+         "missing_rows": "server=navidrome&missing=true"
+        }
        }
       ]
      }
@@ -464,21 +748,51 @@
         "pushed_at": null,
         "plex_key": null,
         "error": null,
-        "rule": "saved_playlists.in_plex"
+        "rule": "saved_playlists.in_plex",
+        "copies": {
+         "count": 2,
+         "of": 2,
+         "missing": 0,
+         "reasons": {},
+         "snapshot": true,
+         "rule": "a live Plex copy: the stored rating key is in jimbo-dj's tracks and not removed",
+         "rows": "server=plex",
+         "missing_rows": "server=plex&missing=true"
+        }
        },
        {
         "server": "jellyfin",
         "on": false,
         "set_by": null,
         "from": "P6",
-        "rule": "jimbo-dj has no Jellyfin playlists; traqfreq keeps this switch from P6"
+        "rule": "jimbo-dj has no Jellyfin playlists; traqfreq keeps this switch from P6",
+        "copies": {
+         "count": 2,
+         "of": 2,
+         "missing": 0,
+         "reasons": {},
+         "snapshot": true,
+         "rule": "the Plex copy is matched to an item in the stored Jellyfin snapshot (P3's matches)",
+         "rows": "server=jellyfin",
+         "missing_rows": "server=jellyfin&missing=true"
+        }
        },
        {
         "server": "navidrome",
         "on": false,
         "set_by": null,
         "from": "P6",
-        "rule": "jimbo-dj has no Navidrome playlists; traqfreq keeps this switch from P6"
+        "rule": "jimbo-dj has no Navidrome playlists; traqfreq keeps this switch from P6",
+        "copies": {
+         "count": 2,
+         "of": 2,
+         "missing": 0,
+         "reasons": {},
+         "snapshot": true,
+         "rule": "the Plex copy is matched to an item in the stored Navidrome snapshot (P3's matches)",
+         "rows": "server=navidrome",
+         "missing_rows": "server=navidrome&missing=true"
+        }
        }
       ]
      }
@@ -511,21 +825,53 @@
      "pushed_at": 1793844200,
      "plex_key": 9001,
      "error": null,
-     "rule": "saved_playlists.in_plex"
+     "rule": "saved_playlists.in_plex",
+     "copies": {
+      "count": 4,
+      "of": 4,
+      "missing": 0,
+      "reasons": {},
+      "snapshot": true,
+      "rule": "a live Plex copy: the stored rating key is in jimbo-dj's tracks and not removed",
+      "rows": "server=plex",
+      "missing_rows": "server=plex&missing=true"
+     }
     },
     {
      "server": "jellyfin",
      "on": false,
      "set_by": null,
      "from": "P6",
-     "rule": "jimbo-dj has no Jellyfin playlists; traqfreq keeps this switch from P6"
+     "rule": "jimbo-dj has no Jellyfin playlists; traqfreq keeps this switch from P6",
+     "copies": {
+      "count": 4,
+      "of": 4,
+      "missing": 0,
+      "reasons": {},
+      "snapshot": true,
+      "rule": "the Plex copy is matched to an item in the stored Jellyfin snapshot (P3's matches)",
+      "rows": "server=jellyfin",
+      "missing_rows": "server=jellyfin&missing=true"
+     }
     },
     {
      "server": "navidrome",
      "on": false,
      "set_by": null,
      "from": "P6",
-     "rule": "jimbo-dj has no Navidrome playlists; traqfreq keeps this switch from P6"
+     "rule": "jimbo-dj has no Navidrome playlists; traqfreq keeps this switch from P6",
+     "copies": {
+      "count": 3,
+      "of": 4,
+      "missing": 1,
+      "reasons": {
+       "hidden_path": 1
+      },
+      "snapshot": true,
+      "rule": "the Plex copy is matched to an item in the stored Navidrome snapshot (P3's matches)",
+      "rows": "server=navidrome",
+      "missing_rows": "server=navidrome&missing=true"
+     }
     }
    ]
   },
@@ -682,7 +1028,10 @@
        }
       ],
       "count": 1
-     }
+     },
+     "got": 1,
+     "available": 1,
+     "banned": 0
     },
     {
      "id": "b",
@@ -721,7 +1070,10 @@
        }
       ],
       "count": 2
-     }
+     },
+     "got": 1,
+     "available": 2,
+     "banned": 0
     },
     {
      "id": "c",
@@ -768,16 +1120,128 @@
        }
       ],
       "count": 2
-     }
+     },
+     "got": 2,
+     "available": 2,
+     "banned": 0
     }
    ],
    "total": 4,
    "library": 5,
    "rules": {
-    "count": "the live tracks a line's conditions match (jimbo-dj's rules.branch_sets)",
+    "count": "the live tracks a line's conditions match (rules.branch_sets)",
     "total": "the live tracks any line matches, each once",
-    "share": "the line's whole number of the playlist's n tracks (rules.quotas)"
-   }
+    "share": "the line's whole number of the playlist's n tracks (rules.quotas, largest remainder)",
+    "got": "the tracks the line took: lines take turns toward their shares in order, a track two lines share goes to the first, a song (artist and title) goes in once, at most per_artist each (rules.pick)",
+    "available": "the line's pool: its tracks most played first, up to max(6n, 400), less Never in mixes (rules.rank, make.details)",
+    "banned": "the line's tracks Never in mixes leaves out: a song, an artist or a style (bans.get), for tracks jimbo-dj's index knows, as make.details tests them",
+    "picked": "every track picked, each with the line that took it",
+    "minutes": "the picked tracks' length, rounded to minutes",
+    "order": "pick order: jimbo-dj orders the picked tracks for flow (flow.order), which traqfreq copies in T27"
+   },
+   "summary": "4 tracks: 8 Ringbahn, not sad, 6 (Ada Vey or played in 2025), 6 happy · (100-110 BPM or 8A). Ordered so key and tempo flow. Made by jimbo-dj.",
+   "picked": {
+    "count": 4,
+    "minutes": 21,
+    "tracks": [
+     {
+      "rating_key": 102,
+      "title": "Ostkreuz",
+      "artist": "Kollektiv Nord",
+      "album": "Ringbahn",
+      "year": 2019,
+      "duration_ms": 298000,
+      "line": "a",
+      "live": true,
+      "line_name": "Ringbahn, not sad"
+     },
+     {
+      "rating_key": 105,
+      "title": "Coil",
+      "artist": "Ada Vey",
+      "album": "Quiet Engines",
+      "year": 2023,
+      "duration_ms": 402000,
+      "line": "b",
+      "live": true,
+      "line_name": "(Ada Vey or played in 2025)"
+     },
+     {
+      "rating_key": 101,
+      "title": "Westkreuz",
+      "artist": "Kollektiv Nord",
+      "album": "Ringbahn",
+      "year": 2019,
+      "duration_ms": 312000,
+      "line": "c",
+      "live": true,
+      "line_name": "happy · (100-110 BPM or 8A)"
+     },
+     {
+      "rating_key": 103,
+      "title": "Harbour Lights",
+      "artist": "The Paper Lanterns",
+      "album": "Low Tide Radio",
+      "year": 2021,
+      "duration_ms": 221000,
+      "line": "c",
+      "live": true,
+      "line_name": "happy · (100-110 BPM or 8A)"
+     }
+    ],
+    "order": "pick",
+    "seconds": 0.01
+   },
+   "bans": {
+    "songs": 0,
+    "artists": 1,
+    "styles": 0
+   },
+   "preview": {
+    "branches": [
+     {
+      "id": "a",
+      "count": 1,
+      "share": 8,
+      "got": 1,
+      "available": 1
+     },
+     {
+      "id": "b",
+      "count": 2,
+      "share": 6,
+      "got": 1,
+      "available": 2
+     },
+     {
+      "id": "c",
+      "count": 2,
+      "share": 6,
+      "got": 2,
+      "available": 2
+     }
+    ],
+    "total": 4,
+    "tracks": [
+     {
+      "rating_key": 102,
+      "branch": "a"
+     },
+     {
+      "rating_key": 105,
+      "branch": "b"
+     },
+     {
+      "rating_key": 101,
+      "branch": "c"
+     },
+     {
+      "rating_key": 103,
+      "branch": "c"
+     }
+    ]
+   },
+   "read_only": "A preview: nothing is saved, and nothing is pushed to Plex, Jellyfin or Navidrome."
   },
   "lines_error": null
  },
@@ -806,21 +1270,51 @@
      "pushed_at": null,
      "plex_key": null,
      "error": null,
-     "rule": "saved_playlists.in_plex"
+     "rule": "saved_playlists.in_plex",
+     "copies": {
+      "count": 3,
+      "of": 3,
+      "missing": 0,
+      "reasons": {},
+      "snapshot": true,
+      "rule": "a live Plex copy: the stored rating key is in jimbo-dj's tracks and not removed",
+      "rows": "server=plex",
+      "missing_rows": "server=plex&missing=true"
+     }
     },
     {
      "server": "jellyfin",
      "on": false,
      "set_by": null,
      "from": "P6",
-     "rule": "jimbo-dj has no Jellyfin playlists; traqfreq keeps this switch from P6"
+     "rule": "jimbo-dj has no Jellyfin playlists; traqfreq keeps this switch from P6",
+     "copies": {
+      "count": 3,
+      "of": 3,
+      "missing": 0,
+      "reasons": {},
+      "snapshot": true,
+      "rule": "the Plex copy is matched to an item in the stored Jellyfin snapshot (P3's matches)",
+      "rows": "server=jellyfin",
+      "missing_rows": "server=jellyfin&missing=true"
+     }
     },
     {
      "server": "navidrome",
      "on": false,
      "set_by": null,
      "from": "P6",
-     "rule": "jimbo-dj has no Navidrome playlists; traqfreq keeps this switch from P6"
+     "rule": "jimbo-dj has no Navidrome playlists; traqfreq keeps this switch from P6",
+     "copies": {
+      "count": 3,
+      "of": 3,
+      "missing": 0,
+      "reasons": {},
+      "snapshot": true,
+      "rule": "the Plex copy is matched to an item in the stored Navidrome snapshot (P3's matches)",
+      "rows": "server=navidrome",
+      "missing_rows": "server=navidrome&missing=true"
+     }
     }
    ]
   },
@@ -935,7 +1429,10 @@
        }
       ],
       "count": 1
-     }
+     },
+     "got": 1,
+     "available": 1,
+     "banned": 0
     },
     {
      "id": "b",
@@ -958,16 +1455,106 @@
        }
       ],
       "count": 2
-     }
+     },
+     "got": 2,
+     "available": 2,
+     "banned": 0
     }
    ],
    "total": 3,
    "library": 5,
    "rules": {
-    "count": "the live tracks a line's conditions match (jimbo-dj's rules.branch_sets)",
+    "count": "the live tracks a line's conditions match (rules.branch_sets)",
     "total": "the live tracks any line matches, each once",
-    "share": "the line's whole number of the playlist's n tracks (rules.quotas)"
-   }
+    "share": "the line's whole number of the playlist's n tracks (rules.quotas, largest remainder)",
+    "got": "the tracks the line took: lines take turns toward their shares in order, a track two lines share goes to the first, a song (artist and title) goes in once, at most per_artist each (rules.pick)",
+    "available": "the line's pool: its tracks most played first, up to max(6n, 400), less Never in mixes (rules.rank, make.details)",
+    "banned": "the line's tracks Never in mixes leaves out: a song, an artist or a style (bans.get), for tracks jimbo-dj's index knows, as make.details tests them",
+    "picked": "every track picked, each with the line that took it",
+    "minutes": "the picked tracks' length, rounded to minutes",
+    "order": "pick order: jimbo-dj orders the picked tracks for flow (flow.order), which traqfreq copies in T27"
+   },
+   "summary": "3 tracks: 10 in saved:from-the-2020s · not in cluster:quiet-engines, 10 in mix:daily. Ordered so key and tempo flow. Made by jimbo-dj.",
+   "picked": {
+    "count": 3,
+    "minutes": 13,
+    "tracks": [
+     {
+      "rating_key": 104,
+      "title": "Static Gulls",
+      "artist": "The Paper Lanterns",
+      "album": "Low Tide Radio",
+      "year": 2021,
+      "duration_ms": 245000,
+      "line": "a",
+      "live": true,
+      "line_name": "in saved:from-the-2020s · not in cluster:quiet-engines"
+     },
+     {
+      "rating_key": 101,
+      "title": "Westkreuz",
+      "artist": "Kollektiv Nord",
+      "album": "Ringbahn",
+      "year": 2019,
+      "duration_ms": 312000,
+      "line": "b",
+      "live": true,
+      "line_name": "in mix:daily"
+     },
+     {
+      "rating_key": 103,
+      "title": "Harbour Lights",
+      "artist": "The Paper Lanterns",
+      "album": "Low Tide Radio",
+      "year": 2021,
+      "duration_ms": 221000,
+      "line": "b",
+      "live": true,
+      "line_name": "in mix:daily"
+     }
+    ],
+    "order": "pick",
+    "seconds": 0.0
+   },
+   "bans": {
+    "songs": 0,
+    "artists": 1,
+    "styles": 0
+   },
+   "preview": {
+    "branches": [
+     {
+      "id": "a",
+      "count": 1,
+      "share": 10,
+      "got": 1,
+      "available": 1
+     },
+     {
+      "id": "b",
+      "count": 2,
+      "share": 10,
+      "got": 2,
+      "available": 2
+     }
+    ],
+    "total": 3,
+    "tracks": [
+     {
+      "rating_key": 104,
+      "branch": "a"
+     },
+     {
+      "rating_key": 101,
+      "branch": "b"
+     },
+     {
+      "rating_key": 103,
+      "branch": "b"
+     }
+    ]
+   },
+   "read_only": "A preview: nothing is saved, and nothing is pushed to Plex, Jellyfin or Navidrome."
   },
   "lines_error": null
  },
@@ -996,21 +1583,57 @@
      "pushed_at": 1793239200,
      "plex_key": null,
      "error": null,
-     "rule": "saved_playlists.in_plex"
+     "rule": "saved_playlists.in_plex",
+     "copies": {
+      "count": 0,
+      "of": 1,
+      "missing": 1,
+      "reasons": {
+       "removed": 1
+      },
+      "snapshot": true,
+      "rule": "a live Plex copy: the stored rating key is in jimbo-dj's tracks and not removed",
+      "rows": "server=plex",
+      "missing_rows": "server=plex&missing=true"
+     }
     },
     {
      "server": "jellyfin",
      "on": false,
      "set_by": null,
      "from": "P6",
-     "rule": "jimbo-dj has no Jellyfin playlists; traqfreq keeps this switch from P6"
+     "rule": "jimbo-dj has no Jellyfin playlists; traqfreq keeps this switch from P6",
+     "copies": {
+      "count": 0,
+      "of": 1,
+      "missing": 1,
+      "reasons": {
+       "removed": 1
+      },
+      "snapshot": true,
+      "rule": "the Plex copy is matched to an item in the stored Jellyfin snapshot (P3's matches)",
+      "rows": "server=jellyfin",
+      "missing_rows": "server=jellyfin&missing=true"
+     }
     },
     {
      "server": "navidrome",
      "on": false,
      "set_by": null,
      "from": "P6",
-     "rule": "jimbo-dj has no Navidrome playlists; traqfreq keeps this switch from P6"
+     "rule": "jimbo-dj has no Navidrome playlists; traqfreq keeps this switch from P6",
+     "copies": {
+      "count": 0,
+      "of": 1,
+      "missing": 1,
+      "reasons": {
+       "removed": 1
+      },
+      "snapshot": true,
+      "rule": "the Plex copy is matched to an item in the stored Navidrome snapshot (P3's matches)",
+      "rows": "server=navidrome",
+      "missing_rows": "server=navidrome&missing=true"
+     }
     }
    ]
   },
@@ -1061,21 +1684,51 @@
      "pushed_at": 1793844230,
      "plex_key": 9002,
      "error": null,
-     "rule": "saved_playlists.in_plex"
+     "rule": "saved_playlists.in_plex",
+     "copies": {
+      "count": 3,
+      "of": 3,
+      "missing": 0,
+      "reasons": {},
+      "snapshot": true,
+      "rule": "a live Plex copy: the stored rating key is in jimbo-dj's tracks and not removed",
+      "rows": "server=plex",
+      "missing_rows": "server=plex&missing=true"
+     }
     },
     {
      "server": "jellyfin",
      "on": false,
      "set_by": null,
      "from": "P6",
-     "rule": "jimbo-dj has no Jellyfin playlists; traqfreq keeps this switch from P6"
+     "rule": "jimbo-dj has no Jellyfin playlists; traqfreq keeps this switch from P6",
+     "copies": {
+      "count": 3,
+      "of": 3,
+      "missing": 0,
+      "reasons": {},
+      "snapshot": true,
+      "rule": "the Plex copy is matched to an item in the stored Jellyfin snapshot (P3's matches)",
+      "rows": "server=jellyfin",
+      "missing_rows": "server=jellyfin&missing=true"
+     }
     },
     {
      "server": "navidrome",
      "on": false,
      "set_by": null,
      "from": "P6",
-     "rule": "jimbo-dj has no Navidrome playlists; traqfreq keeps this switch from P6"
+     "rule": "jimbo-dj has no Navidrome playlists; traqfreq keeps this switch from P6",
+     "copies": {
+      "count": 3,
+      "of": 3,
+      "missing": 0,
+      "reasons": {},
+      "snapshot": true,
+      "rule": "the Plex copy is matched to an item in the stored Navidrome snapshot (P3's matches)",
+      "rows": "server=navidrome",
+      "missing_rows": "server=navidrome&missing=true"
+     }
     }
    ]
   },
@@ -1147,5 +1800,403 @@
   "limit": 200,
   "offset": 0,
   "rule": "live tracks the conditions match, in album order"
- }
+ },
+ "/api/playlists/night-lines/rows?line=c&limit=200&which=got": {
+  "line": "c",
+  "which": "got",
+  "path": "",
+  "count": 2,
+  "rows": [
+   {
+    "rating_key": 101,
+    "title": "Westkreuz",
+    "artist": "Kollektiv Nord",
+    "album": "Ringbahn",
+    "year": 2019,
+    "duration_ms": 312000,
+    "live": true,
+    "line": "c"
+   },
+   {
+    "rating_key": 103,
+    "title": "Harbour Lights",
+    "artist": "The Paper Lanterns",
+    "album": "Low Tide Radio",
+    "year": 2021,
+    "duration_ms": 221000,
+    "live": true,
+    "line": "c"
+   }
+  ],
+  "limit": 200,
+  "offset": 0,
+  "rule": "the tracks the line took: lines take turns toward their shares in order, a track two lines share goes to the first, a song (artist and title) goes in once, at most per_artist each (rules.pick), in pick order: jimbo-dj orders the picked tracks for flow (flow.order), which traqfreq copies in T27"
+ },
+ "/api/playlists/night-lines/copies?server=navidrome&limit=200&missing=true": {
+  "server": "navidrome",
+  "missing": true,
+  "count": 1,
+  "rows": [
+   {
+    "rating_key": 105,
+    "title": "Coil",
+    "artist": "Ada Vey",
+    "album": "Quiet Engines",
+    "year": 2023,
+    "duration_ms": 402000,
+    "live": true,
+    "copy": false,
+    "reason": "hidden_path"
+   }
+  ],
+  "limit": 200,
+  "offset": 0,
+  "rule": "the Plex copy is matched to an item in the stored Navidrome snapshot (P3's matches); only the tracks without one",
+  "reasons": {
+   "removed": "the track was removed from Plex (tracks.removed_at), so no server has the copy jimbo-dj stored",
+   "not_in_library": "the stored rating key isn't in jimbo-dj's tracks at all",
+   "no_snapshot": "no snapshot of this server yet: press Refresh on SERVERS to read it (GET requests only)",
+   "no_path": "No file to match by: Plex gives no path for the copy, or the server none for the item; the MusicBrainz and tag tiers found nothing either.",
+   "outside_roots": "The file is outside the known music folders, so it has no file key; the MusicBrainz and tag tiers found nothing either.",
+   "not_on_server": "No item on the other server has this file, MusicBrainz IDs or tags.",
+   "ambiguous": "More than one candidate at the first tier that had any (or one candidate two copies want): traqfreq doesn't guess.",
+   "hidden_path": "The server gives no real path (Navidrome without Report Real Path), so the file tier can't be used, and the MusicBrainz and tag tiers found nothing.",
+   "not_in_plex": "An item no Plex copy matched: a file Plex doesn't list.",
+   "multi_part": "Another part of a multi-part Plex copy (same folder, disc and track): Plex keeps only the first part's file, which is matched; this part is not."
+  }
+ },
+ "/api/junction?b=decade%3A2010s%2C%21mood%3Asad%7E8%7ERingbahn%252C+not+sad&b=%28artist%3AAda+Vey%7Clistened%3A2025%29%7E6&b=mood%3Ahappy%2C%28bpm%3A100-110%7Ckey%3A8A%29%7E6&n=20": {
+  "n": 20,
+  "per_artist": 3,
+  "shuffle": 0,
+  "name": "Ringbahn, not sad + (Ada Vey or played in 2025) + happy · (100-110 BPM or 8A)",
+  "query": "b=decade:2010s,!mood:sad~8~Ringbahn%252C+not+sad&b=(artist:Ada+Vey|listened:2025)~6&b=mood:happy,(bpm:100-110|key:8A)~6&n=20",
+  "lines": [
+   {
+    "id": "a",
+    "label": "Ringbahn, not sad",
+    "share": 8,
+    "words": "2010s · not sad",
+    "count": 1,
+    "match": {
+     "type": "group",
+     "words": "(2010s · not sad)",
+     "path": "",
+     "all": [
+      {
+       "type": "condition",
+       "f": "decade",
+       "v": "2010s",
+       "text": "2010s",
+       "count": 2,
+       "path": "all.0"
+      }
+     ],
+     "not": [
+      {
+       "type": "condition",
+       "f": "mood",
+       "v": "sad",
+       "text": "sad",
+       "count": 1,
+       "path": "not.0"
+      }
+     ],
+     "count": 1
+    },
+    "got": 1,
+    "available": 1,
+    "banned": 0
+   },
+   {
+    "id": "b",
+    "label": null,
+    "share": 6,
+    "words": "(Ada Vey or played in 2025)",
+    "count": 2,
+    "match": {
+     "type": "group",
+     "words": "(Ada Vey or played in 2025)",
+     "path": "",
+     "all": [
+      {
+       "type": "group",
+       "words": "(Ada Vey or played in 2025)",
+       "path": "all.0",
+       "any": [
+        {
+         "type": "condition",
+         "f": "artist",
+         "v": "Ada Vey",
+         "text": "Ada Vey",
+         "count": 1,
+         "path": "all.0.any.0"
+        },
+        {
+         "type": "condition",
+         "f": "listened",
+         "v": "2025",
+         "text": "played in 2025",
+         "count": 1,
+         "path": "all.0.any.1"
+        }
+       ],
+       "count": 2
+      }
+     ],
+     "count": 2
+    },
+    "got": 1,
+    "available": 2,
+    "banned": 0
+   },
+   {
+    "id": "c",
+    "label": null,
+    "share": 6,
+    "words": "happy · (100-110 BPM or 8A)",
+    "count": 2,
+    "match": {
+     "type": "group",
+     "words": "(happy · (100-110 BPM or 8A))",
+     "path": "",
+     "all": [
+      {
+       "type": "condition",
+       "f": "mood",
+       "v": "happy",
+       "text": "happy",
+       "count": 2,
+       "path": "all.0"
+      },
+      {
+       "type": "group",
+       "words": "(100-110 BPM or 8A)",
+       "path": "all.1",
+       "any": [
+        {
+         "type": "condition",
+         "f": "bpm",
+         "v": "100-110",
+         "text": "100-110 BPM",
+         "count": 1,
+         "path": "all.1.any.0"
+        },
+        {
+         "type": "condition",
+         "f": "key",
+         "v": "8A",
+         "text": "8A",
+         "count": 1,
+         "path": "all.1.any.1"
+        }
+       ],
+       "count": 2
+      }
+     ],
+     "count": 2
+    },
+    "got": 2,
+    "available": 2,
+    "banned": 0
+   }
+  ],
+  "total": 4,
+  "library": 5,
+  "rules": {
+   "count": "the live tracks a line's conditions match (rules.branch_sets)",
+   "total": "the live tracks any line matches, each once",
+   "share": "the line's whole number of the playlist's n tracks (rules.quotas, largest remainder)",
+   "got": "the tracks the line took: lines take turns toward their shares in order, a track two lines share goes to the first, a song (artist and title) goes in once, at most per_artist each (rules.pick)",
+   "available": "the line's pool: its tracks most played first, up to max(6n, 400), less Never in mixes (rules.rank, make.details)",
+   "banned": "the line's tracks Never in mixes leaves out: a song, an artist or a style (bans.get), for tracks jimbo-dj's index knows, as make.details tests them",
+   "picked": "every track picked, each with the line that took it",
+   "minutes": "the picked tracks' length, rounded to minutes",
+   "order": "pick order: jimbo-dj orders the picked tracks for flow (flow.order), which traqfreq copies in T27"
+  },
+  "summary": "4 tracks: 8 Ringbahn, not sad, 6 (Ada Vey or played in 2025), 6 happy · (100-110 BPM or 8A). Ordered so key and tempo flow. Made by jimbo-dj.",
+  "picked": {
+   "count": 4,
+   "minutes": 21,
+   "tracks": [
+    {
+     "rating_key": 102,
+     "title": "Ostkreuz",
+     "artist": "Kollektiv Nord",
+     "album": "Ringbahn",
+     "year": 2019,
+     "duration_ms": 298000,
+     "line": "a",
+     "live": true,
+     "line_name": "Ringbahn, not sad"
+    },
+    {
+     "rating_key": 105,
+     "title": "Coil",
+     "artist": "Ada Vey",
+     "album": "Quiet Engines",
+     "year": 2023,
+     "duration_ms": 402000,
+     "line": "b",
+     "live": true,
+     "line_name": "(Ada Vey or played in 2025)"
+    },
+    {
+     "rating_key": 101,
+     "title": "Westkreuz",
+     "artist": "Kollektiv Nord",
+     "album": "Ringbahn",
+     "year": 2019,
+     "duration_ms": 312000,
+     "line": "c",
+     "live": true,
+     "line_name": "happy · (100-110 BPM or 8A)"
+    },
+    {
+     "rating_key": 103,
+     "title": "Harbour Lights",
+     "artist": "The Paper Lanterns",
+     "album": "Low Tide Radio",
+     "year": 2021,
+     "duration_ms": 221000,
+     "line": "c",
+     "live": true,
+     "line_name": "happy · (100-110 BPM or 8A)"
+    }
+   ],
+   "order": "pick",
+   "seconds": 0.0
+  },
+  "bans": {
+   "songs": 0,
+   "artists": 1,
+   "styles": 0
+  },
+  "preview": {
+   "branches": [
+    {
+     "id": "a",
+     "count": 1,
+     "share": 8,
+     "got": 1,
+     "available": 1
+    },
+    {
+     "id": "b",
+     "count": 2,
+     "share": 6,
+     "got": 1,
+     "available": 2
+    },
+    {
+     "id": "c",
+     "count": 2,
+     "share": 6,
+     "got": 2,
+     "available": 2
+    }
+   ],
+   "total": 4,
+   "tracks": [
+    {
+     "rating_key": 102,
+     "branch": "a"
+    },
+    {
+     "rating_key": 105,
+     "branch": "b"
+    },
+    {
+     "rating_key": 101,
+     "branch": "c"
+    },
+    {
+     "rating_key": 103,
+     "branch": "c"
+    }
+   ]
+  },
+  "read_only": "A preview: nothing is saved, and nothing is pushed to Plex, Jellyfin or Navidrome."
+ },
+ "/api/junction/rows?b=decade%3A2010s%2C%21mood%3Asad%7E8%7ERingbahn%252C+not+sad&b=%28artist%3AAda+Vey%7Clistened%3A2025%29%7E6&b=mood%3Ahappy%2C%28bpm%3A100-110%7Ckey%3A8A%29%7E6&n=20&line=b&limit=200&which=available": {
+  "line": "b",
+  "which": "available",
+  "path": "",
+  "count": 2,
+  "rows": [
+   {
+    "rating_key": 102,
+    "title": "Ostkreuz",
+    "artist": "Kollektiv Nord",
+    "album": "Ringbahn",
+    "year": 2019,
+    "duration_ms": 298000,
+    "live": true
+   },
+   {
+    "rating_key": 105,
+    "title": "Coil",
+    "artist": "Ada Vey",
+    "album": "Quiet Engines",
+    "year": 2023,
+    "duration_ms": 402000,
+    "live": true
+   }
+  ],
+  "limit": 200,
+  "offset": 0,
+  "rule": "the line's pool: its tracks most played first, up to max(6n, 400), less Never in mixes (rules.rank, make.details), in that order (before Shuffle's jitter)"
+ },
+ "/api/junction/rows?b=decade%3A2010s%2C%21mood%3Asad%7E8%7ERingbahn%252C+not+sad&b=%28artist%3AAda+Vey%7Clistened%3A2025%29%7E6&b=mood%3Ahappy%2C%28bpm%3A100-110%7Ckey%3A8A%29%7E6&n=20&line=&limit=200&which=picked": {
+  "line": null,
+  "which": "picked",
+  "path": "",
+  "count": 4,
+  "rows": [
+   {
+    "rating_key": 102,
+    "title": "Ostkreuz",
+    "artist": "Kollektiv Nord",
+    "album": "Ringbahn",
+    "year": 2019,
+    "duration_ms": 298000,
+    "live": true,
+    "line": "a"
+   },
+   {
+    "rating_key": 105,
+    "title": "Coil",
+    "artist": "Ada Vey",
+    "album": "Quiet Engines",
+    "year": 2023,
+    "duration_ms": 402000,
+    "live": true,
+    "line": "b"
+   },
+   {
+    "rating_key": 101,
+    "title": "Westkreuz",
+    "artist": "Kollektiv Nord",
+    "album": "Ringbahn",
+    "year": 2019,
+    "duration_ms": 312000,
+    "live": true,
+    "line": "c"
+   },
+   {
+    "rating_key": 103,
+    "title": "Harbour Lights",
+    "artist": "The Paper Lanterns",
+    "album": "Low Tide Radio",
+    "year": 2021,
+    "duration_ms": 221000,
+    "live": true,
+    "line": "c"
+   }
+  ],
+  "limit": 200,
+  "offset": 0,
+  "rule": "every track picked, each with the line that took it, in pick order: jimbo-dj orders the picked tracks for flow (flow.order), which traqfreq copies in T27"
+ },
+ "_tree": "b=decade%3A2010s%2C%21mood%3Asad%7E8%7ERingbahn%252C+not+sad&b=%28artist%3AAda+Vey%7Clistened%3A2025%29%7E6&b=mood%3Ahappy%2C%28bpm%3A100-110%7Ckey%3A8A%29%7E6&n=20"
 }

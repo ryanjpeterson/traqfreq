@@ -434,13 +434,26 @@ Checked from the laptop over Tailscale on the deployed app (`main` 90a8d26, with
 - **Checked in the browser** on the fixture (port 4499, scratch copy): the list in dark desktop and 375 px light, a playlist's lines in dark desktop, `inside-the-lines` at 375 px light (no side-scroll), the rows page, and the LIBRARY card. No console errors.
 - **After deploy, check on live data:** `/api/playlists` (77 rows; 8 with lines), the lines of Metal Mix, Blimp, Blurps and Early (genre, mood, family, style and listened conditions), and how long `leaf_keys` takes for `genre` and `style` on 53k tracks (it builds `Styles` once per stamp).
 
-## Next: T25 (P5 PLAYLISTS)
-The Junction and its levers ([spec](docs/specs/t24-playlists.md)):
-- Vendor `rules.build`'s picking (`pick`, `rank`, `_jitter`, `build`), with `make.details`, `similar._norm_title` and `bans.get`.
-- The drawing (lines meeting in one, with its list view and summary), with read-only LineLevers for share and cap.
-- `/library/junction?b=…`.
-- Each switch with how many tracks have a copy on its server.
-- Gate check 1 and the set of tracks of check 2, on the fixture.
+## T25 done (2026-11-25, `claude/t25-junction`, from `main` d8b7077; laptop over SMB like T3–T24)
+- **Picking, vendored unchanged at 1d8a7cb** (`git show` only), under jimbo-dj's module names:
+  - `vendor/rules.py` gains Picking (`pick`, `rank`, `_jitter`, `build`). `facet_counts` (the narrow panel) is not copied.
+  - `vendor/make.py` gains `details`; `vendor/similar.py` (`_norm_title`, `_public`); `vendor/bans.py` (`KINDS`, `Bans`, `get`; `ensure_schema` a stand-in); `vendor/browse.py` gains `ORDER`, `SORTS`, `_with_plays`.
+  - `vendor/vectors.py`: `META_COLS` and `_META_Q` copied; `Index` and `get` are a stand-in with `meta` only (no embeddings), cached per `cache.data_stamp`.
+  - `vendor/history.py` gains `match_key`, `norm_artist`, `plays_of` (copies already here) and a stand-in `track_stats` (handed in with `using`, built by `library.track_plays`).
+  - `vendor/flow.py` stays a stand-in: `order` keeps pick order, `describe` gives None (`STAND_IN = True`; every answer says "pick order"). T27 copies the real one.
+  - `tests/test_junction.py::test_picking_vendored_unchanged` checks each copy against jimbo-dj's git when it is beside the repo.
+- **`src/traqfreq/junction.py`:** `build` runs `rules.build` as jimbo-dj's preview does (`exclude=bans.get(con) or None`). Each line: `count`, `share`, `got`, `available`, `banned`; `total`; `picked` (each track with `line`, pick order, minutes); `preview` in jimbo-dj's answer shape for the gate. `rows`: `which` = count, got, available (pool before Shuffle's jitter), banned, picked, total.
+- **Read at 1d8a7cb, kept as is:** `make.details` drops a banned track only when the vectors index knows it, so a banned track not analysed at the current version can still be picked (tested: 102 stays when Kollektiv Nord is banned).
+- **Copies per switch** (`playlists.Copies`): Plex = live tracks; Jellyfin and Navidrome = copies P3 matched in the stored snapshots. A missing copy has one reason: `removed`, `not_in_library`, `no_snapshot`, or P3's reason. On every switch in `GET /api/playlists` and `GET /api/playlists/{ref}`; rows at `GET /api/playlists/{ref}/copies?server=&missing=`.
+- **`src/traqfreq/playlists_gate.py`:** `check_lines` (gate check 1) and `check_track_set` (check 2's set) compare traqfreq's `preview` with jimbo-dj's preview answer; every difference named. T28 adds the order, check 3 and the script.
+- **API, GET only:** `/api/junction?b=…`, `/api/junction/rows?b=…&line=&which=&path=`, `/api/playlists/{ref}/rows?which=…`, `/api/playlists/{ref}/copies`. A saved playlist's `lines` now carries the picking too.
+- **Pages** (kit only): the Junction section on a playlist's page and at `/library/junction?b=…` (an "Open in the Junction" button from a playlist): summary numbers, the drawing (lines meeting in one; L6 summary for screen readers), the list view with read-only LineLevers for share and the cap, each line's numbers opening their rows, the picked tracks saying which line brought each in (B3). `/library/junction/rows`, `/library/playlists/copies`. Copy `junction.*`, `playlists.copies.*`, `playlists.reason.*`, `unit.minute/style.*`.
+- Tests: pytest 259 (`tests/test_junction.py`, 13: Night lines worked out by hand, shuffle seeded, per-artist cap, line priority, a song once, Never in mixes, rows behind every number, gate check 1 and the set, copies with and without snapshots, reads only). Vitest 224 (`playlists.test.tsx` +8; answers regenerated with the fixture's snapshots). Web build, brand checks, 13 self-tests pass. The web bundle is now just over Vite's 500 kB warning (a warning only).
+- **Checked in the browser** on the fixture with snapshots (port 4484, scratch copy): a playlist's Junction in dark desktop, `/library/junction?b=…` at 375 px light (no side-scroll), the picked tracks' why. No console errors.
+- **After deploy, check on live data:** `/api/playlists` time (it now builds P3's matches once per data stamp), the copies of the 19 Plex playlists, and the Junction of Metal Mix, Blimp, Blurps and Early (each answer's `picked.seconds`).
+
+## Next: T26 (P5 PLAYLISTS)
+Movements, rooted to roaming ([spec](docs/specs/t24-playlists.md)): a line can follow a T23 movement or a ladder, with a read-only slider from rooted (the tag alone) to roaming (its movement and neighbours on the map). New in traqfreq, a preview only, not part of the gate.
 **Planned for P5/P6 (Ryan, 2026-11-24):** every playlist and mix has three separate switches, Plex, Jellyfin and Navidrome. Navidrome also has NaviBeat connected to it.
 Also worth a look on Navidrome's side: its scan error "stat /music: bad file descriptor" (from T18; not seen since the restart).
 
