@@ -29,7 +29,8 @@ def test_fixed_trees():
     fixed = playlists_compare.fixed_trees()
     assert len(fixed) >= playlists_gate.TREES and len({t["id"] for t in fixed}) == len(fixed)
     for t in fixed:
-        assert rules.clean(t["rules"])["branches"]
+        assert rules.clean(t["rules"]) == t["rules"]  # written as jimbo-dj's builder writes it
+        assert rules.from_query(rules.to_query(t["rules"])) == t["rules"]  # so its URL form is the same tree
     two = set(playlists_gate.tree_features(fixed[0]["rules"])) | set(playlists_gate.tree_features(fixed[1]["rules"]))
     assert two == set(playlists_gate.FEATURES)
 
@@ -142,6 +143,32 @@ def test_script_asks_again_once(client, legacy_db):
     g = s.from_url("http://tq", "http://jd", get, post)
     assert g["trees"][0]["asked"] == {"attempts": 2, "steady": True} and len(calls["post"]) == 11
     assert g["passed"]
+
+
+def test_script_against_a_traqfreq_before_t28(client, legacy_db):
+    """No /api/playlists/compare: the script builds the same ten trees itself and asks /api/junction for each,
+    with the same answers as the T28 endpoints give."""
+    import urllib.error
+    s = _script()
+    get, post, calls = _fake(client, legacy_db)
+
+    def old_get(base, path):
+        if base != "http://jd" and path.startswith("/api/playlists/compare"):
+            raise urllib.error.HTTPError(path, 404, "Not Found", None, None)
+        return get(base, path)
+
+    def old_post(base, path, body):
+        calls["post"].append(body["rules"])
+        assert path == "/api/rules/preview"
+        t = next(t for t in client.get("/api/playlists/compare").json()["trees"] if t["rules"] == body["rules"])
+        return client.get(f"/api/playlists/compare/trees/{t['i']}").json()["preview"]
+
+    g = s.from_url("http://tq", "http://jd", old_get, old_post)
+    assert g["before_t28"] and g["passed"], json.dumps(g)[:1500]
+    new = client.get("/api/playlists/compare").json()["trees"]
+    assert [r["query"] for r in g["trees"]] == [t["query"] for t in new]
+    assert all(r["asked"] == {"attempts": 1, "steady": None} for r in g["trees"])
+    assert "before T28" in s.report(g)
 
 
 def test_script_only_posts_the_preview():

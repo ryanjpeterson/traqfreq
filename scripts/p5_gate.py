@@ -17,6 +17,11 @@ between traqfreq's answer and jimbo-dj's, that tree is asked again once.
     python scripts/p5_gate.py --url http://macmini:4492 --json
 
 ``--jimbodj`` defaults to the same host on port 4490. Exit status 0 = passed, 1 = not passed, 2 = couldn't run.
+
+Against a traqfreq from before T28 (no ``/api/playlists/compare``), the script builds the same ten trees itself: the
+saved ones from ``GET /api/playlists`` and ``/api/playlists/{id}``, then this checkout's p5_trees.json; traqfreq's
+answer for each is ``GET /api/junction`` with the tree's URL form (the same tree: p5_trees.json is written that way),
+and there is no stamp to watch, so each tree is asked once.
 """
 
 from __future__ import annotations
@@ -24,6 +29,7 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+import urllib.error
 import urllib.parse
 import urllib.request
 from pathlib import Path
@@ -66,19 +72,53 @@ def ask_tree(url: str, jd: str, i: int, get=get, post=post) -> tuple[dict, dict,
     return ours, theirs, {"attempts": attempt, "steady": steady}
 
 
+TREES_FILE = Path(__file__).resolve().parents[1] / "src/traqfreq/p5_trees.json"
+
+
+def compare_before_t28(url: str, get=get) -> dict:
+    """The compare answer, built here from a traqfreq without /api/playlists/compare (before T28)."""
+    from traqfreq.vendor import rules  # the URL form; jimbo-dj's rules.py, vendored (pure)
+    listing = get(url, "/api/playlists")
+    rows = sorted((r for k in listing["kinds"] for r in k["rows"] if r["lines"]), key=lambda r: r["id"])
+    trees = []
+    for r in rows:
+        tree = get(url, f"/api/playlists/{r['id']}?limit=1")["tree"]
+        trees.append({"source": {"kind": "saved", "id": r["id"], "slug": r["slug"], "title": r["title"], "name": r["name"]},
+                      "rules": rules.clean(tree)})
+    for t in json.loads(TREES_FILE.read_text())["trees"]:
+        if len(trees) >= playlists_gate.TREES:
+            break
+        trees.append({"source": {"kind": "fixed", "id": t["id"], "name": t["name"]}, "rules": rules.clean(t["rules"])})
+    trees = [t | {"i": i, "query": rules.to_query(t["rules"])} for i, t in enumerate(trees[:playlists_gate.TREES])]
+    return {"trees": trees, "saved": {"rows": playlists_gate.saved_rows(listing)}, "before_t28": True}
+
+
+def ask_tree_before_t28(url: str, jd: str, t: dict, get=get, post=post) -> tuple[dict, dict, dict]:
+    ours = get(url, f"/api/junction?{t['query']}")
+    theirs = post(jd, "/api/rules/preview", {"rules": t["rules"]})
+    return ours, theirs, {"attempts": 1, "steady": None}
+
+
 def from_url(url: str, jd: str, get=get, post=post) -> dict:
-    c = get(url, "/api/playlists/compare")
+    try:
+        c = get(url, "/api/playlists/compare")
+    except urllib.error.HTTPError as e:
+        if e.code != 404:
+            raise
+        c = compare_before_t28(url, get)
+    old = c.get("before_t28", False)
     results = []
     for t in c["trees"]:
         try:
-            ours, theirs, asked = ask_tree(url, jd, t["i"], get, post)
+            ours, theirs, asked = (ask_tree_before_t28(url, jd, t, get, post) if old
+                                   else ask_tree(url, jd, t["i"], get, post))
             r = playlists_gate.check_tree(ours["preview"], theirs)
         except Exception as e:  # noqa: BLE001 - a tree either side can't build fails, and says why
             r, asked = {"ok": False, "error": f"{e.__class__.__name__}: {e}",
                         "lines": {"ok": False}, "tracks": {"ok": False}}, {"attempts": 1, "steady": None}
         results.append(r | {"i": t["i"], "source": t["source"], "query": t["query"], "asked": asked})
     saved = playlists_gate.check_saved(c["saved"]["rows"], get(jd, "/api/saved")["playlists"])
-    return playlists_gate.gate([t["rules"] for t in c["trees"]], results, saved)
+    return playlists_gate.gate([t["rules"] for t in c["trees"]], results, saved) | {"before_t28": old}
 
 
 def _state(ok: bool) -> str:
@@ -92,9 +132,11 @@ def _name(r: dict) -> str:
 
 def report(g: dict) -> str:
     cov = g["coverage"]
-    out = ["P5 gate: same tracks as jimbo-dj",
-           f"trees: {cov['trees']} of {playlists_gate.TREES}; every kind of condition used: "
-           + ("yes" if not cov["missing"] else f"no (missing: {', '.join(cov['missing'])})")]
+    out = ["P5 gate: same tracks as jimbo-dj"]
+    if g.get("before_t28"):
+        out.append("(traqfreq from before T28: the trees built here, each asked once, no stamp to watch)")
+    out.append(f"trees: {cov['trees']} of {playlists_gate.TREES}; every kind of condition used: "
+               + ("yes" if not cov["missing"] else f"no (missing: {', '.join(cov['missing'])})"))
     one, two, three = g["checks"]
     out.append(f"1. lines: {_state(one['passed'])} ({one['ok']} of {one['trees']} trees)")
     out.append(f"2. tracks: {_state(two['passed'])} ({two['ok']} of {two['trees']} trees)")
