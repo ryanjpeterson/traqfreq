@@ -4,8 +4,9 @@
 ``POST /api/rules/preview`` does: Never in mixes as ``exclude=bans.get(con) or None``, the index's ``meta``
 (vendor/vectors.py) for ``make.details``, every source's plays for ``rank`` (library.track_plays). Each line gets
 its ``count``, ``share``, ``got`` and ``available``, the union its ``total``: gate check 1's fields. The picked
-tracks each carry the line that took them (``branch``): gate check 2's set. Their order is pick order until T27
-copies ``flow.order`` (vendor/flow.py is a stand-in and the answer says so).
+tracks each carry the line that took them (``branch``), in jimbo-dj's flow order (vendor/flow.py, copied at T27):
+gate check 2. Each picked track also says why it is there (B3): every condition of its line, met or not (``met``),
+and its ``transition`` from the track before (flow.describe: Camelot steps and the tempo gap).
 
 Every number has its rows (``rows``): a line's matches, the tracks it got, the pool it chose from, the tracks
 Never in mixes left out. Nothing is saved, pushed or written anywhere.
@@ -15,11 +16,11 @@ from __future__ import annotations
 import sqlite3
 
 from . import legacy, library, playlists
-from .vendor import bans, flow, make, rules, vectors
+from .vendor import bans, make, rules, vectors
 from .vendor import history as vh
 
 WHICH = ("count", "got", "available", "banned", "picked", "total")
-TRACK_FIELDS = ("rating_key", "title", "artist", "album", "year", "duration_ms")
+TRACK_FIELDS = ("rating_key", "title", "artist", "album", "year", "duration_ms", "camelot", "bpm")
 RULES = {
     "count": "the live tracks a line's conditions match (rules.branch_sets)",
     "share": "the line's whole number of the playlist's n tracks (rules.quotas, largest remainder)",
@@ -32,7 +33,13 @@ RULES = {
     "total": "the live tracks any line matches, each once",
     "picked": "every track picked, each with the line that took it",
     "minutes": "the picked tracks' length, rounded to minutes",
-    "order": "pick order: jimbo-dj orders the picked tracks for flow (flow.order), which traqfreq copies in T27",
+    "order": "flow order: from the first picked track, each next one is the left track with the cheapest transition "
+             "(Camelot keys, tempo with half and double time, loudness, danceability; flow.order)",
+    "met": "for each condition and group of the line that brought the track in: whether the track meets it, counted "
+           "as the line's count is (rules.leaf_keys, rules.evaluate)",
+    "transition": "from the track before: steps around the Camelot wheel (0 the same key, 1 a neighbour) and the "
+                  "tempo gap as a share of this track's tempo, half and double time counting as the same "
+                  "(flow.describe); none for the first track, and none where a track has no key or tempo",
 }
 
 
@@ -58,7 +65,32 @@ class _Run:
 
 
 def _track(t: dict) -> dict:
-    return {k: t.get(k) for k in TRACK_FIELDS} | {"line": t.get("branch"), "live": True}  # rank keeps live tracks only
+    return ({k: t.get(k) for k in TRACK_FIELDS}  # rank keeps live tracks only
+            | {"line": t.get("branch"), "live": True, "transition": t.get("transition") or {}})
+
+
+def _met(conn, tree: dict, default_tz: str | None) -> dict[str, dict[str, set[int]]]:
+    """Per line, per path ("" the line, "all.0", "all.1.any.0", ...): the live tracks that node matches, each
+    condition counted as the line's count is (rules.leaf_keys, combined by rules.evaluate)."""
+    out: dict[str, dict[str, set[int]]] = {}
+    with playlists._In(conn, default_tz):
+        lib = rules.library(conn)
+        seen: dict[tuple, set[int]] = {}
+
+        def leaf(f, v):
+            if (f, v) not in seen:
+                seen[f, v] = set(rules.leaf_keys(conn, f, v))
+            return seen[f, v]
+
+        def walk(node, path, into):
+            into[path] = rules.evaluate(node, leaf, lambda: lib) & lib
+            for part in ("all", "any", "not"):
+                for i, x in enumerate(node.get(part, []) if "f" not in node else []):
+                    walk(x, f"{path}.{part}.{i}" if path else f"{part}.{i}", into)
+
+        for b in tree["branches"]:
+            walk(b["match"], "", out.setdefault(b["id"], {}))
+    return out
 
 
 def _pick(conn: sqlite3.Connection, tree: dict, default_tz: str | None):
@@ -84,11 +116,14 @@ def build(conn: sqlite3.Connection, tree: dict, default_tz: str | None = None) -
         assert b["count"] == line["count"]  # the same sets, counted twice
         line |= {"got": b["got"], "available": b["available"], "banned": len(gone)}
     labels = {b["id"]: b.get("label") or rules.describe(b["match"]) for b in tree["branches"]}
-    tracks = [_track(t) | {"line_name": labels.get(t.get("branch"))} for t in r["tracks"]]
+    met = _met(conn, tree, default_tz)
+    tracks = [_track(t) | {"line_name": labels.get(t.get("branch")),
+                           "met": {p: t["rating_key"] in keys for p, keys in met.get(t.get("branch"), {}).items()}}
+              for t in r["tracks"]]
     out |= {
         "summary": rules.summary(tree, len(tracks)),
         "picked": {"count": len(tracks), "minutes": r["minutes"], "tracks": tracks,
-                   "order": "pick" if getattr(flow, "STAND_IN", False) else "flow", "seconds": r["seconds"]},
+                   "order": "flow", "seconds": r["seconds"]},
         "bans": {"songs": len(ban.songs), "artists": len(ban.artists), "styles": len(ban.styles)},
         "preview": {"branches": r["branches"], "total": r["total"],
                     "tracks": [{"rating_key": t["rating_key"], "branch": t["line"]} for t in tracks]},

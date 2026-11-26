@@ -36,7 +36,7 @@ def test_vendored_unchanged():
                              ("history.py", "history.py", "def listened_keys(", "def band_share("),
                              ("insights.py", "jimbodj_insights.py", "def track_family(", "def genre_view("),
                              ("facets.py", "facets.py", 'kind, _, ident = ref.partition(":")\n    if kind == "cluster"',
-                              '    if kind == "mix":')):
+                              '    if kind in ("artist", "album"):')):
         theirs = subprocess.run(["git", "-C", str(jimbodj), "show", f"1d8a7cb:src/jimbodj/{path}"],
                                 capture_output=True, text=True, check=True).stdout
         part = theirs[theirs.index(a):theirs.index(b)].rstrip()

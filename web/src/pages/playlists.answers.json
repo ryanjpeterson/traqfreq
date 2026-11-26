@@ -1137,7 +1137,9 @@
     "banned": "the line's tracks Never in mixes leaves out: a song, an artist or a style (bans.get), for tracks jimbo-dj's index knows, as make.details tests them",
     "picked": "every track picked, each with the line that took it",
     "minutes": "the picked tracks' length, rounded to minutes",
-    "order": "pick order: jimbo-dj orders the picked tracks for flow (flow.order), which traqfreq copies in T27"
+    "order": "flow order: from the first picked track, each next one is the left track with the cheapest transition (Camelot keys, tempo with half and double time, loudness, danceability; flow.order)",
+    "met": "for each condition and group of the line that brought the track in: whether the track meets it, counted as the line's count is (rules.leaf_keys, rules.evaluate)",
+    "transition": "from the track before: steps around the Camelot wheel (0 the same key, 1 a neighbour) and the tempo gap as a share of this track's tempo, half and double time counting as the same (flow.describe); none for the first track, and none where a track has no key or tempo"
    },
    "summary": "4 tracks: 8 Ringbahn, not sad, 6 (Ada Vey or played in 2025), 6 happy · (100-110 BPM or 8A). Ordered so key and tempo flow. Made by jimbo-dj.",
    "picked": {
@@ -1151,9 +1153,17 @@
       "album": "Ringbahn",
       "year": 2019,
       "duration_ms": 298000,
+      "camelot": null,
+      "bpm": null,
       "line": "a",
       "live": true,
-      "line_name": "Ringbahn, not sad"
+      "transition": {},
+      "line_name": "Ringbahn, not sad",
+      "met": {
+       "": true,
+       "all.0": true,
+       "not.0": false
+      }
      },
      {
       "rating_key": 105,
@@ -1162,9 +1172,21 @@
       "album": "Quiet Engines",
       "year": 2023,
       "duration_ms": 402000,
+      "camelot": null,
+      "bpm": null,
       "line": "b",
       "live": true,
-      "line_name": "(Ada Vey or played in 2025)"
+      "transition": {
+       "key_steps": null,
+       "bpm_gap": null
+      },
+      "line_name": "(Ada Vey or played in 2025)",
+      "met": {
+       "": true,
+       "all.0": true,
+       "all.0.any.0": true,
+       "all.0.any.1": false
+      }
      },
      {
       "rating_key": 101,
@@ -1173,9 +1195,22 @@
       "album": "Ringbahn",
       "year": 2019,
       "duration_ms": 312000,
+      "camelot": "8A",
+      "bpm": 128.0,
       "line": "c",
       "live": true,
-      "line_name": "happy · (100-110 BPM or 8A)"
+      "transition": {
+       "key_steps": null,
+       "bpm_gap": null
+      },
+      "line_name": "happy · (100-110 BPM or 8A)",
+      "met": {
+       "": true,
+       "all.0": true,
+       "all.1": true,
+       "all.1.any.0": false,
+       "all.1.any.1": true
+      }
      },
      {
       "rating_key": 103,
@@ -1184,12 +1219,25 @@
       "album": "Low Tide Radio",
       "year": 2021,
       "duration_ms": 221000,
+      "camelot": "5B",
+      "bpm": 104.0,
       "line": "c",
       "live": true,
-      "line_name": "happy · (100-110 BPM or 8A)"
+      "transition": {
+       "key_steps": 4,
+       "bpm_gap": 0.231
+      },
+      "line_name": "happy · (100-110 BPM or 8A)",
+      "met": {
+       "": true,
+       "all.0": true,
+       "all.1": true,
+       "all.1.any.0": true,
+       "all.1.any.1": false
+      }
      }
     ],
-    "order": "pick",
+    "order": "flow",
     "seconds": 0.01
    },
    "bans": {
@@ -1472,7 +1520,9 @@
     "banned": "the line's tracks Never in mixes leaves out: a song, an artist or a style (bans.get), for tracks jimbo-dj's index knows, as make.details tests them",
     "picked": "every track picked, each with the line that took it",
     "minutes": "the picked tracks' length, rounded to minutes",
-    "order": "pick order: jimbo-dj orders the picked tracks for flow (flow.order), which traqfreq copies in T27"
+    "order": "flow order: from the first picked track, each next one is the left track with the cheapest transition (Camelot keys, tempo with half and double time, loudness, danceability; flow.order)",
+    "met": "for each condition and group of the line that brought the track in: whether the track meets it, counted as the line's count is (rules.leaf_keys, rules.evaluate)",
+    "transition": "from the track before: steps around the Camelot wheel (0 the same key, 1 a neighbour) and the tempo gap as a share of this track's tempo, half and double time counting as the same (flow.describe); none for the first track, and none where a track has no key or tempo"
    },
    "summary": "3 tracks: 10 in saved:from-the-2020s · not in cluster:quiet-engines, 10 in mix:daily. Ordered so key and tempo flow. Made by jimbo-dj.",
    "picked": {
@@ -1486,9 +1536,17 @@
       "album": "Low Tide Radio",
       "year": 2021,
       "duration_ms": 245000,
+      "camelot": null,
+      "bpm": null,
       "line": "a",
       "live": true,
-      "line_name": "in saved:from-the-2020s · not in cluster:quiet-engines"
+      "transition": {},
+      "line_name": "in saved:from-the-2020s · not in cluster:quiet-engines",
+      "met": {
+       "": true,
+       "all.0": true,
+       "not.0": false
+      }
      },
      {
       "rating_key": 101,
@@ -1497,9 +1555,19 @@
       "album": "Ringbahn",
       "year": 2019,
       "duration_ms": 312000,
+      "camelot": "8A",
+      "bpm": 128.0,
       "line": "b",
       "live": true,
-      "line_name": "in mix:daily"
+      "transition": {
+       "key_steps": null,
+       "bpm_gap": null
+      },
+      "line_name": "in mix:daily",
+      "met": {
+       "": true,
+       "all.0": true
+      }
      },
      {
       "rating_key": 103,
@@ -1508,12 +1576,22 @@
       "album": "Low Tide Radio",
       "year": 2021,
       "duration_ms": 221000,
+      "camelot": "5B",
+      "bpm": 104.0,
       "line": "b",
       "live": true,
-      "line_name": "in mix:daily"
+      "transition": {
+       "key_steps": 4,
+       "bpm_gap": 0.231
+      },
+      "line_name": "in mix:daily",
+      "met": {
+       "": true,
+       "all.0": true
+      }
      }
     ],
-    "order": "pick",
+    "order": "flow",
     "seconds": 0.0
    },
    "bans": {
@@ -1830,7 +1908,7 @@
   ],
   "limit": 200,
   "offset": 0,
-  "rule": "the tracks the line took: lines take turns toward their shares in order, a track two lines share goes to the first, a song (artist and title) goes in once, at most per_artist each (rules.pick), in pick order: jimbo-dj orders the picked tracks for flow (flow.order), which traqfreq copies in T27"
+  "rule": "the tracks the line took: lines take turns toward their shares in order, a track two lines share goes to the first, a song (artist and title) goes in once, at most per_artist each (rules.pick), in flow order: from the first picked track, each next one is the left track with the cheapest transition (Camelot keys, tempo with half and double time, loudness, danceability; flow.order)"
  },
  "/api/playlists/night-lines/copies?server=navidrome&limit=200&missing=true": {
   "server": "navidrome",
@@ -2012,7 +2090,9 @@
    "banned": "the line's tracks Never in mixes leaves out: a song, an artist or a style (bans.get), for tracks jimbo-dj's index knows, as make.details tests them",
    "picked": "every track picked, each with the line that took it",
    "minutes": "the picked tracks' length, rounded to minutes",
-   "order": "pick order: jimbo-dj orders the picked tracks for flow (flow.order), which traqfreq copies in T27"
+   "order": "flow order: from the first picked track, each next one is the left track with the cheapest transition (Camelot keys, tempo with half and double time, loudness, danceability; flow.order)",
+   "met": "for each condition and group of the line that brought the track in: whether the track meets it, counted as the line's count is (rules.leaf_keys, rules.evaluate)",
+   "transition": "from the track before: steps around the Camelot wheel (0 the same key, 1 a neighbour) and the tempo gap as a share of this track's tempo, half and double time counting as the same (flow.describe); none for the first track, and none where a track has no key or tempo"
   },
   "summary": "4 tracks: 8 Ringbahn, not sad, 6 (Ada Vey or played in 2025), 6 happy · (100-110 BPM or 8A). Ordered so key and tempo flow. Made by jimbo-dj.",
   "picked": {
@@ -2026,9 +2106,17 @@
      "album": "Ringbahn",
      "year": 2019,
      "duration_ms": 298000,
+     "camelot": null,
+     "bpm": null,
      "line": "a",
      "live": true,
-     "line_name": "Ringbahn, not sad"
+     "transition": {},
+     "line_name": "Ringbahn, not sad",
+     "met": {
+      "": true,
+      "all.0": true,
+      "not.0": false
+     }
     },
     {
      "rating_key": 105,
@@ -2037,9 +2125,21 @@
      "album": "Quiet Engines",
      "year": 2023,
      "duration_ms": 402000,
+     "camelot": null,
+     "bpm": null,
      "line": "b",
      "live": true,
-     "line_name": "(Ada Vey or played in 2025)"
+     "transition": {
+      "key_steps": null,
+      "bpm_gap": null
+     },
+     "line_name": "(Ada Vey or played in 2025)",
+     "met": {
+      "": true,
+      "all.0": true,
+      "all.0.any.0": true,
+      "all.0.any.1": false
+     }
     },
     {
      "rating_key": 101,
@@ -2048,9 +2148,22 @@
      "album": "Ringbahn",
      "year": 2019,
      "duration_ms": 312000,
+     "camelot": "8A",
+     "bpm": 128.0,
      "line": "c",
      "live": true,
-     "line_name": "happy · (100-110 BPM or 8A)"
+     "transition": {
+      "key_steps": null,
+      "bpm_gap": null
+     },
+     "line_name": "happy · (100-110 BPM or 8A)",
+     "met": {
+      "": true,
+      "all.0": true,
+      "all.1": true,
+      "all.1.any.0": false,
+      "all.1.any.1": true
+     }
     },
     {
      "rating_key": 103,
@@ -2059,12 +2172,25 @@
      "album": "Low Tide Radio",
      "year": 2021,
      "duration_ms": 221000,
+     "camelot": "5B",
+     "bpm": 104.0,
      "line": "c",
      "live": true,
-     "line_name": "happy · (100-110 BPM or 8A)"
+     "transition": {
+      "key_steps": 4,
+      "bpm_gap": 0.231
+     },
+     "line_name": "happy · (100-110 BPM or 8A)",
+     "met": {
+      "": true,
+      "all.0": true,
+      "all.1": true,
+      "all.1.any.0": true,
+      "all.1.any.1": false
+     }
     }
    ],
-   "order": "pick",
+   "order": "flow",
    "seconds": 0.0
   },
   "bans": {
@@ -2196,7 +2322,7 @@
   ],
   "limit": 200,
   "offset": 0,
-  "rule": "every track picked, each with the line that took it, in pick order: jimbo-dj orders the picked tracks for flow (flow.order), which traqfreq copies in T27"
+  "rule": "every track picked, each with the line that took it, in flow order: from the first picked track, each next one is the left track with the cheapest transition (Camelot keys, tempo with half and double time, loudness, danceability; flow.order)"
  },
  "_tree": "b=decade%3A2010s%2C%21mood%3Asad%7E8%7ERingbahn%252C+not+sad&b=%28artist%3AAda+Vey%7Clistened%3A2025%29%7E6&b=mood%3Ahappy%2C%28bpm%3A100-110%7Ckey%3A8A%29%7E6&n=20",
  "/api/junction/reach?b=decade%3A2010s%2C%21mood%3Asad%7E8%7ERingbahn%252C+not+sad&b=%28artist%3AAda+Vey%7Clistened%3A2025%29%7E6&b=mood%3Ahappy%2C%28bpm%3A100-110%7Ckey%3A8A%29%7E6&n=20": {
@@ -2493,7 +2619,9 @@
     "banned": "the line's tracks Never in mixes leaves out: a song, an artist or a style (bans.get), for tracks jimbo-dj's index knows, as make.details tests them",
     "picked": "every track picked, each with the line that took it",
     "minutes": "the picked tracks' length, rounded to minutes",
-    "order": "pick order: jimbo-dj orders the picked tracks for flow (flow.order), which traqfreq copies in T27"
+    "order": "flow order: from the first picked track, each next one is the left track with the cheapest transition (Camelot keys, tempo with half and double time, loudness, danceability; flow.order)",
+    "met": "for each condition and group of the line that brought the track in: whether the track meets it, counted as the line's count is (rules.leaf_keys, rules.evaluate)",
+    "transition": "from the track before: steps around the Camelot wheel (0 the same key, 1 a neighbour) and the tempo gap as a share of this track's tempo, half and double time counting as the same (flow.describe); none for the first track, and none where a track has no key or tempo"
    },
    "summary": "4 tracks: 12 black metal, 8 doom metal. Ordered so key and tempo flow. Made by jimbo-dj.",
    "picked": {
@@ -2507,9 +2635,16 @@
       "album": "Ringbahn",
       "year": 2019,
       "duration_ms": 312000,
+      "camelot": "8A",
+      "bpm": 128.0,
       "line": "a",
       "live": true,
-      "line_name": "black metal"
+      "transition": {},
+      "line_name": "black metal",
+      "met": {
+       "": true,
+       "all.0": true
+      }
      },
      {
       "rating_key": 104,
@@ -2518,9 +2653,19 @@
       "album": "Low Tide Radio",
       "year": 2021,
       "duration_ms": 245000,
+      "camelot": null,
+      "bpm": null,
       "line": "b",
       "live": true,
-      "line_name": "doom metal"
+      "transition": {
+       "key_steps": null,
+       "bpm_gap": null
+      },
+      "line_name": "doom metal",
+      "met": {
+       "": true,
+       "all.0": true
+      }
      },
      {
       "rating_key": 102,
@@ -2529,9 +2674,19 @@
       "album": "Ringbahn",
       "year": 2019,
       "duration_ms": 298000,
+      "camelot": null,
+      "bpm": null,
       "line": "a",
       "live": true,
-      "line_name": "black metal"
+      "transition": {
+       "key_steps": null,
+       "bpm_gap": null
+      },
+      "line_name": "black metal",
+      "met": {
+       "": true,
+       "all.0": true
+      }
      },
      {
       "rating_key": 103,
@@ -2540,12 +2695,22 @@
       "album": "Low Tide Radio",
       "year": 2021,
       "duration_ms": 221000,
+      "camelot": "5B",
+      "bpm": 104.0,
       "line": "b",
       "live": true,
-      "line_name": "doom metal"
+      "transition": {
+       "key_steps": null,
+       "bpm_gap": null
+      },
+      "line_name": "doom metal",
+      "met": {
+       "": true,
+       "all.0": true
+      }
      }
     ],
-    "order": "pick",
+    "order": "flow",
     "seconds": 0.0
    },
    "bans": {
@@ -2891,7 +3056,9 @@
    "banned": "the line's tracks Never in mixes leaves out: a song, an artist or a style (bans.get), for tracks jimbo-dj's index knows, as make.details tests them",
    "picked": "every track picked, each with the line that took it",
    "minutes": "the picked tracks' length, rounded to minutes",
-   "order": "pick order: jimbo-dj orders the picked tracks for flow (flow.order), which traqfreq copies in T27"
+   "order": "flow order: from the first picked track, each next one is the left track with the cheapest transition (Camelot keys, tempo with half and double time, loudness, danceability; flow.order)",
+   "met": "for each condition and group of the line that brought the track in: whether the track meets it, counted as the line's count is (rules.leaf_keys, rules.evaluate)",
+   "transition": "from the track before: steps around the Camelot wheel (0 the same key, 1 a neighbour) and the tempo gap as a share of this track's tempo, half and double time counting as the same (flow.describe); none for the first track, and none where a track has no key or tempo"
   },
   "summary": "2 tracks: the tracks in your library that are doom metal. Ordered so key and tempo flow. Made by jimbo-dj.",
   "picked": {
@@ -2905,9 +3072,16 @@
      "album": "Low Tide Radio",
      "year": 2021,
      "duration_ms": 245000,
+     "camelot": null,
+     "bpm": null,
      "line": "a",
      "live": true,
-     "line_name": "doom metal"
+     "transition": {},
+     "line_name": "doom metal",
+     "met": {
+      "": true,
+      "all.0": true
+     }
     },
     {
      "rating_key": 103,
@@ -2916,12 +3090,22 @@
      "album": "Low Tide Radio",
      "year": 2021,
      "duration_ms": 221000,
+     "camelot": "5B",
+     "bpm": 104.0,
      "line": "a",
      "live": true,
-     "line_name": "doom metal"
+     "transition": {
+      "key_steps": null,
+      "bpm_gap": null
+     },
+     "line_name": "doom metal",
+     "met": {
+      "": true,
+      "all.0": true
+     }
     }
    ],
-   "order": "pick",
+   "order": "flow",
    "seconds": 0.0
   },
   "bans": {

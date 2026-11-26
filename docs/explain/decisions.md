@@ -2,6 +2,18 @@
 
 ## Log
 
+### 2026-11-25 — The in:mix: scope keeps what jimbo-dj's index knows
+
+- **Decision:** `mixes.latest` is vendored unchanged at T27, replacing T24's stand-in. A mix's tracks count toward `in:mix:` only when jimbo-dj's vectors index knows them: analysed at the current analyzer version, status ok, with features.
+- **Why:** the stand-in kept every live track with an ok analysis at any version, so a track analysed at an old version counted in traqfreq and not in jimbo-dj. The gate compares the two, and only jimbo-dj's rule can pass it.
+- **Consequences:** the fixture's daily mix gives the same tracks either way (its unanalysed track was already left out); a scratch copy with an old-version track in the mix tests the difference. On live data, `in:mix:` lines can shrink by the tracks waiting for re-analysis.
+
+### 2026-11-25 — Why this track: every condition of its line, met or not
+
+- **Decision:** each picked track carries, per condition and group of the line that brought it in, whether it meets it (`met`), counted as the line's count is. The page shows them as true or false ConditionChips under the line's AND, OR and NOT parts, with the transition from the track before (jimbo-dj's `flow.describe`). StationRow's why now takes chips as well as a sentence.
+- **Why:** B3 asks every row to say why it is there. A NOT condition is shown as false, which is why the track is in, so the part's words (NOT: none of these) are shown beside the chips.
+- **Consequences:** no new kit component. The transition has no score of its own: jimbo-dj's describe gives Camelot steps and the tempo gap only, and traqfreq shows just those.
+
 ### 2026-11-25 — Rooted to roaming widens only style conditions, and only as a preview
 
 - **Decision:** a line follows the tag of each `style` condition it needs (in its `all` or `any` parts, not under a `not`). Four stops widen that condition: rooted (the tag alone, the line as it is), ladder (the tags under it), movement (the tags of each movement naming one of those) and roaming (their neighbours on the genre map, one rung up or down, broad tags left out). Each tag is counted the way jimbo-dj counts a `style` condition. The slider is read-only and every line sits at rooted.

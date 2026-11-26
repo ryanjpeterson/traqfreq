@@ -129,12 +129,19 @@ export type Line = {
   id: string; label: string | null; share: number; words: string; count: number; match: Group | Condition;
   got?: number; available?: number; banned?: number;
 };
-export type Picked = TrackRow & { line: string; line_name: string | null };
+/** How a track follows the one before (jimbo-dj's flow.describe): Camelot steps and the tempo gap (a share). */
+export type Transition = { key_steps?: number | null; bpm_gap?: number | null };
+/** A picked track (T25), in flow order with its key, tempo and transition, and per path of its line whether it
+ *  meets that condition or group (T27, B3). */
+export type Picked = TrackRow & {
+  line: string; line_name: string | null; camelot?: string | null; bpm?: number | null; transition?: Transition;
+  met?: Record<string, boolean>;
+};
 export type Lines = {
   n: number; per_artist: number; shuffle: number; name: string; query: string; lines: Line[]; total: number;
   library: number; rules: Record<string, string>;
   summary?: string; read_only?: string;
-  picked?: { count: number; minutes: number; order: 'pick' | 'flow'; seconds: number; tracks: Picked[] };
+  picked?: { count: number; minutes: number; order: 'flow'; seconds: number; tracks: Picked[] };
   bans?: { songs: number; artists: number; styles: number };
 };
 export type TrackRow = {
@@ -154,7 +161,7 @@ export type CopyRows = {
   server: Server; missing: boolean | null; count: number; rows: CopyRow[]; rule: string; reasons: Record<string, string>;
 };
 
-type Unit = 'playlist' | 'line' | 'track' | 'minute' | 'song' | 'artist' | 'style' | 'tag';
+type Unit = 'playlist' | 'line' | 'track' | 'minute' | 'song' | 'artist' | 'style' | 'tag' | 'step';
 export function count(n: number, unit: Unit): string {
   return `${fmt(n)} ${t(`unit.${unit}.${n === 1 ? 'one' : 'other'}` as StringKey)}`;
 }

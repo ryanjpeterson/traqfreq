@@ -192,7 +192,7 @@ export function lintNavRules(text, file) {
 
 // ---------- T2 / T3 / W2 ----------
 const PROPER = new Set(['Plex', 'Jellyfin', 'Navidrome', 'Tailscale', 'Last.fm', 'Mixxx', 'Ollama', 'Soulseek', 'Fira', 'Sans',
-  'Berlin', 'Gelb', 'Mac', 'Junction', 'Apple', 'Music', 'Spotify', 'MusicBrainz', 'Discogs', 'Plexamp', 'I']);
+  'Berlin', 'Gelb', 'Mac', 'Junction', 'Apple', 'Music', 'Spotify', 'MusicBrainz', 'Discogs', 'Plexamp', 'Camelot', 'I']);
 const ACRONYMS = new Set(['API', 'BPM', 'DB', 'URL', 'ID', 'KB/s', 'MB', 'GB', 'FLAC', 'MP3', 'AAC', 'OK', 'UTC', 'CSV', 'JSON', 'SQLite', 'AND', 'OR', 'NOT', 'LUFS', 'EP']);
 const BANNED = ['magic', 'magical', 'smart', 'ai-powered', 'oops', 'whoops'];
 

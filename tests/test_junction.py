@@ -54,7 +54,7 @@ def test_picking_vendored_unchanged():
     """rules.py's Picking, make.details, bans' read side, similar._norm_title and _public, browse's plays sort and
     the index's meta query are jimbo-dj's at 1d8a7cb (checked against a copy beside the repo, as T24's test is)."""
     assert "Picking" in rules.VENDORED_FROM and hasattr(rules, "build") and hasattr(rules, "pick")
-    assert flow.STAND_IN  # pick order until T27
+    assert not hasattr(flow, "STAND_IN") and "flow.py" in flow.VENDORED_FROM  # T27: the real flow order
     jimbodj = ROOT.parent / "jimbo-dj"
     if not (jimbodj / ".git").exists():
         return
@@ -68,7 +68,10 @@ def test_picking_vendored_unchanged():
                              ("browse.py", "browse.py", "# plays(): every", "\n\n\nSOUND"),
                              ("browse.py", "browse.py", "def _with_plays(", "\n\n\ndef matching("),
                              ("vectors.py", "vectors.py", "META_COLS = (", "\n\n\ndef _norm"),
-                             ("vectors.py", "vectors.py", "_META_Q = (", "FULL_EVERY")):
+                             ("vectors.py", "vectors.py", "_META_Q = (", "FULL_EVERY"),
+                             ("flow.py", "flow.py", '"""Ordering', None),
+                             ("mixes.py", "mixes.py", "POOL_LABEL = {", "\n\nSCHEMA"),
+                             ("mixes.py", "mixes.py", "def latest(", None)):
         theirs = subprocess.run(["git", "-C", str(jimbodj), "show", f"1d8a7cb:src/jimbodj/{path}"],
                                 capture_output=True, text=True, check=True).stdout
         i = theirs.index(a)
@@ -101,7 +104,20 @@ def test_build_night_lines(legacy_db):
     assert r["preview"]["tracks"] == NIGHT["tracks"]
     assert [t["line"] for t in r["picked"]["tracks"]] == ["a", "b", "c", "c"]
     assert r["picked"]["tracks"][0]["line_name"] == "Ringbahn, not sad"
-    assert r["picked"]["order"] == "pick" and r["picked"]["count"] == 4
+    assert r["picked"]["order"] == "flow" and r["picked"]["count"] == 4
+    # Flow order: only 101 and 103 are in the index, so 102 and 105 have no key or tempo. Every move from a track
+    # without them costs the same (0.4), so the walk keeps pick order; 103 follows 101 four steps round the wheel
+    # (8A to 5B) at a 23.1 % tempo gap (128 against 104 bpm).
+    assert [(t["rating_key"], t["camelot"], t["bpm"], t["transition"]) for t in r["picked"]["tracks"]] == [
+        (102, None, None, {}), (105, None, None, {"key_steps": None, "bpm_gap": None}),
+        (101, "8A", 128.0, {"key_steps": None, "bpm_gap": None}), (103, "5B", 104.0, {"key_steps": 4, "bpm_gap": 0.231})]
+    # Why each is here (B3): its line's conditions, met or not. 102 is from the 2010s and not sad; 105 is by Ada Vey
+    # and wasn't played in 2025; 101 is happy in 8A (not 100-110 bpm); 103 is happy at 104 bpm (not 8A).
+    assert [t["met"] for t in r["picked"]["tracks"]] == [
+        {"": True, "all.0": True, "not.0": False},
+        {"": True, "all.0": True, "all.0.any.0": True, "all.0.any.1": False},
+        {"": True, "all.0": True, "all.1": True, "all.1.any.0": False, "all.1.any.1": True},
+        {"": True, "all.0": True, "all.1": True, "all.1.any.0": True, "all.1.any.1": False}]
     assert r["picked"]["minutes"] == round((298000 + 402000 + 312000 + 221000) / 60000)
     assert r["summary"].startswith("4 tracks: 8 Ringbahn, not sad, 6 ")
     assert r["bans"] == {"songs": 0, "artists": 1, "styles": 0}  # Former Band: removed, so nothing is left out
@@ -146,6 +162,46 @@ def test_a_song_goes_in_once(legacy_db, tmp_path):
     r = junction.build(legacy.connect(db), rules.from_query("b=decade:2010s"))
     assert r["lines"][0]["count"] == 3 and r["lines"][0]["available"] == 3
     assert [t["rating_key"] for t in r["picked"]["tracks"]] == [101, 102]
+
+
+def _analysed(legacy_db, tmp_path):
+    """The fixture with 102 analysed again at version 2 and 104 analysed (invented: 102 bpm, 5B, -9.0 LUFS), so
+    five tracks are picked and four of them have a key and a tempo."""
+    return _scratch(legacy_db, tmp_path, "UPDATE analysis SET version = 2 WHERE rating_key = 102",
+                    "INSERT INTO analysis (rating_key, version, status, error, analyzed_at) VALUES (104, 2, 'ok', NULL, 1)",
+                    "INSERT INTO features (rating_key, bpm, camelot, loudness_lufs) VALUES (104, 102.0, '5B', -9.0)")
+
+
+def test_flow_order(legacy_db, tmp_path):
+    """jimbo-dj's flow.order, worked out by hand. The lines take 101, 104, 102, 103, 105 (most played first, in
+    turns). No track has a score, so the walk starts at the first, 101 (8A, 128 bpm, -7.1 LUFS). Its cheapest next
+    is 102 (9A, one step: 0.15, tempo 0.02, loudness 0.03), not 104 or 103 (four steps: 0.8 and more) or 105 (no
+    key: 0.4). From 102, 105 (0.4) beats 104 and 103 (five steps). From 105 every move costs 0.4: 104, then 103."""
+    db = _analysed(legacy_db, tmp_path)
+    r = junction.build(legacy.connect(db), rules.from_query("b=decade:2010s~10&b=decade:2020s~10"))
+    assert [(t["rating_key"], t["line"]) for t in r["picked"]["tracks"]] == [
+        (101, "a"), (102, "a"), (105, "b"), (104, "b"), (103, "b")]
+    assert [t["transition"] for t in r["picked"]["tracks"]] == [
+        {}, {"key_steps": 1, "bpm_gap": 0.015}, {"key_steps": None, "bpm_gap": None},
+        {"key_steps": None, "bpm_gap": None}, {"key_steps": 0, "bpm_gap": 0.019}]
+    assert r["preview"]["tracks"] == [{"rating_key": t["rating_key"], "branch": t["line"]} for t in r["picked"]["tracks"]]
+    # The picked rows come in the same order.
+    rows = junction.rows(legacy.connect(db), rules.from_query("b=decade:2010s~10&b=decade:2020s~10"), which="picked")
+    assert [x["rating_key"] for x in rows["rows"]] == [101, 102, 105, 104, 103]
+    assert flow.order([{"rating_key": 1}, {"rating_key": 2}]) == [{"rating_key": 1}, {"rating_key": 2}]  # two stay
+
+
+def test_mix_keeps_what_the_index_knows(legacy_db, tmp_path):
+    """mixes.latest (vendored at T27) keeps the mix's tracks jimbo-dj's index knows: analysed at the current
+    version. The stand-in before it kept 102 too (status ok, but at version 1). The fixture's daily mix (101, 103,
+    104) gives {101, 103} either way, so here 102 is added to it."""
+    db = _scratch(legacy_db, tmp_path, "UPDATE mixes SET tracks = '[[101, \"favourite\"], [102, \"new\"], [103, \"new\"]]'")
+    r = junction.build(legacy.connect(db), rules.from_query("b=in:mix:daily"))
+    assert r["lines"][0]["count"] == 2 and {t["rating_key"] for t in r["picked"]["tracks"]} == {101, 103}
+    (tmp_path / "old").mkdir()
+    db2 = _scratch(legacy_db, tmp_path / "old", "DROP TABLE mixes")  # an old database: no mix built yet
+    with pytest.raises(ValueError, match="isn't built yet"):
+        junction.build(legacy.connect(db2), rules.from_query("b=in:mix:daily"))
 
 
 def test_never_in_mixes(legacy_db, tmp_path):
@@ -211,6 +267,19 @@ def test_gate_check_1_and_track_set(legacy_db):
     assert c1["total"]["ok"] is False and all(x["ok"] for x in c1["lines"][1:])
     c2 = playlists_gate.check_track_set(ours, other)
     assert (c2["missing"], c2["extra"], c2["other_line"]) == ([104], [103], [{"rating_key": 102, "ours": "a", "theirs": "b"}])
+
+
+def test_gate_check_2_order(legacy_db, tmp_path):
+    """Check 2 in full: the same tracks in the same order. Night lines' order matches; a swap is named by place."""
+    ours = junction.build(legacy.connect(legacy_db), _mf()._NIGHT)["preview"]
+    c = playlists_gate.check_tracks(ours, NIGHT)
+    assert c["ok"] and c["set"]["ok"] and c["order"] == {"ok": True, "first_difference": None, "rule": c["order"]["rule"]}
+    swapped = {**NIGHT, "tracks": [NIGHT["tracks"][0], NIGHT["tracks"][2], NIGHT["tracks"][1], NIGHT["tracks"][3]]}
+    c = playlists_gate.check_tracks(ours, swapped)
+    assert c["set"]["ok"] and not c["ok"]
+    assert c["order"]["first_difference"] == {"position": 2, "ours": 105, "theirs": 101}
+    short = {**NIGHT, "tracks": NIGHT["tracks"][:3]}
+    assert playlists_gate.check_order(ours, short)["first_difference"] == {"position": 4, "ours": 103, "theirs": None}
 
 
 def test_copies_on_each_server(snap_client):
