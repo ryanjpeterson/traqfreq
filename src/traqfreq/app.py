@@ -10,7 +10,7 @@ from datetime import datetime
 from urllib.parse import urlencode
 from zoneinfo import ZoneInfo
 
-from . import __version__, counted, entities, history, identity, junction, legacy, library, library_gate, matching, periods, playlists, proposals, reading, servers, servers_gate, store, tagpages, tags, tags_gate
+from . import __version__, counted, entities, history, identity, junction, legacy, library, library_gate, matching, periods, playlists, proposals, reach, reading, servers, servers_gate, store, tagpages, tags, tags_gate
 from .settings import CORE, MODULES, Settings
 
 
@@ -611,6 +611,22 @@ def create_app(settings: Settings | None = None, server_transport=None) -> FastA
         """The tracks behind one of the Junction's numbers (``which``: count, got, available, banned, picked)."""
         return read_playlists(lambda c: junction.rows(c, playlists.rules.from_query(tree_query(request)), line, which,
                                                       path, limit, offset, settings.tz))
+
+    # --- T26: movements, rooted to roaming (new in traqfreq; a preview, not part of the gate) ---------------
+
+    @app.get("/api/junction/reach")
+    def junction_reach(request: Request) -> dict:
+        """How far each line of a tree could reach if it followed its tag: the style conditions it follows and four
+        stops (rooted, ladder, movement, roaming), each with its count of live tracks and the tags it takes in. A
+        preview only: the Junction's numbers don't move, nothing is picked or saved."""
+        return read_playlists(lambda c: reach.reach_from_query(c, tree_query(request), settings.tz))
+
+    @app.get("/api/junction/reach/rows")
+    def junction_reach_rows(request: Request, line: str, stop: str, which: str = "count", limit: int = 50,
+                            offset: int = 0) -> dict:
+        """The tracks behind a stop's number: all it matches (count) or only those the rooted line doesn't (added)."""
+        return read_playlists(lambda c: reach.rows(c, playlists.rules.from_query(tree_query(request)), line, stop, which,
+                                                   limit, offset, settings.tz))
 
     @app.get("/api/modules")
     def modules() -> dict:
