@@ -489,6 +489,14 @@ Checked from the laptop over Tailscale on the deployed app (`main` 90a8d26, with
 - **Checked in the browser** on the fixture with snapshots (port 4482, scratch copy): Night lines' picked tracks with their why open in dark desktop, and `/library/junction?b=…` at 375 px light (no side-scroll). No console errors.
 - **After deploy, check on live data:** the Junction of Metal Mix, Blimp, Blurps and Early (`picked.seconds`, since `met` counts each condition once more), each order against jimbo-dj's Library → Tracks preview by eye, and whether any `in:mix:` line shrank (tracks waiting for re-analysis).
 
+## T27 deployed and checked: 2026-11-26
+On `main` 44e0fbc (PR #30), GET only against `http://macmini:4492`:
+- `/api/playlists`: 77 rows, 8 with lines (5.8 s, cold).
+- Every one of the 8 trees answers `order: "flow"`. Every picked track has a Camelot key (all are in jimbo-dj's index), and its own line's `met` is true. Building each takes 0.01 to 0.09 s inside a request of 0.2 to 2.5 s.
+- Lines and picks: Metal Mix 24/18/17/8/33 of 100, Blimp 100, Blurps 47/10/43, Early 40 for each of five lines (200).
+- No live tree has an `in:mix:` condition, so the `mixes.latest` change moves no live line.
+- **jimbo-dj's stored tracks aren't the yardstick.** Its stored playlists were built at other times (Keep fresh leaves out what was played last week), so they share 38 to 79 % of the tracks with today's picks and differ in order. Order is checked for real in T28, against jimbo-dj's `POST /api/rules/preview` with the same data stamp.
+
 ## Next: T28 (P5 PLAYLISTS)
 The Ask box and the gate ([spec](docs/specs/t24-playlists.md)): words to a line through `jimbodj-text` (:4491, read-only) and Ollama when it's on; `scripts/p5_gate.py --url` (the only caller of jimbo-dj's `POST /api/rules/preview`), `GET /api/playlists/compare`, `p5_trees.json`, gate check 3 (the saved list), the gate card on LIBRARY and SETUP, and a live run recorded here. Checks 1 and 2 are ready in `playlists_gate.py` (`check_lines`, `check_tracks`).
 **Planned for P5/P6 (Ryan, 2026-11-24):** every playlist and mix has three separate switches, Plex, Jellyfin and Navidrome. Navidrome also has NaviBeat connected to it.
