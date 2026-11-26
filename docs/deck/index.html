@@ -116,7 +116,7 @@ addEventListener('resize', fit); fit();
 <div class="frame"><section id="status">
 <div class="bar"></div>
 <p class="barlabel">Status</p>
-<div class="barcode"><p>25 / 28</p></div>
+<div class="barcode"><p>26 / 28</p></div>
 <h2 class="head">Where the build stands</h2>
 <table class="tbl">
 <tr class="hd"><th style="width:8%">Phase</th><th style="width:30%">What</th><th style="width:12%">Sessions</th><th style="width:10%">Done</th><th style="width:14%">Status</th><th style="width:26%">Gate</th></tr>
@@ -125,7 +125,7 @@ addEventListener('resize', fit); fit();
 <tr><td>P2</td><td>LIBRARY, read-only</td><td>4</td><td>4</td><td>Done</td><td>Counts match jimbo-dj</td></tr>
 <tr><td>P3</td><td>SERVERS: identity, Jellyfin, Navidrome</td><td>7</td><td>7</td><td>Done</td><td>One song, three servers</td></tr>
 <tr><td>P4</td><td>TAGS, read-only</td><td>4</td><td>4</td><td>Done</td><td>Ladder and per-track tags right</td></tr>
-<tr class="now"><td>P5</td><td>PLAYLISTS: Junction preview</td><td>5</td><td>2</td><td>In progress</td><td>Same tracks as jimbo-dj</td></tr>
+<tr class="now"><td>P5</td><td>PLAYLISTS: Junction preview</td><td>5</td><td>3</td><td>In progress</td><td>Same tracks as jimbo-dj</td></tr>
 <tr><td>P6</td><td>Cut-overs, one writer at a time</td><td>~15</td><td>0</td><td>Not started</td><td>Each switched off in jimbo-dj</td></tr>
 <tr><td>P7</td><td>DISCOVER, MIXES, FETCH, language loop</td><td>~30</td><td>0</td><td>Not started</td><td>Per module</td></tr>
 <tr><td>P8</td><td>Retire jimbo-dj; skins</td><td>~5</td><td>0</td><td>Not started</td><td>jimbo-dj off for a week</td></tr>
@@ -278,14 +278,14 @@ addEventListener('resize', fit); fit();
 <div class="frame"><section id="p5">
 <div class="bar"></div>
 <p class="barlabel">Phase P5 · PLAYLISTS</p>
-<div class="barcode"><p>2 / 5</p></div>
+<div class="barcode"><p>3 / 5</p></div>
 <div class="row"><div class="badge L"><p>P5</p></div><h2 class="head">The Junction, as a preview</h2></div>
 <div class="cols2">
 <table class="tbl">
 <tr class="hd"><th style="width:14%">Session</th><th style="width:70%">Work</th><th style="width:16%">Status</th></tr>
 <tr><td>T24</td><td>Spec written. Every saved playlist with its Plex, Jellyfin and Navidrome switches, read-only; each line’s AND, OR and NOT conditions counted with jimbo-dj’s rules, each count opening its tracks</td><td>Done</td></tr>
 <tr><td>T25</td><td>jimbo-dj’s picking vendored: shares, cap per artist, line order, shuffle, Never in mixes. The Junction drawing with read-only levers, any tree at /library/junction, each switch with its copies on that server</td><td>Done</td></tr>
-<tr><td>T26</td><td>Movements with the rooted-to-roaming slider</td><td>To do</td></tr>
+<tr><td>T26</td><td>Rooted to roaming, new in traqfreq: a line follows its style tag along the ladder, its movement and its neighbours on the map; a read-only slider of four stops, each count opening its tracks; a preview outside the gate</td><td>Done</td></tr>
 <tr><td>T27</td><td>Flow order and “why this track” on every row</td><td>To do</td></tr>
 <tr><td>T28</td><td>The Ask box (CLAP always, Ollama lines when it’s on); p5_gate.py and the gate card</td><td>To do</td></tr>
 </table>
@@ -356,7 +356,8 @@ addEventListener('resize', fit); fit();
 <h2 class="head">What happened, newest first</h2>
 <table class="tbl">
 <tr class="hd"><th style="width:16%">Date</th><th style="width:16%">Session</th><th style="width:68%">What</th></tr>
-<tr class="now"><td>Next</td><td>Next: T26</td><td>Movements, rooted to roaming: a line can follow a T23 movement or a ladder, with a read-only slider; a preview, not part of the gate</td></tr>
+<tr class="now"><td>Next</td><td>Next: T27</td><td>Flow order and why this track: flow.order and flow.describe vendored, so the order matches; every row with its line, its conditions true or false, and its transition</td></tr>
+<tr><td>2026-11-25</td><td>T26</td><td>PR #29 on branch claude/t26-movements: rooted to roaming, new in traqfreq: each line following its style tag through four stops (the tag alone, its ladder, its movement, its neighbours on the map), a read-only slider on the Junction, every count opening its tracks; the Junction unchanged, not in the gate; 265 API and 228 web tests</td></tr>
 <tr><td>2026-11-25</td><td>T25</td><td>PR #28 on branch claude/t25-junction: jimbo-dj’s picking vendored; the Junction (what any tree picks now, each line’s count, share, got and available, every track with its line) with its drawing and read-only levers; each switch with its copies per server; gate check 1 and check 2’s set on the fixture; 259 API and 224 web tests</td></tr>
 <tr><td>2026-11-24</td><td>T24</td><td>PR #27 on branch claude/t24-playlists: P5 spec; every saved playlist with its Plex, Jellyfin and Navidrome switches (read-only); a playlist’s lines with AND, OR and NOT conditions counted with jimbo-dj’s vendored rules, each opening its tracks; 246 API and 216 web tests</td></tr>
 <tr><td>2026-11-24</td><td>P4 gate</td><td>Passed on the deployed app once jimbo-dj’s stored audit caught up: ladders 15 of 15, per-track tags 53,789 of 53,789 tracks, the audit 691 of 691 tags; never loosened</td></tr>
