@@ -7,7 +7,7 @@
 
 The ten trees: every saved playlist that has one (as `make.spec_of` reads it: a `rules` spec, an old Explore `filter`, a genre `blend`; 8 on 2026-11-24), then fixed trees from `src/traqfreq/p5_trees.json` until there are ten. The fixed ones are chosen so that between them the ten use AND, OR and NOT, a nested group, an `in:` scope, and at least one condition of each family (a chart bar, a sound filter, `genre`, `style`, `family`, `listened`).
 
-jimbo-dj's side of checks 1 and 2 is `POST /api/rules/preview` with the same tree. That endpoint writes nothing. Read at 1d8a7cb, it builds the playlist and keeps the last 64 answers in process memory for a minute. It is the only non-GET call anything in traqfreq makes, and only the gate script makes it. Both sides are asked within seconds of each other. If jimbo-dj's data stamp moves in between, that tree is asked again once. Check 3 is `GET /api/saved`.
+jimbo-dj's side of checks 1 and 2 is `POST /api/rules/preview` with the same tree. That endpoint writes nothing. Read at 1d8a7cb, it builds the playlist and keeps the last 64 answers in process memory for a minute. It is the only non-GET call anything in traqfreq makes to jimbo-dj, and only the gate script makes it. (The Ask box's POSTs, T28, go to jimbodj-text's `/embed` and, when it's on, Ollama's `/api/chat`: they turn words into numbers or values and read nothing.) Both sides are asked within seconds of each other. If jimbo-dj's data stamp moves in between, that tree is asked again once. Check 3 is `GET /api/saved`.
 
 PLAYLISTS only reads. Saving, pushing to Plex, Keep fresh, the daily and weekly mixes and re-clustering all stay in jimbo-dj until P6. traqfreq never writes to jimbo-dj's database, to Plex, to Jellyfin or to Navidrome.
 
@@ -74,6 +74,18 @@ A line can follow a T23 movement or a ladder, with a read-only slider from roote
 
 ### T28: the Ask box and the gate
 The Ask box: words to a line, through jimbo-dj's CLAP text server (`jimbodj-text`, :4491, read-only), and Ollama lines when it's on (jimbo-dj's prompt.py). Then the gate: `src/traqfreq/playlists_gate.py`, `GET /api/playlists/compare` (traqfreq's own answers, for the card), `scripts/p5_gate.py --url` (the only caller of jimbo-dj's preview), `p5_trees.json`, the gate card on LIBRARY and SETUP, and a live run recorded in HANDOFF.
+*Done 2026-11-26* (HANDOFF). **P5 gate passed 2026-11-26** on live data. How it reads:
+- **jimbo-dj at 1d8a7cb has no Ollama code** (`docs/specs/ollama.md` there is "on spec, not built"), and its prompt goes to Radio (`similar.more_like`), not to a line. So the Ask box vendors what exists unchanged (`prompt.clean`, `Unavailable`; vectors.py's `_norm`, `_EMB_Q`, `_stamp`, `_vectors`; the three lines of `more_like` that score a prompt) and builds the line itself (`src/traqfreq/ask.py`):
+  - **Typed:** `facet:value` parts, comma-separated as in jimbo-dj's URL form (`decade:1990s`, `!mood:sad`), checked with `rules.clean`. Always on.
+  - **By sound:** the other words go to jimbodj-text's `/embed`; the vector is compared with every analysed track's CLAP audio vector (centred on the library mean, as jimbo-dj's index does). Of the 100 nearest tracks, up to three styles become the line (an OR), each time the style whose nearest tracks not covered yet weigh most by score, each on at least a tenth of them. Typed parts join it with AND and NOT. Off when `TRAQFREQ_TEXT_URL` is empty (compose sets it to `http://host.docker.internal:4491`).
+  - **By Ollama:** only when `TRAQFREQ_OLLAMA_URL` is set. Built to jimbo-dj's Ollama spec: `/api/chat` with a JSON schema, temperature 0.2, the library's own styles (the 400 most used), moods and decades to pick from; anything else is dropped and named. Its line is shown like the others; it decides nothing on its own.
+  - Every line has its count, each condition's count opening its rows, and opens in the Junction. The nearest tracks and each style's share of them open their rows (`/library/junction/ask`).
+- **The ten trees:** the saved playlists with a tree by id, then `p5_trees.json` until ten. Its first two trees alone use every kind of condition, so any ten do (`playlists_gate.coverage`). Each fixed tree is written in the form jimbo-dj's builder writes (`rules.clean` of its URL form), so the URL form gives the same tree.
+- **Check 3:** traqfreq's list (`GET /api/playlists`) against jimbo-dj's `GET /api/saved`, by id: kind, title, track count, Plex switch, stale.
+- **Stamp:** `GET /api/playlists/compare/stamp` is jimbo-dj's data stamp (`rules._stamp`) plus the counted listens and the saved playlists, which a line's pool and `in:`/`listened` depend on without moving the data stamp. The script asks a tree again once if it moves between traqfreq's answer and jimbo-dj's.
+- **The card** shows traqfreq's side (each tree's numbers opening their rows, the coverage, the saved list) and how to run the script; it can't pass on its own, because only the script asks jimbo-dj.
+- **The kit:** the Ask box's field is LineLever's new `field` mode (a search field in place of the share bar). K1 allows no new component.
+- The script also runs against a traqfreq from before T28: it builds the same ten trees from `GET /api/playlists` and this checkout's `p5_trees.json`, and asks `GET /api/junction` for each (no stamp to watch). The first live run used that path, on the deployed T27.
 
 ## Not in P5
 - Any write: to jimbo-dj (no save, rename, delete, refresh or Keep fresh), to Plex, to Jellyfin, to Navidrome. The switches are shown, never set.

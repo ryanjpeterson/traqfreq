@@ -26,6 +26,7 @@
 - 2026-11-25, T25: the Junction. jimbo-dj's picking vendored, any tree previewed at `/library/junction`, and each switch with its copies on that server.
 - 2026-11-25, T26: rooted to roaming. Each line following its style tag along the ladder, the movements and the genre map, a read-only preview beside the Junction.
 - 2026-11-25, T27: flow order and why this track. jimbo-dj's flow order vendored; each picked track with its conditions met or not and its transition.
+- 2026-11-26, T28: the Ask box (words to a line by sound, through jimbo-dj's CLAP text server) and the P5 gate. **P5 gate passed on live data**: 10 of 10 trees, 77 of 77 saved playlists.
 
 ## Pivots and renames
 

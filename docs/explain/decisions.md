@@ -2,6 +2,18 @@
 
 ## Log
 
+### 2026-11-26 — The Ask box makes a line from the nearest tracks' styles
+
+- **Decision:** words become a line three ways (`src/traqfreq/ask.py`). Typed `facet:value` parts are used as they are. The other words go to jimbo-dj's CLAP text server and are compared with every analysed track's CLAP vector, as jimbo-dj's prompt Radio does; up to three styles that cover the 100 nearest tracks become the line, an OR. A local Ollama, only when set, reads the words into the library's own styles, moods and decades and drops the rest.
+- **Why:** jimbo-dj at 1d8a7cb sends a prompt to Radio (a ranked list), not to a line, and has no Ollama code yet (its Ollama spec is "on spec, not built"). A line made of styles is something the Junction, the gate's rules and every count already understand, so the words end in something counted, explained and opened like any other line. Ollama never decides on its own: its line is checked against the library and shown like the others.
+- **Consequences:** numpy is a dependency. jimbodj-text's `/embed` and Ollama's `/api/chat` are POSTs from traqfreq that read nothing; the only POST to jimbo-dj is still the gate script's preview. The Ask box's field is LineLever's new `field` mode, since K1 allows no twelfth component.
+
+### 2026-11-26 — The P5 gate: only the script asks jimbo-dj
+
+- **Decision:** `scripts/p5_gate.py` is the only caller of jimbo-dj's `POST /api/rules/preview` and `GET /api/saved`. `GET /api/playlists/compare` and the gate card show traqfreq's side: the ten trees with their numbers, the kinds of condition they use, the saved list. The fixed trees in `p5_trees.json` are written as jimbo-dj's builder writes them, so their URL form gives the same tree. The script also runs against a traqfreq from before T28.
+- **Why:** the spec keeps every non-GET call to jimbo-dj in one place that runs only when asked. A tree with a top-level OR came back from the URL form wrapped in an AND; the same tracks, but not the same tree, so it is stored the way the builder makes it.
+- **Consequences:** the card can't say "passed" on its own; HANDOFF records each run. The first live run (2026-11-26) used the before-T28 path against the deployed T27, whose Junction is the same code, and passed.
+
 ### 2026-11-25 — The in:mix: scope keeps what jimbo-dj's index knows
 
 - **Decision:** `mixes.latest` is vendored unchanged at T27, replacing T24's stand-in. A mix's tracks count toward `in:mix:` only when jimbo-dj's vectors index knows them: analysed at the current analyzer version, status ok, with features.
