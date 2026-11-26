@@ -10,6 +10,7 @@ requires-python = ">=3.12"
 dependencies = [
   "fastapi>=0.115",
   "httpx>=0.27",  # T16: the read-only server client (GET only)
+  "numpy>=1.26",  # T28: the Ask box compares a CLAP text vector with every track's CLAP audio embedding
   "uvicorn>=0.30",
 ]
 

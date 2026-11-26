@@ -1,0 +1,53 @@
+{
+ "about": "The P5 gate's fixed trees (docs/specs/t24-playlists.md). The gate asks every saved playlist that has a tree (make.spec_of), then these in order until there are ten. The first two cover, between them, AND, OR, NOT, a nested group, an in: scope and one condition of each family (a chart bar, a sound filter, genre, style, family, listened), so any ten cover them all. Values are ones the live library and the fixture both have.",
+ "trees": [
+  {"id": "every-family", "name": "Every kind of condition",
+   "rules": {"n": 40, "per_artist": 3, "shuffle": 0, "branches": [
+    {"id": "a", "share": 16, "label": "Black or doom, not happy",
+     "match": {"all": [{"f": "style", "v": "black metal"},
+                       {"any": [{"f": "genre", "v": "Rock---Black Metal"}, {"f": "genre", "v": "Rock---Doom Metal"}]}],
+               "not": [{"f": "mood", "v": "happy"}]}},
+    {"id": "b", "share": 8, "match": {"all": [{"f": "family", "v": "Metal"}, {"f": "decade", "v": "2010s"}]}},
+    {"id": "c", "share": 8, "match": {"all": [{"f": "listened", "v": "2025"}]}},
+    {"id": "d", "share": 8, "match": {"all": [{"f": "in", "v": "mix:daily"}]}}]}},
+  {"id": "nested-shuffled", "name": "Ambient, nested and shuffled",
+   "rules": {"n": 30, "per_artist": 2, "shuffle": 3, "branches": [
+    {"id": "a", "share": 18,
+     "match": {"all": [{"any": [{"f": "style", "v": "ambient"},
+                                {"all": [{"f": "genre", "v": "Electronic---Ambient"}, {"f": "bpm", "v": "60-110"}]}]}],
+               "not": [{"f": "in", "v": "mix:daily"}]}},
+    {"id": "b", "share": 12,
+     "match": {"any": [{"f": "decade", "v": "1990s"}, {"f": "decade", "v": "2000s"}, {"f": "decade", "v": "2020s"}],
+               "not": [{"f": "family", "v": "Metal"}]}}]}},
+  {"id": "doom-slow", "name": "Doom, slow",
+   "rules": {"n": 20, "per_artist": 3, "shuffle": 0, "branches": [
+    {"id": "a", "share": 20, "match": {"all": [{"f": "style", "v": "doom metal"}, {"f": "bpm", "v": "-100"}]}}]}},
+  {"id": "two-keys", "name": "Two keys",
+   "rules": {"n": 20, "per_artist": 3, "shuffle": 0, "branches": [
+    {"id": "a", "share": 10, "match": {"all": [{"f": "key", "v": "8A"}]}},
+    {"id": "b", "share": 10, "match": {"all": [{"f": "key", "v": "9A"}]}}]}},
+  {"id": "two-years", "name": "Played in 2024 or 2025",
+   "rules": {"n": 30, "per_artist": 1, "shuffle": 0, "branches": [
+    {"id": "a", "share": 30, "match": {"any": [{"f": "listened", "v": "2024"}, {"f": "listened", "v": "2025"}]}}]}},
+  {"id": "black-not-2010s", "name": "Black metal, not from the 2010s",
+   "rules": {"n": 20, "per_artist": 2, "shuffle": 0, "branches": [
+    {"id": "a", "share": 20, "match": {"all": [{"f": "genre", "v": "Rock---Black Metal"}],
+                                       "not": [{"f": "decade", "v": "2010s"}]}}]}},
+  {"id": "two-families", "name": "Metal and electronic",
+   "rules": {"n": 40, "per_artist": 3, "shuffle": 1, "branches": [
+    {"id": "a", "share": 20, "match": {"all": [{"f": "family", "v": "Metal"}]}},
+    {"id": "b", "share": 20, "match": {"all": [{"f": "family", "v": "Electronic"}]}}]}},
+  {"id": "moods", "name": "Dark or sad, not energetic",
+   "rules": {"n": 30, "per_artist": 3, "shuffle": 0, "branches": [
+    {"id": "a", "share": 30, "match": {"any": [{"f": "mood", "v": "dark"}, {"f": "mood", "v": "sad"}],
+                                       "not": [{"f": "mood", "v": "energetic"}]}}]}},
+  {"id": "decades", "name": "Three decades",
+   "rules": {"n": 30, "per_artist": 3, "shuffle": 0, "branches": [
+    {"id": "a", "share": 10, "match": {"all": [{"f": "decade", "v": "1990s"}]}},
+    {"id": "b", "share": 10, "match": {"all": [{"f": "decade", "v": "2000s"}]}},
+    {"id": "c", "share": 10, "match": {"all": [{"f": "decade", "v": "2010s"}]}}]}},
+  {"id": "black-or-ambient", "name": "Black metal or ambient",
+   "rules": {"n": 20, "per_artist": 3, "shuffle": 0, "branches": [
+    {"id": "a", "share": 20, "match": {"any": [{"f": "style", "v": "black metal"}, {"f": "style", "v": "ambient"}]}}]}}
+ ]
+}
