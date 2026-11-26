@@ -53,6 +53,15 @@ Vendored unchanged at 1d8a7cb, as earlier phases did (`VENDORED_FROM`; stand-ins
 
 ### T26: movements, rooted to roaming
 A line can follow a T23 movement or a ladder, with a read-only slider from rooted (the tag alone) to roaming (its movement and neighbours on the map). It is new in traqfreq, a preview only, and not part of the gate.
+*Done 2026-11-25* (HANDOFF). How it reads (`src/traqfreq/reach.py`):
+- A line follows the tag of each `style` condition it needs, in its `all` or `any` parts. A style under a `not` isn't followed, because widening it would shrink the line. Nor is a `genre` condition: those are Discogs genres, not on the ladder. The tag is the value through jimbo-dj's tag rules. It is followed only when it is on the ladder or in a movement.
+- Four stops, each taking in the one before:
+  - **rooted**: the tag alone, the line as it is, so its count is the Junction's;
+  - **ladder**: every tag under it on its ladder;
+  - **movement**: every tag of each movement naming one of those;
+  - **roaming**: their neighbours on the genre map, one rung up or down, broad tags left out.
+- At each stop, the followed condition matches any of the stop's tags, each counted as jimbo-dj counts a `style` condition (`rules.leaf_keys`). The rest of the line stays as it is.
+- `GET /api/junction/reach?b=…` and `GET /api/junction/reach/rows?b=…&line=&stop=&which=count|added`. On the Junction (a saved playlist's page and `/library/junction`), each following line has a read-only slider with the line at rooted, a summary for screen readers and the list view. Each stop has its count, what it adds over rooted and the tags it takes in.
 
 ### T27: flow order and why this track
 `flow.order` and `flow.describe` (vendored), the track details they read (the analyzer's features, as jimbo-dj's index has them), so the order matches (check 2 in full). Every row shows which line brought it in and why (B3): the conditions it meets, each ConditionChip true or false, and its transition from the track before.

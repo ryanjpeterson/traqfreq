@@ -452,8 +452,29 @@ Checked from the laptop over Tailscale on the deployed app (`main` 90a8d26, with
 - **Checked in the browser** on the fixture with snapshots (port 4484, scratch copy): a playlist's Junction in dark desktop, `/library/junction?b=…` at 375 px light (no side-scroll), the picked tracks' why. No console errors.
 - **After deploy, check on live data:** `/api/playlists` time (it now builds P3's matches once per data stamp), the copies of the 19 Plex playlists, and the Junction of Metal Mix, Blimp, Blurps and Early (each answer's `picked.seconds`).
 
-## Next: T26 (P5 PLAYLISTS)
-Movements, rooted to roaming ([spec](docs/specs/t24-playlists.md)): a line can follow a T23 movement or a ladder, with a read-only slider from rooted (the tag alone) to roaming (its movement and neighbours on the map). New in traqfreq, a preview only, not part of the gate.
+## T26 done (2026-11-25, `claude/t26-movements`, from `main` 88d59ae; laptop over SMB like T3–T25)
+- **New in traqfreq, a preview only, not part of the gate.** jimbo-dj's picking (`vendor/rules.py`, `junction.py`) is untouched, and the Junction's answers don't move. A test builds every fixture tree before and after and compares them.
+- **`src/traqfreq/reach.py`:** a line follows the tag of each `style` condition it needs (`all`/`any`, not under `not`; `genre` is Discogs genres, not followed). The tag is the value through jimbo-dj's tag rules, followed only when it is on TAGS' ladder or in a movement. Four stops:
+  - **rooted**: the tag alone, the line as it is (its count is the Junction's);
+  - **ladder**: + every tag under it (`tags.descendants_of`);
+  - **movement**: + the tags of each movement naming one of those;
+  - **roaming**: + their parents and children on the map, broad tags left out.
+
+  Each stop's tags are counted as jimbo-dj counts `style` (`rules.leaf_keys`, score ≥ 0.45); the rest of the line is unchanged. Each stop has `count`, `added` (over rooted), `tags` and `new_tags` (with how each came in: ladder, movement with its name, neighbour of which tag, and whether any album carries it).
+- **API, GET only:** `/api/junction/reach?b=…`, `/api/junction/reach/rows?b=…&line=&stop=&which=count|added` (400 for a bad stop or which, 404 for a line that follows no tag).
+- **Page** (kit only): "Rooted to roaming" under the Junction, on a playlist's page and at `/library/junction?b=…`. Each following line is a card with:
+  - the tags it follows and the movements naming them;
+  - a read-only slider (a CSS rail with a LineBullet at rooted, where every jimbo-dj line is) and a summary for screen readers;
+  - the list view: each stop's count and what it adds, opening `/library/junction/reach?…` (Back goes to the playlist when `ref` is given), and the tags it takes in.
+
+  A note says it is a preview outside the gate. Copy `reach.*`.
+- **Fixture:** unchanged. By hand: style:doom metal gives 2, 2, 3, 3 tracks. Dark Ambient, from Doom and drone, brings 101; Death Metal comes in as Death-Doom Metal's other parent. Black Metal stays at 2, because Metal (broad) is left out and Shoegaze's 0.4 is under the line.
+- Tests: pytest 265 (`tests/test_reach.py`, 6). Vitest 228 (`playlists.test.tsx` +4; reach answers added to `playlists.answers.json`, the existing ones checked unchanged). The web build, brand checks and 13 self-tests pass.
+- **Checked in the browser** on the fixture with snapshots (port 4483, scratch copy): the blend's page in dark desktop, `/library/junction?b=style:doom metal~10` at 375 px light (no side-scroll) and in dark desktop, and the movement stop's added rows (Westkreuz). No console errors.
+- **After deploy, check on live data:** `/api/junction/reach` for Metal Mix, Blimp, Blurps and Early (which lines follow a tag; how long it takes, since every stop counts each tag's `style` members, cached per data stamp), and that the Junction's own numbers are unchanged.
+
+## Next: T27 (P5 PLAYLISTS)
+Flow order and why this track ([spec](docs/specs/t24-playlists.md)): `flow.order` and `flow.describe` vendored (replacing the stand-in), the track details they read, so check 2's order matches. Every row shows which line brought it in and why (B3): its conditions as true or false ConditionChips, and its transition from the track before.
 **Planned for P5/P6 (Ryan, 2026-11-24):** every playlist and mix has three separate switches, Plex, Jellyfin and Navidrome. Navidrome also has NaviBeat connected to it.
 Also worth a look on Navidrome's side: its scan error "stat /music: bad file descriptor" (from T18; not seen since the restart).
 
