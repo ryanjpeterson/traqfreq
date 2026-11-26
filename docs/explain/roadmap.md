@@ -7,7 +7,8 @@ The phases and sessions are planned in [docs/specs/README.md](../specs/README.md
 - **P5 PLAYLISTS, the Junction preview, T24–T28** ([spec](../specs/t24-playlists.md)).
   - T24 done: every saved playlist with its Plex, Jellyfin and Navidrome switches (read-only), and the lines of the ones with a tree. Each line's AND, OR and NOT conditions are counted with jimbo-dj's vendored rules, each count opening its rows.
   - T25 done: the Junction. jimbo-dj's picking vendored (shares, the cap per artist, line order, shuffle, Never in mixes); what any tree picks now, with each line's count, share, got and available, at `/library/junction?b=…`; the drawing with its list view and read-only levers; each switch with how many tracks have a copy on its server.
-  - Next, T26 movements. Then T27 flow order and why, T28 the Ask box and the gate ("Same tracks as jimbo-dj").
+  - T26 done: rooted to roaming. A line follows the tag of each style condition it needs; a read-only slider shows four stops (the tag alone, its ladder, its movement, its neighbours on the genre map), each counted with jimbo-dj's style rule and opening its rows. New in traqfreq, a preview, not in the gate.
+  - Next, T27 flow order and why. Then T28 the Ask box and the gate ("Same tracks as jimbo-dj").
   - After P5, traqfreq shows everything jimbo-dj shows, read-only.
 
 ## Next

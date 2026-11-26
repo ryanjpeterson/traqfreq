@@ -6,14 +6,16 @@ import { trackHref } from '../app/entities';
 import { formatUtc } from '../app/time';
 import {
   PLAYLISTS_PATH, copiesApi, copiesHref, count, junctionApi, junctionHref, kindName, playlistApi,
-  playlistHref, rowsApi, serverName, sourceRowsHref, treeQuery,
+  playlistHref, reachApi, reachRowsApi, reachRowsHref, rowsApi, serverName, sourceRowsHref, treeQuery,
   type Condition, type Copies, type CopyRows, type Group, type Line, type LineRows, type Lines, type Node,
-  type PlaylistList, type PlaylistPage, type PlaylistRow, type Source, type Switch, type TrackRow, type Which,
+  type PlaylistList, type PlaylistPage, type PlaylistRow, type Reach, type ReachLine, type ReachRows as ReachRowsData,
+  type ReachTag, type Source, type Stop, type Switch, type TrackRow, type Which,
 } from '../app/playlists';
 
 /** T24: PLAYLISTS (P5), the Junction preview: jimbo-dj's saved playlists, their three switches and their lines,
  *  read-only. Every count opens its rows (W3). T25: what the lines pick now (the Junction: its drawing, list view and
- *  read-only levers), any tree at /library/junction?b=…, and how many tracks have a copy on each switch's server. */
+ *  read-only levers), any tree at /library/junction?b=…, and how many tracks have a copy on each switch's server.
+ *  T26: rooted to roaming, how far each line could reach if it followed its tag (a read-only slider, a preview). */
 
 type Nav = { navigate: (href: string) => void };
 type Operator = 'AND' | 'OR' | 'NOT';
@@ -228,6 +230,7 @@ function PlaylistBody({ p, navigate }: { p: PlaylistPage } & Nav) {
       {p.lines_error && <Card><Status state="needs" label={tf('playlists.linesError', { e: p.lines_error })} /></Card>}
       {p.lines && <div><Button variant="secondary" href={junctionHref(p.lines.query)} onClick={() => navigate(junctionHref(p.lines!.query))}>{t('junction.open')}</Button></div>}
       {p.lines && <JunctionView l={p.lines} src={{ ref: r.slug }} navigate={navigate} />}
+      {p.lines && <ReachView tree={p.lines.query} slug={r.slug} navigate={navigate} />}
       {p.lines && <LinesView l={p.lines} src={{ ref: r.slug }} navigate={navigate} />}
       <Stored p={p} navigate={navigate} />
     </>
@@ -466,7 +469,126 @@ function JunctionLoad({ tree, navigate }: { tree: string } & Nav) {
     <>
       <Text variant="note">{`${t('junction.name')}: ${load.data.name}`}</Text>
       <JunctionView l={load.data} src={{ tree }} navigate={navigate} />
+      <ReachView tree={tree} navigate={navigate} />
       <LinesView l={load.data} src={{ tree }} navigate={navigate} />
+    </>
+  );
+}
+
+// --- rooted to roaming (T26) -------------------------------------------------------------------------------
+
+const stopName = (s: Stop) => t(`reach.stop.${s}` as StringKey);
+const reachLineName = (x: ReachLine) => (x.label ? `${tf('playlists.line', { id: x.id })} · ${x.label}` : tf('playlists.line', { id: x.id }));
+
+/** A tag a stop takes in, in words: its name, how it came in, and whether any album carries it yet. */
+function tagText(x: ReachTag): string {
+  const how = x.via === 'ladder' ? t('reach.via.ladder')
+    : x.via === 'movement' ? tf('reach.via.movement', { name: x.movement_name ?? x.movement ?? '' })
+      : x.via === 'neighbour' ? tf('reach.via.neighbour', { of: x.of ?? '' }) : '';
+  return [x.name, how && `(${how}${x.in_use ? '' : `, ${t('reach.notInUse')}`})`].filter(Boolean).join(' ');
+}
+
+/** How far each line could reach if it followed its tag: rooted (the tag alone), its ladder, its movement and its
+ *  neighbours on the map. Per line: a read-only slider drawn as four stops with the line at rooted (jimbo-dj's lines
+ *  don't follow tags), a summary for screen readers and the list view with every number opening its rows (L6, W3). */
+function ReachView({ tree, slug, navigate }: { tree: string; slug?: string } & Nav) {
+  const load = useGet<Reach>(reachApi(tree));
+  return (
+    <section aria-labelledby="rr-head" className="stack reach">
+      <Text variant="heading" id="rr-head">{t('reach.title')}</Text>
+      <Text>{t('reach.intro')}</Text>
+      {load.state === 'loading' && <Text>{t('reach.loading')}</Text>}
+      {load.state === 'failed' && <Failed />}
+      {load.state === 'ok' && load.data.following === 0 && <Card><Text>{t('reach.none')}</Text></Card>}
+      {load.state === 'ok' && load.data.lines.filter((x) => x.stops.length).map((x) => (
+        <ReachLineView key={x.id} x={x} r={load.data} tree={tree} slug={slug} navigate={navigate} />
+      ))}
+      {load.state === 'ok' && load.data.following > 0 && <Text variant="note">{t('reach.note')}</Text>}
+    </section>
+  );
+}
+
+function ReachLineView({ x, r, tree, slug, navigate }: { x: ReachLine; r: Reach; tree: string; slug?: string } & Nav) {
+  const name = reachLineName(x);
+  const named = [...new Set(x.follows.flatMap((f) => f.movements.map((m) => m.name)))];
+  const href = (stop: Stop, which: 'count' | 'added') => reachRowsHref(tree, x.id, stop, which, slug);
+  return (
+    <Card label={name}>
+      <div className="stack">
+        <Text>{tf('reach.follows', { tags: x.follows.map((f) => f.name).join(', ') })}</Text>
+        <Text variant="note">{named.length ? tf('reach.namedBy', { movements: named.join(', ') }) : t('reach.noMovement')}</Text>
+
+        <div className="map">
+          <p className="visually-hidden">
+            {tf('reach.summary', {
+              line: name, rooted: count(x.stops[0].count, 'track'),
+              each: x.stops.map((s) => tf('reach.summaryStop', { stop: stopName(s.stop), n: count(s.count, 'track'), added: count(s.added, 'track') })).join('; '),
+            })}
+          </p>
+          <div className="rr-slider line-l" aria-hidden="true">
+            <span className="rr-rail" />
+            <ol className="rr-stops">
+              {x.stops.map((s, i) => (
+                <li key={s.stop} className={`rr-stop${i === 0 ? ' is-here' : ''}`}>
+                  {i === 0 ? <LineBullet module="L" size={28} decorative /> : <span className="rr-dot" />}
+                  <span className="rr-name">{stopName(s.stop)}</span>
+                  <span className="rr-num">{count(s.count, 'track')}</span>
+                  {i === 0 && <span className="rr-here">{t('reach.here')}</span>}
+                </li>
+              ))}
+            </ol>
+          </div>
+        </div>
+
+        <Text variant="label">{tf('reach.list', { line: name })}</Text>
+        <ul className="lines rr-list">
+          {x.stops.map((s) => (
+            <li key={s.stop} className="stack">
+              <ul className="rows" aria-label={`${stopName(s.stop)}, ${name}`}>
+                <li>
+                  <span><strong>{stopName(s.stop)}</strong><span className="sub">{`${r.rules[s.stop] ?? ''} · ${tf('reach.tagsAt', { n: count(s.tags, 'tag') })}`}</span></span>
+                  {s.count > 0 ? <Num href={href(s.stop, 'count')} label={count(s.count, 'track')} of={`${t('reach.matches')}, ${stopName(s.stop)}, ${name}`} navigate={navigate} />
+                    : <span className="hist-num">{count(0, 'track')}</span>}
+                </li>
+                {s.stop !== 'rooted' && (
+                  <li>
+                    <span><strong>{t('reach.added')}</strong><span className="sub">{r.rules.added ?? ''}</span></span>
+                    {s.added > 0 ? <Num href={href(s.stop, 'added')} label={count(s.added, 'track')} of={`${t('reach.added')}, ${stopName(s.stop)}, ${name}`} navigate={navigate} />
+                      : <span className="hist-num">{count(0, 'track')}</span>}
+                  </li>
+                )}
+              </ul>
+              <Text variant="note">{s.new_tags.length ? tf('reach.takesIn', { tags: s.new_tags.map(tagText).join(', ') }) : t('reach.takesNothing')}</Text>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </Card>
+  );
+}
+
+/** The tracks behind a stop's number: all it matches, or only those the rooted line doesn't. */
+export function ReachRows({ query, navigate }: { query: string } & Nav) {
+  const load = useGet<ReachRowsData>(reachRowsApi(query));
+  const q = new URLSearchParams(query);
+  const ref = q.get('ref');
+  const added = q.get('which') === 'added';
+  return (
+    <>
+      <Band module="L">{t('playlists.rows.sub')}</Band>
+      <div className="page stack history playlists">
+        <Back href={ref ? playlistHref(ref) : junctionHref(query)} label={ref ? t('playlists.rows.back') : t('junction.back')} navigate={navigate} />
+        <Text variant="title">{t(added ? 'reach.rows.titleAdded' : 'reach.rows.title')}</Text>
+        {load.state === 'loading' && <Text>{t('rows.loading')}</Text>}
+        {load.state === 'failed' && <Failed why={load.status === 404 ? 'playlists.notFound' : undefined} />}
+        {load.state === 'ok' && (
+          <>
+            <Text>{[tf('playlists.line', { id: load.data.line }), load.data.words, stopName(load.data.stop), count(load.data.count, 'track')].join(' · ')}</Text>
+            <Text variant="note">{`${t('playlists.rule')}: ${load.data.rule}.`}</Text>
+            <TrackList rows={load.data.rows} why={() => tf('reach.rows.why', { stop: stopName(load.data.stop) })} navigate={navigate} />
+          </>
+        )}
+      </div>
     </>
   );
 }

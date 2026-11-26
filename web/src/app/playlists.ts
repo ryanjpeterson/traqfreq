@@ -65,6 +65,43 @@ export function copiesApi(query: string): string {
   return `/api/playlists/${encodeURIComponent(q.get('ref') ?? '')}/copies?${out.toString()}`;
 }
 
+/** T26: rooted to roaming, how far each line could reach if it followed its tag. A preview, not the Junction's. */
+export const REACH_ROWS_PATH = '/library/junction/reach';
+export type Stop = 'rooted' | 'ladder' | 'movement' | 'roaming';
+export type ReachWhich = 'count' | 'added';
+export const reachApi = (query: string) => `/api/junction/reach?${treeQuery(query)}`;
+/** The rows behind a stop's number; ref (a saved playlist's slug) is only where Back goes. */
+export function reachRowsHref(tree: string, line: string, stop: Stop, which: ReachWhich = 'count', ref?: string): string {
+  const q = new URLSearchParams(treeQuery(tree));
+  if (ref) q.set('ref', ref);
+  q.set('line', line);
+  q.set('stop', stop);
+  if (which !== 'count') q.set('which', which);
+  return `${REACH_ROWS_PATH}?${q.toString()}`;
+}
+export function reachRowsApi(query: string): string {
+  const q = new URLSearchParams(query);
+  const out = new URLSearchParams({ line: q.get('line') ?? '', stop: q.get('stop') ?? '', which: q.get('which') ?? 'count', limit: '200' });
+  return `/api/junction/reach/rows?${treeQuery(query)}&${out.toString()}`;
+}
+export type ReachTag = {
+  key: string; name: string; via: 'tag' | 'ladder' | 'movement' | 'neighbour'; follows: string; in_use: boolean;
+  movement?: string; movement_name?: string; of?: string;
+};
+export type ReachStop = { stop: Stop; count: number; added: number; tags: number; new_tags: ReachTag[] };
+export type ReachLine = {
+  id: string; label: string | null; words: string;
+  follows: { path: string; value: string; key: string; name: string; text: string; movements: { id: string; name: string }[] }[];
+  stops: ReachStop[];
+};
+export type Reach = {
+  query: string; name: string; stops: Stop[]; lines: ReachLine[]; following: number; movements: number;
+  rules: Record<string, string>;
+};
+export type ReachRows = {
+  line: string; stop: Stop; which: ReachWhich; words: string; count: number; rule: string; rows: TrackRow[];
+};
+
 export type Server = 'plex' | 'jellyfin' | 'navidrome';
 export type Copies = {
   count: number; of: number; missing: number; reasons: Record<string, number>; snapshot: boolean; rule: string;
@@ -117,7 +154,7 @@ export type CopyRows = {
   server: Server; missing: boolean | null; count: number; rows: CopyRow[]; rule: string; reasons: Record<string, string>;
 };
 
-type Unit = 'playlist' | 'line' | 'track' | 'minute' | 'song' | 'artist' | 'style';
+type Unit = 'playlist' | 'line' | 'track' | 'minute' | 'song' | 'artist' | 'style' | 'tag';
 export function count(n: number, unit: Unit): string {
   return `${fmt(n)} ${t(`unit.${unit}.${n === 1 ? 'one' : 'other'}` as StringKey)}`;
 }

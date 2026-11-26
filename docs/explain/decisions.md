@@ -2,6 +2,12 @@
 
 ## Log
 
+### 2026-11-25 — Rooted to roaming widens only style conditions, and only as a preview
+
+- **Decision:** a line follows the tag of each `style` condition it needs (in its `all` or `any` parts, not under a `not`). Four stops widen that condition: rooted (the tag alone, the line as it is), ladder (the tags under it), movement (the tags of each movement naming one of those) and roaming (their neighbours on the genre map, one rung up or down, broad tags left out). Each tag is counted the way jimbo-dj counts a `style` condition. The slider is read-only and every line sits at rooted.
+- **Why:** style names and TAGS' tag keys are the same words, so the widened line is still counted by jimbo-dj's own rule, and nothing vendored changes. A broad tag would take its whole line. Widening a NOT would shrink the line. `genre` conditions are Discogs genres, which aren't on the ladder.
+- **Consequences:** the Junction's answers and the P5 gate don't move (`reach.py` only reads). Following a tag for real would need jimbo-dj's lines to change, so it waits for P6 or later.
+
 ### 2026-11-24 — Playlists live under LIBRARY, and the P5 gate asks jimbo-dj's preview
 
 - **Decision:** the Junction (jimbo-dj's branch builder, Library → Tracks) and the saved playlists are pages under LIBRARY, not a module of their own. The P5 gate compares traqfreq's tracks with jimbo-dj's `POST /api/rules/preview` for the same tree. That endpoint builds a playlist and saves nothing. Only `scripts/p5_gate.py` calls it.

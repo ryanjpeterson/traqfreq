@@ -13,7 +13,7 @@ import { HistoryYears } from './pages/HistoryYears';
 import { Library } from './pages/Library';
 import { LibraryRows } from './pages/LibraryRows';
 import { LibraryCompare } from './pages/LibraryCompare';
-import { Junction, Playlist, PlaylistCopies, PlaylistRows, Playlists } from './pages/Playlists';
+import { Junction, Playlist, PlaylistCopies, PlaylistRows, Playlists, ReachRows } from './pages/Playlists';
 import { LibraryAlbum, LibraryArtist, LibraryList, LibraryPlays, LibraryTrack } from './pages/LibraryEntities';
 import { MapHome } from './pages/MapHome';
 import { ModulePage } from './pages/ModulePage';
@@ -116,13 +116,14 @@ function HistoryPage({ sub, query, navigate }: { sub?: string; query: string; na
 
 /** LIBRARY's pages: the overview, the rows behind a number, the album and artist lists, an album, an artist, a
  *  track, and the listens behind their history numbers (T11), the P2 comparison (T12), PLAYLISTS (T24) and the
- *  Junction (T25). */
+ *  Junction (T25), rooted to roaming (T26). */
 function LibraryPage({ sub, entityKey, playlistRef, query, navigate }: { sub?: string; entityKey?: number; playlistRef?: string; query: string; navigate: (href: string) => void }) {
   if (sub === 'playlists') return <Playlists navigate={navigate} />;
   if (sub === 'playlist' && playlistRef) return <Playlist key={playlistRef} slug={playlistRef} navigate={navigate} />;
   if (sub === 'playlistRows' || sub === 'junctionRows') return <PlaylistRows query={query} navigate={navigate} />;
   if (sub === 'playlistCopies') return <PlaylistCopies query={query} navigate={navigate} />;
   if (sub === 'junction') return <Junction query={query} navigate={navigate} />;
+  if (sub === 'reachRows') return <ReachRows query={query} navigate={navigate} />;
   if (sub === 'tracks') return <LibraryRows query={query} navigate={navigate} />;
   if (sub === 'albums' || sub === 'artists') return <LibraryList kind={sub} query={query} navigate={navigate} />;
   if (sub === 'plays') return <LibraryPlays query={query} navigate={navigate} />;

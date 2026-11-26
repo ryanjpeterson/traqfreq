@@ -24,6 +24,7 @@
 - 2026-11-24: P4 gate passed on the deployed app, all three checks, once jimbo-dj's stored audit caught up.
 - 2026-11-24, T24: P5 begins, PLAYLISTS. The Junction preview's spec, the saved playlists with three switches each, and their lines counted with jimbo-dj's rules.
 - 2026-11-25, T25: the Junction. jimbo-dj's picking vendored, any tree previewed at `/library/junction`, and each switch with its copies on that server.
+- 2026-11-25, T26: rooted to roaming. Each line following its style tag along the ladder, the movements and the genre map, a read-only preview beside the Junction.
 
 ## Pivots and renames
 
