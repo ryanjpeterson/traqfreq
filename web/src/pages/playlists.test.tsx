@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { cleanup, render, screen, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { Shell } from '../App';
 import { parseRoute } from '../app/route';
 import { copiesApi, copiesHref, junctionApi, reachApi, reachRowsApi, reachRowsHref, rowsApi, rowsHref, sourceRowsHref, treeQuery } from '../app/playlists';
@@ -159,6 +160,31 @@ describe('T25 the Junction', () => {
     const rows = within(picked).getAllByRole('link').map((x) => x.textContent);
     expect(rows).toEqual(['Ostkreuz', 'Coil', 'Westkreuz', 'Harbour Lights']);
     expect(within(picked).getAllByText(/Brought in by Line c/, { selector: '*' }).length).toBeGreaterThan(0);
+  });
+
+  it('says why each picked track is here: its line\'s conditions true or false, and its transition (T27, B3)', async () => {
+    const user = userEvent.setup();
+    open('/library/playlists/night-lines');
+    const picked = (await screen.findByText('Picked tracks · 4 tracks')).closest('section') as HTMLElement;
+    expect(within(picked).getByText(/Ordered for flow, as jimbo-dj orders them/)).toBeTruthy();
+    const rows = within(picked).getAllByRole('listitem').filter((x) => x.classList.contains('kit-station'));
+    expect(rows).toHaveLength(4);
+    const chips = (row: HTMLElement) => [...row.querySelectorAll('.kit-chip')].map((c) => `${c.getAttribute('data-op')} ${c.querySelector('.kit-chip-text')?.textContent}`);
+    // Ostkreuz: Line a, from the 2010s and not sad; the first track.
+    expect(chips(rows[0])).toEqual(['true 2010s', 'false sad']);
+    expect(within(rows[0]).getByText('NOT: none of these')).toBeTruthy();
+    expect(within(rows[0]).getByText('The first track: nothing comes before it.')).toBeTruthy();
+    // Coil: by Ada Vey, not played in 2025; neither it nor Ostkreuz has a key or tempo in jimbo-dj's index.
+    expect(chips(rows[1])).toEqual(['true Group: (Ada Vey or played in 2025)', 'true Ada Vey', 'false played in 2025']);
+    expect(within(rows[1]).getByText('From the track before: no key to compare, no tempo to compare.')).toBeTruthy();
+    // Harbour Lights: happy at 100-110 BPM, not 8A; four steps from Westkreuz's 8A, 23.1 % slower.
+    expect(chips(rows[3])).toEqual(['true happy', 'true Group: (100-110 BPM or 8A)', 'true 100-110 BPM', 'false 8A']);
+    expect(within(rows[3]).getByText('From the track before: 4 steps round the Camelot wheel, tempo 23.1 % apart.')).toBeTruthy();
+    expect(rows[2].querySelector('.kit-station-code')?.textContent).toBe('Key 8A128 BPM'); // Westkreuz's key and tempo
+    // Behind the toggle, as every StationRow's why is.
+    const why = within(rows[3]).getByRole('button', { name: "Why it's here" });
+    await user.click(why);
+    expect(why.getAttribute('aria-expanded')).toBe('true');
   });
 
   it('previews any tree in jimbo-dj\'s URL form at /library/junction', async () => {

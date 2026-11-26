@@ -2,8 +2,8 @@
 constants, plus a stand-in ``scope`` (not vendored) for the ``in:`` condition.
 
 jimbo-dj's ``facets.scope`` imports its clusters, mixes, songs and store modules. Here they are the read-only
-copies in vendor/ (clusters.py, store.py, songs.py) and a stand-in for ``mixes.latest`` (vendor/mixes.py). The body
-below is jimbo-dj's ``scope`` as written at 1d8a7cb; only where its modules come from differs.
+copies in vendor/ (clusters.py, store.py, songs.py, and from T27 mixes.py's ``latest``). The body below is
+jimbo-dj's ``scope`` as written at 1d8a7cb; only where its modules come from differs.
 """
 from __future__ import annotations
 
@@ -35,6 +35,9 @@ def scope(con: sqlite3.Connection, ref: str, index=None) -> tuple[list[int], str
             raise ValueError("no such saved playlist")
         return p["keys"], p["title"]
     if kind == "mix":
+        if index is None:
+            from . import vectors
+            index = vectors.get(con)
         m = mixes.latest(con, index, ident)
         if not m:
             raise ValueError("that mix isn't built yet")

@@ -9,13 +9,15 @@ import {
   playlistHref, reachApi, reachRowsApi, reachRowsHref, rowsApi, serverName, sourceRowsHref, treeQuery,
   type Condition, type Copies, type CopyRows, type Group, type Line, type LineRows, type Lines, type Node,
   type PlaylistList, type PlaylistPage, type PlaylistRow, type Reach, type ReachLine, type ReachRows as ReachRowsData,
-  type ReachTag, type Source, type Stop, type Switch, type TrackRow, type Which,
+  type Picked, type ReachTag, type Source, type Stop, type Switch, type TrackRow, type Transition, type Which,
 } from '../app/playlists';
 
 /** T24: PLAYLISTS (P5), the Junction preview: jimbo-dj's saved playlists, their three switches and their lines,
  *  read-only. Every count opens its rows (W3). T25: what the lines pick now (the Junction: its drawing, list view and
  *  read-only levers), any tree at /library/junction?b=…, and how many tracks have a copy on each switch's server.
- *  T26: rooted to roaming, how far each line could reach if it followed its tag (a read-only slider, a preview). */
+ *  T26: rooted to roaming, how far each line could reach if it followed its tag (a read-only slider, a preview).
+ *  T27: the picked tracks in jimbo-dj's flow order, each saying why it is there: its line's conditions met or not,
+ *  and its transition from the track before (B3). */
 
 type Nav = { navigate: (href: string) => void };
 type Operator = 'AND' | 'OR' | 'NOT';
@@ -435,14 +437,73 @@ function JunctionView({ l, src, navigate }: { l: Lines; src: Source } & Nav) {
 
       <section className="stack" aria-labelledby="jn-picked">
         <Text variant="label" id="jn-picked">{`${t('junction.pickedTracks')} · ${count(p.count, 'track')}`}</Text>
-        <Text variant="note">{p.order === 'pick' ? t('junction.pickOrder') : t('junction.flowOrder')}</Text>
-        <TrackList rows={p.tracks}
-          why={(i) => tf('junction.why', { line: p.tracks[i].line_name ? `${tf('playlists.line', { id: p.tracks[i].line })} (${p.tracks[i].line_name})` : tf('playlists.line', { id: p.tracks[i].line }) })}
-          navigate={navigate} />
+        <Text variant="note">{t('junction.flowOrder')}</Text>
+        <div className="pl-tracks">
+          {p.tracks.map((tr, i) => (
+            <StationRow key={`${tr.rating_key}-${i}`} position={i + 1} module="L" title={tr.title} artist={tr.artist}
+              musicalKey={tr.camelot ?? undefined} bpm={tr.bpm != null ? Math.round(tr.bpm) : undefined}
+              why={<PickedWhy tr={tr} first={i === 0} line={l.lines.find((x) => x.id === tr.line)} />}
+              href={trackHref(tr.rating_key)} onNavigate={navigate} />
+          ))}
+        </div>
       </section>
       {l.read_only && <Text variant="note">{l.read_only}</Text>}
     </section>
   );
+}
+
+/** Why a picked track is here (B3): the line that brought it in, each of that line's conditions met (true) or not
+ *  (false) under its AND, OR and NOT parts, and how it follows the track before. */
+function PickedWhy({ tr, first, line }: { tr: Picked; first: boolean; line?: Line }) {
+  const name = tf('playlists.line', { id: tr.line });
+  return (
+    <span className="stack">
+      <Text>{tf('junction.why', { line: tr.line_name ? `${name} (${tr.line_name})` : name })}</Text>
+      {line && tr.met && <WhyTree node={line.match} met={tr.met} />}
+      <Text variant="note">{transitionText(tr.transition, first)}</Text>
+    </span>
+  );
+}
+
+function metOp(met: Record<string, boolean>, path: string): 'true' | 'false' {
+  return met[path] ? 'true' : 'false';
+}
+
+function WhyTree({ node, met }: { node: Node; met: Record<string, boolean> }) {
+  if (node.type === 'condition') {
+    return <ul className="pl-tree"><li className="pl-row"><ConditionChip op={metOp(met, node.path)}>{node.text}</ConditionChip></li></ul>;
+  }
+  return (
+    <ul className="pl-tree">
+      {OPS.filter((o) => node[o.part]?.length).map((o) => (
+        <li key={o.part} className="pl-part">
+          <Text variant="note">{t(o.label)}</Text>
+          <ul className="pl-tree">
+            {node[o.part]!.map((x) => x.type === 'condition'
+              ? <li key={x.path} className="pl-row"><ConditionChip op={metOp(met, x.path)}>{x.text}</ConditionChip></li>
+              : (
+                <li key={x.path} className="pl-group">
+                  <span className="pl-row"><ConditionChip op={metOp(met, x.path)}>{`${t('playlists.group')}: ${x.words}`}</ConditionChip></span>
+                  <WhyTree node={x} met={met} />
+                </li>
+              ))}
+          </ul>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+/** flow.describe in words: Camelot steps (0 the same key) and the tempo gap, half and double time the same. */
+function transitionText(x: Transition | undefined, first: boolean): string {
+  if (first) return t('junction.transition.first');
+  const steps = x?.key_steps;
+  const key = steps == null ? t('junction.transition.keyUnknown')
+    : steps === 0 ? t('junction.transition.sameKey') : tf('junction.transition.keySteps', { n: count(steps, 'step') });
+  const gap = x?.bpm_gap;
+  const tempo = gap == null ? t('junction.transition.tempoUnknown')
+    : tf('junction.transition.tempo', { n: tf('unit.pct', { n: (gap * 100).toFixed(1) }) });
+  return tf('junction.transition.from', { key, tempo });
 }
 
 /** Any tree in jimbo-dj's URL form: /library/junction?b=…&n=…&per=…&shuffle=…. */

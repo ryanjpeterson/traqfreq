@@ -1,4 +1,4 @@
-import { useId, useState } from 'react';
+import { useId, useState, type ReactNode } from 'react';
 import { t } from '../../copy/t';
 import { LineBullet } from './LineBullet';
 import type { ModuleId } from './modules';
@@ -11,8 +11,9 @@ type Props = {
   artist: string;
   musicalKey?: string;
   bpm?: number;
-  /** Why the track is here, in a sentence (B3). Always available behind the toggle. */
-  why: string;
+  /** Why the track is here (B3): a sentence, or a sentence with its conditions as ConditionChips. Always
+   *  available behind the toggle. */
+  why: ReactNode;
   defaultOpen?: boolean;
   /** Makes the title a link (to the track's page). */
   href?: string;
@@ -57,7 +58,7 @@ export function StationRow({ position, module, title, artist, musicalKey, bpm, w
       >
         {open ? t('kit.why.hide') : t('kit.why.show')}
       </button>
-      <p className="kit-station-reason" id={`${id}-why`} hidden={!open}>{why}</p>
+      <div className="kit-station-reason" id={`${id}-why`} hidden={!open}>{why}</div>
     </li>
   );
 }
