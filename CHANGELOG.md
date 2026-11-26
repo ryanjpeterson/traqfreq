@@ -4,6 +4,11 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 ### Added
+- T27: jimbo-dj's `flow.py` vendored unchanged at 1d8a7cb, replacing T25's stand-in. The Junction's picked tracks come in jimbo-dj's flow order (Camelot keys, tempo with half and double time, loudness, danceability), and gate check 2 covers the order as well as the set (`playlists_gate.check_order`, `check_tracks`).
+- T27: why this track (B3). Every picked track shows the line that brought it in, each of that line's conditions and groups as a true or false ConditionChip under its AND, OR and NOT parts, its key and tempo, and its transition from the track before (Camelot steps and tempo gap). StationRow's why takes chips as well as a sentence.
+### Changed
+- T27: `mixes.latest` vendored unchanged: an `in:mix:` condition counts only the mix's tracks jimbo-dj's index knows (analysed at the current version), as jimbo-dj does. The stand-in kept every ok analysis at any version.
+### Added
 - T26: rooted to roaming (`src/traqfreq/reach.py`), new in traqfreq and a preview only, outside the P5 gate. A line follows the tag of each style condition it needs. Four stops widen it: rooted (the tag alone, the line as it is), ladder (the tags under it), movement (the tags of each movement naming one) and roaming (their neighbours on the genre map, broad tags left out). Each is counted with jimbo-dj's style rule. `GET /api/junction/reach`, `GET /api/junction/reach/rows`. The Junction's numbers don't move.
 - T26: on the Junction (a playlist's page and `/library/junction`), each following line has a read-only slider with the line at rooted, a summary for screen readers and its list view. Each stop has its count, what it adds and the tags it takes in, and every count opens its rows (`/library/junction/reach`).
 - T25: jimbo-dj's picking vendored unchanged at 1d8a7cb: `rules.py`'s Picking (`pick`, `rank`, `_jitter`, `build`), `make.details`, the read side of `bans.py` (Never in mixes), `similar._norm_title` and `_public`, `browse`'s plays sort and `_with_plays`, and the index's meta query (`vectors.META_COLS`, `_META_Q`). Stand-ins, marked: the index without vectors, `history.track_stats` (traqfreq's `library.track_plays`), and `flow.order` (pick order until T27).

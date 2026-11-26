@@ -37,7 +37,7 @@ Vendored unchanged at 1d8a7cb, as earlier phases did (`VENDORED_FROM`; stand-ins
 - `vendor/browse.py` (T24): browse.py's `SOUND` and `_where`, used by `leaf_keys` for the sound filters.
 - Stand-ins named like jimbo-dj's modules (as `vendor/genres.py` and `vendor/tags.py` are): `vendor/cache.py` (`data_stamp`), `vendor/analyzer_version.py`, `vendor/history.py` (`listened_keys` and `_range`, copied unchanged, over T8's `listen_tz`), and `scope` for `in:` (facets.py's, with the saved-playlist and cluster lookups read-only).
 - Already here: `vendor/jimbodj_facets.py` (`members`), `vendor/genres.py` (`Styles`, `family`), `vendor/jimbodj_insights.py`. `insights.track_family` is added unchanged for the `family` condition.
-- Later sessions: `flow.py` (T27, pure), `similar._public` and `_norm_title`, `make.details`, `bans.get` (T25).
+- Later sessions: `flow.py` and `mixes.latest` (T27), `similar._public` and `_norm_title`, `make.details`, `bans.get` (T25).
 
 ## Sessions
 ### T24: lines
@@ -65,6 +65,12 @@ A line can follow a T23 movement or a ladder, with a read-only slider from roote
 
 ### T27: flow order and why this track
 `flow.order` and `flow.describe` (vendored), the track details they read (the analyzer's features, as jimbo-dj's index has them), so the order matches (check 2 in full). Every row shows which line brought it in and why (B3): the conditions it meets, each ConditionChip true or false, and its transition from the track before.
+*Done 2026-11-25* (HANDOFF). What it reads:
+- `vendor/flow.py` is jimbo-dj's whole file, unchanged. `rules.build` hands it the picked tracks as `make.details` gives them: from the vectors index's meta (`similar._public`: camelot, bpm, bpm_confidence, loudness_lufs, danceability) for analysed tracks, or with no key or tempo for the rest. No picked track has a score, so the walk starts at the first track picked.
+- The track details were already vendored in T25 (`vectors.META_COLS`, `_META_Q`, the same query as jimbo-dj's index). The index still has no embeddings: P5 needs none.
+- `mixes.latest` is vendored unchanged, as HANDOFF's T24 note asked: `in:mix:` keeps only the tracks the index knows (current analyzer version), not every ok analysis.
+- Gate check 2 in full: `playlists_gate.check_tracks` (the set and `check_order`, naming the first place the order differs).
+- Each picked track has `met` (per path of its line: whether it meets that condition or group), `transition` (`flow.describe`), `camelot` and `bpm`.
 
 ### T28: the Ask box and the gate
 The Ask box: words to a line, through jimbo-dj's CLAP text server (`jimbodj-text`, :4491, read-only), and Ollama lines when it's on (jimbo-dj's prompt.py). Then the gate: `src/traqfreq/playlists_gate.py`, `GET /api/playlists/compare` (traqfreq's own answers, for the card), `scripts/p5_gate.py --url` (the only caller of jimbo-dj's preview), `p5_trees.json`, the gate card on LIBRARY and SETUP, and a live run recorded in HANDOFF.

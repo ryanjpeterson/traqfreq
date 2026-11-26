@@ -8,7 +8,8 @@ The phases and sessions are planned in [docs/specs/README.md](../specs/README.md
   - T24 done: every saved playlist with its Plex, Jellyfin and Navidrome switches (read-only), and the lines of the ones with a tree. Each line's AND, OR and NOT conditions are counted with jimbo-dj's vendored rules, each count opening its rows.
   - T25 done: the Junction. jimbo-dj's picking vendored (shares, the cap per artist, line order, shuffle, Never in mixes); what any tree picks now, with each line's count, share, got and available, at `/library/junction?b=…`; the drawing with its list view and read-only levers; each switch with how many tracks have a copy on its server.
   - T26 done: rooted to roaming. A line follows the tag of each style condition it needs; a read-only slider shows four stops (the tag alone, its ladder, its movement, its neighbours on the genre map), each counted with jimbo-dj's style rule and opening its rows. New in traqfreq, a preview, not in the gate.
-  - Next, T27 flow order and why. Then T28 the Ask box and the gate ("Same tracks as jimbo-dj").
+  - T27 done: flow order and why this track. jimbo-dj's `flow.py` vendored, so the picked tracks come in its play order and gate check 2 covers the order as well as the set; every picked track shows its line's conditions as true or false and its transition from the track before.
+  - Next, T28: the Ask box and the gate ("Same tracks as jimbo-dj").
   - After P5, traqfreq shows everything jimbo-dj shows, read-only.
 
 ## Next
