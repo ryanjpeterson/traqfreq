@@ -658,11 +658,12 @@ def create_app(settings: Settings | None = None, server_transport=None, ask_tran
                                                 app.state.ask_transport, settings.tz))
 
     @app.get("/api/junction/ask/rows")
-    def junction_ask_rows(q: str, limit: int = 50, offset: int = 0) -> dict:
-        """The rows behind the sound line: the tracks nearest the words, closest first, each with its score."""
+    def junction_ask_rows(q: str, style: str = "", limit: int = 50, offset: int = 0) -> dict:
+        """The rows behind the sound side's numbers: the tracks nearest the words, closest first, each with its
+        score; with ``style``, only those that style is on."""
         def run(c):
             try:
-                return ask.near_rows(c, q, settings.text_url, app.state.ask_transport, limit, offset)
+                return ask.near_rows(c, q, settings.text_url, app.state.ask_transport, limit, offset, style)
             except ask.prompt.Unavailable as e:
                 raise HTTPException(503, str(e))
             except LookupError as e:

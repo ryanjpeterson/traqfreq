@@ -39,14 +39,15 @@ export const LIBRARY_PLAYS = '/library/plays';
 export const LIBRARY_COMPARE = '/library/compare';
 /** T24: PLAYLISTS (P5): the saved playlists, one playlist (/library/playlists/<slug>), the rows behind its counts.
  *  T25: the Junction (any tree, /library/junction?b=…), the rows behind its numbers, the copies behind a switch.
- *  T26: the rows behind a line's stop, rooted to roaming (/library/junction/reach). */
+ *  T26: the rows behind a line's stop, rooted to roaming (/library/junction/reach).
+ *  T28: the tracks nearest the Ask box's words (/library/junction/ask). */
 export type LibrarySub = 'tracks' | 'albums' | 'artists' | 'plays' | 'album' | 'artist' | 'track' | 'compare'
-  | 'playlists' | 'playlist' | 'playlistRows' | 'playlistCopies' | 'junction' | 'junctionRows' | 'reachRows';
+  | 'playlists' | 'playlist' | 'playlistRows' | 'playlistCopies' | 'junction' | 'junctionRows' | 'reachRows' | 'askRows';
 const LIBRARY_SUBS: Record<string, LibrarySub> = {
   [LIBRARY_TRACKS]: 'tracks', [LIBRARY_ALBUMS]: 'albums', [LIBRARY_ARTISTS]: 'artists', [LIBRARY_PLAYS]: 'plays',
   [LIBRARY_COMPARE]: 'compare', '/library/playlists': 'playlists', '/library/playlists/rows': 'playlistRows',
   '/library/playlists/copies': 'playlistCopies', '/library/junction': 'junction', '/library/junction/rows': 'junctionRows',
-  '/library/junction/reach': 'reachRows',
+  '/library/junction/reach': 'reachRows', '/library/junction/ask': 'askRows',
 };
 
 /** T15: SETUP → SERVERS and the rows behind its counts (identity copies; match rows). SERVERS is not a module. */

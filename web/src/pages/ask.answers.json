@@ -1,0 +1,1348 @@
+{
+ "/api/junction/ask?q=frozen+forest+at+night%2C+decade%3A2010s": {
+  "text": "frozen forest at night, decade:2010s",
+  "words": "frozen forest at night",
+  "typed": {
+   "all": [
+    {
+     "f": "decade",
+     "v": "2010s"
+    }
+   ],
+   "not": []
+  },
+  "sound": {
+   "state": "ok",
+   "near": 4,
+   "styles": [
+    {
+     "style": "atmospheric black metal",
+     "near": 2,
+     "new": 2
+    },
+    {
+     "style": "death metal",
+     "near": 2,
+     "new": 2
+    }
+   ],
+   "rule": "the words' CLAP text vector (jimbodj-text) against every analysed track's CLAP audio embedding, centred on the library mean; the closest first (jimbo-dj's prompt Radio, similar.more_like)",
+   "line": {
+    "source": "sound",
+    "label": "frozen forest at night",
+    "words": "(atmospheric black metal or death metal) · 2010s",
+    "count": 2,
+    "match": {
+     "type": "group",
+     "words": "((atmospheric black metal or death metal) · 2010s)",
+     "path": "",
+     "all": [
+      {
+       "type": "group",
+       "words": "(atmospheric black metal or death metal)",
+       "path": "all.0",
+       "any": [
+        {
+         "type": "condition",
+         "f": "style",
+         "v": "atmospheric black metal",
+         "text": "atmospheric black metal",
+         "count": 2,
+         "path": "all.0.any.0"
+        },
+        {
+         "type": "condition",
+         "f": "style",
+         "v": "death metal",
+         "text": "death metal",
+         "count": 2,
+         "path": "all.0.any.1"
+        }
+       ],
+       "count": 4
+      },
+      {
+       "type": "condition",
+       "f": "decade",
+       "v": "2010s",
+       "text": "2010s",
+       "count": 2,
+       "path": "all.1"
+      }
+     ],
+     "count": 2
+    },
+    "query": "b=(style:atmospheric+black+metal|style:death+metal),decade:2010s~60~frozen+forest+at+night",
+    "rule": "from the 100 nearest tracks: up to 3 styles, one at a time, each time the one whose nearest tracks not covered yet weigh most by their scores, each on at least 10 % of them (style as jimbo-dj's chart counts it)"
+   }
+  },
+  "ollama": {
+   "state": "ok",
+   "model": "qwen2.5:7b",
+   "kept": {
+    "style": [
+     "black metal"
+    ],
+    "mood": [],
+    "decade": [
+     "2010s"
+    ]
+   },
+   "dropped": [
+    {
+     "f": "style",
+     "v": "Shoegaze Polka"
+    },
+    {
+     "f": "mood",
+     "v": "glorious"
+    }
+   ],
+   "rule": "a local model (Ollama) reads the words into styles, moods and decades; only values the library has are kept, the rest are named as dropped",
+   "line": {
+    "source": "ollama",
+    "label": "frozen forest at night",
+    "words": "black metal · 2010s",
+    "count": 2,
+    "match": {
+     "type": "group",
+     "words": "(black metal · 2010s)",
+     "path": "",
+     "all": [
+      {
+       "type": "condition",
+       "f": "style",
+       "v": "black metal",
+       "text": "black metal",
+       "count": 2,
+       "path": "all.0"
+      },
+      {
+       "type": "condition",
+       "f": "decade",
+       "v": "2010s",
+       "text": "2010s",
+       "count": 2,
+       "path": "all.1"
+      }
+     ],
+     "count": 2
+    },
+    "query": "b=style:black+metal,decade:2010s~60~frozen+forest+at+night",
+    "rule": "a local model (Ollama) reads the words into styles, moods and decades; only values the library has are kept, the rest are named as dropped"
+   }
+  },
+  "lines": [
+   {
+    "source": "typed",
+    "label": null,
+    "words": "2010s",
+    "count": 2,
+    "match": {
+     "type": "group",
+     "words": "2010s",
+     "path": "",
+     "all": [
+      {
+       "type": "condition",
+       "f": "decade",
+       "v": "2010s",
+       "text": "2010s",
+       "count": 2,
+       "path": "all.0"
+      }
+     ],
+     "count": 2
+    },
+    "query": "b=decade:2010s~60",
+    "rule": "facet:value parts, comma-separated as in jimbo-dj's URL form (decade:1990s, !mood:sad), checked with rules.clean"
+   },
+   {
+    "source": "sound",
+    "label": "frozen forest at night",
+    "words": "(atmospheric black metal or death metal) · 2010s",
+    "count": 2,
+    "match": {
+     "type": "group",
+     "words": "((atmospheric black metal or death metal) · 2010s)",
+     "path": "",
+     "all": [
+      {
+       "type": "group",
+       "words": "(atmospheric black metal or death metal)",
+       "path": "all.0",
+       "any": [
+        {
+         "type": "condition",
+         "f": "style",
+         "v": "atmospheric black metal",
+         "text": "atmospheric black metal",
+         "count": 2,
+         "path": "all.0.any.0"
+        },
+        {
+         "type": "condition",
+         "f": "style",
+         "v": "death metal",
+         "text": "death metal",
+         "count": 2,
+         "path": "all.0.any.1"
+        }
+       ],
+       "count": 4
+      },
+      {
+       "type": "condition",
+       "f": "decade",
+       "v": "2010s",
+       "text": "2010s",
+       "count": 2,
+       "path": "all.1"
+      }
+     ],
+     "count": 2
+    },
+    "query": "b=(style:atmospheric+black+metal|style:death+metal),decade:2010s~60~frozen+forest+at+night",
+    "rule": "from the 100 nearest tracks: up to 3 styles, one at a time, each time the one whose nearest tracks not covered yet weigh most by their scores, each on at least 10 % of them (style as jimbo-dj's chart counts it)"
+   },
+   {
+    "source": "ollama",
+    "label": "frozen forest at night",
+    "words": "black metal · 2010s",
+    "count": 2,
+    "match": {
+     "type": "group",
+     "words": "(black metal · 2010s)",
+     "path": "",
+     "all": [
+      {
+       "type": "condition",
+       "f": "style",
+       "v": "black metal",
+       "text": "black metal",
+       "count": 2,
+       "path": "all.0"
+      },
+      {
+       "type": "condition",
+       "f": "decade",
+       "v": "2010s",
+       "text": "2010s",
+       "count": 2,
+       "path": "all.1"
+      }
+     ],
+     "count": 2
+    },
+    "query": "b=style:black+metal,decade:2010s~60~frozen+forest+at+night",
+    "rule": "a local model (Ollama) reads the words into styles, moods and decades; only values the library has are kept, the rest are named as dropped"
+   }
+  ],
+  "rules": {
+   "typed": "facet:value parts, comma-separated as in jimbo-dj's URL form (decade:1990s, !mood:sad), checked with rules.clean",
+   "near": "the words' CLAP text vector (jimbodj-text) against every analysed track's CLAP audio embedding, centred on the library mean; the closest first (jimbo-dj's prompt Radio, similar.more_like)",
+   "styles": "from the 100 nearest tracks: up to 3 styles, one at a time, each time the one whose nearest tracks not covered yet weigh most by their scores, each on at least 10 % of them (style as jimbo-dj's chart counts it)",
+   "ollama": "a local model (Ollama) reads the words into styles, moods and decades; only values the library has are kept, the rest are named as dropped",
+   "count": "the live tracks the line matches, counted with jimbo-dj's rules (rules.leaf_keys, rules.evaluate)"
+  },
+  "read_only": "A suggestion: nothing is saved. Open a line in the Junction to see what it picks."
+ },
+ "/api/junction/ask/rows?q=frozen+forest+at+night&limit=200": {
+  "text": "frozen forest at night",
+  "style": null,
+  "count": 4,
+  "rows": [
+   {
+    "rating_key": 101,
+    "title": "Westkreuz",
+    "artist": "Kollektiv Nord",
+    "album": "Ringbahn",
+    "year": 2019,
+    "duration_ms": 312000,
+    "live": true,
+    "score": 1.0
+   },
+   {
+    "rating_key": 102,
+    "title": "Ostkreuz",
+    "artist": "Kollektiv Nord",
+    "album": "Ringbahn",
+    "year": 2019,
+    "duration_ms": 298000,
+    "live": true,
+    "score": 1.0
+   },
+   {
+    "rating_key": 103,
+    "title": "Harbour Lights",
+    "artist": "The Paper Lanterns",
+    "album": "Low Tide Radio",
+    "year": 2021,
+    "duration_ms": 221000,
+    "live": true,
+    "score": 0.0
+   },
+   {
+    "rating_key": 104,
+    "title": "Static Gulls",
+    "artist": "The Paper Lanterns",
+    "album": "Low Tide Radio",
+    "year": 2021,
+    "duration_ms": 245000,
+    "live": true,
+    "score": 0.0
+   }
+  ],
+  "limit": 200,
+  "offset": 0,
+  "rule": "the words' CLAP text vector (jimbodj-text) against every analysed track's CLAP audio embedding, centred on the library mean; the closest first (jimbo-dj's prompt Radio, similar.more_like)"
+ },
+ "/api/junction/ask/rows?q=frozen+forest+at+night&limit=200&style=atmospheric+black+metal": {
+  "text": "frozen forest at night",
+  "style": "atmospheric black metal",
+  "count": 2,
+  "rows": [
+   {
+    "rating_key": 101,
+    "title": "Westkreuz",
+    "artist": "Kollektiv Nord",
+    "album": "Ringbahn",
+    "year": 2019,
+    "duration_ms": 312000,
+    "live": true,
+    "score": 1.0
+   },
+   {
+    "rating_key": 102,
+    "title": "Ostkreuz",
+    "artist": "Kollektiv Nord",
+    "album": "Ringbahn",
+    "year": 2019,
+    "duration_ms": 298000,
+    "live": true,
+    "score": 1.0
+   }
+  ],
+  "limit": 200,
+  "offset": 0,
+  "rule": "the words' CLAP text vector (jimbodj-text) against every analysed track's CLAP audio embedding, centred on the library mean; the closest first (jimbo-dj's prompt Radio, similar.more_like)"
+ },
+ "/api/junction/ask?q=storm": {
+  "text": "storm",
+  "words": "storm",
+  "typed": {
+   "all": [],
+   "not": []
+  },
+  "sound": {
+   "state": "off"
+  },
+  "ollama": {
+   "state": "off"
+  },
+  "lines": [],
+  "rules": {
+   "typed": "facet:value parts, comma-separated as in jimbo-dj's URL form (decade:1990s, !mood:sad), checked with rules.clean",
+   "near": "the words' CLAP text vector (jimbodj-text) against every analysed track's CLAP audio embedding, centred on the library mean; the closest first (jimbo-dj's prompt Radio, similar.more_like)",
+   "styles": "from the 100 nearest tracks: up to 3 styles, one at a time, each time the one whose nearest tracks not covered yet weigh most by their scores, each on at least 10 % of them (style as jimbo-dj's chart counts it)",
+   "ollama": "a local model (Ollama) reads the words into styles, moods and decades; only values the library has are kept, the rest are named as dropped",
+   "count": "the live tracks the line matches, counted with jimbo-dj's rules (rules.leaf_keys, rules.evaluate)"
+  },
+  "read_only": "A suggestion: nothing is saved. Open a line in the Junction to see what it picks."
+ },
+ "/api/playlists/compare": {
+  "gate": "P5",
+  "version": 1,
+  "stamp": "fixture",
+  "trees": [
+   {
+    "source": {
+     "kind": "saved",
+     "id": 1,
+     "slug": "night-lines",
+     "title": "🧭 Night lines",
+     "name": "Night lines"
+    },
+    "rules": {
+     "n": 20,
+     "per_artist": 3,
+     "shuffle": 0,
+     "branches": [
+      {
+       "id": "a",
+       "share": 8,
+       "match": {
+        "all": [
+         {
+          "f": "decade",
+          "v": "2010s"
+         }
+        ],
+        "not": [
+         {
+          "f": "mood",
+          "v": "sad"
+         }
+        ]
+       },
+       "label": "Ringbahn, not sad"
+      },
+      {
+       "id": "b",
+       "share": 6,
+       "match": {
+        "all": [
+         {
+          "any": [
+           {
+            "f": "artist",
+            "v": "Ada Vey"
+           },
+           {
+            "f": "listened",
+            "v": "2025"
+           }
+          ]
+         }
+        ]
+       }
+      },
+      {
+       "id": "c",
+       "share": 6,
+       "match": {
+        "all": [
+         {
+          "f": "mood",
+          "v": "happy"
+         },
+         {
+          "any": [
+           {
+            "f": "bpm",
+            "v": "100-110"
+           },
+           {
+            "f": "key",
+            "v": "8A"
+           }
+          ]
+         }
+        ]
+       }
+      }
+     ]
+    },
+    "i": 0,
+    "query": "b=decade:2010s,!mood:sad~8~Ringbahn%252C+not+sad&b=(artist:Ada+Vey|listened:2025)~6&b=mood:happy,(bpm:100-110|key:8A)~6&n=20",
+    "features": [
+     "and",
+     "or",
+     "not",
+     "nested",
+     "chart",
+     "sound",
+     "listened"
+    ],
+    "lines": [
+     {
+      "id": "a",
+      "label": "Ringbahn, not sad",
+      "words": "2010s · not sad",
+      "share": 8,
+      "count": 1,
+      "got": 1,
+      "available": 1
+     },
+     {
+      "id": "b",
+      "label": null,
+      "words": "(Ada Vey or played in 2025)",
+      "share": 6,
+      "count": 2,
+      "got": 1,
+      "available": 2
+     },
+     {
+      "id": "c",
+      "label": null,
+      "words": "happy · (100-110 BPM or 8A)",
+      "share": 6,
+      "count": 2,
+      "got": 2,
+      "available": 2
+     }
+    ],
+    "total": 4,
+    "picked": 4,
+    "minutes": 21
+   },
+   {
+    "source": {
+     "kind": "saved",
+     "id": 2,
+     "slug": "blend-black-metal-doom-metal",
+     "title": "🎧 Blend: Black Metal / Doom Metal",
+     "name": "Blend: Black Metal / Doom Metal"
+    },
+    "rules": {
+     "n": 20,
+     "per_artist": 3,
+     "shuffle": 0,
+     "branches": [
+      {
+       "id": "a",
+       "share": 12,
+       "match": {
+        "all": [
+         {
+          "f": "style",
+          "v": "black metal"
+         }
+        ]
+       }
+      },
+      {
+       "id": "b",
+       "share": 8,
+       "match": {
+        "all": [
+         {
+          "f": "style",
+          "v": "doom metal"
+         }
+        ]
+       }
+      }
+     ]
+    },
+    "i": 1,
+    "query": "b=style:black+metal~12&b=style:doom+metal~8&n=20",
+    "features": [
+     "and",
+     "style"
+    ],
+    "lines": [
+     {
+      "id": "a",
+      "label": null,
+      "words": "black metal",
+      "share": 12,
+      "count": 2,
+      "got": 2,
+      "available": 2
+     },
+     {
+      "id": "b",
+      "label": null,
+      "words": "doom metal",
+      "share": 8,
+      "count": 2,
+      "got": 2,
+      "available": 2
+     }
+    ],
+    "total": 4,
+    "picked": 4,
+    "minutes": 18
+   },
+   {
+    "source": {
+     "kind": "saved",
+     "id": 3,
+     "slug": "from-the-2020s",
+     "title": "🧭 From the 2020s",
+     "name": "From the 2020s"
+    },
+    "rules": {
+     "n": 60,
+     "per_artist": 3,
+     "shuffle": 0,
+     "branches": [
+      {
+       "id": "a",
+       "share": 60,
+       "match": {
+        "all": [
+         {
+          "f": "decade",
+          "v": "2020s"
+         }
+        ]
+       }
+      }
+     ]
+    },
+    "i": 2,
+    "query": "b=decade:2020s~60",
+    "features": [
+     "and",
+     "chart"
+    ],
+    "lines": [
+     {
+      "id": "a",
+      "label": null,
+      "words": "2020s",
+      "share": 60,
+      "count": 3,
+      "got": 3,
+      "available": 3
+     }
+    ],
+    "total": 3,
+    "picked": 3,
+    "minutes": 14
+   },
+   {
+    "source": {
+     "kind": "saved",
+     "id": 10,
+     "slug": "inside-the-lines",
+     "title": "🧭 Inside the lines",
+     "name": "Inside the lines"
+    },
+    "rules": {
+     "n": 20,
+     "per_artist": 3,
+     "shuffle": 2,
+     "branches": [
+      {
+       "id": "a",
+       "share": 10,
+       "match": {
+        "all": [
+         {
+          "f": "in",
+          "v": "saved:from-the-2020s"
+         }
+        ],
+        "not": [
+         {
+          "f": "in",
+          "v": "cluster:quiet-engines"
+         }
+        ]
+       }
+      },
+      {
+       "id": "b",
+       "share": 10,
+       "match": {
+        "all": [
+         {
+          "f": "in",
+          "v": "mix:daily"
+         }
+        ]
+       }
+      }
+     ]
+    },
+    "i": 3,
+    "query": "b=in:saved:from-the-2020s,!in:cluster:quiet-engines~10&b=in:mix:daily~10&n=20&shuffle=2",
+    "features": [
+     "and",
+     "not",
+     "in"
+    ],
+    "lines": [
+     {
+      "id": "a",
+      "label": null,
+      "words": "in saved:from-the-2020s · not in cluster:quiet-engines",
+      "share": 10,
+      "count": 1,
+      "got": 1,
+      "available": 1
+     },
+     {
+      "id": "b",
+      "label": null,
+      "words": "in mix:daily",
+      "share": 10,
+      "count": 2,
+      "got": 2,
+      "available": 2
+     }
+    ],
+    "total": 3,
+    "picked": 3,
+    "minutes": 13
+   },
+   {
+    "source": {
+     "kind": "fixed",
+     "id": "every-family",
+     "name": "Every kind of condition"
+    },
+    "rules": {
+     "n": 40,
+     "per_artist": 3,
+     "shuffle": 0,
+     "branches": [
+      {
+       "id": "a",
+       "share": 16,
+       "match": {
+        "all": [
+         {
+          "f": "style",
+          "v": "black metal"
+         },
+         {
+          "any": [
+           {
+            "f": "genre",
+            "v": "Rock---Black Metal"
+           },
+           {
+            "f": "genre",
+            "v": "Rock---Doom Metal"
+           }
+          ]
+         }
+        ],
+        "not": [
+         {
+          "f": "mood",
+          "v": "happy"
+         }
+        ]
+       },
+       "label": "Black or doom, not happy"
+      },
+      {
+       "id": "b",
+       "share": 8,
+       "match": {
+        "all": [
+         {
+          "f": "family",
+          "v": "Metal"
+         },
+         {
+          "f": "decade",
+          "v": "2010s"
+         }
+        ]
+       }
+      },
+      {
+       "id": "c",
+       "share": 8,
+       "match": {
+        "all": [
+         {
+          "f": "listened",
+          "v": "2025"
+         }
+        ]
+       }
+      },
+      {
+       "id": "d",
+       "share": 8,
+       "match": {
+        "all": [
+         {
+          "f": "in",
+          "v": "mix:daily"
+         }
+        ]
+       }
+      }
+     ]
+    },
+    "i": 4,
+    "query": "b=style:black+metal,(genre:Rock---Black+Metal|genre:Rock---Doom+Metal),!mood:happy~16~Black+or+doom%252C+not+happy&b=family:Metal,decade:2010s~8&b=listened:2025~8&b=in:mix:daily~8&n=40",
+    "features": [
+     "and",
+     "or",
+     "not",
+     "nested",
+     "in",
+     "chart",
+     "sound",
+     "genre",
+     "style",
+     "family",
+     "listened"
+    ],
+    "lines": [
+     {
+      "id": "a",
+      "label": "Black or doom, not happy",
+      "words": "black metal · (Rock---Black Metal or Rock---Doom Metal) · not happy",
+      "share": 16,
+      "count": 1,
+      "got": 1,
+      "available": 1
+     },
+     {
+      "id": "b",
+      "label": null,
+      "words": "Metal · 2010s",
+      "share": 8,
+      "count": 2,
+      "got": 1,
+      "available": 2
+     },
+     {
+      "id": "c",
+      "label": null,
+      "words": "played in 2025",
+      "share": 8,
+      "count": 1,
+      "got": 0,
+      "available": 1
+     },
+     {
+      "id": "d",
+      "label": null,
+      "words": "in mix:daily",
+      "share": 8,
+      "count": 2,
+      "got": 1,
+      "available": 2
+     }
+    ],
+    "total": 3,
+    "picked": 3,
+    "minutes": 14
+   },
+   {
+    "source": {
+     "kind": "fixed",
+     "id": "nested-shuffled",
+     "name": "Ambient, nested and shuffled"
+    },
+    "rules": {
+     "n": 30,
+     "per_artist": 2,
+     "shuffle": 3,
+     "branches": [
+      {
+       "id": "a",
+       "share": 18,
+       "match": {
+        "all": [
+         {
+          "any": [
+           {
+            "f": "style",
+            "v": "ambient"
+           },
+           {
+            "all": [
+             {
+              "f": "genre",
+              "v": "Electronic---Ambient"
+             },
+             {
+              "f": "bpm",
+              "v": "60-110"
+             }
+            ]
+           }
+          ]
+         }
+        ],
+        "not": [
+         {
+          "f": "in",
+          "v": "mix:daily"
+         }
+        ]
+       }
+      },
+      {
+       "id": "b",
+       "share": 12,
+       "match": {
+        "any": [
+         {
+          "f": "decade",
+          "v": "1990s"
+         },
+         {
+          "f": "decade",
+          "v": "2000s"
+         },
+         {
+          "f": "decade",
+          "v": "2020s"
+         }
+        ],
+        "not": [
+         {
+          "f": "family",
+          "v": "Metal"
+         }
+        ]
+       }
+      }
+     ]
+    },
+    "i": 5,
+    "query": "b=(style:ambient|genre:Electronic---Ambient,bpm:60-110),!in:mix:daily~18&b=(decade:1990s|decade:2000s|decade:2020s),!family:Metal~12&n=30&per=2&shuffle=3",
+    "features": [
+     "and",
+     "or",
+     "not",
+     "nested",
+     "in",
+     "chart",
+     "sound",
+     "genre",
+     "style",
+     "family"
+    ],
+    "lines": [
+     {
+      "id": "a",
+      "label": null,
+      "words": "(ambient or (Electronic---Ambient · 60-110 BPM)) · not in mix:daily",
+      "share": 18,
+      "count": 0,
+      "got": 0,
+      "available": 0
+     },
+     {
+      "id": "b",
+      "label": null,
+      "words": "(1990s or 2000s or 2020s) · not Metal",
+      "share": 12,
+      "count": 1,
+      "got": 1,
+      "available": 1
+     }
+    ],
+    "total": 1,
+    "picked": 1,
+    "minutes": 7
+   },
+   {
+    "source": {
+     "kind": "fixed",
+     "id": "doom-slow",
+     "name": "Doom, slow"
+    },
+    "rules": {
+     "n": 20,
+     "per_artist": 3,
+     "shuffle": 0,
+     "branches": [
+      {
+       "id": "a",
+       "share": 20,
+       "match": {
+        "all": [
+         {
+          "f": "style",
+          "v": "doom metal"
+         },
+         {
+          "f": "bpm",
+          "v": "-100"
+         }
+        ]
+       }
+      }
+     ]
+    },
+    "i": 6,
+    "query": "b=style:doom+metal,bpm:-100~20&n=20",
+    "features": [
+     "and",
+     "sound",
+     "style"
+    ],
+    "lines": [
+     {
+      "id": "a",
+      "label": null,
+      "words": "doom metal · -100 BPM",
+      "share": 20,
+      "count": 0,
+      "got": 0,
+      "available": 0
+     }
+    ],
+    "total": 0,
+    "picked": 0,
+    "minutes": 0
+   },
+   {
+    "source": {
+     "kind": "fixed",
+     "id": "two-keys",
+     "name": "Two keys"
+    },
+    "rules": {
+     "n": 20,
+     "per_artist": 3,
+     "shuffle": 0,
+     "branches": [
+      {
+       "id": "a",
+       "share": 10,
+       "match": {
+        "all": [
+         {
+          "f": "key",
+          "v": "8A"
+         }
+        ]
+       }
+      },
+      {
+       "id": "b",
+       "share": 10,
+       "match": {
+        "all": [
+         {
+          "f": "key",
+          "v": "9A"
+         }
+        ]
+       }
+      }
+     ]
+    },
+    "i": 7,
+    "query": "b=key:8A~10&b=key:9A~10&n=20",
+    "features": [
+     "and",
+     "sound"
+    ],
+    "lines": [
+     {
+      "id": "a",
+      "label": null,
+      "words": "8A",
+      "share": 10,
+      "count": 1,
+      "got": 1,
+      "available": 1
+     },
+     {
+      "id": "b",
+      "label": null,
+      "words": "9A",
+      "share": 10,
+      "count": 0,
+      "got": 0,
+      "available": 0
+     }
+    ],
+    "total": 1,
+    "picked": 1,
+    "minutes": 5
+   },
+   {
+    "source": {
+     "kind": "fixed",
+     "id": "two-years",
+     "name": "Played in 2024 or 2025"
+    },
+    "rules": {
+     "n": 30,
+     "per_artist": 1,
+     "shuffle": 0,
+     "branches": [
+      {
+       "id": "a",
+       "share": 30,
+       "match": {
+        "any": [
+         {
+          "f": "listened",
+          "v": "2024"
+         },
+         {
+          "f": "listened",
+          "v": "2025"
+         }
+        ]
+       }
+      }
+     ]
+    },
+    "i": 8,
+    "query": "b=(listened:2024|listened:2025)~30&n=30&per=1",
+    "features": [
+     "or",
+     "listened"
+    ],
+    "lines": [
+     {
+      "id": "a",
+      "label": null,
+      "words": "played in 2024 or played in 2025",
+      "share": 30,
+      "count": 1,
+      "got": 1,
+      "available": 1
+     }
+    ],
+    "total": 1,
+    "picked": 1,
+    "minutes": 5
+   },
+   {
+    "source": {
+     "kind": "fixed",
+     "id": "black-not-2010s",
+     "name": "Black metal, not from the 2010s"
+    },
+    "rules": {
+     "n": 20,
+     "per_artist": 2,
+     "shuffle": 0,
+     "branches": [
+      {
+       "id": "a",
+       "share": 20,
+       "match": {
+        "all": [
+         {
+          "f": "genre",
+          "v": "Rock---Black Metal"
+         }
+        ],
+        "not": [
+         {
+          "f": "decade",
+          "v": "2010s"
+         }
+        ]
+       }
+      }
+     ]
+    },
+    "i": 9,
+    "query": "b=genre:Rock---Black+Metal,!decade:2010s~20&n=20&per=2",
+    "features": [
+     "and",
+     "not",
+     "chart",
+     "genre"
+    ],
+    "lines": [
+     {
+      "id": "a",
+      "label": null,
+      "words": "Rock---Black Metal · not 2010s",
+      "share": 20,
+      "count": 0,
+      "got": 0,
+      "available": 0
+     }
+    ],
+    "total": 0,
+    "picked": 0,
+    "minutes": 0
+   }
+  ],
+  "coverage": {
+   "ok": true,
+   "trees": 10,
+   "by": {
+    "and": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     9
+    ],
+    "or": [
+     0,
+     4,
+     5,
+     8
+    ],
+    "not": [
+     0,
+     3,
+     4,
+     5,
+     9
+    ],
+    "nested": [
+     0,
+     4,
+     5
+    ],
+    "in": [
+     3,
+     4,
+     5
+    ],
+    "chart": [
+     0,
+     2,
+     4,
+     5,
+     9
+    ],
+    "sound": [
+     0,
+     4,
+     5,
+     6,
+     7
+    ],
+    "genre": [
+     4,
+     5,
+     9
+    ],
+    "style": [
+     1,
+     4,
+     5,
+     6
+    ],
+    "family": [
+     4,
+     5
+    ],
+    "listened": [
+     0,
+     4,
+     8
+    ]
+   },
+   "missing": [],
+   "rule": "every saved playlist with a tree (make.spec_of), then p5_trees.json's fixed trees until there are ten; between them they use AND, OR, NOT, a nested group, an in: scope, a chart bar, a sound filter, genre, style, family and listened"
+  },
+  "saved": {
+   "count": 10,
+   "rows": [
+    {
+     "id": 1,
+     "kind": "explore",
+     "title": "🧭 Night lines",
+     "tracks": 4,
+     "in_plex": true,
+     "stale": false
+    },
+    {
+     "id": 2,
+     "kind": "blend",
+     "title": "🎧 Blend: Black Metal / Doom Metal",
+     "tracks": 3,
+     "in_plex": false,
+     "stale": false
+    },
+    {
+     "id": 3,
+     "kind": "explore",
+     "title": "🧭 From the 2020s",
+     "tracks": 3,
+     "in_plex": false,
+     "stale": false
+    },
+    {
+     "id": 4,
+     "kind": "mix",
+     "title": "🎧 Daily mix",
+     "tracks": 3,
+     "in_plex": true,
+     "stale": false
+    },
+    {
+     "id": 5,
+     "kind": "cluster",
+     "title": "🪩 Quiet Engines",
+     "tracks": 2,
+     "in_plex": false,
+     "stale": false
+    },
+    {
+     "id": 6,
+     "kind": "cluster",
+     "title": "🪩 Gone Grey",
+     "tracks": 1,
+     "in_plex": false,
+     "stale": true
+    },
+    {
+     "id": 7,
+     "kind": "like",
+     "title": "🔁 More like Westkreuz",
+     "tracks": 2,
+     "in_plex": true,
+     "stale": false
+    },
+    {
+     "id": 8,
+     "kind": "history",
+     "title": "🎧 Top songs of 2026",
+     "tracks": 3,
+     "in_plex": false,
+     "stale": false
+    },
+    {
+     "id": 9,
+     "kind": "setlist",
+     "title": "🎤 Kollektiv Nord live",
+     "tracks": 2,
+     "in_plex": false,
+     "stale": false
+    },
+    {
+     "id": 10,
+     "kind": "explore",
+     "title": "🧭 Inside the lines",
+     "tracks": 3,
+     "in_plex": false,
+     "stale": false
+    }
+   ]
+  },
+  "checks": [
+   {
+    "check": "lines",
+    "rule": "every line's count, share, got and available, and the union's total, equal jimbo-dj's preview",
+    "asked_by": "scripts/p5_gate.py"
+   },
+   {
+    "check": "tracks",
+    "rule": "check 2: the same tracks in the same order, each brought in by the same line",
+    "asked_by": "scripts/p5_gate.py"
+   },
+   {
+    "check": "saved",
+    "rule": "check 3: the same saved playlists as jimbo-dj's GET /api/saved, each with the same kind, title, track count, Plex switch and stale flag",
+    "asked_by": "scripts/p5_gate.py"
+   }
+  ],
+  "script": "python scripts/p5_gate.py --url http://macmini:4492 --jimbodj http://macmini:4490",
+  "rules": {
+   "lines": "every line's count, share, got and available, and the union's total, equal jimbo-dj's preview",
+   "track_set": "the same picked tracks, each brought in by the same line",
+   "order": "the same tracks in the same play order (flow.order); the first place they differ is named",
+   "tracks": "check 2: the same tracks in the same order, each brought in by the same line",
+   "saved": "check 3: the same saved playlists as jimbo-dj's GET /api/saved, each with the same kind, title, track count, Plex switch and stale flag",
+   "trees": "every saved playlist with a tree (make.spec_of), then p5_trees.json's fixed trees until there are ten; between them they use AND, OR, NOT, a nested group, an in: scope, a chart bar, a sound filter, genre, style, family and listened",
+   "stamp": "both sides are asked within seconds; if the data stamp moves in between, the tree is asked again once",
+   "passed": "passed when the ten trees cover every kind of condition and checks 1, 2 and 3 pass for all of them"
+  },
+  "endpoints": {
+   "compare": "/api/playlists/compare",
+   "tree": "/api/playlists/compare/trees/{i}",
+   "stamp": "/api/playlists/compare/stamp",
+   "saved": "/api/playlists/compare",
+   "jimbodj_preview": "POST /api/rules/preview",
+   "jimbodj_saved": "GET /api/saved"
+  },
+  "read_only": "Read-only. traqfreq reads jimbo-dj's database opened read-only. Only scripts/p5_gate.py asks jimbo-dj, with GET /api/saved and POST /api/rules/preview, which builds a preview and writes nothing."
+ },
+ "_q": "frozen forest at night, decade:2010s"
+}

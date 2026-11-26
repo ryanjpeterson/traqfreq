@@ -14,7 +14,7 @@
   overflow: hidden; clip-path: inset(50%); white-space: nowrap;
 }
 
-:where(.kit-nav, .kit-button, .kit-chip-remove, .kit-station-why, .kit-lever-range):focus-visible {
+:where(.kit-nav, .kit-button, .kit-chip-remove, .kit-station-why, .kit-lever-range, .kit-lever-field):focus-visible {
   outline: 2px solid var(--ink);
   outline-offset: 2px;
 }
@@ -109,6 +109,13 @@
 .kit-lever-bar { height: 8px; background: var(--card); border: 1px solid var(--rule); }
 .kit-lever-bar > span { display: block; height: 100%; background: var(--line); outline: var(--line-outline); }
 .kit-lever-range { width: 100%; min-height: 44px; margin: 0; accent-color: var(--line); }
+.kit-lever-form { margin: 0; }
+.kit-lever-field {
+  box-sizing: border-box; width: 100%; min-height: 44px; margin: 0; padding: 0 12px;
+  font: inherit; font-size: 15px; color: var(--ink); background: var(--card);
+  border: 2px solid var(--line); border-radius: 0; outline: var(--line-outline);
+}
+.kit-lever-field::placeholder { color: var(--ink2); opacity: 1; }
 .kit-lever-nums { margin: 0; text-align: right; display: grid; font-variant-numeric: tabular-nums; }
 .kit-lever-pct { font-size: 20px; font-weight: 700; }
 .kit-lever-count { font-size: 12px; color: var(--ink2); }

@@ -147,6 +147,8 @@ def test_nearest_and_the_line(clap_db, tmp_path):
     rows = c.get("/api/junction/ask/rows", params={"q": "frozen forest at night"}).json()
     assert [x["rating_key"] for x in rows["rows"]][:2] == [101, 102] and rows["count"] == 4
     assert rows["rows"][0]["score"] == 1.0
+    doom = c.get("/api/junction/ask/rows", params={"q": "frozen forest at night", "style": "death metal"}).json()
+    assert [x["rating_key"] for x in doom["rows"]] == [103, 104] and doom["style"] == "death metal"
     assert all(m == "POST" and u == f"{TEXT}/embed" for m, u in t.seen)  # only the text server, only /embed
 
 
@@ -187,6 +189,9 @@ def test_ollama_grounded(clap_db, tmp_path):
     line = o["line"]
     assert line["source"] == "ollama" and [x["source"] for x in r["lines"]] == ["sound", "ollama"]
     assert line["match"]["all"][0]["v"] == "black metal" and line["count"] == EXPECT_OLLAMA
+    # A value the words also type isn't added twice: the typed part stays as typed.
+    r = _client(clap_db, tmp_path, t, ollama=OLLAMA).get("/api/junction/ask", params={"q": "grim winter, decade:2010s"}).json()
+    assert r["ollama"]["line"]["query"].startswith("b=style:black+metal,decade:2010s~60")
 
 
 def test_ask_writes_nothing(clap_db, tmp_path):

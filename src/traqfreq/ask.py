@@ -150,16 +150,20 @@ def by_sound(conn, words: str, typed: dict, url: str | None, transport, default_
 
 
 def near_rows(conn: sqlite3.Connection, text: str, url: str | None, transport=None, limit: int = 50,
-              offset: int = 0) -> dict:
-    """The rows behind the sound line: the nearest tracks, closest first, each with its score."""
+              offset: int = 0, style: str = "") -> dict:
+    """The rows behind the sound side's numbers: the nearest tracks, closest first, each with its score; with
+    ``style``, only those that style is on (a style's "on n of the nearest")."""
     _, _, words = split(text)
     if not url or not words:
         raise ValueError("nothing to compare: no words, or jimbodj-text isn't set up")
     near = nearest(conn, words, url, transport)
+    if style:
+        sc = genres.get(conn).scores
+        near = [(k, s) for k, s in near if sc.get(k, {}).get(style, 0) >= genres.MATCH]
     keys = [k for k, _ in near]
     score = dict(near)
     total, page = playlists._rows(conn, keys, max(1, min(limit, 200)), max(0, offset), order=keys)
-    return {"text": words, "count": total, "rows": [r | {"score": score[r["rating_key"]]} for r in page],
+    return {"text": words, "style": style or None, "count": total, "rows": [r | {"score": score[r["rating_key"]]} for r in page],
             "limit": limit, "offset": offset, "rule": RULES["near"]}
 
 
@@ -199,6 +203,7 @@ def by_ollama(conn, text: str, typed: dict, url: str | None, model: str, transpo
     except (httpx.HTTPError, KeyError, ValueError, TypeError) as e:
         return {"state": "unavailable", "error": f"Ollama at {url} didn't answer: {e.__class__.__name__}"}
     kept, dropped, groups = {}, [], []
+    typed_already = {(c["f"], c["v"].lower()) for part in ("all", "not") for c in typed.get(part, [])}
     for f, values in have.items():
         lower = {v.lower(): v for v in values}
         picks = []
@@ -209,7 +214,7 @@ def by_ollama(conn, text: str, typed: dict, url: str | None, model: str, transpo
             elif hit not in picks:
                 picks.append(hit)
         kept[f] = picks
-        leaves = [{"f": f, "v": v} for v in picks[:4]]
+        leaves = [{"f": f, "v": v} for v in picks[:4] if (f, v.lower()) not in typed_already]  # typed: kept as typed
         if leaves:
             groups.append(leaves[0] if len(leaves) == 1 else {"any": leaves})
     out = {"state": "ok", "model": model, "kept": kept, "dropped": dropped, "rule": RULES["ollama"]}

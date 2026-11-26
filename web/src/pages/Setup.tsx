@@ -8,6 +8,7 @@ import { CompareCard } from './HistoryCompare';
 import { LibraryCompareCard } from './LibraryCompare';
 import { ServersCard } from './Servers';
 import { ServersGateCard } from './ServersGate';
+import { PlaylistsGateCard } from './PlaylistsGate';
 import { TagsGateCard } from './TagsGenre';
 
 /** SETUP, read-only: what traqfreq can read from jimbo-dj's database, and which modules are on. */
@@ -58,6 +59,7 @@ export function Setup({ modules, navigate }: { modules: ModuleSwitch[]; navigate
           <SetupLibraryCompare navigate={navigate} />
           <ServersCard navigate={navigate} />
           <ServersGateCard navigate={navigate} />
+          <PlaylistsGateCard navigate={navigate} />
           {tagsOn && <TagsGateCard navigate={navigate} />}
           {historyOn && <SetupCompare navigate={navigate} />}
 

@@ -38,5 +38,8 @@
   "board.sampleTitle": "Sample title",
   "board.sampleArtist": "Sample artist",
   "board.sampleWhy": "Brought in by HISTORY: played 14 times in the last 90 days.",
-  "board.sampleKey": "8A"
+  "board.sampleKey": "8A",
+  "board.leverAskTitle": "Ask",
+  "board.leverAskDetail": "A few words to a line (T28's field)",
+  "board.leverAskPlaceholder": "rainy sunday, decade:1990s"
 }
