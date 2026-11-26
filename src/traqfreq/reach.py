@@ -89,7 +89,8 @@ class _Map:
             if any(x["key"] in seen for x in m["tags"]):
                 for x in m["tags"]:
                     if x["key"] not in seen and all(y["key"] != x["key"] for y in moved):
-                        moved.append({"key": x["key"], "via": "movement", "movement": m["id"]})
+                        moved.append({"key": x["key"], "via": "movement", "movement": m["id"],
+                                      "movement_name": m["name"]})
         out.append(moved)
         seen |= {x["key"] for x in moved}
         near = []
@@ -153,7 +154,7 @@ def _line(conn: sqlite3.Connection, b: dict, mp: _Map, lib: frozenset) -> tuple[
                 reached[f["v"]] |= {x["key"] for x in f["stops"][i]}
             new += [{"key": x["key"], "name": mp.name(x["key"]), "via": x["via"], "follows": f["key"],
                      "in_use": bool(mp.nodes.get(x["key"], {}).get("in_use")),
-                     **({"movement": x["movement"]} if "movement" in x else {}),
+                     **({"movement": x["movement"], "movement_name": x["movement_name"]} if "movement" in x else {}),
                      **({"of": mp.name(x["of"])} if "of" in x else {})}
                     for x in f["stops"][i]]
         got = _sets(conn, b["match"], widen if i else {}, lib)

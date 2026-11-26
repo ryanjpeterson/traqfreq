@@ -45,7 +45,7 @@ def test_broad_tags_stay_out(legacy_db):
     assert _counts(line) == [("rooted", 2, 0), ("ladder", 2, 0), ("movement", 2, 0), ("roaming", 2, 0)]
     keys = {x["key"] for s in line["stops"] for x in s["new_tags"]}
     assert "metal" not in keys and {"blackgaze", "shoegaze"} <= keys
-    assert {x["movement"] for x in line["stops"][2]["new_tags"]} == {"blackgaze"}
+    assert {(x["movement"], x["movement_name"]) for x in line["stops"][2]["new_tags"]} == {("blackgaze", "Blackgaze")}
 
 
 def test_rooted_is_the_junction(legacy_db):

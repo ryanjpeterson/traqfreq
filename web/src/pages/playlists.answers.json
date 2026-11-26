@@ -2198,5 +2198,926 @@
   "offset": 0,
   "rule": "every track picked, each with the line that took it, in pick order: jimbo-dj orders the picked tracks for flow (flow.order), which traqfreq copies in T27"
  },
- "_tree": "b=decade%3A2010s%2C%21mood%3Asad%7E8%7ERingbahn%252C+not+sad&b=%28artist%3AAda+Vey%7Clistened%3A2025%29%7E6&b=mood%3Ahappy%2C%28bpm%3A100-110%7Ckey%3A8A%29%7E6&n=20"
+ "_tree": "b=decade%3A2010s%2C%21mood%3Asad%7E8%7ERingbahn%252C+not+sad&b=%28artist%3AAda+Vey%7Clistened%3A2025%29%7E6&b=mood%3Ahappy%2C%28bpm%3A100-110%7Ckey%3A8A%29%7E6&n=20",
+ "/api/junction/reach?b=decade%3A2010s%2C%21mood%3Asad%7E8%7ERingbahn%252C+not+sad&b=%28artist%3AAda+Vey%7Clistened%3A2025%29%7E6&b=mood%3Ahappy%2C%28bpm%3A100-110%7Ckey%3A8A%29%7E6&n=20": {
+  "query": "b=decade:2010s,!mood:sad~8~Ringbahn%252C+not+sad&b=(artist:Ada+Vey|listened:2025)~6&b=mood:happy,(bpm:100-110|key:8A)~6&n=20",
+  "name": "Ringbahn, not sad + (Ada Vey or played in 2025) + happy · (100-110 BPM or 8A)",
+  "stops": [
+   "rooted",
+   "ladder",
+   "movement",
+   "roaming"
+  ],
+  "lines": [
+   {
+    "id": "a",
+    "label": "Ringbahn, not sad",
+    "words": "2010s · not sad",
+    "follows": [],
+    "stops": []
+   },
+   {
+    "id": "b",
+    "label": null,
+    "words": "(Ada Vey or played in 2025)",
+    "follows": [],
+    "stops": []
+   },
+   {
+    "id": "c",
+    "label": null,
+    "words": "happy · (100-110 BPM or 8A)",
+    "follows": [],
+    "stops": []
+   }
+  ],
+  "following": 0,
+  "movements": 5,
+  "rules": {
+   "follows": "a line follows the tag of each style condition it needs (in its all or any parts, not under a not), the condition's value through jimbo-dj's tag rules",
+   "rooted": "the tag alone: the line as it is, its count the Junction's",
+   "ladder": "and every tag under it on its ladder (TAGS)",
+   "movement": "and every tag of each movement (traqfreq's movements.json) naming one of those",
+   "roaming": "and their neighbours on the genre map: the tags one rung up or down from each, broad tags left out",
+   "count": "the live tracks the line matches at this stop, its followed conditions matching any of the stop's tags, each counted as jimbo-dj counts a style condition (a style score of at least 0.45)",
+   "added": "the live tracks this stop matches that the rooted line doesn't",
+   "preview": "A preview only: jimbo-dj's lines don't follow tags, nothing here is picked or saved, and the Junction's numbers stay as they are. Not part of the P5 gate."
+  }
+ },
+ "/api/junction/reach?b=in%3Asaved%3Afrom-the-2020s%2C%21in%3Acluster%3Aquiet-engines%7E10&b=in%3Amix%3Adaily%7E10&n=20&shuffle=2": {
+  "query": "b=in:saved:from-the-2020s,!in:cluster:quiet-engines~10&b=in:mix:daily~10&n=20&shuffle=2",
+  "name": "in saved:from-the-2020s · not in cluster:quiet-engines + in mix:daily",
+  "stops": [
+   "rooted",
+   "ladder",
+   "movement",
+   "roaming"
+  ],
+  "lines": [
+   {
+    "id": "a",
+    "label": null,
+    "words": "in saved:from-the-2020s · not in cluster:quiet-engines",
+    "follows": [],
+    "stops": []
+   },
+   {
+    "id": "b",
+    "label": null,
+    "words": "in mix:daily",
+    "follows": [],
+    "stops": []
+   }
+  ],
+  "following": 0,
+  "movements": 5,
+  "rules": {
+   "follows": "a line follows the tag of each style condition it needs (in its all or any parts, not under a not), the condition's value through jimbo-dj's tag rules",
+   "rooted": "the tag alone: the line as it is, its count the Junction's",
+   "ladder": "and every tag under it on its ladder (TAGS)",
+   "movement": "and every tag of each movement (traqfreq's movements.json) naming one of those",
+   "roaming": "and their neighbours on the genre map: the tags one rung up or down from each, broad tags left out",
+   "count": "the live tracks the line matches at this stop, its followed conditions matching any of the stop's tags, each counted as jimbo-dj counts a style condition (a style score of at least 0.45)",
+   "added": "the live tracks this stop matches that the rooted line doesn't",
+   "preview": "A preview only: jimbo-dj's lines don't follow tags, nothing here is picked or saved, and the Junction's numbers stay as they are. Not part of the P5 gate."
+  }
+ },
+ "/api/playlists/blend-black-metal-doom-metal?limit=50": {
+  "playlist": {
+   "id": 2,
+   "slug": "blend-black-metal-doom-metal",
+   "kind": "blend",
+   "kind_name": "Genre blend",
+   "title": "🎧 Blend: Black Metal / Doom Metal",
+   "name": "Blend: Black Metal / Doom Metal",
+   "summary": "3 tracks. Made by jimbo-dj.",
+   "tracks": 3,
+   "created_at": 1793757600,
+   "updated_at": 1793844210,
+   "stale": false,
+   "stale_in_plex": null,
+   "made_by": "rules",
+   "from": null,
+   "lines": 2,
+   "switches": [
+    {
+     "server": "plex",
+     "on": false,
+     "set_by": "jimbo-dj",
+     "pushed_at": null,
+     "plex_key": null,
+     "error": null,
+     "rule": "saved_playlists.in_plex",
+     "copies": {
+      "count": 3,
+      "of": 3,
+      "missing": 0,
+      "reasons": {},
+      "snapshot": true,
+      "rule": "a live Plex copy: the stored rating key is in jimbo-dj's tracks and not removed",
+      "rows": "server=plex",
+      "missing_rows": "server=plex&missing=true"
+     }
+    },
+    {
+     "server": "jellyfin",
+     "on": false,
+     "set_by": null,
+     "from": "P6",
+     "rule": "jimbo-dj has no Jellyfin playlists; traqfreq keeps this switch from P6",
+     "copies": {
+      "count": 3,
+      "of": 3,
+      "missing": 0,
+      "reasons": {},
+      "snapshot": true,
+      "rule": "the Plex copy is matched to an item in the stored Jellyfin snapshot (P3's matches)",
+      "rows": "server=jellyfin",
+      "missing_rows": "server=jellyfin&missing=true"
+     }
+    },
+    {
+     "server": "navidrome",
+     "on": false,
+     "set_by": null,
+     "from": "P6",
+     "rule": "jimbo-dj has no Navidrome playlists; traqfreq keeps this switch from P6",
+     "copies": {
+      "count": 3,
+      "of": 3,
+      "missing": 0,
+      "reasons": {},
+      "snapshot": true,
+      "rule": "the Plex copy is matched to an item in the stored Navidrome snapshot (P3's matches)",
+      "rows": "server=navidrome",
+      "missing_rows": "server=navidrome&missing=true"
+     }
+    }
+   ]
+  },
+  "stored": {
+   "count": 3,
+   "live": 3,
+   "rows": [
+    {
+     "rating_key": 101,
+     "title": "Westkreuz",
+     "artist": "Kollektiv Nord",
+     "album": "Ringbahn",
+     "year": 2019,
+     "duration_ms": 312000,
+     "live": true
+    },
+    {
+     "rating_key": 103,
+     "title": "Harbour Lights",
+     "artist": "The Paper Lanterns",
+     "album": "Low Tide Radio",
+     "year": 2021,
+     "duration_ms": 221000,
+     "live": true
+    },
+    {
+     "rating_key": 102,
+     "title": "Ostkreuz",
+     "artist": "Kollektiv Nord",
+     "album": "Ringbahn",
+     "year": 2019,
+     "duration_ms": 298000,
+     "live": true
+    }
+   ],
+   "limit": 50,
+   "offset": 0,
+   "rule": "saved_playlists.keys, the tracks jimbo-dj stored, in play order"
+  },
+  "tree": {
+   "n": 20,
+   "per_artist": 3,
+   "shuffle": 0,
+   "branches": [
+    {
+     "id": "a",
+     "share": 12,
+     "match": {
+      "all": [
+       {
+        "f": "style",
+        "v": "black metal"
+       }
+      ]
+     }
+    },
+    {
+     "id": "b",
+     "share": 8,
+     "match": {
+      "all": [
+       {
+        "f": "style",
+        "v": "doom metal"
+       }
+      ]
+     }
+    }
+   ]
+  },
+  "lines": {
+   "n": 20,
+   "per_artist": 3,
+   "shuffle": 0,
+   "name": "black metal + doom metal",
+   "query": "b=style:black+metal~12&b=style:doom+metal~8&n=20",
+   "lines": [
+    {
+     "id": "a",
+     "label": null,
+     "share": 12,
+     "words": "black metal",
+     "count": 2,
+     "match": {
+      "type": "group",
+      "words": "black metal",
+      "path": "",
+      "all": [
+       {
+        "type": "condition",
+        "f": "style",
+        "v": "black metal",
+        "text": "black metal",
+        "count": 2,
+        "path": "all.0"
+       }
+      ],
+      "count": 2
+     },
+     "got": 2,
+     "available": 2,
+     "banned": 0
+    },
+    {
+     "id": "b",
+     "label": null,
+     "share": 8,
+     "words": "doom metal",
+     "count": 2,
+     "match": {
+      "type": "group",
+      "words": "doom metal",
+      "path": "",
+      "all": [
+       {
+        "type": "condition",
+        "f": "style",
+        "v": "doom metal",
+        "text": "doom metal",
+        "count": 2,
+        "path": "all.0"
+       }
+      ],
+      "count": 2
+     },
+     "got": 2,
+     "available": 2,
+     "banned": 0
+    }
+   ],
+   "total": 4,
+   "library": 5,
+   "rules": {
+    "count": "the live tracks a line's conditions match (rules.branch_sets)",
+    "total": "the live tracks any line matches, each once",
+    "share": "the line's whole number of the playlist's n tracks (rules.quotas, largest remainder)",
+    "got": "the tracks the line took: lines take turns toward their shares in order, a track two lines share goes to the first, a song (artist and title) goes in once, at most per_artist each (rules.pick)",
+    "available": "the line's pool: its tracks most played first, up to max(6n, 400), less Never in mixes (rules.rank, make.details)",
+    "banned": "the line's tracks Never in mixes leaves out: a song, an artist or a style (bans.get), for tracks jimbo-dj's index knows, as make.details tests them",
+    "picked": "every track picked, each with the line that took it",
+    "minutes": "the picked tracks' length, rounded to minutes",
+    "order": "pick order: jimbo-dj orders the picked tracks for flow (flow.order), which traqfreq copies in T27"
+   },
+   "summary": "4 tracks: 12 black metal, 8 doom metal. Ordered so key and tempo flow. Made by jimbo-dj.",
+   "picked": {
+    "count": 4,
+    "minutes": 18,
+    "tracks": [
+     {
+      "rating_key": 101,
+      "title": "Westkreuz",
+      "artist": "Kollektiv Nord",
+      "album": "Ringbahn",
+      "year": 2019,
+      "duration_ms": 312000,
+      "line": "a",
+      "live": true,
+      "line_name": "black metal"
+     },
+     {
+      "rating_key": 104,
+      "title": "Static Gulls",
+      "artist": "The Paper Lanterns",
+      "album": "Low Tide Radio",
+      "year": 2021,
+      "duration_ms": 245000,
+      "line": "b",
+      "live": true,
+      "line_name": "doom metal"
+     },
+     {
+      "rating_key": 102,
+      "title": "Ostkreuz",
+      "artist": "Kollektiv Nord",
+      "album": "Ringbahn",
+      "year": 2019,
+      "duration_ms": 298000,
+      "line": "a",
+      "live": true,
+      "line_name": "black metal"
+     },
+     {
+      "rating_key": 103,
+      "title": "Harbour Lights",
+      "artist": "The Paper Lanterns",
+      "album": "Low Tide Radio",
+      "year": 2021,
+      "duration_ms": 221000,
+      "line": "b",
+      "live": true,
+      "line_name": "doom metal"
+     }
+    ],
+    "order": "pick",
+    "seconds": 0.0
+   },
+   "bans": {
+    "songs": 0,
+    "artists": 1,
+    "styles": 0
+   },
+   "preview": {
+    "branches": [
+     {
+      "id": "a",
+      "count": 2,
+      "share": 12,
+      "got": 2,
+      "available": 2
+     },
+     {
+      "id": "b",
+      "count": 2,
+      "share": 8,
+      "got": 2,
+      "available": 2
+     }
+    ],
+    "total": 4,
+    "tracks": [
+     {
+      "rating_key": 101,
+      "branch": "a"
+     },
+     {
+      "rating_key": 104,
+      "branch": "b"
+     },
+     {
+      "rating_key": 102,
+      "branch": "a"
+     },
+     {
+      "rating_key": 103,
+      "branch": "b"
+     }
+    ]
+   },
+   "read_only": "A preview: nothing is saved, and nothing is pushed to Plex, Jellyfin or Navidrome."
+  },
+  "lines_error": null
+ },
+ "/api/junction/reach?b=style%3Ablack+metal%7E12&b=style%3Adoom+metal%7E8&n=20": {
+  "query": "b=style:black+metal~12&b=style:doom+metal~8&n=20",
+  "name": "black metal + doom metal",
+  "stops": [
+   "rooted",
+   "ladder",
+   "movement",
+   "roaming"
+  ],
+  "lines": [
+   {
+    "id": "a",
+    "label": null,
+    "words": "black metal",
+    "follows": [
+     {
+      "path": "all.0",
+      "value": "black metal",
+      "key": "black metal",
+      "name": "Black Metal",
+      "text": "black metal",
+      "movements": []
+     }
+    ],
+    "stops": [
+     {
+      "stop": "rooted",
+      "count": 2,
+      "added": 0,
+      "tags": 1,
+      "new_tags": [
+       {
+        "key": "black metal",
+        "name": "Black Metal",
+        "via": "tag",
+        "follows": "black metal",
+        "in_use": true
+       }
+      ]
+     },
+     {
+      "stop": "ladder",
+      "count": 2,
+      "added": 0,
+      "tags": 2,
+      "new_tags": [
+       {
+        "key": "atmospheric black metal",
+        "name": "Atmospheric Black Metal",
+        "via": "ladder",
+        "follows": "black metal",
+        "in_use": true
+       }
+      ]
+     },
+     {
+      "stop": "movement",
+      "count": 2,
+      "added": 0,
+      "tags": 7,
+      "new_tags": [
+       {
+        "key": "blackgaze",
+        "name": "Blackgaze",
+        "via": "movement",
+        "follows": "black metal",
+        "in_use": false,
+        "movement": "blackgaze",
+        "movement_name": "Blackgaze"
+       },
+       {
+        "key": "post-black metal",
+        "name": "Post-Black Metal",
+        "via": "movement",
+        "follows": "black metal",
+        "in_use": false,
+        "movement": "blackgaze",
+        "movement_name": "Blackgaze"
+       },
+       {
+        "key": "shoegaze",
+        "name": "Shoegaze",
+        "via": "movement",
+        "follows": "black metal",
+        "in_use": false,
+        "movement": "blackgaze",
+        "movement_name": "Blackgaze"
+       },
+       {
+        "key": "post-rock",
+        "name": "Post-Rock",
+        "via": "movement",
+        "follows": "black metal",
+        "in_use": false,
+        "movement": "blackgaze",
+        "movement_name": "Blackgaze"
+       },
+       {
+        "key": "dream pop",
+        "name": "Dream Pop",
+        "via": "movement",
+        "follows": "black metal",
+        "in_use": false,
+        "movement": "blackgaze",
+        "movement_name": "Blackgaze"
+       }
+      ]
+     },
+     {
+      "stop": "roaming",
+      "count": 2,
+      "added": 0,
+      "tags": 7,
+      "new_tags": []
+     }
+    ]
+   },
+   {
+    "id": "b",
+    "label": null,
+    "words": "doom metal",
+    "follows": [
+     {
+      "path": "all.0",
+      "value": "doom metal",
+      "key": "doom metal",
+      "name": "Doom Metal",
+      "text": "doom metal",
+      "movements": [
+       {
+        "id": "doom-drone",
+        "name": "Doom and drone"
+       }
+      ]
+     }
+    ],
+    "stops": [
+     {
+      "stop": "rooted",
+      "count": 2,
+      "added": 0,
+      "tags": 1,
+      "new_tags": [
+       {
+        "key": "doom metal",
+        "name": "Doom Metal",
+        "via": "tag",
+        "follows": "doom metal",
+        "in_use": true
+       }
+      ]
+     },
+     {
+      "stop": "ladder",
+      "count": 2,
+      "added": 0,
+      "tags": 2,
+      "new_tags": [
+       {
+        "key": "death-doom metal",
+        "name": "Death-Doom Metal",
+        "via": "ladder",
+        "follows": "doom metal",
+        "in_use": true
+       }
+      ]
+     },
+     {
+      "stop": "movement",
+      "count": 3,
+      "added": 1,
+      "tags": 7,
+      "new_tags": [
+       {
+        "key": "sludge metal",
+        "name": "Sludge Metal",
+        "via": "movement",
+        "follows": "doom metal",
+        "in_use": false,
+        "movement": "doom-drone",
+        "movement_name": "Doom and drone"
+       },
+       {
+        "key": "drone metal",
+        "name": "Drone Metal",
+        "via": "movement",
+        "follows": "doom metal",
+        "in_use": false,
+        "movement": "doom-drone",
+        "movement_name": "Doom and drone"
+       },
+       {
+        "key": "stoner rock",
+        "name": "Stoner Rock",
+        "via": "movement",
+        "follows": "doom metal",
+        "in_use": false,
+        "movement": "doom-drone",
+        "movement_name": "Doom and drone"
+       },
+       {
+        "key": "drone",
+        "name": "Drone",
+        "via": "movement",
+        "follows": "doom metal",
+        "in_use": false,
+        "movement": "doom-drone",
+        "movement_name": "Doom and drone"
+       },
+       {
+        "key": "dark ambient",
+        "name": "Dark Ambient",
+        "via": "movement",
+        "follows": "doom metal",
+        "in_use": false,
+        "movement": "doom-drone",
+        "movement_name": "Doom and drone"
+       }
+      ]
+     },
+     {
+      "stop": "roaming",
+      "count": 3,
+      "added": 1,
+      "tags": 8,
+      "new_tags": [
+       {
+        "key": "death metal",
+        "name": "Death Metal",
+        "via": "neighbour",
+        "follows": "doom metal",
+        "in_use": true,
+        "of": "Death-Doom Metal"
+       }
+      ]
+     }
+    ]
+   }
+  ],
+  "following": 2,
+  "movements": 5,
+  "rules": {
+   "follows": "a line follows the tag of each style condition it needs (in its all or any parts, not under a not), the condition's value through jimbo-dj's tag rules",
+   "rooted": "the tag alone: the line as it is, its count the Junction's",
+   "ladder": "and every tag under it on its ladder (TAGS)",
+   "movement": "and every tag of each movement (traqfreq's movements.json) naming one of those",
+   "roaming": "and their neighbours on the genre map: the tags one rung up or down from each, broad tags left out",
+   "count": "the live tracks the line matches at this stop, its followed conditions matching any of the stop's tags, each counted as jimbo-dj counts a style condition (a style score of at least 0.45)",
+   "added": "the live tracks this stop matches that the rooted line doesn't",
+   "preview": "A preview only: jimbo-dj's lines don't follow tags, nothing here is picked or saved, and the Junction's numbers stay as they are. Not part of the P5 gate."
+  }
+ },
+ "/api/junction?b=style%3Adoom+metal%7E10&n=20": {
+  "n": 20,
+  "per_artist": 3,
+  "shuffle": 0,
+  "name": "doom metal",
+  "query": "b=style:doom+metal~20&n=20",
+  "lines": [
+   {
+    "id": "a",
+    "label": null,
+    "share": 20,
+    "words": "doom metal",
+    "count": 2,
+    "match": {
+     "type": "group",
+     "words": "doom metal",
+     "path": "",
+     "all": [
+      {
+       "type": "condition",
+       "f": "style",
+       "v": "doom metal",
+       "text": "doom metal",
+       "count": 2,
+       "path": "all.0"
+      }
+     ],
+     "count": 2
+    },
+    "got": 2,
+    "available": 2,
+    "banned": 0
+   }
+  ],
+  "total": 2,
+  "library": 5,
+  "rules": {
+   "count": "the live tracks a line's conditions match (rules.branch_sets)",
+   "total": "the live tracks any line matches, each once",
+   "share": "the line's whole number of the playlist's n tracks (rules.quotas, largest remainder)",
+   "got": "the tracks the line took: lines take turns toward their shares in order, a track two lines share goes to the first, a song (artist and title) goes in once, at most per_artist each (rules.pick)",
+   "available": "the line's pool: its tracks most played first, up to max(6n, 400), less Never in mixes (rules.rank, make.details)",
+   "banned": "the line's tracks Never in mixes leaves out: a song, an artist or a style (bans.get), for tracks jimbo-dj's index knows, as make.details tests them",
+   "picked": "every track picked, each with the line that took it",
+   "minutes": "the picked tracks' length, rounded to minutes",
+   "order": "pick order: jimbo-dj orders the picked tracks for flow (flow.order), which traqfreq copies in T27"
+  },
+  "summary": "2 tracks: the tracks in your library that are doom metal. Ordered so key and tempo flow. Made by jimbo-dj.",
+  "picked": {
+   "count": 2,
+   "minutes": 8,
+   "tracks": [
+    {
+     "rating_key": 104,
+     "title": "Static Gulls",
+     "artist": "The Paper Lanterns",
+     "album": "Low Tide Radio",
+     "year": 2021,
+     "duration_ms": 245000,
+     "line": "a",
+     "live": true,
+     "line_name": "doom metal"
+    },
+    {
+     "rating_key": 103,
+     "title": "Harbour Lights",
+     "artist": "The Paper Lanterns",
+     "album": "Low Tide Radio",
+     "year": 2021,
+     "duration_ms": 221000,
+     "line": "a",
+     "live": true,
+     "line_name": "doom metal"
+    }
+   ],
+   "order": "pick",
+   "seconds": 0.0
+  },
+  "bans": {
+   "songs": 0,
+   "artists": 1,
+   "styles": 0
+  },
+  "preview": {
+   "branches": [
+    {
+     "id": "a",
+     "count": 2,
+     "share": 20,
+     "got": 2,
+     "available": 2
+    }
+   ],
+   "total": 2,
+   "tracks": [
+    {
+     "rating_key": 104,
+     "branch": "a"
+    },
+    {
+     "rating_key": 103,
+     "branch": "a"
+    }
+   ]
+  },
+  "read_only": "A preview: nothing is saved, and nothing is pushed to Plex, Jellyfin or Navidrome."
+ },
+ "/api/junction/reach?b=style%3Adoom+metal%7E10&n=20": {
+  "query": "b=style:doom+metal~20&n=20",
+  "name": "doom metal",
+  "stops": [
+   "rooted",
+   "ladder",
+   "movement",
+   "roaming"
+  ],
+  "lines": [
+   {
+    "id": "a",
+    "label": null,
+    "words": "doom metal",
+    "follows": [
+     {
+      "path": "all.0",
+      "value": "doom metal",
+      "key": "doom metal",
+      "name": "Doom Metal",
+      "text": "doom metal",
+      "movements": [
+       {
+        "id": "doom-drone",
+        "name": "Doom and drone"
+       }
+      ]
+     }
+    ],
+    "stops": [
+     {
+      "stop": "rooted",
+      "count": 2,
+      "added": 0,
+      "tags": 1,
+      "new_tags": [
+       {
+        "key": "doom metal",
+        "name": "Doom Metal",
+        "via": "tag",
+        "follows": "doom metal",
+        "in_use": true
+       }
+      ]
+     },
+     {
+      "stop": "ladder",
+      "count": 2,
+      "added": 0,
+      "tags": 2,
+      "new_tags": [
+       {
+        "key": "death-doom metal",
+        "name": "Death-Doom Metal",
+        "via": "ladder",
+        "follows": "doom metal",
+        "in_use": true
+       }
+      ]
+     },
+     {
+      "stop": "movement",
+      "count": 3,
+      "added": 1,
+      "tags": 7,
+      "new_tags": [
+       {
+        "key": "sludge metal",
+        "name": "Sludge Metal",
+        "via": "movement",
+        "follows": "doom metal",
+        "in_use": false,
+        "movement": "doom-drone",
+        "movement_name": "Doom and drone"
+       },
+       {
+        "key": "drone metal",
+        "name": "Drone Metal",
+        "via": "movement",
+        "follows": "doom metal",
+        "in_use": false,
+        "movement": "doom-drone",
+        "movement_name": "Doom and drone"
+       },
+       {
+        "key": "stoner rock",
+        "name": "Stoner Rock",
+        "via": "movement",
+        "follows": "doom metal",
+        "in_use": false,
+        "movement": "doom-drone",
+        "movement_name": "Doom and drone"
+       },
+       {
+        "key": "drone",
+        "name": "Drone",
+        "via": "movement",
+        "follows": "doom metal",
+        "in_use": false,
+        "movement": "doom-drone",
+        "movement_name": "Doom and drone"
+       },
+       {
+        "key": "dark ambient",
+        "name": "Dark Ambient",
+        "via": "movement",
+        "follows": "doom metal",
+        "in_use": false,
+        "movement": "doom-drone",
+        "movement_name": "Doom and drone"
+       }
+      ]
+     },
+     {
+      "stop": "roaming",
+      "count": 3,
+      "added": 1,
+      "tags": 8,
+      "new_tags": [
+       {
+        "key": "death metal",
+        "name": "Death Metal",
+        "via": "neighbour",
+        "follows": "doom metal",
+        "in_use": true,
+        "of": "Death-Doom Metal"
+       }
+      ]
+     }
+    ]
+   }
+  ],
+  "following": 1,
+  "movements": 5,
+  "rules": {
+   "follows": "a line follows the tag of each style condition it needs (in its all or any parts, not under a not), the condition's value through jimbo-dj's tag rules",
+   "rooted": "the tag alone: the line as it is, its count the Junction's",
+   "ladder": "and every tag under it on its ladder (TAGS)",
+   "movement": "and every tag of each movement (traqfreq's movements.json) naming one of those",
+   "roaming": "and their neighbours on the genre map: the tags one rung up or down from each, broad tags left out",
+   "count": "the live tracks the line matches at this stop, its followed conditions matching any of the stop's tags, each counted as jimbo-dj counts a style condition (a style score of at least 0.45)",
+   "added": "the live tracks this stop matches that the rooted line doesn't",
+   "preview": "A preview only: jimbo-dj's lines don't follow tags, nothing here is picked or saved, and the Junction's numbers stay as they are. Not part of the P5 gate."
+  }
+ },
+ "/api/junction/reach/rows?b=style%3Adoom+metal%7E10&n=20&line=a&stop=movement&which=added&limit=200": {
+  "line": "a",
+  "stop": "movement",
+  "which": "added",
+  "words": "doom metal",
+  "count": 1,
+  "rows": [
+   {
+    "rating_key": 101,
+    "title": "Westkreuz",
+    "artist": "Kollektiv Nord",
+    "album": "Ringbahn",
+    "year": 2019,
+    "duration_ms": 312000,
+    "live": true
+   }
+  ],
+  "limit": 200,
+  "offset": 0,
+  "rule": "and every tag of each movement (traqfreq's movements.json) naming one of those; the live tracks this stop matches that the rooted line doesn't, in album order"
+ },
+ "_doom": "b=style%3Adoom+metal%7E10&n=20"
 }

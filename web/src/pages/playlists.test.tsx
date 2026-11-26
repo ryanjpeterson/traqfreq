@@ -2,13 +2,15 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { cleanup, render, screen, within } from '@testing-library/react';
 import { Shell } from '../App';
 import { parseRoute } from '../app/route';
-import { copiesApi, copiesHref, junctionApi, rowsApi, rowsHref, sourceRowsHref, treeQuery } from '../app/playlists';
+import { copiesApi, copiesHref, junctionApi, reachApi, reachRowsApi, reachRowsHref, rowsApi, rowsHref, sourceRowsHref, treeQuery } from '../app/playlists';
 import ANSWERS from './playlists.answers.json';
 
 // T24: traqfreq's own answers on the fixture (scripts/make_fixture.py SAVED, MIXES, CLUSTERS), generated from its API.
 // T25: with the invented Jellyfin and Navidrome snapshots loaded (P3's matches), and the Junction's answers.
 const A = ANSWERS as Record<string, unknown>;
 const TREE = A._tree as string;
+/** T26: a line following Doom Metal (style:doom metal), in the web's URL form. */
+const DOOM = A._doom as string;
 /** A line's card (its conditions), not the Junction's lever of the same name. */
 const card = (name: string) => screen.getAllByText(name).map((x) => x.closest('.kit-card')).find(Boolean) as HTMLElement;
 const mods = (on: string[]) => ({ modules: ['L', 'H', 'T', 'D', 'M', 'F', 'S'].map((id) => ({ id, on: on.includes(id), core: id === 'L' || id === 'S' })) });
@@ -179,5 +181,54 @@ describe('T25 the Junction', () => {
   it('explains an empty Junction', async () => {
     open('/library/junction');
     expect(await screen.findByText(/No lines in the address yet/)).toBeTruthy();
+  });
+});
+
+describe('T26 rooted to roaming', () => {
+  it('routes the rows behind a stop', () => {
+    expect(parseRoute('/library/junction/reach')).toEqual({ page: 'module', module: 'L', sub: 'reachRows' });
+    expect(reachApi('?b=style:punk&ref=x')).toBe('/api/junction/reach?b=style%3Apunk');
+    expect(reachRowsHref('b=style:punk', 'a', 'ladder')).toBe('/library/junction/reach?b=style%3Apunk&line=a&stop=ladder');
+    expect(reachRowsHref('b=style:punk', 'a', 'roaming', 'added', 'x')).toBe('/library/junction/reach?b=style%3Apunk&ref=x&line=a&stop=roaming&which=added');
+    expect(reachRowsApi('?b=style:punk&ref=x&line=a&stop=roaming&which=added')).toBe('/api/junction/reach/rows?b=style%3Apunk&line=a&stop=roaming&which=added&limit=200');
+  });
+
+  it('shows a line following Doom Metal: four stops, rooted now, every number opening its rows', async () => {
+    const f = open(`/library/junction?${DOOM}`);
+    expect(await screen.findByRole('heading', { name: 'Rooted to roaming' })).toBeTruthy();
+    expect(await screen.findByText('Follows Doom Metal')).toBeTruthy();
+    expect(screen.getByText('Named by Doom and drone')).toBeTruthy();
+    // The drawing's summary for screen readers (L6).
+    expect(screen.getByText(/Line a is rooted now, at 2 tracks\. Rooted: 2 tracks, 0 tracks more; Ladder: 2 tracks, 0 tracks more; Movement: 3 tracks, 1 track more; Roaming: 3 tracks, 1 track more/)).toBeTruthy();
+    const move = within(screen.getByRole('list', { name: 'Movement, Line a' }));
+    expect(move.getByRole('link', { name: '3 tracks, Matches, Movement, Line a' }).getAttribute('href')).toBe(`/library/junction/reach?${DOOM}&line=a&stop=movement`);
+    expect(move.getByRole('link', { name: '1 track, More than rooted, Movement, Line a' }).getAttribute('href')).toBe(`/library/junction/reach?${DOOM}&line=a&stop=movement&which=added`);
+    expect(screen.getByText(/Takes in Death-Doom Metal \(under it on the ladder\)/)).toBeTruthy();
+    expect(screen.getByText(/Dark Ambient \(in Doom and drone, not on any album yet\)/)).toBeTruthy();
+    expect(screen.getByText(/Death Metal \(next to Death-Doom Metal on the map\)/)).toBeTruthy();
+    expect(screen.queryAllByRole('slider')).toHaveLength(0); // read-only
+    expect(screen.getByText(/none of this is part of the P5 gate/)).toBeTruthy();
+    expect(f.mock.calls.every(([, init]) => !init?.method || init.method === 'GET')).toBe(true);
+  });
+
+  it('says when no line follows a tag, and follows the blend\'s styles on its page', async () => {
+    open('/library/playlists/night-lines');
+    expect(await screen.findByText(/No line here follows a tag/)).toBeTruthy();
+    cleanup();
+    open('/library/playlists/blend-black-metal-doom-metal');
+    expect(await screen.findByText('Follows Black Metal')).toBeTruthy();
+    expect(screen.getByText('Follows Doom Metal')).toBeTruthy();
+    expect(screen.getByText(/Takes in Blackgaze \(in Blackgaze, not on any album yet\)/)).toBeTruthy();
+    const b = within(screen.getByRole('list', { name: 'Roaming, Line b' }));
+    expect(b.getByRole('link', { name: '3 tracks, Matches, Roaming, Line b' }).getAttribute('href'))
+      .toBe('/library/junction/reach?b=style%3Ablack+metal%7E12&b=style%3Adoom+metal%7E8&n=20&ref=blend-black-metal-doom-metal&line=b&stop=roaming');
+  });
+
+  it('opens the tracks a stop adds, with Back to the playlist or the Junction', async () => {
+    open(`/library/junction/reach?${DOOM}&line=a&stop=movement&which=added`);
+    expect(await screen.findByRole('heading', { level: 1, name: 'Tracks a stop adds' })).toBeTruthy();
+    expect(screen.getAllByRole('link').filter((x) => x.getAttribute('href')?.startsWith('/library/track/')).map((x) => x.textContent)).toEqual(['Westkreuz']);
+    expect(screen.getByText('Matched at Movement.')).toBeTruthy();
+    expect(screen.getByRole('link', { name: 'Back to the Junction' }).getAttribute('href')).toBe(`/library/junction?${DOOM}`);
   });
 });
