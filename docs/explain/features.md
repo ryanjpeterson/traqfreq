@@ -84,6 +84,9 @@ Read-only views of jimbo-dj's data in the Berlin · Gelb look, each number with 
 | The P5 gate | "Same tracks as jimbo-dj": ten trees (the saved ones with a tree, then `p5_trees.json`), lines and tracks in order against jimbo-dj's preview, and the saved list against its `GET /api/saved`. The card on LIBRARY and SETUP shows traqfreq's side (each tree's numbers opening their rows, the kinds of condition they use); `scripts/p5_gate.py` asks jimbo-dj | `GET /api/playlists/compare`, `scripts/p5_gate.py`, `src/traqfreq/playlists_gate.py`, `src/traqfreq/playlists_compare.py` | new |
 | Rooted to roaming | New in traqfreq, a preview outside the gate: each line following the tag of a style condition it needs, with a read-only slider of four stops (rooted: the tag alone; ladder: the tags under it; movement: the tags of each movement naming one; roaming: their neighbours on the genre map, broad tags left out), each stop's count, what it adds and the tags it takes in, every count opening its rows. The Junction's numbers don't move | `/library/junction?b=…`, `/library/junction/reach`, `GET /api/junction/reach`, `GET /api/junction/reach/rows`, `src/traqfreq/reach.py` | new |
 
+### Cut-overs (P6)
+- `traqfreq-cutover status | copy <name> | rollback <name> --reason "…"` (T29): the one-time copy of a cut-over's jimbo-dj tables into `library.sqlite`, checked by count and row by row before it commits; rollback puts them aside and reads go back to jimbo-dj's copy. Every step logged with its reason. `GET /api/cutovers` shows each cut-over's state, check and stamp. Registered so far: `plex` (Plex scan and play log).
+
 ### Throughout
 
 | Feature | What it does | Where | Status |

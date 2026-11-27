@@ -20,7 +20,7 @@
       { "name": "Tailscale", "kind": "self-hosted", "direction": "read", "required": true, "what": "the only way in" }
     ],
     "standards": ["jimbo-deploy", "jimbo-explain"],
-    "now": ["P5 PLAYLISTS, the Junction preview, passed its gate on live data (2026-11-26): 10 of 10 trees with the same lines and tracks in the same order as jimbo-dj, 77 of 77 saved playlists the same", "T28 added the Ask box (words to a line by sound, through jimbo-dj's CLAP text server; a local Ollama when it's on) and the gate script, card and compare endpoint", "Next: P6 cut-overs, one writer at a time"]
+    "now": ["P6 cut-overs started (T29, 2026-11-27): the spec (order: Plex scan and play log, history imports, analyzer, playlists, Fix in Plex, jobs and log, backups), traqfreq's own library.sqlite with the one-time copy, its count check, the reading connection and rollback", "P5 PLAYLISTS passed its gate on live data (2026-11-26); traqfreq shows everything jimbo-dj shows, read-only", "Next: T30, the Plex sync and the watcher"]
   },
   "files": {}
 }

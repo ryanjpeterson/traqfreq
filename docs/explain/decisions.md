@@ -2,6 +2,13 @@
 
 ## Log
 
+### 2026-11-27 — P6: tables move whole into library.sqlite, read through views
+
+- **Decision:** each cut-over owns whole jimbo-dj tables (and some `meta` keys), copied once into `TRAQFREQ_DATA_DIR/library.sqlite` with jimbo-dj's own `CREATE` statements and checked in the same transaction: row counts, no row different either way, jimbo-dj's numbers, the owned `meta` keys. Pages read through one connection, jimbo-dj's database read-only with `library.sqlite` attached read-only and a TEMP VIEW per owned table. The order is Ryan's: Plex scan and play log, history imports, analyzer, playlists, Fix in Plex, jobs and log, backups. jimbodj-text and the native analyzer stay as they are.
+- **Why:** jimbo-dj writes one table from several places (its nightly sync also imports Plex plays and Last.fm and starts the MusicBrainz lookups; `listens` is one deduped table for every source), so only whole tables keep one writer. The same schema keeps every vendored reader working unchanged; a view in `temp` shadows jimbo-dj's table without touching the 45 places that check `sqlite_master`. In jimbo-dj, switching off comes before the copy, so no write falls between them.
+- **Alternatives:** a new schema of traqfreq's own (every reader rewritten at once); splitting `listens` by source (dedupe crosses sources); moving the analyzer and text server into traqfreq (about two more sessions, nothing gained).
+- **Consequences:** a second file to back up (cut-over 7). Until the analyzer and playlists cut-overs, jimbo-dj's frozen library means new music isn't analysed or in its mixes. A rollback renames the tables aside and reads go back to jimbo-dj's copy at once.
+
 ### 2026-11-26 — The Ask box makes a line from the nearest tracks' styles
 
 - **Decision:** words become a line three ways (`src/traqfreq/ask.py`). Typed `facet:value` parts are used as they are. The other words go to jimbo-dj's CLAP text server and are compared with every analysed track's CLAP vector, as jimbo-dj's prompt Radio does; up to three styles that cover the 100 nearest tracks become the line, an OR. A local Ollama, only when set, reads the words into the library's own styles, moods and decades and drops the rest.
