@@ -2,6 +2,20 @@
 
 ## Log
 
+### 2026-11-27 — The Plex sync stays jimbo-dj's code, behind traqfreq's checks
+
+- **Decision:** jimbo-dj's sync and watcher are vendored unchanged; only plexapi's `PlexServer` (a GET-only httpx stand-in with the same attributes) and the db and config modules are stand-ins. `db.connect` opens only `library.sqlite` and refuses until the `plex` cut-over is owned. `plexsync.run` adds the rest: Plex settings from traqfreq's env, one sync at a time, a check that `TRAQFREQ_PLEX_PATH_MAP` gives every stored track jimbo-dj's local path, and a `runs` row per sync. The watcher is off unless `TRAQFREQ_WATCH=on`. The switch-off check compares jimbo-dj's side with the copy's stamp and names new rows, never merging them.
+- **Why:** the same code writes the same rows, so the P2 numbers move only by what's new in Plex. A wrong path map would silently rewrite 54,000 `local_path`s that the analyzer and file tags read. Refusing in two places (the wrapper and `db.connect`) means neither the command nor the watcher can write before the copy.
+- **Alternatives:** plexapi as a dependency (more surface than GET, a second way to reach Plex); rewriting the sync (risks drift from jimbo-dj's rows).
+- **Consequences:** `watch_fingerprint` joins the `plex` cut-over's meta keys. Rows jimbo-dj writes after the copy are shown on SETUP and read again from their source by hand.
+
+### 2026-11-27 — P6: tables move whole into library.sqlite, read through views
+
+- **Decision:** each cut-over owns whole jimbo-dj tables (and some `meta` keys), copied once into `TRAQFREQ_DATA_DIR/library.sqlite` with jimbo-dj's own `CREATE` statements and checked in the same transaction: row counts, no row different either way, jimbo-dj's numbers, the owned `meta` keys. Pages read through one connection, jimbo-dj's database read-only with `library.sqlite` attached read-only and a TEMP VIEW per owned table. The order is Ryan's: Plex scan and play log, history imports, analyzer, playlists, Fix in Plex, jobs and log, backups. jimbodj-text and the native analyzer stay as they are.
+- **Why:** jimbo-dj writes one table from several places (its nightly sync also imports Plex plays and Last.fm and starts the MusicBrainz lookups; `listens` is one deduped table for every source), so only whole tables keep one writer. The same schema keeps every vendored reader working unchanged; a view in `temp` shadows jimbo-dj's table without touching the 45 places that check `sqlite_master`. In jimbo-dj, switching off comes before the copy, so no write falls between them.
+- **Alternatives:** a new schema of traqfreq's own (every reader rewritten at once); splitting `listens` by source (dedupe crosses sources); moving the analyzer and text server into traqfreq (about two more sessions, nothing gained).
+- **Consequences:** a second file to back up (cut-over 7). Until the analyzer and playlists cut-overs, jimbo-dj's frozen library means new music isn't analysed or in its mixes. A rollback renames the tables aside and reads go back to jimbo-dj's copy at once.
+
 ### 2026-11-26 — The Ask box makes a line from the nearest tracks' styles
 
 - **Decision:** words become a line three ways (`src/traqfreq/ask.py`). Typed `facet:value` parts are used as they are. The other words go to jimbo-dj's CLAP text server and are compared with every analysed track's CLAP vector, as jimbo-dj's prompt Radio does; up to three styles that cover the 100 nearest tracks become the line, an OR. A local Ollama, only when set, reads the words into the library's own styles, moods and decades and drops the rest.

@@ -1,7 +1,7 @@
 {
   "version": "0.1.0",
   "docs": "docs/explain",
-  "synced": { "commit": "c70988c", "date": "2026-11-27" },
+  "synced": { "commit": "9f4e710", "date": "2026-11-27" },
   "facts": {
     "name": "traqfreq",
     "tagline": "jimbo-dj's successor, built beside it: listening history, library, servers, tags and playlists, every number showing its rows",
@@ -12,7 +12,7 @@
     "stack": ["Python", "FastAPI", "React", "TypeScript", "SQLite"],
     "integrations": [
       { "name": "jimbo-dj", "kind": "jimbo", "direction": "read", "required": true, "what": "its database: library, listening history, stored stats" },
-      { "name": "Plex", "kind": "self-hosted", "direction": "read", "required": true, "what": "the library and Plex plays, through jimbo-dj's sync" },
+      { "name": "Plex", "kind": "self-hosted", "direction": "read", "required": true, "what": "the library and Plex plays through jimbo-dj's sync; from T30 traqfreq's own sync and watcher (GET only), live from cut-over 1" },
       { "name": "Jellyfin", "kind": "self-hosted", "direction": "read", "required": false, "what": "one song across servers (P3)" },
       { "name": "Navidrome", "kind": "self-hosted", "direction": "read", "required": false, "what": "one song across servers (P3)" },
       { "name": "jimbodj-text", "kind": "jimbo", "direction": "read", "required": false, "what": "the Ask box (T28): jimbo-dj's CLAP text server turns words into a vector" },
@@ -20,7 +20,7 @@
       { "name": "Tailscale", "kind": "self-hosted", "direction": "read", "required": true, "what": "the only way in" }
     ],
     "standards": ["jimbo-deploy", "jimbo-explain"],
-    "now": ["P5 PLAYLISTS, the Junction preview, passed its gate on live data (2026-11-26): 10 of 10 trees with the same lines and tracks in the same order as jimbo-dj, 77 of 77 saved playlists the same", "T28 added the Ask box (words to a line by sound, through jimbo-dj's CLAP text server; a local Ollama when it's on) and the gate script, card and compare endpoint", "Next: P6 cut-overs, one writer at a time"]
+    "now": ["P6 cut-overs (T29–T30 done, 2026-11-27): traqfreq's own library.sqlite with the one-time copy, its count check, the reading connection and rollback; the Plex sync and watcher (jimbo-dj's, vendored, writing only once plex is owned), the runs log and the switch-off check on SETUP", "P5 PLAYLISTS passed its gate on live data (2026-11-26); traqfreq shows everything jimbo-dj shows, read-only", "Next: T31, the play log and MusicBrainz, then the deploy: jimbo-dj's sync off and traqfreq-cutover copy plex"]
   },
   "files": {}
 }

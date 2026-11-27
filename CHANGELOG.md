@@ -3,6 +3,14 @@
 All notable changes to this project are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions are CalVer (`YYYY.MM.N`).
 
 ## [Unreleased]
+### Added
+- T30: traqfreq's Plex sync and watcher (`src/traqfreq/plexsync.py`): jimbo-dj's `library.sync`, `plex.py`, `metadata.py` and `watcher.py` vendored unchanged at 1d8a7cb, with a GET-only stand-in for plexapi's `PlexServer` and stand-ins for jimbo-dj's db and config. They write only `library.sqlite` and only once the `plex` cut-over is owned; before that, and without `TRAQFREQ_PLEX_URL`/`TRAQFREQ_PLEX_TOKEN`, or when `TRAQFREQ_PLEX_PATH_MAP` wouldn't give jimbo-dj's local paths, the sync refuses with the reason. The watcher is off unless `TRAQFREQ_WATCH=on`. `traqfreq-cutover sync --reason …`.
+- T30: the `runs` table in `library.sqlite`: every sync with when, how long, ok or not, its counts, note, reason and undo.
+- T30: the switch-off check. `GET /api/cutovers` compares jimbo-dj's side now with each owned cut-over's stamp (rows per table, highest listen id, last sync, newest import) and names the rows new there; it also carries the newest runs, the watcher's state and the Plex settings (never the token). The Cut-overs card on SETUP shows all of it.
+- T29: the P6 spec (`docs/specs/t29-cutovers.md`): how jimbo-dj writes today (read at 1d8a7cb) and, for each of seven cut-overs in Ryan's order (Plex scan and play log, history imports, analyzer, playlists, Fix in Plex, jobs and log, backups), what traqfreq holds, the one-time copy and its check, what it writes, what is switched off in jimbo-dj and how to switch it back, the rollback and the gate. Sessions T29–T44.
+- T29: traqfreq's own library database (`TRAQFREQ_DATA_DIR/library.sqlite`, `src/traqfreq/own.py`): the cut-over registry (`plex` so far), the one-time copy of a cut-over's jimbo-dj tables with jimbo-dj's schema, checked in the same transaction (row counts, every row both ways, jimbo-dj's numbers, the owned meta keys) and rolled back whole if any check fails; rollback that puts the tables aside; every step in `cutover_log` with its reason. `traqfreq-cutover status | copy | rollback`, `GET /api/cutovers`.
+### Changed
+- T29: every page reads through one connection (`own.reader`): jimbo-dj's database read-only with traqfreq's copy of each owned table in front of it (attached read-only, a TEMP VIEW per table). Before any copy it is the same read-only connection as before.
 ### Changed
 - Deploy: jimbo-deploy's current standard. Sessions edit and commit in `~/Development/traqfreq` (`deploy.json` `local`), push with `push.sh` to GitHub and Forgejo together; Forgejo is a normal repo, no longer a pull mirror; the server checkout only pulls and deploys.
 - T28's branch brought up to that standard: `main` merged in and every test suite re-run green in the laptop clone (Python 3.12 through uv).

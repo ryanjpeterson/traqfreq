@@ -10,6 +10,7 @@ import { ServersCard } from './Servers';
 import { ServersGateCard } from './ServersGate';
 import { PlaylistsGateCard } from './PlaylistsGate';
 import { TagsGateCard } from './TagsGenre';
+import { CutoversCard } from './Cutovers';
 
 /** SETUP, read-only: what traqfreq can read from jimbo-dj's database, and which modules are on. */
 export function Setup({ modules, navigate }: { modules: ModuleSwitch[]; navigate: (href: string) => void }) {
@@ -56,6 +57,7 @@ export function Setup({ modules, navigate }: { modules: ModuleSwitch[]; navigate
             )}
           </Card>
 
+          <CutoversCard />
           <SetupLibraryCompare navigate={navigate} />
           <ServersCard navigate={navigate} />
           <ServersGateCard navigate={navigate} />

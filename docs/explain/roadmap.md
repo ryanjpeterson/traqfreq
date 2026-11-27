@@ -4,21 +4,18 @@ The phases and sessions are planned in [docs/specs/README.md](../specs/README.md
 
 ## Now
 
-- **P5 PLAYLISTS, the Junction preview, T24–T28** ([spec](../specs/t24-playlists.md)). Done: **the P5 gate passed on live data on 2026-11-26.**
-  - T24 done: every saved playlist with its Plex, Jellyfin and Navidrome switches (read-only), and the lines of the ones with a tree. Each line's AND, OR and NOT conditions are counted with jimbo-dj's vendored rules, each count opening its rows.
-  - T25 done: the Junction. jimbo-dj's picking vendored (shares, the cap per artist, line order, shuffle, Never in mixes); what any tree picks now, with each line's count, share, got and available, at `/library/junction?b=…`; the drawing with its list view and read-only levers; each switch with how many tracks have a copy on its server.
-  - T26 done: rooted to roaming. A line follows the tag of each style condition it needs; a read-only slider shows four stops (the tag alone, its ladder, its movement, its neighbours on the genre map), each counted with jimbo-dj's style rule and opening its rows. New in traqfreq, a preview, not in the gate.
-  - T27 done: flow order and why this track. jimbo-dj's `flow.py` vendored, so the picked tracks come in its play order and gate check 2 covers the order as well as the set; every picked track shows its line's conditions as true or false and its transition from the track before.
-  - T28 done: the Ask box (words to a line: typed parts, by sound through jimbo-dj's CLAP text server, by a local Ollama when it's on) and the gate "Same tracks as jimbo-dj": `scripts/p5_gate.py`, `GET /api/playlists/compare`, `p5_trees.json`, check 3 (the saved list) and the gate card on LIBRARY and SETUP. Live: 10 of 10 trees, 77 of 77 saved playlists.
-  - With P5, traqfreq shows everything jimbo-dj shows, read-only.
+- **P6 cut-overs, one writer at a time, T29–T44** ([spec](../specs/t29-cutovers.md)). Order (Ryan, 2026-11-27): Plex scan and play log, history imports, analyzer, playlists, Fix in Plex, jobs and log, backups. Each: switched off in jimbo-dj, copied once into traqfreq's `library.sqlite` and checked by count, then read and written there; gate a week with jimbo-dj's switch off and nothing missed.
+  - T29 done: the spec; `library.sqlite`, the cut-over registry, the reading connection (traqfreq's copy in front of jimbo-dj's database, every reader unchanged), the one-time copy with its count check, rollback, `traqfreq-cutover`, `GET /api/cutovers`. On the fixture; nothing copied live yet.
+  - T30 done: the Plex sync and the watcher (jimbo-dj's, vendored; GET only; writing only once `plex` is owned), the `runs` log, the switch-off check and the Cut-overs card on SETUP. On the fixture with a Plex stand-in; nothing copied or switched off live.
+- **P5 PLAYLISTS, the Junction preview, T24–T28** ([spec](../specs/t24-playlists.md)): done, gate passed on live data 2026-11-26. With P5, traqfreq shows everything jimbo-dj shows, read-only.
 
 ## Next
 
-1. **P6 cut-overs**: one writer at a time, starting where Ryan chooses. The playlists cut-over pushes each playlist and mix to the servers its switches name.
+1. **T31**: the play log (Last.fm API, Plex history) and MusicBrainz; deploy, copy, jimbo-dj's sync job off; the first cut-over's gate. Also the nightly sync and imports (until cut-over 6's scheduler), and setting `TRAQFREQ_PLEX_*` in the mini's `.env`.
 
 ## Later
 
-- **P6 cut-overs** (~15 sessions): imports, scans, analyzer, playlists, Fix in Plex, jobs and backups move from jimbo-dj one at a time, each switched off there.
+- **P6, cut-overs 2–7** (T32–T44): history uploads and ListenBrainz, analyzer, playlists (three switches pushing), Fix in Plex, jobs and log, backups.
 - **P7 new modules** (~30): DISCOVER, MIXES, FETCH, the language loop.
 - **P8** retire jimbo-dj; the other nine design directions ship as skins.
 
