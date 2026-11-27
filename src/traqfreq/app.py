@@ -10,7 +10,7 @@ from datetime import datetime
 from urllib.parse import urlencode
 from zoneinfo import ZoneInfo
 
-from . import __version__, ask, counted, entities, history, identity, junction, legacy, library, library_gate, matching, periods, playlists, playlists_compare, proposals, reach, reading, servers, servers_gate, store, tagpages, tags, tags_gate
+from . import __version__, ask, counted, entities, history, identity, junction, legacy, library, library_gate, matching, own, periods, playlists, playlists_compare, proposals, reach, reading, servers, servers_gate, store, tagpages, tags, tags_gate
 from .settings import CORE, MODULES, Settings
 
 
@@ -37,7 +37,7 @@ def create_app(settings: Settings | None = None, server_transport=None, ask_tran
         if settings.legacy_db is None:
             raise HTTPException(503, "TRAQFREQ_LEGACY_DB is not set")
         try:
-            conn = legacy.connect(settings.legacy_db)
+            conn = own.reader(settings.legacy_db, settings.data_dir)
         except legacy.LegacyDBMissing:
             raise HTTPException(503, "legacy DB not found")
         try:
@@ -48,6 +48,13 @@ def create_app(settings: Settings | None = None, server_transport=None, ask_tran
     @app.get("/api/legacy/summary")
     def legacy_summary() -> dict:
         return read_legacy(legacy.summary)
+
+    @app.get("/api/cutovers")
+    def cutovers() -> dict:
+        """P6: each cut-over's state (not copied, owned, rolled back), its copy check and stamp, and the newest
+        cut-over log entries, from traqfreq's library.sqlite. Read-only: copies and rollbacks are run with the
+        traqfreq-cutover command at deploy."""
+        return own.status(settings.data_dir)
 
     @app.get("/api/legacy/activity")
     def legacy_activity() -> dict:
@@ -304,7 +311,7 @@ def create_app(settings: Settings | None = None, server_transport=None, ask_tran
         conn = None
         if settings.legacy_db is not None:
             try:
-                conn = legacy.connect(settings.legacy_db)
+                conn = own.reader(settings.legacy_db, settings.data_dir)
             except legacy.LegacyDBMissing:
                 conn = None
         try:
