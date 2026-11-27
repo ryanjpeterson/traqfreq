@@ -116,7 +116,7 @@ addEventListener('resize', fit); fit();
 <div class="frame"><section id="status">
 <div class="bar"></div>
 <p class="barlabel">Status</p>
-<div class="barcode"><p>29 / 44</p></div>
+<div class="barcode"><p>30 / 44</p></div>
 <h2 class="head">Where the build stands</h2>
 <table class="tbl">
 <tr class="hd"><th style="width:8%">Phase</th><th style="width:30%">What</th><th style="width:12%">Sessions</th><th style="width:10%">Done</th><th style="width:14%">Status</th><th style="width:26%">Gate</th></tr>
@@ -126,11 +126,11 @@ addEventListener('resize', fit); fit();
 <tr><td>P3</td><td>SERVERS: identity, Jellyfin, Navidrome</td><td>7</td><td>7</td><td>Done</td><td>One song, three servers</td></tr>
 <tr><td>P4</td><td>TAGS, read-only</td><td>4</td><td>4</td><td>Done</td><td>Ladder and per-track tags right</td></tr>
 <tr><td>P5</td><td>PLAYLISTS: Junction preview</td><td>5</td><td>5</td><td>Done</td><td>Same tracks as jimbo-dj</td></tr>
-<tr class="now"><td>P6</td><td>Cut-overs, one writer at a time</td><td>16</td><td>1</td><td>In progress</td><td>Each off in jimbo-dj a week, nothing missed</td></tr>
+<tr class="now"><td>P6</td><td>Cut-overs, one writer at a time</td><td>16</td><td>2</td><td>In progress</td><td>Each off in jimbo-dj a week, nothing missed</td></tr>
 <tr><td>P7</td><td>DISCOVER, MIXES, FETCH, language loop</td><td>~30</td><td>0</td><td>Not started</td><td>Per module</td></tr>
 <tr><td>P8</td><td>Retire jimbo-dj; skins</td><td>~5</td><td>0</td><td>Not started</td><td>jimbo-dj off for a week</td></tr>
 </table>
-<p class="small">P0–P5 (28 sessions) are done: a full read-only traqfreq beside jimbo-dj, every gate passed on live data. P6 has begun (T29: the spec and traqfreq’s own library database). Each session is one 5-hour usage window ending in a pull request.</p>
+<p class="small">P0–P5 (28 sessions) are done: a full read-only traqfreq beside jimbo-dj, every gate passed on live data. P6 is under way (T29: the spec and traqfreq’s own library database; T30: the Plex sync, the watcher and the switch-off check). Each session is one 5-hour usage window ending in a pull request.</p>
 <div class="foot"><p class="label">traqfreq · build phases</p><p class="pg"></p></div>
 <aside>This is the slide that changes most: after each session, its phase’s Done count goes up and the status moves from Not started to In progress to Done. The counter in the yellow bar is sessions done out of the 44 through P6, the end of the cut-overs.</aside>
 </section></div>
@@ -306,7 +306,7 @@ addEventListener('resize', fit); fit();
 <div class="row"><div class="badge"><p>P6</p></div><h2 class="head">Writes move over, one at a time</h2></div>
 <table class="tbl">
 <tr class="hd"><th style="width:24%">Cut-over</th><th style="width:12%">Sessions</th><th style="width:40%">What moves</th><th style="width:24%">Switched off in jimbo-dj</th></tr>
-<tr class="now"><td>1 Plex scan and play log</td><td>T29–T31</td><td>Sync, watcher, Plex plays, Last.fm, MusicBrainz; T29 done: spec, library.sqlite, the copy and its check</td><td>Sync job, watcher, MusicBrainz</td></tr>
+<tr class="now"><td>1 Plex scan and play log</td><td>T29–T31</td><td>Sync, watcher, Plex plays, Last.fm, MusicBrainz; T29 done: spec, library.sqlite, the copy and its check; T30 done: Plex sync and watcher (vendored, GET only), runs log, switch-off check on SETUP</td><td>Sync job, watcher, MusicBrainz</td></tr>
 <tr><td>2 History imports</td><td>T32–T34</td><td>Spotify, Apple Music, Last.fm uploads with undo; ListenBrainz added</td><td>Uploads (stop at 1)</td></tr>
 <tr><td>3 Analyzer</td><td>T35–T36</td><td>The queue and results; the Mac’s agent points at :4492</td><td>Analyzer agent target</td></tr>
 <tr><td>4 Playlists</td><td>T37–T39</td><td>Save, push to Plex, Jellyfin, Navidrome, Keep fresh, mixes; NaviBeat first</td><td>Playlist jobs and push</td></tr>
@@ -356,7 +356,8 @@ addEventListener('resize', fit); fit();
 <h2 class="head">What happened, newest first</h2>
 <table class="tbl">
 <tr class="hd"><th style="width:16%">Date</th><th style="width:16%">Session</th><th style="width:68%">What</th></tr>
-<tr class="now"><td>Next</td><td>T30</td><td>The Plex sync and the watcher into library.sqlite, the runs log, the switch-off check on SETUP; then T31: play log, MusicBrainz, the first live copy</td></tr>
+<tr class="now"><td>Next</td><td>T31</td><td>The play log (Last.fm API, Plex history) and MusicBrainz after each sync, a nightly run, the gate script; then the deploy: jimbo-dj’s sync off, the first live copy</td></tr>
+<tr><td>2026-11-27</td><td>T30</td><td>PR #36 on branch claude/t30-plex-sync: jimbo-dj’s Plex sync and watcher vendored (GET only, writing library.sqlite only once plex is owned, refusing a path map that would move jimbo-dj’s paths); the runs log; the switch-off check naming rows new on jimbo-dj’s side, on SETUP’s Cut-overs card; on the fixture, nothing live; 309 API and 240 web tests</td></tr>
 <tr><td>2026-11-27</td><td>T29</td><td>Branch claude/t29-cutovers: the P6 spec (seven cut-overs, T29–T44, order confirmed by Ryan); library.sqlite, the reading connection, the one-time copy with its count check, rollback, traqfreq-cutover; on the fixture, nothing copied live; 297 API and 235 web tests</td></tr>
 <tr><td>2026-11-26</td><td>P5 gate</td><td>Passed on live data: 10 of 10 trees (8 saved, 2 fixed) with the same lines and the same tracks in the same flow order as jimbo-dj’s preview; 77 of 77 saved playlists the same</td></tr>
 <tr><td>2026-11-26</td><td>T28</td><td>PR #32 on branch claude/t28-ask-gate: the Ask box (typed parts, by sound through jimbo-dj’s CLAP text server, a local Ollama when it’s on); p5_trees.json, check 3, /api/playlists/compare, p5_gate.py and the gate card on LIBRARY and SETUP; 286 API and 235 web tests</td></tr>

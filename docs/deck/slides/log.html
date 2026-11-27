@@ -4,7 +4,8 @@
 <h2 class="head">What happened, newest first</h2>
 <table class="tbl">
 <tr class="hd"><th style="width:16%">Date</th><th style="width:16%">Session</th><th style="width:68%">What</th></tr>
-<tr class="now"><td>Next</td><td>T30</td><td>The Plex sync and the watcher into library.sqlite, the runs log, the switch-off check on SETUP; then T31: play log, MusicBrainz, the first live copy</td></tr>
+<tr class="now"><td>Next</td><td>T31</td><td>The play log (Last.fm API, Plex history) and MusicBrainz after each sync, a nightly run, the gate script; then the deploy: jimbo-dj’s sync off, the first live copy</td></tr>
+<tr><td>2026-11-27</td><td>T30</td><td>PR #36 on branch claude/t30-plex-sync: jimbo-dj’s Plex sync and watcher vendored (GET only, writing library.sqlite only once plex is owned, refusing a path map that would move jimbo-dj’s paths); the runs log; the switch-off check naming rows new on jimbo-dj’s side, on SETUP’s Cut-overs card; on the fixture, nothing live; 309 API and 240 web tests</td></tr>
 <tr><td>2026-11-27</td><td>T29</td><td>Branch claude/t29-cutovers: the P6 spec (seven cut-overs, T29–T44, order confirmed by Ryan); library.sqlite, the reading connection, the one-time copy with its count check, rollback, traqfreq-cutover; on the fixture, nothing copied live; 297 API and 235 web tests</td></tr>
 <tr><td>2026-11-26</td><td>P5 gate</td><td>Passed on live data: 10 of 10 trees (8 saved, 2 fixed) with the same lines and the same tracks in the same flow order as jimbo-dj’s preview; 77 of 77 saved playlists the same</td></tr>
 <tr><td>2026-11-26</td><td>T28</td><td>PR #32 on branch claude/t28-ask-gate: the Ask box (typed parts, by sound through jimbo-dj’s CLAP text server, a local Ollama when it’s on); p5_trees.json, check 3, /api/playlists/compare, p5_gate.py and the gate card on LIBRARY and SETUP; 286 API and 235 web tests</td></tr>
