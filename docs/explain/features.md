@@ -86,6 +86,8 @@ Read-only views of jimbo-dj's data in the Berlin · Gelb look, each number with 
 
 ### Cut-overs (P6)
 - `traqfreq-cutover status | copy <name> | rollback <name> --reason "…"` (T29): the one-time copy of a cut-over's jimbo-dj tables into `library.sqlite`, checked by count and row by row before it commits; rollback puts them aside and reads go back to jimbo-dj's copy. Every step logged with its reason. `GET /api/cutovers` shows each cut-over's state, check and stamp. Registered so far: `plex` (Plex scan and play log).
+- The Plex sync and the watcher (T30): jimbo-dj's `library.sync`, `plex.py`, `metadata.py` and `watcher.py` vendored unchanged, writing `library.sqlite` only once `plex` is owned, Plex read with GET only. It refuses before the copy, without its settings, or when `TRAQFREQ_PLEX_PATH_MAP` wouldn't give jimbo-dj's local paths. Every run in `runs` with when, how long, ok or not, counts, note, reason and undo. `traqfreq-cutover sync --reason …`; the watcher with `TRAQFREQ_WATCH=on`.
+- The switch-off check (T30): for each owned cut-over, jimbo-dj's side now against the copy's stamp (rows per table, highest listen id, last sync, newest import), naming the rows new on jimbo-dj's side. The Cut-overs card on SETUP shows it with the Plex settings (never the token), the watcher and the newest runs. `GET /api/cutovers`.
 
 ### Throughout
 

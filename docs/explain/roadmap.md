@@ -6,12 +6,12 @@ The phases and sessions are planned in [docs/specs/README.md](../specs/README.md
 
 - **P6 cut-overs, one writer at a time, T29–T44** ([spec](../specs/t29-cutovers.md)). Order (Ryan, 2026-11-27): Plex scan and play log, history imports, analyzer, playlists, Fix in Plex, jobs and log, backups. Each: switched off in jimbo-dj, copied once into traqfreq's `library.sqlite` and checked by count, then read and written there; gate a week with jimbo-dj's switch off and nothing missed.
   - T29 done: the spec; `library.sqlite`, the cut-over registry, the reading connection (traqfreq's copy in front of jimbo-dj's database, every reader unchanged), the one-time copy with its count check, rollback, `traqfreq-cutover`, `GET /api/cutovers`. On the fixture; nothing copied live yet.
+  - T30 done: the Plex sync and the watcher (jimbo-dj's, vendored; GET only; writing only once `plex` is owned), the `runs` log, the switch-off check and the Cut-overs card on SETUP. On the fixture with a Plex stand-in; nothing copied or switched off live.
 - **P5 PLAYLISTS, the Junction preview, T24–T28** ([spec](../specs/t24-playlists.md)): done, gate passed on live data 2026-11-26. With P5, traqfreq shows everything jimbo-dj shows, read-only.
 
 ## Next
 
-1. **T30**: the Plex sync and the watcher (vendored), the runs log, the switch-off check on SETUP.
-2. **T31**: the play log (Last.fm API, Plex history) and MusicBrainz; deploy, copy, jimbo-dj's sync job off; the first cut-over's gate.
+1. **T31**: the play log (Last.fm API, Plex history) and MusicBrainz; deploy, copy, jimbo-dj's sync job off; the first cut-over's gate. Also the nightly sync and imports (until cut-over 6's scheduler), and setting `TRAQFREQ_PLEX_*` in the mini's `.env`.
 
 ## Later
 

@@ -2,6 +2,13 @@
 
 ## Log
 
+### 2026-11-27 — The Plex sync stays jimbo-dj's code, behind traqfreq's checks
+
+- **Decision:** jimbo-dj's sync and watcher are vendored unchanged; only plexapi's `PlexServer` (a GET-only httpx stand-in with the same attributes) and the db and config modules are stand-ins. `db.connect` opens only `library.sqlite` and refuses until the `plex` cut-over is owned. `plexsync.run` adds the rest: Plex settings from traqfreq's env, one sync at a time, a check that `TRAQFREQ_PLEX_PATH_MAP` gives every stored track jimbo-dj's local path, and a `runs` row per sync. The watcher is off unless `TRAQFREQ_WATCH=on`. The switch-off check compares jimbo-dj's side with the copy's stamp and names new rows, never merging them.
+- **Why:** the same code writes the same rows, so the P2 numbers move only by what's new in Plex. A wrong path map would silently rewrite 54,000 `local_path`s that the analyzer and file tags read. Refusing in two places (the wrapper and `db.connect`) means neither the command nor the watcher can write before the copy.
+- **Alternatives:** plexapi as a dependency (more surface than GET, a second way to reach Plex); rewriting the sync (risks drift from jimbo-dj's rows).
+- **Consequences:** `watch_fingerprint` joins the `plex` cut-over's meta keys. Rows jimbo-dj writes after the copy are shown on SETUP and read again from their source by hand.
+
 ### 2026-11-27 — P6: tables move whole into library.sqlite, read through views
 
 - **Decision:** each cut-over owns whole jimbo-dj tables (and some `meta` keys), copied once into `TRAQFREQ_DATA_DIR/library.sqlite` with jimbo-dj's own `CREATE` statements and checked in the same transaction: row counts, no row different either way, jimbo-dj's numbers, the owned `meta` keys. Pages read through one connection, jimbo-dj's database read-only with `library.sqlite` attached read-only and a TEMP VIEW per owned table. The order is Ryan's: Plex scan and play log, history imports, analyzer, playlists, Fix in Plex, jobs and log, backups. jimbodj-text and the native analyzer stay as they are.
