@@ -3,6 +3,8 @@
 All notable changes to this project are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions are CalVer (`YYYY.MM.N`).
 
 ## [Unreleased]
+### Changed
+- Deploy: jimbo-deploy's current standard. Sessions edit and commit in `~/Development/traqfreq` (`deploy.json` `local`), push with `push.sh` to GitHub and Forgejo together; Forgejo is a normal repo, no longer a pull mirror; the server checkout only pulls and deploys.
 ### Added
 - P5 gate passed on live data (2026-11-26): `scripts/p5_gate.py` exit 0. 10 of 10 trees (the 8 saved trees and 2 fixed ones) with the same lines and the same tracks in the same order as jimbo-dj's preview, and 77 of 77 saved playlists the same as its `GET /api/saved`.
 - T28: the Ask box on the Junction (`src/traqfreq/ask.py`, `GET /api/junction/ask`). A few words become lines: typed `facet:value` parts as they are; the other words by sound, through jimbo-dj's CLAP text server (jimbodj-text, `TRAQFREQ_TEXT_URL`), compared with every analysed track's CLAP vector, the nearest tracks' styles making the line; and, only when `TRAQFREQ_OLLAMA_URL` is set, a local Ollama reading the words into the library's own styles, moods and decades (anything else dropped and named). Each line with its counts, opening in the Junction; the nearest tracks open their rows (`/library/junction/ask`, `GET /api/junction/ask/rows`). Vendored unchanged at 1d8a7cb: `prompt.clean`, `Unavailable`, vectors.py's `_norm`, `_EMB_Q`, `_stamp`, `_vectors`, and `more_like`'s prompt scores.

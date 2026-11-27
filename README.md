@@ -6,7 +6,7 @@ How and why it works: [docs/explain](docs/explain/README.md)
 
 ## Deploy
 
-Code is pushed to GitHub; Forgejo (`http://macmini:4470/ryanjpeterson/traqfreq`) is a pull mirror of it. The server checkout at `/Volumes/jimbos-sloppydrive/traqfreq` pulls from GitHub and runs compose. `ssh macmini` from the laptop is not set up, so run this as a Termius snippet on the mini, named `deploy traqfreq`:
+Code is edited and committed on the laptop in `~/Development/traqfreq` and pushed with jimbo-deploy's `scripts/push.sh`, which pushes every branch to GitHub and Forgejo (`http://macmini:4470/ryanjpeterson/traqfreq`, a normal repo, not a mirror) at the same time. `origin` fetches from GitHub and pushes to both. The server checkout at `/Volumes/jimbos-sloppydrive/traqfreq` pulls from GitHub and runs compose; nothing is committed there. `ssh macmini` from the laptop is not set up, so run this as a Termius snippet on the mini, named `deploy traqfreq`:
 
 ```bash
 cd /Volumes/jimbos-sloppydrive/traqfreq && git pull --ff-only && docker compose -f docker-compose.yml up -d --build && docker compose -f docker-compose.yml ps

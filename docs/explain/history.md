@@ -32,6 +32,7 @@
 
 - Built beside jimbo-dj, not in it (planning, before 2026-11-22): a rewrite in place would risk jimbo-dj's database.
 - 2026-11-22: sessions moved from a cloud container (T1, T2) to the laptop working in the server checkout over SMB (T3 on).
+- 2026-11-27: sessions moved off the SMB server checkout to a laptop clone (`~/Development/traqfreq`); Forgejo changed from a pull mirror to a normal repo pushed together with GitHub (jimbo-deploy standard).
 - 2026-11-22: reuse by vendoring jimbo-dj's pure functions unchanged instead of depending on its repo (it is private).
 
 ## By the numbers

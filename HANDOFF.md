@@ -1,6 +1,8 @@
 # Handoff
 
 ## Where sessions run
+**From 2026-11-27 (jimbo-deploy standard): sessions run on the laptop in `~/Development/traqfreq`**, a normal clone (fetch GitHub, push GitHub + Forgejo). Push with jimbo-deploy's `scripts/push.sh` (`~/.claude/plugins/marketplaces/jimbo-deploy/scripts/push.sh`), never a bare `git push`; it also deletes merged branches. Forgejo is now a normal repo pushed from the laptop, not a pull mirror. The server checkout `/Volumes/jimbos-sloppydrive/traqfreq` only pulls and deploys: never commit or push from it. The rest of this section is history (T3–T27 worked in the server checkout over SMB).
+
 T1 and T2 ran in a cloud container. **T3 ran on the laptop, directly in the server checkout over SMB** (`/Volumes/jimbos-sloppydrive/traqfreq`; Ryan's call, use this mount and not `jimbos-sloppydrive-1`). Pushes go to GitHub; Forgejo mirrors it. The GitHub repo is **public** and its default branch is **`main`** (2026-11-22, at f06a60f = `claude/t3-kit`); session branches are pushed beside it, and only Ryan moves `main`.
 
 Working over SMB, as T3 did:

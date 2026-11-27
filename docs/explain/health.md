@@ -7,7 +7,7 @@ Healthy and moving fast: P0–P3 done and gated on live data in three days. Used
 ## Risks
 
 - **jimbo-dj changes how it counts or its schema** (medium): traqfreq's vendored copies drift. Softened by the gates and `tests/test_vendor.py`; re-vendor when it happens.
-- **SMB working copy** (low): renames sometimes fail on the server checkout; sessions retry and keep node_modules off the drive.
+- **SMB working copy** (resolved 2026-11-27): sessions now work in a laptop clone; the server checkout only pulls.
 - **One machine** (low): everything is on the Mac mini; traqfreq holds nothing precious yet (caches only).
 
 ## Tech debt

@@ -1,1 +1,1 @@
-{"app":"traqfreq","local":"~/traqfreq (on macmini)","server":"/Volumes/jimbos-sloppydrive/traqfreq","github":"ryanjpeterson/traqfreq","forgejo":"ryanjpeterson/traqfreq","compose":"docker-compose.yml","port":4492,"service":"web"}
+{"app":"traqfreq","local":"~/Development/traqfreq","server":"/Volumes/jimbos-sloppydrive/traqfreq","github":"ryanjpeterson/traqfreq","forgejo":"ryanjpeterson/traqfreq","compose":"docker-compose.yml","port":4492,"service":"web"}
