@@ -110,7 +110,14 @@
 - **Alternatives:** rewrite the counting; depend on jimbo-dj's package.
 - **Consequences:** re-copy when jimbo-dj changes; the gates catch drift.
 
-### 2026-11-22 — Sessions run in the server checkout over SMB
+### 2026-11-27 — Sessions run in a laptop clone; push to GitHub and Forgejo together
+
+- **Decision:** edit and commit in `~/Development/traqfreq`; push with jimbo-deploy's `push.sh` to GitHub and Forgejo at once; Forgejo is a normal repo, not a pull mirror; the server checkout only pulls and deploys.
+- **Why:** the jimbo-deploy standard (one rule for every app); the mini has no Forgejo credentials, so commits from the server checkout couldn't reach both; no SMB quirks.
+- **Alternatives:** keep working in the server checkout with Forgejo as a pull mirror.
+- **Consequences:** a push fails if either side is down (see jimbo-deploy Failover); supersedes the 2026-11-22 decision below.
+
+### 2026-11-22 — Sessions run in the server checkout over SMB (superseded 2026-11-27)
 
 - **Decision:** work on the laptop in `/Volumes/jimbos-sloppydrive/traqfreq`, with node_modules and venvs in a scratch copy.
 - **Why:** gates and deploys use the same checkout; cloud containers can't reach the Mac mini.

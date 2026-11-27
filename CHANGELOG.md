@@ -3,6 +3,8 @@
 All notable changes to this project are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions are CalVer (`YYYY.MM.N`).
 
 ## [Unreleased]
+### Changed
+- Deploy: jimbo-deploy's current standard. Sessions edit and commit in `~/Development/traqfreq` (`deploy.json` `local`), push with `push.sh` to GitHub and Forgejo together; Forgejo is a normal repo, no longer a pull mirror; the server checkout only pulls and deploys.
 ### Added
 - T27: jimbo-dj's `flow.py` vendored unchanged at 1d8a7cb, replacing T25's stand-in. The Junction's picked tracks come in jimbo-dj's flow order (Camelot keys, tempo with half and double time, loudness, danceability), and gate check 2 covers the order as well as the set (`playlists_gate.check_order`, `check_tracks`).
 - T27: why this track (B3). Every picked track shows the line that brought it in, each of that line's conditions and groups as a true or false ConditionChip under its AND, OR and NOT parts, its key and tempo, and its transition from the track before (Camelot steps and tempo gap). StationRow's why takes chips as well as a sentence.
