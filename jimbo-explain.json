@@ -1,7 +1,7 @@
 {
   "version": "0.1.0",
   "docs": "docs/explain",
-  "synced": { "commit": "4baaa03", "date": "2026-11-27" },
+  "synced": { "commit": "1caa51c", "date": "2026-11-27" },
   "facts": {
     "name": "traqfreq",
     "tagline": "jimbo-dj's successor, built beside it: listening history, library, servers, tags and playlists, every number showing its rows",
