@@ -154,6 +154,21 @@ describe('LineLever', () => {
     expect(container.firstElementChild!.className).toContain('is-off');
     expect((screen.getByRole('slider') as HTMLInputElement).disabled).toBe(true);
   });
+  it('field (T28): a labelled search field that asks on Enter; no slider or percent', async () => {
+    const change = vi.fn();
+    const submit = vi.fn();
+    const { container } = render(<LineLever {...base} field={{ value: 'rainy', onChange: change, onSubmit: submit, placeholder: 'words' }} />);
+    expect(screen.queryByRole('slider')).toBeNull();
+    expect(container.querySelector('.kit-lever-pct')).toBeNull();
+    expect(screen.getByRole('search')).toBeTruthy();
+    const box = screen.getByRole('searchbox', { name: 'Played often' }) as HTMLInputElement;
+    expect(box.value).toBe('rainy');
+    expect(box.getAttribute('aria-describedby')).toBe(container.querySelector('.kit-lever-detail')!.id);
+    await userEvent.type(box, 'x{Enter}');
+    expect(change).toHaveBeenCalledWith('rainyx');
+    expect(submit).toHaveBeenCalledOnce();
+    expect(container.querySelector('.kit-lever-count')!.textContent).toBe('12 tracks');
+  });
 });
 
 describe('StationRow', () => {

@@ -2,7 +2,7 @@
 
 ## Snapshot
 
-Healthy and moving fast: P0–P3 done and gated on live data in three days. Used daily by one listener beside jimbo-dj. Upkeep is low (no jobs, cache only). Matching works on invented snapshots (T14), SETUP shows it (T15), the GET-only client and refresh are in place (T16), Jellyfin is read live (T17: 53,133 of 53,133 Plex copies matched by file, also from the deployed container) and so is Navidrome (T18: 52,712 of 53,133 by MusicBrainz ID and tags, since its paths are hidden); the P3 gate (T19) passed on live data on 2026-11-24 once Navidrome reported real paths: every pair one to one over 53,274 copies, 0 unmatched. P4 TAGS (T20–T23) is built. Checks 1 and 2 of its gate pass on live data. Check 3 does not pass, because jimbo-dj's stored `library.tags` is built from a background Library older than its stamp. That is jimbo-dj's side, and the check stays strict. The most useful next thing is P5 PLAYLISTS (T24).
+Healthy and moving fast: P0–P3 done and gated on live data in three days. Used daily by one listener beside jimbo-dj. Upkeep is low (no jobs, cache only). Matching works on invented snapshots (T14), SETUP shows it (T15), the GET-only client and refresh are in place (T16), Jellyfin is read live (T17: 53,133 of 53,133 Plex copies matched by file, also from the deployed container) and so is Navidrome (T18: 52,712 of 53,133 by MusicBrainz ID and tags, since its paths are hidden); the P3 gate (T19) passed on live data on 2026-11-24 once Navidrome reported real paths: every pair one to one over 53,274 copies, 0 unmatched. P4 TAGS (T20–T23) is built. Checks 1 and 2 of its gate pass on live data. Check 3 does not pass, because jimbo-dj's stored `library.tags` is built from a background Library older than its stamp. That is jimbo-dj's side, and the check stays strict. P4's gate then passed (2026-11-24), and P5 PLAYLISTS (T24–T28) passed its gate on live data on 2026-11-26: 10 of 10 trees and 77 of 77 saved playlists the same as jimbo-dj. The most useful next thing is P6, the first cut-over.
 
 ## Risks
 
@@ -13,7 +13,7 @@ Healthy and moving fast: P0–P3 done and gated on live data in three days. Used
 ## Tech debt
 
 - Vendored code with stand-ins (`src/traqfreq/vendor/`): it must be re-copied by hand when jimbo-dj changes.
-- `app.py` holds every route in one factory (about 360 lines); worth splitting per module before P6.
+- `app.py` holds every route in one factory (about 700 lines); worth splitting per module before P6.
 - Search is a placeholder page.
 
 ## Known issues

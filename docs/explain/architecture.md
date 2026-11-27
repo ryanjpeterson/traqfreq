@@ -5,10 +5,12 @@
     browser → traqfreq web (React, served by FastAPI :4492) → API (src/traqfreq/app.py)
                                                               ├→ jimbo-dj's SQLite (read-only, /legacy)
                                                               ├→ traqfreq.sqlite (caches, snapshots, refresh log, /data)
-                                                              └→ Jellyfin, Navidrome (GET only, on refresh; readers T17, T18)
+                                                              ├→ Jellyfin, Navidrome (GET only, on refresh; readers T17, T18)
+                                                              └→ jimbodj-text, Ollama (the Ask box, T28: words to numbers)
+    scripts/p5_gate.py → traqfreq (GET) and jimbo-dj (GET /api/saved, POST /api/rules/preview: a preview, writes nothing)
 
 - `src/traqfreq/app.py`: the FastAPI app and every route; serves `web/dist`.
-- `legacy.py` (the read-only connection), `history.py`, `counted.py`, `periods.py` (HISTORY), `library.py`, `entities.py`, `library_gate.py` (LIBRARY), `identity.py`, `servers.py`, `snapshots.py`, `matching.py`, `reading.py` (the GET-only server client and refresh), `servers_gate.py` (the P3 gate) (SERVERS), `tags.py` (TAGS: the ladder, tracks by source, gate check 2), `store.py` (cache, server snapshots and the refresh log), `vendor/` (jimbo-dj's code).
+- `legacy.py` (the read-only connection), `history.py`, `counted.py`, `periods.py` (HISTORY), `library.py`, `entities.py`, `library_gate.py` (LIBRARY), `identity.py`, `servers.py`, `snapshots.py`, `matching.py`, `reading.py` (the GET-only server client and refresh), `servers_gate.py` (the P3 gate) (SERVERS), `tags.py` (TAGS: the ladder, tracks by source, gate check 2), `playlists.py`, `junction.py`, `reach.py`, `ask.py` (the Ask box), `playlists_compare.py` and `playlists_gate.py` (the P5 gate) (PLAYLISTS), `store.py` (cache, server snapshots and the refresh log), `vendor/` (jimbo-dj's code).
 - `web/src/pages` (pages, importing only from `web/src/components/kit`), `web/src/app` (nav, routes, API calls), `web/src/copy/strings.json` (all copy).
 
 ## Data flow

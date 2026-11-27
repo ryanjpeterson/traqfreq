@@ -219,6 +219,7 @@ main > .kit-text.is-body { max-width: 64ch; margin-bottom: 24px; }
 .pl-row .kit-chip { max-width: 100%; overflow-wrap: anywhere; }
 .pl-group { display: flex; flex-direction: column; gap: 6px; }
 .pl-tracks { display: flex; flex-direction: column; }
+.ask-line { padding-top: 12px; border-top: 1px solid var(--rule); }
 @media (max-width: 599px) {
   .pl-switches { justify-content: flex-start; }
 }

@@ -20,6 +20,11 @@ services:
       TRAQFREQ_NAVIDROME_USER: ${TRAQFREQ_NAVIDROME_USER:-}
       TRAQFREQ_NAVIDROME_PASSWORD: ${TRAQFREQ_NAVIDROME_PASSWORD:-}
       TRAQFREQ_NAVIDROME_ROOTS: ${TRAQFREQ_NAVIDROME_ROOTS:-}
+      # T28's Ask box: jimbo-dj's CLAP text server (jimbodj-text, native on the host, read-only) and, optionally,
+      # a local Ollama (off unless set).
+      TRAQFREQ_TEXT_URL: ${TRAQFREQ_TEXT_URL:-http://host.docker.internal:4491}
+      TRAQFREQ_OLLAMA_URL: ${TRAQFREQ_OLLAMA_URL:-}
+      TRAQFREQ_OLLAMA_MODEL: ${TRAQFREQ_OLLAMA_MODEL:-}
     ports:
       - "${TRAQFREQ_PORT:-4492}:4492"
     volumes:

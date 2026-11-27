@@ -10,16 +10,17 @@ from datetime import datetime
 from urllib.parse import urlencode
 from zoneinfo import ZoneInfo
 
-from . import __version__, counted, entities, history, identity, junction, legacy, library, library_gate, matching, periods, playlists, proposals, reach, reading, servers, servers_gate, store, tagpages, tags, tags_gate
+from . import __version__, ask, counted, entities, history, identity, junction, legacy, library, library_gate, matching, periods, playlists, playlists_compare, proposals, reach, reading, servers, servers_gate, store, tagpages, tags, tags_gate
 from .settings import CORE, MODULES, Settings
 
 
-def create_app(settings: Settings | None = None, server_transport=None) -> FastAPI:
+def create_app(settings: Settings | None = None, server_transport=None, ask_transport=None) -> FastAPI:
     """``server_transport``: an ``httpx`` transport for the server readers (tests: ``httpx.MockTransport``)."""
     settings = settings or Settings.from_env()
     app = FastAPI(title="traqfreq", version=__version__)
     app.state.settings = settings
     app.state.server_transport = server_transport
+    app.state.ask_transport = ask_transport  # T28: jimbodj-text and Ollama (tests: httpx.MockTransport)
     app.state.readers = None  # None = reading.READERS; tests put their own here
 
     @app.get("/api/health")
@@ -567,6 +568,25 @@ def create_app(settings: Settings | None = None, server_transport=None) -> FastA
         return read_playlists(lambda c: playlists.line_rows(c, playlists.rules.from_query(tree_query(request)), line, path,
                                                             limit, offset, settings.tz))
 
+    # --- T28: the P5 gate, traqfreq's side (jimbo-dj's is asked only by scripts/p5_gate.py) ------------------
+
+    @app.get("/api/playlists/compare")
+    def playlists_compare_all() -> dict:
+        """The P5 gate card: the ten trees (saved ones with a tree, then p5_trees.json), each with its lines'
+        numbers and what it picks now, which kinds of condition they use between them, and the saved list check 3
+        compares. jimbo-dj's side is asked by scripts/p5_gate.py only."""
+        return read_playlists(lambda c: playlists_compare.compare(c, settings.tz))
+
+    @app.get("/api/playlists/compare/stamp")
+    def playlists_compare_stamp() -> dict:
+        """The data stamp both sides' answers depend on; the gate script asks a tree again once if it moves."""
+        return read_playlists(lambda c: {"stamp": playlists_compare.stamp(c)})
+
+    @app.get("/api/playlists/compare/trees/{i}")
+    def playlists_compare_tree(i: int) -> dict:
+        """traqfreq's answer for gate tree i, in the shape of jimbo-dj's POST /api/rules/preview, with its tree."""
+        return read_playlists(lambda c: playlists_compare.tree(c, i, settings.tz))
+
     @app.get("/api/playlists/{ref}")
     def playlists_one(ref: str, limit: int = 50, offset: int = 0) -> dict:
         """One saved playlist (slug or id): its switches, the tracks jimbo-dj stored (play order) and, when it has
@@ -627,6 +647,28 @@ def create_app(settings: Settings | None = None, server_transport=None) -> FastA
         """The tracks behind a stop's number: all it matches (count) or only those the rooted line doesn't (added)."""
         return read_playlists(lambda c: reach.rows(c, playlists.rules.from_query(tree_query(request)), line, stop, which,
                                                    limit, offset, settings.tz))
+
+    # --- T28: the Ask box, words to a line (jimbodj-text, and Ollama when it's on) -------------------------
+
+    @app.get("/api/junction/ask")
+    def junction_ask(q: str = "") -> dict:
+        """A few words to lines for the Junction: typed facet:value parts, the words by sound (jimbodj-text's CLAP
+        vector against every track's) and, when it's on, by Ollama. Each line has its count and URL form."""
+        return read_playlists(lambda c: ask.ask(c, q, settings.text_url, settings.ollama_url, settings.ollama_model,
+                                                app.state.ask_transport, settings.tz))
+
+    @app.get("/api/junction/ask/rows")
+    def junction_ask_rows(q: str, style: str = "", limit: int = 50, offset: int = 0) -> dict:
+        """The rows behind the sound side's numbers: the tracks nearest the words, closest first, each with its
+        score; with ``style``, only those that style is on."""
+        def run(c):
+            try:
+                return ask.near_rows(c, q, settings.text_url, app.state.ask_transport, limit, offset, style)
+            except ask.prompt.Unavailable as e:
+                raise HTTPException(503, str(e))
+            except LookupError as e:
+                raise HTTPException(404, str(e))
+        return read_playlists(run)
 
     @app.get("/api/modules")
     def modules() -> dict:

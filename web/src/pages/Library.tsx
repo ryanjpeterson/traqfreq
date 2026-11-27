@@ -8,6 +8,7 @@ import { artistHref, listHref } from '../app/entities';
 import { EmptyState } from './ModulePage';
 import { LibraryCompareCard } from './LibraryCompare';
 import { PlaylistsCard } from './Playlists';
+import { PlaylistsGateCard } from './PlaylistsGate';
 
 type Nav = { navigate: (href: string) => void };
 
@@ -94,6 +95,7 @@ function LibraryBody({ s, navigate }: { s: LibraryStats } & Nav) {
       <div className="hist-grid">
         <LibraryCompareCard load={gate} navigate={navigate} />
         <PlaylistsCard navigate={navigate} />
+        <PlaylistsGateCard navigate={navigate} />
       </div>
 
       <section aria-labelledby="l-files">

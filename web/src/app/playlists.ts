@@ -102,6 +102,54 @@ export type ReachRows = {
   line: string; stop: Stop; which: ReachWhich; words: string; count: number; rule: string; rows: TrackRow[];
 };
 
+/** T28: the Ask box, words to a line (typed parts, by sound through jimbodj-text, by Ollama when it's on). */
+export const ASK_ROWS_PATH = '/library/junction/ask';
+export const askApi = (words: string) => `/api/junction/ask?${new URLSearchParams({ q: words }).toString()}`;
+export function askRowsHref(words: string, style?: string): string {
+  const q = new URLSearchParams({ q: words });
+  if (style) q.set('style', style);
+  return `${ASK_ROWS_PATH}?${q.toString()}`;
+}
+export function askRowsApi(query: string): string {
+  const q = new URLSearchParams(query);
+  const out = new URLSearchParams({ q: q.get('q') ?? '', limit: '200' });
+  if (q.get('style')) out.set('style', q.get('style') ?? '');
+  return `/api/junction/ask/rows?${out.toString()}`;
+}
+export type AskSource = 'typed' | 'sound' | 'ollama';
+export type AskLine = {
+  source: AskSource; label: string | null; words: string; count: number; match: Group | Condition; query: string; rule: string;
+};
+export type AskState = 'ok' | 'off' | 'unavailable' | 'no_vectors' | 'no_words';
+export type AskAnswer = {
+  text: string; words: string; lines: AskLine[]; rules: Record<string, string>; read_only: string;
+  sound: { state: AskState; error?: string; near?: number; styles?: { style: string; near: number; new: number }[]; rule?: string; line?: AskLine };
+  ollama: {
+    state: AskState; error?: string; model?: string; kept?: Record<string, string[]>; dropped?: { f: string; v: string }[];
+    rule?: string; line?: AskLine;
+  };
+};
+export type AskRows = {
+  text: string; style: string | null; count: number; rule: string; rows: (TrackRow & { score: number })[];
+};
+
+/** T28: the P5 gate, traqfreq's side (jimbo-dj's is asked by scripts/p5_gate.py only). */
+export const PLAYLISTS_GATE_API = '/api/playlists/compare';
+export type GateFeature = 'and' | 'or' | 'not' | 'nested' | 'in' | 'chart' | 'sound' | 'genre' | 'style' | 'family' | 'listened';
+export type GateTree = {
+  i: number; query: string; features: GateFeature[];
+  source: { kind: 'saved'; id: number; slug: string | null; title: string; name: string } | { kind: 'fixed'; id: string; name: string };
+  lines?: { id: string; label: string | null; words: string; share: number; count: number; got: number; available: number }[];
+  total?: number; picked?: number; minutes?: number; error?: string;
+};
+export type PlaylistsGate = {
+  gate: 'P5'; version: number; stamp: string; trees: GateTree[];
+  coverage: { ok: boolean; trees: number; by: Record<GateFeature, number[]>; missing: GateFeature[]; rule: string };
+  saved: { count: number; rows: { id: number; kind: string; title: string; tracks: number; in_plex: boolean; stale: boolean }[] };
+  checks: { check: 'lines' | 'tracks' | 'saved'; rule: string; asked_by: string }[];
+  script: string; rules: Record<string, string>; read_only: string;
+};
+
 export type Server = 'plex' | 'jellyfin' | 'navidrome';
 export type Copies = {
   count: number; of: number; missing: number; reasons: Record<string, number>; snapshot: boolean; rule: string;
@@ -161,7 +209,7 @@ export type CopyRows = {
   server: Server; missing: boolean | null; count: number; rows: CopyRow[]; rule: string; reasons: Record<string, string>;
 };
 
-type Unit = 'playlist' | 'line' | 'track' | 'minute' | 'song' | 'artist' | 'style' | 'tag' | 'step';
+type Unit = 'playlist' | 'line' | 'track' | 'minute' | 'song' | 'artist' | 'style' | 'tag' | 'step' | 'tree';
 export function count(n: number, unit: Unit): string {
   return `${fmt(n)} ${t(`unit.${unit}.${n === 1 ? 'one' : 'other'}` as StringKey)}`;
 }

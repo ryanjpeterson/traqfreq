@@ -46,6 +46,10 @@ class Settings:
     navidrome_user: str | None = None
     navidrome_password: str | None = None
     navidrome_roots: tuple[str, ...] = ()  # Navidrome's music folders as its real paths show them (T18), if needed
+    # T28's Ask box: jimbo-dj's CLAP text server (jimbodj-text, read-only) and, optionally, a local Ollama.
+    text_url: str | None = None  # empty = words aren't compared by sound
+    ollama_url: str | None = None  # empty = off (the default)
+    ollama_model: str = "qwen2.5:7b"
 
     @classmethod
     def from_env(cls, env: dict[str, str] | None = None) -> "Settings":
@@ -67,4 +71,7 @@ class Settings:
             navidrome_user=env.get("TRAQFREQ_NAVIDROME_USER") or None,
             navidrome_password=env.get("TRAQFREQ_NAVIDROME_PASSWORD") or None,
             navidrome_roots=tuple(r.strip() for r in (env.get("TRAQFREQ_NAVIDROME_ROOTS") or "").split(",") if r.strip()),
+            text_url=(env.get("TRAQFREQ_TEXT_URL") or "").rstrip("/") or None,
+            ollama_url=(env.get("TRAQFREQ_OLLAMA_URL") or "").rstrip("/") or None,
+            ollama_model=env.get("TRAQFREQ_OLLAMA_MODEL") or "qwen2.5:7b",
         )

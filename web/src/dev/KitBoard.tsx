@@ -8,6 +8,7 @@ import './board.css';
 /** Dev only (/kit in `npm run dev`): every kit component in every state. Never in a production build (D1). */
 export function KitBoard() {
   const [share, setShare] = useState(40);
+  const [words, setWords] = useState('');
   const [chips, setChips] = useState([true, true]);
   return (
     <main className="board">
@@ -61,6 +62,8 @@ export function KitBoard() {
       <section className="board-group">
         <Text variant="label">{b('board.levers')}</Text>
         <LineLever module="H" title={b('board.leverHistoryTitle')} detail={b('board.leverHistoryDetail')} share={share} count={Math.round(share / 2.5)} onChange={setShare} />
+        <LineLever module="L" title={b('board.leverAskTitle')} detail={b('board.leverAskDetail')} share={0} count={words ? 24 : 0}
+          field={{ value: words, onChange: setWords, onSubmit: () => {}, placeholder: b('board.leverAskPlaceholder') }} />
         <LineLever module="T" title={b('board.leverTagsTitle')} detail={b('board.leverTagsDetail')} share={35} count={14} />
         <LineLever module="M" title={b('board.leverTagsTitle')} detail={b('board.leverTagsDetail')} share={25} count={10} />
         <LineLever module="D" title={b('board.leverDiscoverTitle')} detail={b('board.leverDiscoverDetail')} share={0} count={0} onChange={() => {}} off />

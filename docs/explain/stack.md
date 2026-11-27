@@ -28,7 +28,8 @@ Docker compose on the Mac mini (service `web`, port 4492), deployed with jimbo-d
 |-|-|-|
 | fastapi | >=0.115 | the API and static file serving |
 | uvicorn | >=0.30 | the server |
-| httpx | >=0.27 | the GET-only server client (T16) and FastAPI's test client |
+| httpx | >=0.27 | the GET-only server client (T16) and FastAPI's test client; the Ask box's calls to jimbodj-text and Ollama (T28) |
+| numpy | >=1.26 | the Ask box (T28): a CLAP text vector against every track's CLAP vector, as jimbo-dj's prompt Radio does |
 | pytest (dev) | >=8 | tests |
 
 ### Web (`web/package.json`)

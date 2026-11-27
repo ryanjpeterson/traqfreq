@@ -1,7 +1,7 @@
 {
   "version": "0.1.0",
   "docs": "docs/explain",
-  "synced": { "commit": "4baaa03", "date": "2026-11-27" },
+  "synced": { "commit": "1caa51c", "date": "2026-11-27" },
   "facts": {
     "name": "traqfreq",
     "tagline": "jimbo-dj's successor, built beside it: listening history, library, servers, tags and playlists, every number showing its rows",
@@ -15,10 +15,12 @@
       { "name": "Plex", "kind": "self-hosted", "direction": "read", "required": true, "what": "the library and Plex plays, through jimbo-dj's sync" },
       { "name": "Jellyfin", "kind": "self-hosted", "direction": "read", "required": false, "what": "one song across servers (P3)" },
       { "name": "Navidrome", "kind": "self-hosted", "direction": "read", "required": false, "what": "one song across servers (P3)" },
+      { "name": "jimbodj-text", "kind": "jimbo", "direction": "read", "required": false, "what": "the Ask box (T28): jimbo-dj's CLAP text server turns words into a vector" },
+      { "name": "Ollama", "kind": "self-hosted", "direction": "read", "required": false, "what": "the Ask box (T28), optional and off by default: words read into the library's styles, moods and decades" },
       { "name": "Tailscale", "kind": "self-hosted", "direction": "read", "required": true, "what": "the only way in" }
     ],
     "standards": ["jimbo-deploy", "jimbo-explain"],
-    "now": ["P4 TAGS passed its gate on live data (2026-11-24)", "P5 PLAYLISTS, the Junction preview (T24–T28): T24–T27 done (saved playlists with three server switches and their copies on each server, lines counted and picked with jimbo-dj's rules, the Junction at /library/junction in jimbo-dj's flow order with why each track is there, and rooted to roaming, a preview of each line following its tag); next T28, the Ask box and the gate"]
+    "now": ["P5 PLAYLISTS, the Junction preview, passed its gate on live data (2026-11-26): 10 of 10 trees with the same lines and tracks in the same order as jimbo-dj, 77 of 77 saved playlists the same", "T28 added the Ask box (words to a line by sound, through jimbo-dj's CLAP text server; a local Ollama when it's on) and the gate script, card and compare endpoint", "Next: P6 cut-overs, one writer at a time"]
   },
   "files": {}
 }

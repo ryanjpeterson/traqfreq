@@ -2,10 +2,11 @@ import type { CSSProperties } from 'react';
 import { Band, Button, Card, ConditionChip, LineBullet, LineLever, Status, StationRow, Text } from '../components/kit';
 import { t, tf, type StringKey } from '../copy/t';
 import { useGet } from '../app/api';
+import { AskBox } from './JunctionAsk';
 import { trackHref } from '../app/entities';
 import { formatUtc } from '../app/time';
 import {
-  PLAYLISTS_PATH, copiesApi, copiesHref, count, junctionApi, junctionHref, kindName, playlistApi,
+  JUNCTION_PATH, PLAYLISTS_PATH, copiesApi, copiesHref, count, junctionApi, junctionHref, kindName, playlistApi,
   playlistHref, reachApi, reachRowsApi, reachRowsHref, rowsApi, serverName, sourceRowsHref, treeQuery,
   type Condition, type Copies, type CopyRows, type Group, type Line, type LineRows, type Lines, type Node,
   type PlaylistList, type PlaylistPage, type PlaylistRow, type Reach, type ReachLine, type ReachRows as ReachRowsData,
@@ -22,7 +23,7 @@ import {
 type Nav = { navigate: (href: string) => void };
 type Operator = 'AND' | 'OR' | 'NOT';
 
-function Num({ href, label, of, navigate }: { href: string; label: string; of?: string } & Nav) {
+export function Num({ href, label, of, navigate }: { href: string; label: string; of?: string } & Nav) {
   return (
     <Button variant="quiet" href={href} onClick={() => navigate(href)}>
       {label}{of && <span className="visually-hidden">{`, ${of}`}</span>}
@@ -30,7 +31,7 @@ function Num({ href, label, of, navigate }: { href: string; label: string; of?: 
   );
 }
 
-function Failed({ why }: { why?: StringKey }) {
+export function Failed({ why }: { why?: StringKey }) {
   return (
     <Card>
       <div className="stack">
@@ -41,7 +42,7 @@ function Failed({ why }: { why?: StringKey }) {
   );
 }
 
-function Back({ href, label, navigate }: { href: string; label: string } & Nav) {
+export function Back({ href, label, navigate }: { href: string; label: string } & Nav) {
   return <div><Button variant="quiet" href={href} onClick={() => navigate(href)}>{label}</Button></div>;
 }
 
@@ -135,6 +136,7 @@ export function Playlists({ navigate }: Nav) {
         <Back href="/library" label={t('library.rows.back')} navigate={navigate} />
         <Text variant="title">{t('playlists.title')}</Text>
         <Text>{t('playlists.intro')}</Text>
+        <div><Button variant="secondary" href={JUNCTION_PATH} onClick={() => navigate(JUNCTION_PATH)}>{t('ask.openAsk')}</Button></div>
         {load.state === 'loading' && <Text>{t('playlists.loading')}</Text>}
         {load.state === 'failed' && <Failed why={load.status === 404 ? 'playlists.none' : undefined} />}
         {load.state === 'ok' && <ListBody p={load.data} navigate={navigate} />}
@@ -278,7 +280,7 @@ const OPS: { part: 'all' | 'any' | 'not'; op: Operator; label: StringKey }[] = [
 
 /** A line's conditions: each group's AND, OR and NOT parts, each condition a chip with its count (nesting shown by
  *  indent; a screen reader hears each part's operator in words). */
-function Tree({ node, src, line, navigate }: { node: Node; src: Source; line: string } & Nav) {
+export function Tree({ node, src, line, navigate }: { node: Node; src: Source; line: string } & Nav) {
   if (node.type === 'condition') return <ul className="pl-tree"><Leaf c={node} op="AND" src={src} line={line} navigate={navigate} /></ul>;
   return <GroupView g={node} src={src} line={line} navigate={navigate} />;
 }
@@ -333,7 +335,7 @@ function Stored({ p, navigate }: { p: PlaylistPage } & Nav) {
   );
 }
 
-function TrackList({ rows, why, navigate }: { rows: TrackRow[]; why: (i: number) => string } & Nav) {
+export function TrackList({ rows, why, navigate }: { rows: TrackRow[]; why: (i: number) => string } & Nav) {
   return (
     <div className="pl-tracks">
       {rows.map((r, i) => (
@@ -516,6 +518,7 @@ export function Junction({ query, navigate }: { query: string } & Nav) {
         <Back href={PLAYLISTS_PATH} label={t('playlists.back')} navigate={navigate} />
         <Text variant="title">{t('junction.pageTitle')}</Text>
         <Text>{t('junction.intro')}</Text>
+        <AskBox key={tree} navigate={navigate} />
         {tree.includes('b=') ? <JunctionLoad tree={tree} navigate={navigate} /> : <Card><Text>{t('junction.empty')}</Text></Card>}
       </div>
     </>
