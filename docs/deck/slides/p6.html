@@ -1,19 +1,19 @@
 <section id="p6">
 <div class="bar"></div>
 <p class="barlabel">Phase P6 · Cut-overs</p>
-<div class="barcode"><p>TO DO</p></div>
+<div class="barcode"><p>IN PROGRESS</p></div>
 <div class="row"><div class="badge"><p>P6</p></div><h2 class="head">Writes move over, one at a time</h2></div>
 <table class="tbl">
-<tr class="hd"><th style="width:28%">Cut-over</th><th style="width:10%">Sessions</th><th style="width:40%">What moves</th><th style="width:22%">Switched off in jimbo-dj</th></tr>
-<tr><td>History imports</td><td>3</td><td>Last.fm, Spotify, Apple Music; ListenBrainz added; bot checks become live</td><td>Settings → imports</td></tr>
-<tr><td>Plex scan and play log</td><td>2</td><td>Sync and play-log reads, into traqfreq’s own databases</td><td>Sync job</td></tr>
-<tr><td>Analyzer</td><td>2</td><td>The Mac’s analyzer posts results to traqfreq</td><td>Analyzer agent target</td></tr>
-<tr><td>Playlists</td><td>3</td><td>Save, push, Keep fresh, picks; Jellyfin and Navidrome too</td><td>Playlist jobs and push</td></tr>
-<tr><td>Fix in Plex</td><td>2</td><td>Genre writes to Plex and files, with undo</td><td>Tags → Fix in Plex</td></tr>
-<tr><td>Jobs and log</td><td>2</td><td>The scheduler and SETUP’s activity log</td><td>Scheduler</td></tr>
-<tr><td>Backups</td><td>1</td><td>Nightly backups of every traqfreq database</td><td>—</td></tr>
+<tr class="hd"><th style="width:24%">Cut-over</th><th style="width:12%">Sessions</th><th style="width:40%">What moves</th><th style="width:24%">Switched off in jimbo-dj</th></tr>
+<tr class="now"><td>1 Plex scan and play log</td><td>T29–T31</td><td>Sync, watcher, Plex plays, Last.fm, MusicBrainz; T29 done: spec, library.sqlite, the copy and its check</td><td>Sync job, watcher, MusicBrainz</td></tr>
+<tr><td>2 History imports</td><td>T32–T34</td><td>Spotify, Apple Music, Last.fm uploads with undo; ListenBrainz added</td><td>Uploads (stop at 1)</td></tr>
+<tr><td>3 Analyzer</td><td>T35–T36</td><td>The queue and results; the Mac’s agent points at :4492</td><td>Analyzer agent target</td></tr>
+<tr><td>4 Playlists</td><td>T37–T39</td><td>Save, push to Plex, Jellyfin, Navidrome, Keep fresh, mixes; NaviBeat first</td><td>Playlist jobs and push</td></tr>
+<tr><td>5 Fix in Plex</td><td>T40–T41</td><td>Genre writes to Plex and files, with undo</td><td>Fix in Plex, file tags job</td></tr>
+<tr><td>6 Jobs and log</td><td>T42–T43</td><td>The scheduler and SETUP’s log</td><td>Scheduler</td></tr>
+<tr><td>7 Backups</td><td>T44</td><td>Nightly backups of traqfreq’s databases</td><td>—</td></tr>
 </table>
-<p class="small">Gate for each: a week with jimbo-dj’s switch off and nothing missed. Data that moved is copied once, checked by count, then traqfreq reads its own copy.</p>
+<p class="small">Order confirmed by Ryan on 2026-11-27. Each: jimbo-dj’s switch off, then one copy into library.sqlite checked by count and row by row, then traqfreq reads and writes its copy. Gate: a week with the switch off and nothing missed.</p>
 <div class="foot"><p class="label">traqfreq · build phases</p><p class="pg"></p></div>
-<aside>Each cut-over is one release of each app: traqfreq gains the write and jimbo-dj turns its version off. If a cut-over goes wrong, switch jimbo-dj’s back on; its data hasn’t been touched.</aside>
+<aside>Each cut-over is one release of each app: traqfreq gains the write and jimbo-dj turns its version off. If a cut-over goes wrong, roll it back in traqfreq (its tables go aside, reads return to jimbo-dj’s copy) and switch jimbo-dj’s back on; jimbo-dj’s data hasn’t been touched. jimbodj-text and the native analyzer stay as they are.</aside>
 </section>

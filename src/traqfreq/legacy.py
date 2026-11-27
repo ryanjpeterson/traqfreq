@@ -36,16 +36,46 @@ class LegacyDBMissing(FileNotFoundError):
     pass
 
 
-def connect(path: str | Path) -> sqlite3.Connection:
-    """Open the legacy DB read-only. Raises LegacyDBMissing if the file is absent."""
+def _ro_uri(p: Path) -> str:
+    return f"file:{quote(str(p))}?mode=ro"
+
+
+def connect(path: str | Path, own: tuple[Path, tuple[str, ...], tuple[str, ...]] | None = None) -> sqlite3.Connection:
+    """Open the legacy DB read-only. Raises LegacyDBMissing if the file is absent.
+
+    ``own`` (P6, ``own.reader``): (traqfreq's ``library.sqlite``, the tables its cut-overs own, their meta keys).
+    That file is attached read-only as ``own`` and each owned table gets a TEMP VIEW of its name over
+    ``own.<table>``; SQLite resolves an unqualified name in ``temp`` first, so every reader sees traqfreq's copy
+    unchanged. ``meta`` becomes traqfreq's owned keys first, then jimbo-dj's for the rest. The views are made
+    before ``query_only`` goes on (SQLite refuses a TEMP VIEW under it); both files stay ``mode=ro``."""
     p = Path(path).resolve()
     if not p.is_file():
         raise LegacyDBMissing(str(p))
-    uri = f"file:{quote(str(p))}?mode=ro"
-    conn = sqlite3.connect(uri, uri=True, check_same_thread=False)
+    conn = sqlite3.connect(_ro_uri(p), uri=True, check_same_thread=False)
     conn.row_factory = sqlite3.Row
+    if own is not None:
+        lib, tables, meta_keys = own
+        conn.execute("ATTACH DATABASE ? AS own", (_ro_uri(Path(lib).resolve()),))
+        for t in tables:
+            conn.execute(f'CREATE TEMP VIEW "{t}" AS SELECT * FROM own."{t}"')
+        if meta_keys:
+            has_legacy_meta = conn.execute(
+                "SELECT 1 FROM main.sqlite_master WHERE type = 'table' AND name = 'meta'").fetchone()
+            rest = (" UNION ALL SELECT key, value FROM main.meta WHERE key NOT IN (SELECT key FROM own.meta)"
+                    if has_legacy_meta else "")
+            conn.execute(f"CREATE TEMP VIEW meta AS SELECT key, value FROM own.meta{rest}")
     conn.execute("PRAGMA query_only = ON")
     return conn
+
+
+def attach(conn: sqlite3.Connection, path: str | Path, alias: str = "legacy") -> None:
+    """Attach the legacy DB read-only (``mode=ro``) to one of traqfreq's own connections, for the P6 one-time
+    copy (``own.copy``). Raises LegacyDBMissing if the file is absent. The connection must be opened with
+    ``uri=True``; the attached file can't be written through it."""
+    p = Path(path).resolve()
+    if not p.is_file():
+        raise LegacyDBMissing(str(p))
+    conn.execute(f"ATTACH DATABASE ? AS {alias}", (_ro_uri(p),))
 
 
 def table_names(conn: sqlite3.Connection) -> set[str]:

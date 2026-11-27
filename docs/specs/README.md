@@ -10,7 +10,7 @@ One session = one 5-hour window = one pushed branch. P0–P5 (T1–T28) give a f
 | P3 | SERVERS: track identity, Jellyfin, Navidrome | T13–T19 | One song, three servers |
 | P4 | TAGS, read-only | T20–T23 | Ladder and per-track tags right |
 | P5 | PLAYLISTS: Junction preview | T24–T28 | Same tracks as jimbo-dj |
-| P6 | Cut-overs, one writer at a time | ~15 | Each switched off in jimbo-dj |
+| P6 | Cut-overs, one writer at a time | T29–T44 | Each switched off in jimbo-dj for a week, nothing missed |
 | P7 | DISCOVER, MIXES, FETCH, language loop | ~30 | Per module |
 | P8 | Retire jimbo-dj; other nine directions as skins | ~5 | jimbo-dj off for a week |
 
@@ -55,8 +55,18 @@ Spec: [t24-playlists.md](t24-playlists.md). Gate: the same lines give the same t
 - **T27** Flow order and why this track (B3). *Done* (`flow.py` and `mixes.latest` vendored; the picked tracks in jimbo-dj's flow order, gate check 2 in full in `playlists_gate.py`; each picked track with its line's conditions met or not and its transition).
 - **T28** The Ask box; the gate script `scripts/p5_gate.py`, `GET /api/playlists/compare`, the gate card, a live run. *Done* (`ask.py`: typed parts, by sound through jimbodj-text, by Ollama when it's on; `p5_trees.json`, check 3, the compare endpoints, the gate card on LIBRARY and SETUP). **P5 gate passed 2026-11-26** on live data: 10 of 10 trees with the same lines and the same tracks in the same order, 77 of 77 saved playlists the same (HANDOFF).
 **Ryan's requirement (2026-11-24), for every playlist and mix:** three separate switches, *Plex*, *Jellyfin* and *Navidrome*, each deciding whether that playlist is on that server; any mix of them, none implied by another. Navidrome also has NaviBeat connected to it (to look at when the Navidrome push is built: what it reads from Navidrome's playlists). P5 shows the switches read-only (where each playlist would go); P6 makes them push.
-## P6 Cut-overs (~15)
-Imports, scans, analyzer, playlists, Fix in Plex, jobs, backups. Each is switched off in jimbo-dj as traqfreq takes the write. The playlists cut-over pushes each playlist and mix to the servers its switches name (Plex, Jellyfin, Navidrome, each on its own; see P5), and takes it off a server when its switch goes off.
+## P6 Cut-overs: T29–T44
+Spec: [t29-cutovers.md](t29-cutovers.md). Order confirmed by Ryan 2026-11-27. Each cut-over: one copy into traqfreq's `library.sqlite`, checked by count; traqfreq reads and writes its copy; that job is switched off in jimbo-dj (Ryan, at deploy); gate = a week with it off and nothing missed. jimbodj-text and the native analyzer stay as they are.
+- **1. Plex scan and play log** (scan, Plex plays, Last.fm API, MusicBrainz; one switch-off):
+  - **T29** Spec; `library.sqlite`, the cut-over registry, the reading connection, the one-time copy with its count check, rollback, status (`own.py`, `traqfreq-cutover`), on the fixture. *Done.*
+  - **T30** Plex sync and the watcher, the runs log, the switch-off check on SETUP.
+  - **T31** Play log (Last.fm API, Plex history, dedupe, rematch), MusicBrainz; deploy, copy, switch-off; gate script.
+- **2. History imports:** **T32** uploads with undo per import; **T33** ListenBrainz; **T34** imports page, time zone, gate.
+- **3. Analyzer:** **T35** copy, queue, the agent's endpoints; **T36** the agent pointed at :4492, progress, gate.
+- **4. Playlists:** **T37** NaviBeat first, copy, saving, the three switches stored; **T38** push to Plex, Jellyfin, Navidrome (preview, log, undo); **T39** scheduled mixes, Keep fresh, re-cluster, gate.
+- **5. Fix in Plex:** **T40** copy, plan, apply, undo; **T41** files too, file tags job, gate.
+- **6. Jobs and log:** **T42** the scheduler and its tables; **T43** the log page, leftover jobs.
+- **7. Backups:** **T44** nightly online backups, restore check, jimbo-backup job, gate.
 ## P7 New modules
 DISCOVER, MIXES, FETCH, language loop.
 ## P8 Retire jimbo-dj
