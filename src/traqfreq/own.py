@@ -33,9 +33,13 @@ CREATE TABLE IF NOT EXISTS cutover_log (
     id INTEGER PRIMARY KEY AUTOINCREMENT, at REAL NOT NULL, name TEXT NOT NULL, action TEXT NOT NULL,
     reason TEXT NOT NULL, detail TEXT NOT NULL
 );
+CREATE TABLE IF NOT EXISTS runs (
+    id INTEGER PRIMARY KEY AUTOINCREMENT, job TEXT NOT NULL, started_at REAL NOT NULL, seconds REAL NOT NULL,
+    ok INTEGER NOT NULL, counts TEXT NOT NULL, note TEXT NOT NULL, reason TEXT NOT NULL, undo TEXT NOT NULL
+);
 """
 OWNED, ROLLED_BACK = "owned", "rolled_back"
-TRAQFREQ_TABLES = frozenset({"meta", "cutovers", "cutover_log"})
+TRAQFREQ_TABLES = frozenset({"meta", "cutovers", "cutover_log", "runs"})
 
 
 @dataclass(frozen=True)
@@ -55,7 +59,7 @@ CUTOVERS: dict[str, Cutover] = {
                 "mb_artists", "mb_releases"),
         optional=("mb_artist_names",),
         meta=("last_sync", "server", "history_version", "match_version", "plex_history_version", "history_tz",
-              "applemusic_utc"),
+              "applemusic_utc", "watch_fingerprint"),  # watch_fingerprint: the watcher's (T30)
     ),
 }
 
@@ -311,6 +315,101 @@ def rollback(data_dir: Path, name: str, reason: str) -> dict:
     return record(data_dir, name)
 
 
+# --- the switch-off check (T30): has jimbo-dj written an owned table since the copy? -------------------------
+# Per table, which of jimbo-dj's rows are new since the copy: (rule, the stamp mark it compares with, columns named).
+# A table without a rule is compared by count alone (listen_matches: rematch rewrites it whole).
+NEW_ROWS: dict[str, tuple[str, str, str]] = {
+    "listens": ("id > ?", "max_listen_id", "id, source, started_at, artist, title"),
+    "history_imports": ("at > ?", "last_import_at", "id, source, at, rows, added, note"),
+    "tracks": ("seen_at > ?", "last_sync", "rating_key, artist, title, seen_at, removed_at"),
+    "albums": ("seen_at > ?", "last_sync", "album_key, title, seen_at"),
+    "artists": ("seen_at > ?", "last_sync", "artist_key, title, seen_at"),
+    "mb_artists": ("fetched_at > ?", "copied_at", "mbid, name, fetched_at"),
+    "mb_releases": ("fetched_at > ?", "copied_at", "mbid, title, fetched_at"),
+    "mb_artist_names": ("fetched_at > ?", "copied_at", "name, mbid, fetched_at"),
+}
+MARKS = ("last_sync", "max_listen_id", "last_import_at")
+EXAMPLES = 10
+
+
+def _num(v) -> float:
+    """A stamp mark as a number to compare with (None: nothing was there, so any row is new)."""
+    try:
+        return float(v)
+    except (TypeError, ValueError):
+        return float("-inf")
+
+
+def switch_off(legacy_db: Path, rec: dict, limit: int = EXAMPLES) -> dict:
+    """For an owned cut-over: jimbo-dj's side now against the stamp taken at the copy. Each table's rows then and
+    now, and the rows new on jimbo-dj's side by its rule (``NEW_ROWS``, up to ``limit`` named, newest first); the
+    marks (last_sync, highest listen id, newest import) then and now. ``clean`` when nothing moved. Rows found here
+    were missed by traqfreq: they're never merged by themselves (docs/specs/t29-cutovers.md)."""
+    stamp = rec.get("stamp") or {}
+    copied_rows = stamp.get("rows") or {}
+    conn = legacy.connect(legacy_db)  # jimbo-dj's own file, not the reading connection's views
+    try:
+        now = _stamp(conn, "main", list(copied_rows))
+        have = _tables_in(conn, "main")
+        tables = []
+        for t, then in copied_rows.items():
+            entry = {"table": t, "copied": then, "now": now["rows"].get(t), "new": None, "rule": None,
+                     "examples": []}
+            rule = NEW_ROWS.get(t)
+            if rule and t in have:
+                where, mark, cols = rule
+                since = rec.get("copied_at") if mark == "copied_at" else stamp.get(mark)
+                arg = _num(since)
+                entry["rule"] = {"where": where.replace("?", "…"), "mark": mark, "since": since}
+                entry["new"] = conn.execute(f'SELECT COUNT(*) FROM "{t}" WHERE {where}', (arg,)).fetchone()[0]
+                if entry["new"]:
+                    order = cols.split(",")[0].strip() if mark == "max_listen_id" else where.split()[0]
+                    entry["examples"] = [dict(r) for r in conn.execute(
+                        f'SELECT {cols} FROM "{t}" WHERE {where} ORDER BY {order} DESC LIMIT ?', (arg, limit))]
+            entry["moved"] = entry["now"] != entry["copied"] or bool(entry["new"])
+            tables.append(entry)
+        marks = {m: {"copied": stamp.get(m), "now": now.get(m), "moved": stamp.get(m) != now.get(m)}
+                 for m in MARKS if m in stamp or m in now}
+    finally:
+        conn.close()
+    missed = sum(e["new"] or 0 for e in tables)
+    clean = not any(e["moved"] for e in tables) and not any(m["moved"] for m in marks.values())
+    return {"checked_at": time.time(), "clean": clean, "missed": missed, "tables": tables, "marks": marks}
+
+
+# --- the run log (T30; cut-over 6 shows it) ---------------------------------------------------------------
+def log_run(data_dir: Path, job: str, started_at: float, ok: bool, counts: dict, note: str, reason: str,
+            undo: str) -> int:
+    """One run (a sync now; imports and other jobs later) into ``runs``: when, how long, ok or not, its counts, note,
+    reason and how to undo it."""
+    conn = connect(data_dir)
+    try:
+        cur = conn.execute("INSERT INTO runs (job, started_at, seconds, ok, counts, note, reason, undo) "
+                           "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                           (job, started_at, round(time.time() - started_at, 2), int(bool(ok)),
+                            json.dumps(counts, sort_keys=True), note, reason, undo))
+        return cur.lastrowid
+    finally:
+        conn.close()
+
+
+def runs(data_dir: Path, limit: int = 20, job: str | None = None) -> list[dict]:
+    """The newest runs, newest first. Empty when there's no file (reading never creates it)."""
+    p = path(data_dir)
+    if not p.is_file():
+        return []
+    conn = sqlite3.connect(f"file:{quote(str(p.resolve()))}?mode=ro", uri=True)
+    conn.row_factory = sqlite3.Row
+    try:
+        if "runs" not in _tables_in(conn, "main"):
+            return []
+        q = "SELECT * FROM runs" + (" WHERE job = ?" if job else "") + " ORDER BY id DESC LIMIT ?"
+        return [{**dict(r), "ok": bool(r["ok"]), "counts": json.loads(r["counts"])}
+                for r in conn.execute(q, ((job,) if job else ()) + (limit,))]
+    finally:
+        conn.close()
+
+
 def record(data_dir: Path, name: str) -> dict:
     """One cut-over: its registry entry, state and copy record (or ``state: not_copied``)."""
     c = CUTOVERS[name]
@@ -329,8 +428,9 @@ def record(data_dir: Path, name: str) -> dict:
     return out
 
 
-def status(data_dir: Path, log_limit: int = 20) -> dict:
-    """Every cut-over's record and the newest log entries."""
+def status(data_dir: Path, log_limit: int = 20, legacy_db: Path | None = None) -> dict:
+    """Every cut-over's record and the newest log entries, and the newest runs. With ``legacy_db``, each owned
+    cut-over also gets its switch-off check (``switch_off``; ``None`` for one not owned)."""
     log: list[dict] = []
     if path(data_dir).is_file():
         conn = connect(data_dir)
@@ -340,11 +440,19 @@ def status(data_dir: Path, log_limit: int = 20) -> dict:
                    for r in conn.execute("SELECT * FROM cutover_log ORDER BY id DESC LIMIT ?", (log_limit,))]
         finally:
             conn.close()
-    return {"file": str(path(data_dir)), "cutovers": [record(data_dir, n) for n in CUTOVERS], "log": log}
+    cutovers = [record(data_dir, n) for n in CUTOVERS]
+    for rec in cutovers:
+        rec["switch_off"] = None
+        if legacy_db is not None and rec["state"] == OWNED:
+            try:
+                rec["switch_off"] = switch_off(legacy_db, rec)
+            except (legacy.LegacyDBMissing, sqlite3.Error) as e:
+                rec["switch_off"] = {"error": f"{type(e).__name__}: {e}"}
+    return {"file": str(path(data_dir)), "cutovers": cutovers, "log": log, "runs": runs(data_dir, 10)}
 
 
 def main(argv: list[str] | None = None) -> int:
-    """``traqfreq-cutover status | copy <name> --reason … | rollback <name> --reason …``. Uses TRAQFREQ_DATA_DIR
+    """``traqfreq-cutover status | copy <name> --reason … | rollback <name> --reason … | sync --reason …``. Uses TRAQFREQ_DATA_DIR
     and TRAQFREQ_LEGACY_DB like the app. Run on the mini at deploy, never against real data in tests."""
     import argparse
 
@@ -353,6 +461,8 @@ def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(prog="traqfreq-cutover", description=__doc__.split("\n\n")[0])
     sub = ap.add_subparsers(dest="cmd", required=True)
     sub.add_parser("status")
+    sync = sub.add_parser("sync", help="T30: one Plex sync into library.sqlite (only once plex is owned)")
+    sync.add_argument("--reason", required=True)
     for cmd in ("copy", "rollback"):
         p = sub.add_parser(cmd)
         p.add_argument("name", choices=sorted(CUTOVERS))
@@ -361,14 +471,18 @@ def main(argv: list[str] | None = None) -> int:
     s = Settings.from_env()
     try:
         if args.cmd == "status":
-            out = status(s.data_dir)
+            out = status(s.data_dir, legacy_db=s.legacy_db)
+        elif args.cmd == "sync":
+            from . import plexsync
+
+            out = plexsync.run(s, args.reason)
         elif args.cmd == "copy":
             if s.legacy_db is None:
                 raise CutoverError("TRAQFREQ_LEGACY_DB is not set")
             out = copy(s.legacy_db, s.data_dir, args.name, args.reason)
         else:
             out = rollback(s.data_dir, args.name, args.reason)
-    except CutoverError as e:
+    except (CutoverError, RuntimeError) as e:
         print(f"refused: {e}")
         return 1
     print(json.dumps(out, indent=2, sort_keys=True))

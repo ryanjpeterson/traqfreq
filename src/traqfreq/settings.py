@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import os
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
 # Repo checkout default: <repo>/web/dist (src layout: src/traqfreq/settings.py -> parents[2]).
@@ -50,6 +50,13 @@ class Settings:
     text_url: str | None = None  # empty = words aren't compared by sound
     ollama_url: str | None = None  # empty = off (the default)
     ollama_model: str = "qwen2.5:7b"
+    # T30, P6 cut-over 1: traqfreq's own Plex sync (GET only), writing only once the plex cut-over is owned.
+    # The token is never shown or logged. The path map must be jimbo-dj's (PLEX_PATH_MAP or its MUSIC_DIR_N),
+    # or the sync refuses rather than rewrite every track's local_path.
+    plex_url: str | None = None
+    plex_token: str | None = field(default=None, repr=False)
+    plex_section: str | None = None  # empty = the only music library
+    plex_path_map: str | None = None  # "plex1=local1,plex2=local2", as jimbo-dj's PLEX_PATH_MAP
 
     @classmethod
     def from_env(cls, env: dict[str, str] | None = None) -> "Settings":
@@ -74,4 +81,8 @@ class Settings:
             text_url=(env.get("TRAQFREQ_TEXT_URL") or "").rstrip("/") or None,
             ollama_url=(env.get("TRAQFREQ_OLLAMA_URL") or "").rstrip("/") or None,
             ollama_model=env.get("TRAQFREQ_OLLAMA_MODEL") or "qwen2.5:7b",
+            plex_url=(env.get("TRAQFREQ_PLEX_URL") or "").rstrip("/") or None,
+            plex_token=env.get("TRAQFREQ_PLEX_TOKEN") or None,
+            plex_section=env.get("TRAQFREQ_PLEX_MUSIC_SECTION") or None,
+            plex_path_map=env.get("TRAQFREQ_PLEX_PATH_MAP") or None,
         )

@@ -1,0 +1,993 @@
+{
+  "before": {
+    "file": "data/library.sqlite",
+    "cutovers": [
+      {
+        "name": "plex",
+        "title": "Plex scan and play log",
+        "tables": [
+          "tracks",
+          "albums",
+          "artists",
+          "listens",
+          "listen_matches",
+          "history_imports",
+          "mb_artists",
+          "mb_releases"
+        ],
+        "optional": [
+          "mb_artist_names"
+        ],
+        "meta": [
+          "last_sync",
+          "server",
+          "history_version",
+          "match_version",
+          "plex_history_version",
+          "history_tz",
+          "applemusic_utc",
+          "watch_fingerprint"
+        ],
+        "state": "not_copied",
+        "copied_at": null,
+        "stamp": null,
+        "check": null,
+        "note": null,
+        "switch_off": null
+      }
+    ],
+    "log": [],
+    "runs": [],
+    "watcher": {
+      "started": false,
+      "checked_at": null,
+      "changed_at": null,
+      "scanning": false,
+      "error": null,
+      "enabled": false,
+      "interval": 300
+    },
+    "plex": {
+      "url": "http://plex.test:32400",
+      "token_set": true,
+      "section": "Music",
+      "path_map": "/music/Kollektiv Nord=/srv/music/Kollektiv Nord,/music/The Paper Lanterns=/srv/music/The Paper Lanterns,/music/Former Band=/srv/music/Former Band",
+      "env": [
+        "TRAQFREQ_PLEX_URL",
+        "TRAQFREQ_PLEX_TOKEN",
+        "TRAQFREQ_PLEX_MUSIC_SECTION",
+        "TRAQFREQ_PLEX_PATH_MAP"
+      ]
+    }
+  },
+  "clean": {
+    "file": "data/library.sqlite",
+    "cutovers": [
+      {
+        "name": "plex",
+        "title": "Plex scan and play log",
+        "tables": [
+          "tracks",
+          "albums",
+          "artists",
+          "listens",
+          "listen_matches",
+          "history_imports",
+          "mb_artists",
+          "mb_releases"
+        ],
+        "optional": [
+          "mb_artist_names"
+        ],
+        "meta": [
+          "last_sync",
+          "server",
+          "history_version",
+          "match_version",
+          "plex_history_version",
+          "history_tz",
+          "applemusic_utc",
+          "watch_fingerprint"
+        ],
+        "state": "owned",
+        "copied_at": 1794200400.0,
+        "stamp": {
+          "last_import_at": 1793847900,
+          "last_sync": "1793844000",
+          "max_listen_id": 9,
+          "rows": {
+            "albums": 4,
+            "artists": 4,
+            "history_imports": 3,
+            "listen_matches": 6,
+            "listens": 9,
+            "mb_artists": 1,
+            "mb_releases": 1,
+            "tracks": 6
+          }
+        },
+        "check": {
+          "measures": {
+            "albums": {
+              "jimbodj": 3,
+              "traqfreq": 3
+            },
+            "artists": {
+              "jimbodj": 3,
+              "traqfreq": 3
+            },
+            "plays": {
+              "jimbodj": 6,
+              "traqfreq": 6
+            },
+            "tracks": {
+              "jimbodj": 5,
+              "traqfreq": 5
+            }
+          },
+          "meta": {
+            "applemusic_utc": {
+              "jimbodj": null,
+              "traqfreq": null
+            },
+            "history_tz": {
+              "jimbodj": null,
+              "traqfreq": null
+            },
+            "history_version": {
+              "jimbodj": "1793847900.5",
+              "traqfreq": "1793847900.5"
+            },
+            "last_sync": {
+              "jimbodj": "1793844000",
+              "traqfreq": "1793844000"
+            },
+            "match_version": {
+              "jimbodj": "3",
+              "traqfreq": "3"
+            },
+            "plex_history_version": {
+              "jimbodj": null,
+              "traqfreq": null
+            },
+            "server": {
+              "jimbodj": "{\"name\": \"Fixture Plex\", \"version\": \"1.41.0\", \"machine_id\": \"fixture0\", \"plex_pass\": true, \"section\": \"Music\", \"section_key\": \"1\"}",
+              "traqfreq": "{\"name\": \"Fixture Plex\", \"version\": \"1.41.0\", \"machine_id\": \"fixture0\", \"plex_pass\": true, \"section\": \"Music\", \"section_key\": \"1\"}"
+            },
+            "watch_fingerprint": {
+              "jimbodj": null,
+              "traqfreq": null
+            }
+          },
+          "tables": {
+            "albums": {
+              "jimbodj": 4,
+              "only_jimbodj": 0,
+              "only_traqfreq": 0,
+              "traqfreq": 4
+            },
+            "artists": {
+              "jimbodj": 4,
+              "only_jimbodj": 0,
+              "only_traqfreq": 0,
+              "traqfreq": 4
+            },
+            "history_imports": {
+              "jimbodj": 3,
+              "only_jimbodj": 0,
+              "only_traqfreq": 0,
+              "traqfreq": 3
+            },
+            "listen_matches": {
+              "jimbodj": 6,
+              "only_jimbodj": 0,
+              "only_traqfreq": 0,
+              "traqfreq": 6
+            },
+            "listens": {
+              "jimbodj": 9,
+              "only_jimbodj": 0,
+              "only_traqfreq": 0,
+              "traqfreq": 9
+            },
+            "mb_artists": {
+              "jimbodj": 1,
+              "only_jimbodj": 0,
+              "only_traqfreq": 0,
+              "traqfreq": 1
+            },
+            "mb_releases": {
+              "jimbodj": 1,
+              "only_jimbodj": 0,
+              "only_traqfreq": 0,
+              "traqfreq": 1
+            },
+            "tracks": {
+              "jimbodj": 6,
+              "only_jimbodj": 0,
+              "only_traqfreq": 0,
+              "traqfreq": 6
+            }
+          }
+        },
+        "note": "Cut-over 1 at deploy",
+        "switch_off": {
+          "checked_at": 1794200400.0,
+          "clean": true,
+          "missed": 0,
+          "tables": [
+            {
+              "table": "albums",
+              "copied": 4,
+              "now": 4,
+              "new": 0,
+              "rule": {
+                "where": "seen_at > …",
+                "mark": "last_sync",
+                "since": "1793844000"
+              },
+              "examples": [],
+              "moved": false
+            },
+            {
+              "table": "artists",
+              "copied": 4,
+              "now": 4,
+              "new": 0,
+              "rule": {
+                "where": "seen_at > …",
+                "mark": "last_sync",
+                "since": "1793844000"
+              },
+              "examples": [],
+              "moved": false
+            },
+            {
+              "table": "history_imports",
+              "copied": 3,
+              "now": 3,
+              "new": 0,
+              "rule": {
+                "where": "at > …",
+                "mark": "last_import_at",
+                "since": 1793847900
+              },
+              "examples": [],
+              "moved": false
+            },
+            {
+              "table": "listen_matches",
+              "copied": 6,
+              "now": 6,
+              "new": null,
+              "rule": null,
+              "examples": [],
+              "moved": false
+            },
+            {
+              "table": "listens",
+              "copied": 9,
+              "now": 9,
+              "new": 0,
+              "rule": {
+                "where": "id > …",
+                "mark": "max_listen_id",
+                "since": 9
+              },
+              "examples": [],
+              "moved": false
+            },
+            {
+              "table": "mb_artists",
+              "copied": 1,
+              "now": 1,
+              "new": 0,
+              "rule": {
+                "where": "fetched_at > …",
+                "mark": "copied_at",
+                "since": 1794200400.0
+              },
+              "examples": [],
+              "moved": false
+            },
+            {
+              "table": "mb_releases",
+              "copied": 1,
+              "now": 1,
+              "new": 0,
+              "rule": {
+                "where": "fetched_at > …",
+                "mark": "copied_at",
+                "since": 1794200400.0
+              },
+              "examples": [],
+              "moved": false
+            },
+            {
+              "table": "tracks",
+              "copied": 6,
+              "now": 6,
+              "new": 0,
+              "rule": {
+                "where": "seen_at > …",
+                "mark": "last_sync",
+                "since": "1793844000"
+              },
+              "examples": [],
+              "moved": false
+            }
+          ],
+          "marks": {
+            "last_sync": {
+              "copied": "1793844000",
+              "now": "1793844000",
+              "moved": false
+            },
+            "max_listen_id": {
+              "copied": 9,
+              "now": 9,
+              "moved": false
+            },
+            "last_import_at": {
+              "copied": 1793847900,
+              "now": 1793847900,
+              "moved": false
+            }
+          }
+        }
+      }
+    ],
+    "log": [
+      {
+        "id": 1,
+        "at": 1794200400.0,
+        "name": "plex",
+        "action": "copied",
+        "reason": "Cut-over 1 at deploy",
+        "detail": {
+          "check": {
+            "measures": {
+              "albums": {
+                "jimbodj": 3,
+                "traqfreq": 3
+              },
+              "artists": {
+                "jimbodj": 3,
+                "traqfreq": 3
+              },
+              "plays": {
+                "jimbodj": 6,
+                "traqfreq": 6
+              },
+              "tracks": {
+                "jimbodj": 5,
+                "traqfreq": 5
+              }
+            },
+            "meta": {
+              "applemusic_utc": {
+                "jimbodj": null,
+                "traqfreq": null
+              },
+              "history_tz": {
+                "jimbodj": null,
+                "traqfreq": null
+              },
+              "history_version": {
+                "jimbodj": "1793847900.5",
+                "traqfreq": "1793847900.5"
+              },
+              "last_sync": {
+                "jimbodj": "1793844000",
+                "traqfreq": "1793844000"
+              },
+              "match_version": {
+                "jimbodj": "3",
+                "traqfreq": "3"
+              },
+              "plex_history_version": {
+                "jimbodj": null,
+                "traqfreq": null
+              },
+              "server": {
+                "jimbodj": "{\"name\": \"Fixture Plex\", \"version\": \"1.41.0\", \"machine_id\": \"fixture0\", \"plex_pass\": true, \"section\": \"Music\", \"section_key\": \"1\"}",
+                "traqfreq": "{\"name\": \"Fixture Plex\", \"version\": \"1.41.0\", \"machine_id\": \"fixture0\", \"plex_pass\": true, \"section\": \"Music\", \"section_key\": \"1\"}"
+              },
+              "watch_fingerprint": {
+                "jimbodj": null,
+                "traqfreq": null
+              }
+            },
+            "tables": {
+              "albums": {
+                "jimbodj": 4,
+                "only_jimbodj": 0,
+                "only_traqfreq": 0,
+                "traqfreq": 4
+              },
+              "artists": {
+                "jimbodj": 4,
+                "only_jimbodj": 0,
+                "only_traqfreq": 0,
+                "traqfreq": 4
+              },
+              "history_imports": {
+                "jimbodj": 3,
+                "only_jimbodj": 0,
+                "only_traqfreq": 0,
+                "traqfreq": 3
+              },
+              "listen_matches": {
+                "jimbodj": 6,
+                "only_jimbodj": 0,
+                "only_traqfreq": 0,
+                "traqfreq": 6
+              },
+              "listens": {
+                "jimbodj": 9,
+                "only_jimbodj": 0,
+                "only_traqfreq": 0,
+                "traqfreq": 9
+              },
+              "mb_artists": {
+                "jimbodj": 1,
+                "only_jimbodj": 0,
+                "only_traqfreq": 0,
+                "traqfreq": 1
+              },
+              "mb_releases": {
+                "jimbodj": 1,
+                "only_jimbodj": 0,
+                "only_traqfreq": 0,
+                "traqfreq": 1
+              },
+              "tracks": {
+                "jimbodj": 6,
+                "only_jimbodj": 0,
+                "only_traqfreq": 0,
+                "traqfreq": 6
+              }
+            }
+          },
+          "seconds": 0.0,
+          "stamp": {
+            "last_import_at": 1793847900,
+            "last_sync": "1793844000",
+            "max_listen_id": 9,
+            "rows": {
+              "albums": 4,
+              "artists": 4,
+              "history_imports": 3,
+              "listen_matches": 6,
+              "listens": 9,
+              "mb_artists": 1,
+              "mb_releases": 1,
+              "tracks": 6
+            }
+          },
+          "tables": [
+            "tracks",
+            "albums",
+            "artists",
+            "listens",
+            "listen_matches",
+            "history_imports",
+            "mb_artists",
+            "mb_releases"
+          ],
+          "undo": "traqfreq-cutover rollback plex --reason …"
+        }
+      }
+    ],
+    "runs": [
+      {
+        "id": 1,
+        "job": "plex_sync",
+        "started_at": 1794200400.0,
+        "seconds": 0.0,
+        "ok": true,
+        "counts": {
+          "albums": 2,
+          "artists": 1,
+          "removed": 1,
+          "seconds": 0.0,
+          "streams": 5,
+          "tracks": 5
+        },
+        "note": "5 tracks read from Plex, 1 no longer there, 2 albums, 1 artists, 5 audio formats read",
+        "reason": "Nightly sync",
+        "undo": "Nothing to undo: a sync only mirrors Plex, and the next one reads it again."
+      }
+    ],
+    "watcher": {
+      "started": false,
+      "checked_at": null,
+      "changed_at": null,
+      "scanning": false,
+      "error": null,
+      "enabled": false,
+      "interval": 300
+    },
+    "plex": {
+      "url": "http://plex.test:32400",
+      "token_set": true,
+      "section": "Music",
+      "path_map": "/music/Kollektiv Nord=/srv/music/Kollektiv Nord,/music/The Paper Lanterns=/srv/music/The Paper Lanterns,/music/Former Band=/srv/music/Former Band",
+      "env": [
+        "TRAQFREQ_PLEX_URL",
+        "TRAQFREQ_PLEX_TOKEN",
+        "TRAQFREQ_PLEX_MUSIC_SECTION",
+        "TRAQFREQ_PLEX_PATH_MAP"
+      ]
+    }
+  },
+  "moved": {
+    "file": "data/library.sqlite",
+    "cutovers": [
+      {
+        "name": "plex",
+        "title": "Plex scan and play log",
+        "tables": [
+          "tracks",
+          "albums",
+          "artists",
+          "listens",
+          "listen_matches",
+          "history_imports",
+          "mb_artists",
+          "mb_releases"
+        ],
+        "optional": [
+          "mb_artist_names"
+        ],
+        "meta": [
+          "last_sync",
+          "server",
+          "history_version",
+          "match_version",
+          "plex_history_version",
+          "history_tz",
+          "applemusic_utc",
+          "watch_fingerprint"
+        ],
+        "state": "owned",
+        "copied_at": 1794200400.0,
+        "stamp": {
+          "last_import_at": 1793847900,
+          "last_sync": "1793844000",
+          "max_listen_id": 9,
+          "rows": {
+            "albums": 4,
+            "artists": 4,
+            "history_imports": 3,
+            "listen_matches": 6,
+            "listens": 9,
+            "mb_artists": 1,
+            "mb_releases": 1,
+            "tracks": 6
+          }
+        },
+        "check": {
+          "measures": {
+            "albums": {
+              "jimbodj": 3,
+              "traqfreq": 3
+            },
+            "artists": {
+              "jimbodj": 3,
+              "traqfreq": 3
+            },
+            "plays": {
+              "jimbodj": 6,
+              "traqfreq": 6
+            },
+            "tracks": {
+              "jimbodj": 5,
+              "traqfreq": 5
+            }
+          },
+          "meta": {
+            "applemusic_utc": {
+              "jimbodj": null,
+              "traqfreq": null
+            },
+            "history_tz": {
+              "jimbodj": null,
+              "traqfreq": null
+            },
+            "history_version": {
+              "jimbodj": "1793847900.5",
+              "traqfreq": "1793847900.5"
+            },
+            "last_sync": {
+              "jimbodj": "1793844000",
+              "traqfreq": "1793844000"
+            },
+            "match_version": {
+              "jimbodj": "3",
+              "traqfreq": "3"
+            },
+            "plex_history_version": {
+              "jimbodj": null,
+              "traqfreq": null
+            },
+            "server": {
+              "jimbodj": "{\"name\": \"Fixture Plex\", \"version\": \"1.41.0\", \"machine_id\": \"fixture0\", \"plex_pass\": true, \"section\": \"Music\", \"section_key\": \"1\"}",
+              "traqfreq": "{\"name\": \"Fixture Plex\", \"version\": \"1.41.0\", \"machine_id\": \"fixture0\", \"plex_pass\": true, \"section\": \"Music\", \"section_key\": \"1\"}"
+            },
+            "watch_fingerprint": {
+              "jimbodj": null,
+              "traqfreq": null
+            }
+          },
+          "tables": {
+            "albums": {
+              "jimbodj": 4,
+              "only_jimbodj": 0,
+              "only_traqfreq": 0,
+              "traqfreq": 4
+            },
+            "artists": {
+              "jimbodj": 4,
+              "only_jimbodj": 0,
+              "only_traqfreq": 0,
+              "traqfreq": 4
+            },
+            "history_imports": {
+              "jimbodj": 3,
+              "only_jimbodj": 0,
+              "only_traqfreq": 0,
+              "traqfreq": 3
+            },
+            "listen_matches": {
+              "jimbodj": 6,
+              "only_jimbodj": 0,
+              "only_traqfreq": 0,
+              "traqfreq": 6
+            },
+            "listens": {
+              "jimbodj": 9,
+              "only_jimbodj": 0,
+              "only_traqfreq": 0,
+              "traqfreq": 9
+            },
+            "mb_artists": {
+              "jimbodj": 1,
+              "only_jimbodj": 0,
+              "only_traqfreq": 0,
+              "traqfreq": 1
+            },
+            "mb_releases": {
+              "jimbodj": 1,
+              "only_jimbodj": 0,
+              "only_traqfreq": 0,
+              "traqfreq": 1
+            },
+            "tracks": {
+              "jimbodj": 6,
+              "only_jimbodj": 0,
+              "only_traqfreq": 0,
+              "traqfreq": 6
+            }
+          }
+        },
+        "note": "Cut-over 1 at deploy",
+        "switch_off": {
+          "checked_at": 1794200400.0,
+          "clean": false,
+          "missed": 1,
+          "tables": [
+            {
+              "table": "albums",
+              "copied": 4,
+              "now": 4,
+              "new": 0,
+              "rule": {
+                "where": "seen_at > …",
+                "mark": "last_sync",
+                "since": "1793844000"
+              },
+              "examples": [],
+              "moved": false
+            },
+            {
+              "table": "artists",
+              "copied": 4,
+              "now": 4,
+              "new": 0,
+              "rule": {
+                "where": "seen_at > …",
+                "mark": "last_sync",
+                "since": "1793844000"
+              },
+              "examples": [],
+              "moved": false
+            },
+            {
+              "table": "history_imports",
+              "copied": 3,
+              "now": 3,
+              "new": 0,
+              "rule": {
+                "where": "at > …",
+                "mark": "last_import_at",
+                "since": 1793847900
+              },
+              "examples": [],
+              "moved": false
+            },
+            {
+              "table": "listen_matches",
+              "copied": 6,
+              "now": 6,
+              "new": null,
+              "rule": null,
+              "examples": [],
+              "moved": false
+            },
+            {
+              "table": "listens",
+              "copied": 9,
+              "now": 10,
+              "new": 1,
+              "rule": {
+                "where": "id > …",
+                "mark": "max_listen_id",
+                "since": 9
+              },
+              "examples": [
+                {
+                  "id": 10,
+                  "source": "lastfm",
+                  "started_at": 1794200000,
+                  "artist": "Ada Vey",
+                  "title": "Coil"
+                }
+              ],
+              "moved": true
+            },
+            {
+              "table": "mb_artists",
+              "copied": 1,
+              "now": 1,
+              "new": 0,
+              "rule": {
+                "where": "fetched_at > …",
+                "mark": "copied_at",
+                "since": 1794200400.0
+              },
+              "examples": [],
+              "moved": false
+            },
+            {
+              "table": "mb_releases",
+              "copied": 1,
+              "now": 1,
+              "new": 0,
+              "rule": {
+                "where": "fetched_at > …",
+                "mark": "copied_at",
+                "since": 1794200400.0
+              },
+              "examples": [],
+              "moved": false
+            },
+            {
+              "table": "tracks",
+              "copied": 6,
+              "now": 6,
+              "new": 0,
+              "rule": {
+                "where": "seen_at > …",
+                "mark": "last_sync",
+                "since": "1793844000"
+              },
+              "examples": [],
+              "moved": false
+            }
+          ],
+          "marks": {
+            "last_sync": {
+              "copied": "1793844000",
+              "now": "1794200200",
+              "moved": true
+            },
+            "max_listen_id": {
+              "copied": 9,
+              "now": 10,
+              "moved": true
+            },
+            "last_import_at": {
+              "copied": 1793847900,
+              "now": 1793847900,
+              "moved": false
+            }
+          }
+        }
+      }
+    ],
+    "log": [
+      {
+        "id": 1,
+        "at": 1794200400.0,
+        "name": "plex",
+        "action": "copied",
+        "reason": "Cut-over 1 at deploy",
+        "detail": {
+          "check": {
+            "measures": {
+              "albums": {
+                "jimbodj": 3,
+                "traqfreq": 3
+              },
+              "artists": {
+                "jimbodj": 3,
+                "traqfreq": 3
+              },
+              "plays": {
+                "jimbodj": 6,
+                "traqfreq": 6
+              },
+              "tracks": {
+                "jimbodj": 5,
+                "traqfreq": 5
+              }
+            },
+            "meta": {
+              "applemusic_utc": {
+                "jimbodj": null,
+                "traqfreq": null
+              },
+              "history_tz": {
+                "jimbodj": null,
+                "traqfreq": null
+              },
+              "history_version": {
+                "jimbodj": "1793847900.5",
+                "traqfreq": "1793847900.5"
+              },
+              "last_sync": {
+                "jimbodj": "1793844000",
+                "traqfreq": "1793844000"
+              },
+              "match_version": {
+                "jimbodj": "3",
+                "traqfreq": "3"
+              },
+              "plex_history_version": {
+                "jimbodj": null,
+                "traqfreq": null
+              },
+              "server": {
+                "jimbodj": "{\"name\": \"Fixture Plex\", \"version\": \"1.41.0\", \"machine_id\": \"fixture0\", \"plex_pass\": true, \"section\": \"Music\", \"section_key\": \"1\"}",
+                "traqfreq": "{\"name\": \"Fixture Plex\", \"version\": \"1.41.0\", \"machine_id\": \"fixture0\", \"plex_pass\": true, \"section\": \"Music\", \"section_key\": \"1\"}"
+              },
+              "watch_fingerprint": {
+                "jimbodj": null,
+                "traqfreq": null
+              }
+            },
+            "tables": {
+              "albums": {
+                "jimbodj": 4,
+                "only_jimbodj": 0,
+                "only_traqfreq": 0,
+                "traqfreq": 4
+              },
+              "artists": {
+                "jimbodj": 4,
+                "only_jimbodj": 0,
+                "only_traqfreq": 0,
+                "traqfreq": 4
+              },
+              "history_imports": {
+                "jimbodj": 3,
+                "only_jimbodj": 0,
+                "only_traqfreq": 0,
+                "traqfreq": 3
+              },
+              "listen_matches": {
+                "jimbodj": 6,
+                "only_jimbodj": 0,
+                "only_traqfreq": 0,
+                "traqfreq": 6
+              },
+              "listens": {
+                "jimbodj": 9,
+                "only_jimbodj": 0,
+                "only_traqfreq": 0,
+                "traqfreq": 9
+              },
+              "mb_artists": {
+                "jimbodj": 1,
+                "only_jimbodj": 0,
+                "only_traqfreq": 0,
+                "traqfreq": 1
+              },
+              "mb_releases": {
+                "jimbodj": 1,
+                "only_jimbodj": 0,
+                "only_traqfreq": 0,
+                "traqfreq": 1
+              },
+              "tracks": {
+                "jimbodj": 6,
+                "only_jimbodj": 0,
+                "only_traqfreq": 0,
+                "traqfreq": 6
+              }
+            }
+          },
+          "seconds": 0.0,
+          "stamp": {
+            "last_import_at": 1793847900,
+            "last_sync": "1793844000",
+            "max_listen_id": 9,
+            "rows": {
+              "albums": 4,
+              "artists": 4,
+              "history_imports": 3,
+              "listen_matches": 6,
+              "listens": 9,
+              "mb_artists": 1,
+              "mb_releases": 1,
+              "tracks": 6
+            }
+          },
+          "tables": [
+            "tracks",
+            "albums",
+            "artists",
+            "listens",
+            "listen_matches",
+            "history_imports",
+            "mb_artists",
+            "mb_releases"
+          ],
+          "undo": "traqfreq-cutover rollback plex --reason …"
+        }
+      }
+    ],
+    "runs": [
+      {
+        "id": 1,
+        "job": "plex_sync",
+        "started_at": 1794200400.0,
+        "seconds": 0.0,
+        "ok": true,
+        "counts": {
+          "albums": 2,
+          "artists": 1,
+          "removed": 1,
+          "seconds": 0.0,
+          "streams": 5,
+          "tracks": 5
+        },
+        "note": "5 tracks read from Plex, 1 no longer there, 2 albums, 1 artists, 5 audio formats read",
+        "reason": "Nightly sync",
+        "undo": "Nothing to undo: a sync only mirrors Plex, and the next one reads it again."
+      }
+    ],
+    "watcher": {
+      "started": false,
+      "checked_at": null,
+      "changed_at": null,
+      "scanning": false,
+      "error": null,
+      "enabled": false,
+      "interval": 300
+    },
+    "plex": {
+      "url": "http://plex.test:32400",
+      "token_set": true,
+      "section": "Music",
+      "path_map": "/music/Kollektiv Nord=/srv/music/Kollektiv Nord,/music/The Paper Lanterns=/srv/music/The Paper Lanterns,/music/Former Band=/srv/music/Former Band",
+      "env": [
+        "TRAQFREQ_PLEX_URL",
+        "TRAQFREQ_PLEX_TOKEN",
+        "TRAQFREQ_PLEX_MUSIC_SECTION",
+        "TRAQFREQ_PLEX_PATH_MAP"
+      ]
+    }
+  }
+}

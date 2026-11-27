@@ -10,7 +10,7 @@ from datetime import datetime
 from urllib.parse import urlencode
 from zoneinfo import ZoneInfo
 
-from . import __version__, ask, counted, entities, history, identity, junction, legacy, library, library_gate, matching, own, periods, playlists, playlists_compare, proposals, reach, reading, servers, servers_gate, store, tagpages, tags, tags_gate
+from . import __version__, ask, counted, entities, history, identity, junction, legacy, library, library_gate, matching, own, periods, plexsync, playlists, playlists_compare, proposals, reach, reading, servers, servers_gate, store, tagpages, tags, tags_gate
 from .settings import CORE, MODULES, Settings
 
 
@@ -53,8 +53,13 @@ def create_app(settings: Settings | None = None, server_transport=None, ask_tran
     def cutovers() -> dict:
         """P6: each cut-over's state (not copied, owned, rolled back), its copy check and stamp, and the newest
         cut-over log entries, from traqfreq's library.sqlite. Read-only: copies and rollbacks are run with the
-        traqfreq-cutover command at deploy."""
-        return own.status(settings.data_dir)
+        traqfreq-cutover command at deploy. T30: each owned cut-over's switch-off check (jimbo-dj's side now
+        against the copy's stamp, with the rows new on jimbo-dj's side), the newest runs, the watcher's state and
+        the Plex settings (never the token)."""
+        out = own.status(settings.data_dir, legacy_db=settings.legacy_db)
+        out["watcher"] = plexsync.watch_state()
+        out["plex"] = plexsync.settings_view(settings)
+        return out
 
     @app.get("/api/legacy/activity")
     def legacy_activity() -> dict:
@@ -681,6 +686,8 @@ def create_app(settings: Settings | None = None, server_transport=None, ask_tran
     def modules() -> dict:
         """Each module, in nav order, with whether it is switched on (TRAQFREQ_MODULES)."""
         return {"modules": [{"id": m, "on": m in settings.modules, "core": m in CORE} for m in MODULES]}
+
+    plexsync.start_watcher(settings)  # T30: only when TRAQFREQ_WATCH=on; writes only once plex is owned
 
     if (settings.web_dir / "index.html").is_file():
         app.mount("/", SPAStaticFiles(directory=settings.web_dir, html=True), name="web")

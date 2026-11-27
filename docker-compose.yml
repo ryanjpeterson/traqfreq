@@ -25,6 +25,15 @@ services:
       TRAQFREQ_TEXT_URL: ${TRAQFREQ_TEXT_URL:-http://host.docker.internal:4491}
       TRAQFREQ_OLLAMA_URL: ${TRAQFREQ_OLLAMA_URL:-}
       TRAQFREQ_OLLAMA_MODEL: ${TRAQFREQ_OLLAMA_MODEL:-}
+      # P6 cut-over 1 (T30): traqfreq's own Plex sync, GET only, writing only once `traqfreq-cutover copy plex` has
+      # run. The token is a secret (never shown or logged). The path map must be jimbo-dj's effective PLEX_PATH_MAP
+      # (or its MUSIC_DIR_N=MUSIC_MOUNT/N), or the sync refuses. The watcher is off unless TRAQFREQ_WATCH=on.
+      TRAQFREQ_PLEX_URL: ${TRAQFREQ_PLEX_URL:-}
+      TRAQFREQ_PLEX_TOKEN: ${TRAQFREQ_PLEX_TOKEN:-}
+      TRAQFREQ_PLEX_MUSIC_SECTION: ${TRAQFREQ_PLEX_MUSIC_SECTION:-}
+      TRAQFREQ_PLEX_PATH_MAP: ${TRAQFREQ_PLEX_PATH_MAP:-}
+      TRAQFREQ_WATCH: ${TRAQFREQ_WATCH:-off}
+      TRAQFREQ_WATCH_INTERVAL: ${TRAQFREQ_WATCH_INTERVAL:-300}
     ports:
       - "${TRAQFREQ_PORT:-4492}:4492"
     volumes:

@@ -137,7 +137,7 @@ def test_mismatch_rolls_back_whole_copy(legacy_db, data_dir, monkeypatch):
         own.copy(legacy_db, data_dir, "plex", "test")
     lib = _rw(own.path(data_dir))
     tables = {r[0] for r in lib.execute("SELECT name FROM sqlite_master WHERE type='table'")}
-    assert tables == {"meta", "cutovers", "cutover_log", "sqlite_sequence"}  # nothing half-copied
+    assert tables == {"meta", "cutovers", "cutover_log", "runs", "sqlite_sequence"}  # nothing half-copied
     assert lib.execute("SELECT COUNT(*) FROM meta").fetchone()[0] == 0
     assert own.owned(data_dir) == ((), ())
     last = own.status(data_dir)["log"][0]
